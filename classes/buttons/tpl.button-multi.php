@@ -16,11 +16,18 @@
                     <div class="b-shadow__top">
                         <div class="b-shadow__bottom">
                             <div class="b-shadow__body b-shadow__body_bg_fff b-shadow__body_pad_10_15_5">
-                                <? foreach($this->buttons as $button) {?>
+                                <?php foreach ($this->buttons as $button) {
+    ?>
                                 <div class="b-shadow__txt b-shadow__txt_lineheight_14 b-shadow__txt_padbot_5">
-                                    <a class="b-layout__link b-button-multi__close <?= $button->getCss();?> <?= $this->getColorLink($button->getColor());?>" href="<?=$button->getLink();?>" <?= $button->getEvents();?>><?= $button->getName();?></a>
+                                    <a class="b-layout__link b-button-multi__close <?= $button->getCss();
+    ?> <?= $this->getColorLink($button->getColor());
+    ?>" href="<?=$button->getLink();
+    ?>" <?= $button->getEvents();
+    ?>><?= $button->getName();
+    ?></a>
                                 </div>
-                                <? } //foreach?>
+                                <?php 
+} //foreach?>
                             </div>
                         </div>
                     </div>

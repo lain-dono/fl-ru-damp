@@ -1,6 +1,6 @@
 <?php
 /**
- * Шаблон popup-окна подтверждения выплаты средств
+ * Шаблон popup-окна подтверждения выплаты средств.
  */
 
 //$fn_url = sprintf("/users/%s/setup/finance/", $_SESSION['login']);
@@ -8,7 +8,7 @@
 ?>
 <div id="<?=ReservesPayoutPopup::getPopupId($idx)?>" 
      data-reserves-payout="true" 
-     class="b-shadow b-shadow_block b-shadow_center b-shadow_width_520 <?=(!@$is_show)?'b-shadow_hide':'' ?> b-shadow__quick">
+     class="b-shadow b-shadow_block b-shadow_center b-shadow_width_520 <?=(!@$is_show) ? 'b-shadow_hide' : '' ?> b-shadow__quick">
     <div class="b-shadow__body b-shadow__body_pad_15_20">
         <h2 class="b-layout__title">
             Выплата суммы
@@ -16,7 +16,7 @@
 
         <div class="b-layout <?php //b-layout_waiting ?>">
 
-            <?php if($is_feedback || !$is_allow_feedback): ?>
+            <?php if ($is_feedback || !$is_allow_feedback): ?>
                 <form action="" method="post">
                     <input type="hidden" name="oid" value="<?= $idx ?>" />
                     <input type="hidden" name="hash" value="<?= $hash ?>" />
@@ -73,29 +73,29 @@
                 Способ выплаты
             </div>
             <div class="b-layout__txt b-layout__txt_padbot_20 b-layout__txt_padleft_20 b-layout__txt_fontsize_11">
-                Ваш статус<?php if(@$fn_url): ?> (<a class="b-layout__link" href="<?=$fn_url?>">изменить</a>)<?php endif; ?>: <?=$form_txt?>, <?=$rez_txt?><br>
+                Ваш статус<?php if (@$fn_url): ?> (<a class="b-layout__link" href="<?=$fn_url?>">изменить</a>)<?php endif; ?>: <?=$form_txt?>, <?=$rez_txt?><br>
                 Вам доступны следующие способы выплаты:
             </div>
 <?php
-            if(!empty($payments)):
+            if (!empty($payments)):
 ?>
             <div>
                 <div class="b-buttons b-buttons_padleft_20 b-buttons_padbot_10"> 
-                    <?php foreach($payments as $key => $payment): 
-                            $pay_num = (isset($payment['num']) && !empty($payment['num']))?$payment['num']:null;
+                    <?php foreach ($payments as $key => $payment):
+                            $pay_num = (isset($payment['num']) && !empty($payment['num'])) ? $payment['num'] : null;
                     ?>
                     <div class="b-button_inline-block b-button_margbot_5">
-                        <a class="b-button b-button_margbot_5 b-button__pm<?=(!$pay_num)?' b-button_disabled':''?> <?=@$payment['class']?>" 
+                        <a class="b-button b-button_margbot_5 b-button__pm<?=(!$pay_num) ? ' b-button_disabled' : ''?> <?=@$payment['class']?>" 
                            href="javascript:void(0);" 
-                           <?=(isset($payment['wait']))?'data-reserves-payout-wait="'.$payment['wait'].'"':''?> 
-                           <?php if($pay_num): ?>data-reserves-payout-type="<?=$key?>"<?php endif; ?>><span class="b-button__txt"><?=@$payment['title']?></span></a>
+                           <?=(isset($payment['wait'])) ? 'data-reserves-payout-wait="'.$payment['wait'].'"' : ''?> 
+                           <?php if ($pay_num): ?>data-reserves-payout-type="<?=$key?>"<?php endif; ?>><span class="b-button__txt"><?=@$payment['title']?></span></a>
                         <br/>
                         <span class="b-button__txt b-button__txt_fontsize_11 b-button__txt_center">
                             <?php
-                                if($pay_num):
+                                if ($pay_num):
                             ?>
                                 <?=$pay_num?>
-                                <?php if(@$fn_url): ?>
+                                <?php if (@$fn_url): ?>
                                 <br/>
                                 <a href="<?=$fn_url?>">изменить</a>
                                 <?php endif; ?>
@@ -103,7 +103,7 @@
                                 else:
                             ?>
                                 реквизиты не указаны
-                                <?php if(@$fn_url): ?>
+                                <?php if (@$fn_url): ?>
                                 <br/>
                                 <a href="<?=$fn_url?>">указать</a>
                                 <?php endif; ?>

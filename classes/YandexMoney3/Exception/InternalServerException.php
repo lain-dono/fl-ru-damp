@@ -5,6 +5,6 @@ namespace YandexMoney3\Exception;
 /**
  * 
  */
-class InternalServerErrorException extends Exception
+class InternalServerException extends Exception
 {
 }

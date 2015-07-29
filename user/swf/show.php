@@ -1,15 +1,24 @@
-<?
+<?php
 // sawa: Не понял, где это используется. Если используется, то надо выкинуть обращения к file_exists()
-  require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
+  require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
   $user = __paramInit('string', 'user', NULL);
   $file = __paramInit('string', 'f', NULL);
-  $src_dir = $_SERVER['DOCUMENT_ROOT'].'/users/'.substr($user,0,2).'/'.$user.'/upload';
-  $dst_dir = $_SERVER['DOCUMENT_ROOT'].'/users/'.substr($user,0,2).'/'.$user.'/swf/';
-  $src     = $src_dir.'/'.$file;
-  $dst     = $dst_dir.'/'.$file;
-  if(!$user || !$file || !file_exists($src))                 { header('Location: /404.php'); exit; }
-  if(!file_exists($dst_dir) && !mkdir($dst_dir, 0777, true)) { header('Location: /404.php'); exit; }
-  if(!file_exists($dst) && !copy($src, $dst))                { header('Location: /404.php'); exit; }
+  $src_dir = $_SERVER['DOCUMENT_ROOT'].'/users/'.substr($user, 0, 2).'/'.$user.'/upload';
+  $dst_dir = $_SERVER['DOCUMENT_ROOT'].'/users/'.substr($user, 0, 2).'/'.$user.'/swf/';
+  $src = $src_dir.'/'.$file;
+  $dst = $dst_dir.'/'.$file;
+  if (!$user || !$file || !file_exists($src)) {
+      header('Location: /404.php');
+      exit;
+  }
+  if (!file_exists($dst_dir) && !mkdir($dst_dir, 0777, true)) {
+      header('Location: /404.php');
+      exit;
+  }
+  if (!file_exists($dst) && !copy($src, $dst)) {
+      header('Location: /404.php');
+      exit;
+  }
   ob_start();
 ?>
 <html>
@@ -26,9 +35,9 @@
     </object>
   </body>
 </html>
-<?
+<?php
   $str = ob_get_clean();
-  $str = preg_replace('/>\s+</','><',$str);
-  $str = preg_replace('/\r?\s/',' ',$str);
+  $str = preg_replace('/>\s+</', '><', $str);
+  $str = preg_replace('/\r?\s/', ' ', $str);
   print(trim($str));
 ?>

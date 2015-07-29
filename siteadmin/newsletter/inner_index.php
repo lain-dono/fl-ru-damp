@@ -1,4 +1,7 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; } ?>
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+} ?>
 <h2>
     Загрузка баннера для ежедневной рассылки о новых проектах
 </h2>
@@ -45,7 +48,8 @@
         <b class="b1"></b>
     </div>
 </form>
-<?php if($newsletter_banner_file){ ?>
+<?php if ($newsletter_banner_file) {
+    ?>
 <form method="post" action="">
     <input type="hidden" name="action" value="delete"/>
     <input type="hidden" name="type" value="0"/>
@@ -55,13 +59,18 @@
         <div class="form-in">
             <div class="form-block first">
                 <div class="form-el">
-                    <?php if($newsletter_banner_link){ ?>
+                    <?php if ($newsletter_banner_link) {
+    ?>
                     <a href="<?=$newsletter_banner_link?>" target="_blank">
                         <img src="<?=$newsletter_banner_file?>" />
                     </a>
-                    <?php }else{ ?>
+                    <?php 
+} else {
+    ?>
                         <img src="<?=$newsletter_banner_file?>" />
-                    <?php } ?>
+                    <?php 
+}
+    ?>
                 </div>
             </div>
             <div class="form-block last">
@@ -74,7 +83,8 @@
         <b class="b1"></b>
     </div>
 </form>
-<?php } ?>
+<?php 
+} ?>
 
 <br/><br/>
 <hr/>
@@ -122,7 +132,8 @@
         <b class="b1"></b>
     </div>
 </form>
-<?php if($newsletter_emp_banner_file){ ?>
+<?php if ($newsletter_emp_banner_file) {
+    ?>
 <form method="post" action="">
     <input type="hidden" name="action" value="delete"/>
     <input type="hidden" name="type" value="1"/>
@@ -132,13 +143,18 @@
         <div class="form-in">
             <div class="form-block first">
                 <div class="form-el">
-                    <?php if($newsletter_emp_banner_link){ ?>
+                    <?php if ($newsletter_emp_banner_link) {
+    ?>
                     <a href="<?=$newsletter_emp_banner_link?>" target="_blank">
                         <img src="<?=$newsletter_emp_banner_file?>" />
                     </a>
-                    <?php }else{ ?>
+                    <?php 
+} else {
+    ?>
                         <img src="<?=$newsletter_emp_banner_file?>" />
-                    <?php } ?>
+                    <?php 
+}
+    ?>
                 </div>
             </div>
             <div class="form-block last">
@@ -151,4 +167,5 @@
         <b class="b1"></b>
     </div>
 </form>
-<?php } ?>
+<?php 
+} ?>

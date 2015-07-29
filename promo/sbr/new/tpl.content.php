@@ -1,5 +1,5 @@
-<?
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/promo.common.php");
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/promo.common.php';
 $xajax->printJavascript('/xajax/');
 ?>
 <div class="b-menu b-menu_crumbs b-layout__right b-layout__right_float_right b-layout__right_width_72ps b-menu_margbot_30">
@@ -20,9 +20,11 @@ $xajax->printJavascript('/xajax/');
         <td class="b-layout__one b-layout__one_center b-layout__one_width_33ps">
             <div class="b-layout__txt b-layout__txt_color_fd6c30 b-layout__txt_fontsize_46 b-layout__txt_bold"><?= $roleStr === 'frl' ? '0' : '9.9-13.9' ?>%</div>
             <div class="b-layout__txt"><?= $roleStr === 'frl' ? 'Комиссия для фрилансера' : 'Комиссия для работодателя' ?></div>
-            <? if($roleStr !== 'frl') { ?>
+            <?php if ($roleStr !== 'frl') {
+    ?>
             <div class="b-layout__txt b-layout__txt_fontsize_11" style="color:#000;">(включая все комиссии за открытие аккредитива)</div>
-            <? }//if?>
+            <?php 
+}//if?>
         </td>
         <td class="b-layout__one b-layout__one_center">
             <div class="b-layout__txt b-layout__txt_color_fd6c30 b-layout__txt_fontsize_46 b-layout__txt_bold"><?= sbr_stages::MIN_COST_RUR; ?> руб.</div>
@@ -33,12 +35,15 @@ $xajax->printJavascript('/xajax/');
             <img class="b-layout__pic" src="/images/bs/pskb.png" alt="Веб-кошелек ПСКБ" title="Веб-кошелек ПСКБ"  />&#160;&#160;&#160;
             <img class="b-layout__pic" src="/images/bs/pk.png" alt="Пластиковые карты" title="Пластиковые карты"  />
             <div class="b-layout__txt b-layout__txt_padtop_10"><?= $roleStr === 'frl' ? 'Большой выбор способов вывода денег' : 'Доступны разные способы оплаты' ?></div>
-            <? if($roleStr !== 'frl') { ?><div class="b-layout__txt">&nbsp;</div><? }//if?>
+            <?php if ($roleStr !== 'frl') {
+    ?><div class="b-layout__txt">&nbsp;</div><?php 
+}//if?>
         </td>
     </tr>
 </table>
 <div class="b-promo__bs-arrow"></div>
-<? if ($roleStr === 'frl') { ?>
+<?php if ($roleStr === 'frl') {
+    ?>
 <table class="b-layout__table b-layout__table_width_full">
     <tr class="b-layout__tr">
         <td class="b-layout__one b-layout__one_padright_20"><div class="b-promo__bs b-promo__bs_1"></div></td>
@@ -77,7 +82,9 @@ $xajax->printJavascript('/xajax/');
         </td>
     </tr>
 </table>
-<? } else { ?>
+<?php 
+} else {
+    ?>
 <table class="b-layout__table b-layout__table_width_full">
     <tr class="b-layout__tr">
         <td class="b-layout__one b-layout__one_padright_20"><div class="b-promo__bs b-promo__bs_1"></div></td>
@@ -116,10 +123,11 @@ $xajax->printJavascript('/xajax/');
         </td>
     </tr>
 </table>
-<? } ?>
+<?php 
+} ?>
 <div class="b-promo__bs-arrow"></div>
 <div id="promo-stats">
-    <? include($_SERVER['DOCUMENT_ROOT'] . '/promo/sbr/new/tpl.stats.php') ?>
+    <?php include($_SERVER['DOCUMENT_ROOT'].'/promo/sbr/new/tpl.stats.php') ?>
 </div>
 <div class="b-promo__bs-arrow"></div>
 <table class="b-layout__table b-layout__table_width_400 b-layout__table_center">
@@ -128,16 +136,19 @@ $xajax->printJavascript('/xajax/');
             <div class="b-layout__txt b-layout__txt_fontsize_34">Как это работает</div>
             <div class="b-layout__txt b-layout__txt_padbot_30">Безопасная Сделка &mdash; это легко и надежно.</div>
             <img class="b-layout__pic" src="/images/bs/3.png" alt="" width="461" height="79" />
-            <? if ($roleStr === 'frl') { ?>
+            <?php if ($roleStr === 'frl') {
+    ?>
             <div class="b-layout__txt b-layout__txt_padbot_10 b-layout__txt_left b-layout__txt_padtop_30"><div class="b-promo__num">1</div>&#160;&#160;Работодатель предлагает вам заключить сделку.</div>
             <div class="b-layout__txt b-layout__txt_padbot_10 b-layout__txt_left"><div class="b-promo__num">2</div>&#160;&#160;Вы просматриваете условия сотрудничества и даете свое согласие.</div>
             <div class="b-layout__txt b-layout__txt_padbot_10 b-layout__txt_left"><div class="b-promo__num">3</div>&#160;&#160;Заказчик одобряет выполненный вами проект.</div>
             <div class="b-layout__txt b-layout__txt_left"><div class="b-promo__num">4</div>&#160;&#160;Мы переводим вам гонорар.</div>
-            <? } else { ?>
+            <?php 
+} else {
+    ?>
             <div class="b-layout__txt b-layout__txt_padbot_10 b-layout__txt_left b-layout__txt_padtop_30 b-layout__txt_padleft_100"><div class="b-promo__num">1</div>&#160;&#160;Опубликуйте проект или конкурс и выберите исполнителя.</div>
             <div class="b-layout__txt b-layout__txt_padbot_10 b-layout__txt_left b-layout__txt_padleft_100"><div class="b-promo__num">2</div>&#160;&#160;Зарезервируйте деньги на специальном счете в банке.</div>
             <div class="b-layout__txt b-layout__txt_nowrap b-layout__txt_left b-layout__txt_padleft_100"><div class="b-promo__num">3</div>&#160;&#160;Проверьте выполненную работу. С вашего согласия мы переведем гонорар фрилансеру.</div>
-                <? /*if (get_uid(0)) { ?>
+                <?php /*if (get_uid(0)) { ?>
                 <div class="b-buttons b-buttons_padtop_40 b-buttons_padbot_10 b-buttons_center">
                     <a class="b-button b-button_big_rectangle_color_green" href="/bezopasnaya-sdelka/?site=new">
                         <span class="b-button__b1">
@@ -148,14 +159,16 @@ $xajax->printJavascript('/xajax/');
                     </a>
                 </div>
                 <? } */?>
-            <? } ?>
+            <?php 
+} ?>
         </td>
     </tr>
 </table>
 <div class="b-promo__bs-arrow"></div>
-<? if ($feedbacksFromEmp || $feedbacksFromFrl) { ?>
+<?php if ($feedbacksFromEmp || $feedbacksFromFrl) {
+    ?>
 <div id="promo-feedbacks">
-    <? include($_SERVER['DOCUMENT_ROOT'] . '/promo/sbr/new/tpl.feedbacks.php') ?>
+    <?php include($_SERVER['DOCUMENT_ROOT'].'/promo/sbr/new/tpl.feedbacks.php') ?>
 </div>
 <script>
     (function () {
@@ -203,21 +216,25 @@ $xajax->printJavascript('/xajax/');
 <div class="b-buttons b-buttons_center">
     <a href="javascript:void(0)" id="new-feedbacks" class="b-button b-button_flat b-button_flat_green">Еще отзывы</a>          
 </div>
-<? } ?>
+<?php 
+} ?>
 <div class="b-promo__bs-arrow"></div>
 <table class="b-layout__table b-layout__table_width_400 b-layout__table_center">
     <tr class="b-layout__tr">
         <td class="b-layout__one b-layout__one_center">
             <div class="b-promo__bs b-promo__bs_7"></div>
             <div class="b-layout__txt b-layout__txt_fontsize_34 b-layout__txt_padbot_20">Остались вопросы?</div>
-            <? if ($roleStr === 'frl') { ?>
+            <?php if ($roleStr === 'frl') {
+    ?>
             <div class="b-layout__txt b-layout__txt_padbot_10"><a class="b-layout__link" href="http://feedback.fl.ru/topic/397488-kak-frilanseru-soglasitsya-na-bezopasnuyu-sdelku/">Как согласиться на сделку</a></div>
             <div class="b-layout__txt b-layout__txt_padbot_10"><a class="b-layout__link" href="http://feedback.fl.ru/topic/397433-kalkulyator-bezopasnoj-sdelki/">Как рассчитать свой гонорар</a></div>
             <div class="b-layout__txt b-layout__txt_padbot_10"><a class="b-layout__link" href="http://feedback.fl.ru/topic/397422-poryadok-dejstvij-pri-rabote-cherez-bezopasnuyu-sdelku/">Каков порядок работы через Безопасную Сделку</a></div>
             <div class="b-layout__txt b-layout__txt_padbot_10"><a class="b-layout__link" href="http://feedback.fl.ru/topic/397435-dokumentooborot-bezopasnoj-sdelki/">Как оформить договор</a></div>
             <div class="b-layout__txt b-layout__txt_padbot_10"><a class="b-layout__link" href="http://feedback.fl.ru/topic/397431-chto-takoe-arbitrazh-servisa-bezopasnaya-sdelka-i-kak-k-nemu-obratitsya/">Как работает Арбитраж</a></div>
             <div class="b-layout__txt"><a class="b-layout__link" href="http://feedback.fl.ru/topic/397425-zapolnenie-stranitsyi-finansyi-dlya-rabotyi-cherez-bezopasnuyu-sdelku/">Какие данные нужны для работы через Безопасную Сделку</a></div>
-            <? } else { ?>
+            <?php 
+} else {
+    ?>
             <div class="b-layout__txt b-layout__txt_padbot_10"><a class="b-layout__link" href="http://feedback.fl.ru/topic/397434-kak-nachat-bezopasnuyu-sdelku/">Как начать Безопасную Сделку</a></div>
             <div class="b-layout__txt b-layout__txt_padbot_10"><a class="b-layout__link" href="http://feedback.fl.ru/topic/397433-kalkulyator-bezopasnoj-sdelki/">Как рассчитать бюджет сделки</a></div>
             <div class="b-layout__txt b-layout__txt_padbot_10"><a class="b-layout__link" href="http://feedback.fl.ru/topic/397428-kak-zarezervirovat-dengi-dlya-bezopasnoj-sdelki/">Как зарезервировать деньги для сделки</a></div>
@@ -225,7 +242,8 @@ $xajax->printJavascript('/xajax/');
             <div class="b-layout__txt b-layout__txt_padbot_10"><a class="b-layout__link" href="http://feedback.fl.ru/topic/397435-dokumentooborot-bezopasnoj-sdelki/">Как оформить договор</a></div>
             <div class="b-layout__txt b-layout__txt_padbot_10"><a class="b-layout__link" href="http://feedback.fl.ru/topic/397431-chto-takoe-arbitrazh-servisa-bezopasnaya-sdelka-i-kak-k-nemu-obratitsya/">Как работает Арбитраж</a></div>
             <div class="b-layout__txt"><a class="b-layout__link" href="http://feedback.fl.ru/topic/397440-upravlenie-bezopasnoj-sdelkoj-dlya-rabotodatelya/">Как управлять сделкой</a></div>
-            <? } ?>
+            <?php 
+} ?>
         </td>
     </tr>
 </table>

@@ -1,19 +1,21 @@
-<?
-$rpath = "../";
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/verify.common.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/users.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/verify.php");
+<?php
 
-function addSubscribe() {
+$rpath = '../';
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/verify.common.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/users.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/verify.php';
+
+function addSubscribe()
+{
     $objResponse = new xajaxResponse();
-    
-    if(!get_uid(false)) {
+
+    if (!get_uid(false)) {
         return $objResponse;
     }
-    
-    if(!verify::isSubscribeUser()) {
+
+    if (!verify::isSubscribeUser()) {
         verify::addSubscribeUser();
-        
+
         $count = verify::getCountSubscribe();
         $objResponse->assign('count_subscribe', 'innerHTML', verify::converNumbersTemplate($count));
         $objResponse->assign('count_subscribe_text', 'innerHTML', ending($count, 'пользователь', 'пользователя', 'пользователей'));
@@ -21,7 +23,7 @@ function addSubscribe() {
     } else {
         return $objResponse;
     }
-    
+
     return $objResponse;
 }
 

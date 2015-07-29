@@ -7,26 +7,24 @@ require_once '../classes/stdf.php';
 require_once '../classes/memBuff.php';
 require_once '../classes/smtp.php';
 
-
-/**
+/*
  * Логин пользователя от кого осуществляется рассылка
  * 
  */
 $sender = 'admin';
 
 // Всем пользователям, активированным (active = true), незабаненным (is_banned = B'0'), с включенными рассылками (substring(subscr from 8 for 1)::integer = 1)
-$sql = "SELECT uid, email, login, uname, usurname, subscr FROM users WHERE substring(subscr from 8 for 1)::integer = 1 AND is_banned = B'0' AND active = true"; 
+$sql = "SELECT uid, email, login, uname, usurname, subscr FROM users WHERE substring(subscr from 8 for 1)::integer = 1 AND is_banned = B'0' AND active = true";
 
-$pHost = str_replace("http://", "", $GLOBALS['host']);
-if ( defined('HTTP_PREFIX') ) {
-    $pHttp = str_replace("://", "", HTTP_PREFIX); // Введено с учетом того планируется включение HTTPS на серверах (для писем в ЛС)
+$pHost = str_replace('http://', '', $GLOBALS['host']);
+if (defined('HTTP_PREFIX')) {
+    $pHttp = str_replace('://', '', HTTP_PREFIX); // Введено с учетом того планируется включение HTTPS на серверах (для писем в ЛС)
 } else {
     $pHttp = 'http';
 }
 $eHost = $GLOBALS['host'];
 
-
-$eSubject = "Обновленный дизайн и дополнительные сервисы Free-lance.ru";
+$eSubject = 'Обновленный дизайн и дополнительные сервисы Free-lance.ru';
 
 $eMessage = "<p>Здравствуйте!</p>
 
@@ -52,14 +50,14 @@ $eMessage = "<p>Здравствуйте!</p>
 $DB = new DB('plproxy');
 $master = new DB('master');
 
-if ( $eMessage != '' ) {
+if ($eMessage != '') {
     echo "Send email messages\n";
-    $mail = new smtp;
-    $mail->subject   = $eSubject;
-    $mail->message   = $eMessage;
+    $mail = new smtp();
+    $mail->subject = $eSubject;
+    $mail->message = $eMessage;
     $mail->recipient = '';
     $spamid = $mail->send('text/html');
-    if ( !$spamid ) {
+    if (!$spamid) {
         die("Failed!\n");
     }
 
@@ -70,7 +68,7 @@ if ( $eMessage != '' ) {
     while ($row = pg_fetch_assoc($res)) {
         $mail->recipient[] = array(
             'email' => "{$row['uname']} {$row['usurname']} [{$row['login']}] <{$row['email']}>",
-            'extra' => array('USER_NAME' => $row['uname'], 'USER_SURNAME' => $row['usurname'], 'USER_LOGIN' => $row['login'])
+            'extra' => array('USER_NAME' => $row['uname'], 'USER_SURNAME' => $row['usurname'], 'USER_LOGIN' => $row['login']),
         );
         if (++$i >= 30000) {
             $mail->bind($spamid);
@@ -78,7 +76,7 @@ if ( $eMessage != '' ) {
             $i = 0;
             echo "{$c} users\n";
         }
-        $c++;
+        ++$c;
     }
     if ($i) {
         $mail->bind($spamid);

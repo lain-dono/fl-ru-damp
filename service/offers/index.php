@@ -1,9 +1,10 @@
 <?php
+
 $no_banner = 1;
-$rpath = "../../";
+$rpath = '../../';
 $offers_page = 1;
-$stretch_page       = true;
-$showMainDiv        = true;
+$stretch_page = true;
+$showMainDiv = true;
 require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/classes/projects_offers_answers.php';
 header('Location: /404.php');
@@ -11,15 +12,20 @@ header('Location: /404.php');
 session_start();
 get_uid();
 
-if (!$_SESSION['uid']) { header("Location: /fbd.php"); exit; }
-if (is_emp()) { header("Location: /frl_only.php"); exit; }
+if (!$_SESSION['uid']) {
+    header('Location: /fbd.php');
+    exit;
+}
+if (is_emp()) {
+    header('Location: /frl_only.php');
+    exit;
+}
 
-$answers = new projects_offers_answers;
-$action = isset($_GET['action'])? $_GET['action']: '';
-
+$answers = new projects_offers_answers();
+$action = isset($_GET['action']) ? $_GET['action'] : '';
 
 if ($action == 'buy') {
-    if(isset($_POST['back_uri'])) {
+    if (isset($_POST['back_uri'])) {
         $_SESSION['bill.GET']['back'] = $_POST['back_uri'];
     }
     $ammount = $_POST['ammount'];
@@ -30,13 +36,11 @@ if ($action == 'buy') {
         exit;
     }
 }
-$page_title = "Ответы на проекты - фриланс, удаленная работа на FL.ru";
-$css_file = "projects.css";
-$js_file = array( '/css/block/b-promo/b-promo.js' );
-$content = "content.php";
-$header = "../../header.php";
-$footer = "../../footer.html";
+$page_title = 'Ответы на проекты - фриланс, удаленная работа на FL.ru';
+$css_file = 'projects.css';
+$js_file = array('/css/block/b-promo/b-promo.js');
+$content = 'content.php';
+$header = '../../header.php';
+$footer = '../../footer.html';
 
-include ($rpath."template2.php");
-
-?>
+include $rpath.'template2.php';

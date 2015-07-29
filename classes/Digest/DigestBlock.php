@@ -1,219 +1,238 @@
 <?php
 
 /**
- * Класс для работы с блоком дайджеста
- * 
+ * Класс для работы с блоком дайджеста.
  */
-class DigestBlock {
-    
-    
+class DigestBlock
+{
     /**
-     * Путь к шаблонам
+     * Путь к шаблонам.
      */
     const TEMPLATE_PATH = '/siteadmin/mailer/digest';
-    
+
     /**
-     * Возможность добавлять дополнительный блок
+     * Возможность добавлять дополнительный блок.
      * 
-     * @var boolean 
+     * @var bool
      */
     const IS_CREATED = false;
-    
+
     /**
-     * Возможность добавлять дополнительные поля
+     * Возможность добавлять дополнительные поля.
      * 
-     * @var boolean 
+     * @var bool
      */
     const ADD_FIELD = false;
-    
+
     /**
-     * Номер блока (необходимо для идентификации если их несколько)
+     * Номер блока (необходимо для идентификации если их несколько).
      * 
-     * @var integer
+     * @var int
      */
     protected $num = 0;
-    
+
     /**
-     * Позиция блока
+     * Позиция блока.
      * 
-     * @var integer 
+     * @var int
      */
     protected $_position = 0;
-    
+
     /**
-     * Выбран блок для отображения или нет
+     * Выбран блок для отображения или нет.
      * 
-     * @var boolean
+     * @var bool
      */
-    protected $_check    = false;
-    
+    protected $_check = false;
+
     /**
-     * Главный блок или нет
+     * Главный блок или нет.
      * 
-     * @var boolean 
+     * @var bool
      */
-    protected $is_main   = true;
-    
+    protected $is_main = true;
+
     /**
-     * Ошибка при записи данных в блок
+     * Ошибка при записи данных в блок.
      * 
-     * @var mixed 
+     * @var mixed
      */
-    protected $_error    = false;
-    
+    protected $_error = false;
+
     /**
-     * Данные для отображения блока в HTML
+     * Данные для отображения блока в HTML.
      * 
      * @var mixed
      */
     public $html_data = false;
-    
+
     /**
-     * Заголовок блока
+     * Заголовок блока.
      * 
      * @var string
      */
-    public $title = "Блок";
-    
+    public $title = 'Блок';
+
     /**
-     * Инициализация данных блока
+     * Инициализация данных блока.
      */
-    public function initBlock() {}
-    
+    public function initBlock()
+    {
+    }
+
     /**
-     * Отображения блока
+     * Отображения блока.
      */
-    public function displayBlock() {}
-    
+    public function displayBlock()
+    {
+    }
+
     /**
-     * Инициализация блока
+     * Инициализация блока.
      */
-    public function initialize() {}
-    
+    public function initialize()
+    {
+    }
+
     /**
-     * Название класса
+     * Название класса.
      * 
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return get_class($this);
     }
-    
+
     /**
-     * Задать номер блока
+     * Задать номер блока.
      * 
-     * @param integer $num
+     * @param int $num
      */
-    public function setNum($num) {
+    public function setNum($num)
+    {
         $this->num = $num;
     }
-    
+
     /**
-     * Возвращает номер блока
+     * Возвращает номер блока.
      * 
-     * @return integer
+     * @return int
      */
-    public function getNum() {
+    public function getNum()
+    {
         return $this->num;
     }
-    
+
     /**
-     * Увеличить позицию блока
+     * Увеличить позицию блока.
      */
-    public function setUpPosition() {
-        $this->_position++;
+    public function setUpPosition()
+    {
+        ++$this->_position;
     }
-    
+
     /**
-     * Уменьшить позицию блока
+     * Уменьшить позицию блока.
      */
-    public function setDownPosition() {
-        if($this->_position > 0) {
-            $this->_position--;
+    public function setDownPosition()
+    {
+        if ($this->_position > 0) {
+            --$this->_position;
         }
     }
-    
+
     /**
-     * Задаем позицию блоку
+     * Задаем позицию блоку.
      * 
-     * @param integer $pos
+     * @param int $pos
      */
-    public function setPosition($pos) {
+    public function setPosition($pos)
+    {
         $this->_position = $pos;
     }
-    
+
     /**
-     * Текущая позиция блока
+     * Текущая позиция блока.
+     *
      * @return type
      */
-    public function getPosition() {
+    public function getPosition()
+    {
         return $this->_position;
     }
-    
+
     /**
-     * Есть ли возможность создавать новые блоки
+     * Есть ли возможность создавать новые блоки.
      * 
-     * @return boolean
+     * @return bool
      */
-    public function isCreated() {
-        return constant(get_class($this) . '::IS_CREATED');
+    public function isCreated()
+    {
+        return constant(get_class($this).'::IS_CREATED');
         //return $this::IS_CREATED; // начиная с версии 5.3.0
     }
-    
+
     /**
-     * Задаем отображение блока в HTML
+     * Задаем отображение блока в HTML.
      * 
-     * @param boolean $bool
+     * @param bool $bool
      */
-    public function setCheck($bool) {
+    public function setCheck($bool)
+    {
         $this->_check = $bool;
     }
-    
+
     /**
-     * Отображать или нет блок в HTMl
+     * Отображать или нет блок в HTMl.
      * 
-     * @return boolean
+     * @return bool
      */
-    public function isCheck() {
+    public function isCheck()
+    {
         return $this->_check;
     }
-    
+
     /**
-     * Есть ли возможность создавать новые поля
+     * Есть ли возможность создавать новые поля.
      * 
-     * @return boolean
+     * @return bool
      */
-    public function isAdditionFields() {
-        return constant(get_class($this) . '::ADD_FIELD');
+    public function isAdditionFields()
+    {
+        return constant(get_class($this).'::ADD_FIELD');
         //return $this::ADD_FIELD; // начиная с версии 5.3.0
     }
-    
+
     /**
-     * Блок является главным или нет
+     * Блок является главным или нет.
      * 
-     * @return boolean
+     * @return bool
      */
-    public function isMain() {
+    public function isMain()
+    {
         return $this->is_main;
     }
-    
+
     /**
-     * Задаем параметр блока, главный блок или нет
+     * Задаем параметр блока, главный блок или нет.
      * 
-     * @param boolean $bool
+     * @param bool $bool
      */
-    public function setMain($bool) {
+    public function setMain($bool)
+    {
         $this->is_main = $bool;
     }
-    
+
     /**
-     * Задаем заголовок блока
+     * Задаем заголовок блока.
      * 
      * @param string $title
      * @param ...
      */
-    public function setTitle($title) {
-        if(func_num_args() > 1) {
+    public function setTitle($title)
+    {
+        if (func_num_args() > 1) {
             $args = func_get_args();
             array_shift($args);
             $this->title = vsprintf($title, $args);
@@ -221,43 +240,51 @@ class DigestBlock {
             $this->title = $title;
         }
     }
-    
+
     /**
-     * Заголовок блока
+     * Заголовок блока.
      * 
      * @return string
      */
-    public function getTitle() {
+    public function getTitle()
+    {
         return $this->title;
     }
-    
+
     /**
-     * Ошибка при инициализации блока или нет
+     * Ошибка при инициализации блока или нет.
      * 
-     * @return boolean
+     * @return bool
      */
-    public function isError() {
+    public function isError()
+    {
         return ($this->_error != false);
     }
-    
+
     /**
-     * Инициализирует данные для HTML 
+     * Инициализирует данные для HTML.
      */
-    public function initHtmlData() { }
-    
+    public function initHtmlData()
+    {
+    }
+
     /**
-     * Выдает HTML блок
+     * Выдает HTML блок.
      * 
      * @return string
      */
-    public function htmlBlock() {
+    public function htmlBlock()
+    {
         $this->host = $GLOBALS['host'];
         $this->initHtmlData();
-        if(!$this->html_data) return ''; // Данных для блока нет
-        include ($_SERVER['DOCUMENT_ROOT'] . self::TEMPLATE_PATH . "/tpl.{$this->__toString()}.php");
+        if (!$this->html_data) {
+            return '';
+        } // Данных для блока нет
+        include $_SERVER['DOCUMENT_ROOT'].self::TEMPLATE_PATH."/tpl.{$this->__toString()}.php";
     }
-    
-    public function isWysiwyg() {
+
+    public function isWysiwyg()
+    {
         return false;
     }
 }

@@ -2,8 +2,8 @@
 
 define('IS_OPAUTH', true);
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/opauth/OpauthHelper.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/opauth/OpauthHelper.php';
 
 $config = OpauthHelper::getConfig();
 
@@ -15,7 +15,7 @@ if ($param) {
 
 $action = __paramInit('string', 'action');
 if ($action) {
-    $uri .= '/' . $action;
+    $uri .= '/'.$action;
 } else {
     OpauthHelper::setRole(__paramInit('int', 'role'));
     OpauthHelper::setMultilevel(__paramInit('int', 'multilevel'));

@@ -1,6 +1,9 @@
-<?
-if (!$_in_setup) {header ("HTTP/1.0 403 Forbidden"); exit;}
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/users.common.php");
+<?php
+if (!$_in_setup) {
+    header ('HTTP/1.0 403 Forbidden');
+    exit;
+}
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/users.common.php';
 $xajax->printJavascript('/xajax/');
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/account.common.php");
 //$xajax->printJavascript('/xajax/');

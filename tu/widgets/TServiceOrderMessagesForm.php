@@ -1,21 +1,22 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/attachedfiles.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . '/tu/models/TServiceMsgModel.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/tservices/tservices_helper.php');
+
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/attachedfiles.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/tu/models/TServiceMsgModel.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/tservices/tservices_helper.php';
 
 /**
- * Class TServiceOrderMessagesForm
+ * Class TServiceOrderMessagesForm.
  *
  * Виджет - Форма сообщения в переписке в заказе
  */
-class TServiceOrderMessagesForm extends CWidget 
+class TServiceOrderMessagesForm extends CWidget
 {
     private $is_scroll;
 
-    protected $uid; 
+    protected $uid;
     protected $order_id;
 
-    public function init() 
+    public function init()
     {
         parent::init();
 
@@ -26,22 +27,22 @@ class TServiceOrderMessagesForm extends CWidget
         $this->is_scroll = __paramInit('bool', null, 'form-block', false);
     }
 
-    public function run() 
+    public function run()
     {
         $attachedfiles = new attachedfiles();
         $attachedfiles_session = $attachedfiles->getSession();
         //Хеш безопасности целосности параметров формы
         //сейчас используется для загрузчика файлов
         $param_hash = tservices_helper::getOrderUrlHash(
-                array((int)$this->order_id, $attachedfiles_session),
+                array((int) $this->order_id, $attachedfiles_session),
                 $this->uid);
-        
+
         //собираем шаблон
         $this->render('t-service-order-messages-form', array(
             'order_id' => $this->order_id,
             'param_hash' => $param_hash,
             'is_scroll' => $this->is_scroll,
-            'attachedfiles_session' => $attachedfiles_session
+            'attachedfiles_session' => $attachedfiles_session,
         ));
-	}
+    }
 }

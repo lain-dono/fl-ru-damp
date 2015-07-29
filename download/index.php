@@ -5,16 +5,16 @@
 //чтобы создать минимальное окружение
 define('IN_STDF', 1);
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/stdf.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/config.php');                                                                                                                                                                              
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/globals.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/memBuff' . (defined('USE_MEMCACHED') ? 2 : 1) . '.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/log.php');   
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/session.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/CFile.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/DB.php'); 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/yii/tinyyii.php');
-require_once(__DIR__ . '/controllers/DownloadController.php');
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/globals.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/memBuff'.(defined('USE_MEMCACHED') ? 2 : 1).'.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/log.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/session.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/CFile.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/DB.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/yii/tinyyii.php';
+require_once __DIR__.'/controllers/DownloadController.php';
 
 session_start();
 
@@ -22,11 +22,11 @@ session_start();
 //конфиг не делать для миниокружения
 //так в DAV там хост другой
 if (is_release()) {
-    $host = HTTP_PREFIX . 'www.fl.ru';
+    $host = HTTP_PREFIX.'www.fl.ru';
 } elseif (is_beta()) {
-    $host = HTTP_PREFIX . 'beta.fl.ru';
+    $host = HTTP_PREFIX.'beta.fl.ru';
 } elseif (!is_local()) {
-    $host = HTTP_PREFIX . 'alpha.fl.ru';
+    $host = HTTP_PREFIX.'alpha.fl.ru';
 }
 
 $path = __paramInit('string', 'path', 'path');

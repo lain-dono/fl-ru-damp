@@ -5,7 +5,7 @@
 require_once '../classes/stdf.php';
 require_once '../classes/session.php';
 
-$sess = new session;
+$sess = new session();
 $s = $sess->get($_GET['login']);
 if ($s) {
     $data = $sess->read($s['sid']);
@@ -13,5 +13,3 @@ if ($s) {
 } else {
     die('No session');
 }
-
-?>

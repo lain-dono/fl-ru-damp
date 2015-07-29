@@ -1,33 +1,31 @@
 <?php
+
 //php /var/www/_beta/html/test/mail/spam-debug.php
 //clear;tail -20 /var/www/_beta/html/classes/pgq/logs/spam.pgq
 //cat /var/log/maillog | grep kazakov@fl.ru
 //clear; tail -50 /var/log/maillog
 
-ini_set('display_errors',1);
+ini_set('display_errors', 1);
 error_reporting(E_ALL ^ E_NOTICE);
-
 
 ini_set('max_execution_time', 0);
 ini_set('memory_limit', '512M');
 
-if(!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT']))
-{    
-    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME) . '/../../'), '/');
-} 
+if (!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT'])) {
+    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME).'/../../'), '/');
+}
 
 $path = $_SERVER['DOCUMENT_ROOT'];
 
-require_once($path . "/classes/config.php");
-require_once($path . "/classes/smail.php");
-require_once($path . "/classes/projects.php");
-require_once($path . "/classes/freelancer.php");
+require_once $path.'/classes/config.php';
+require_once $path.'/classes/smail.php';
+require_once $path.'/classes/projects.php';
+require_once $path.'/classes/freelancer.php';
 
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
 //require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/stop_words.php' ); //???
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/city.php");
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/users.php");
-
 
 
 //local
@@ -114,8 +112,7 @@ $sm->remind($u->email);
 
 */
 
-
-$smtp = new smtp;
+$smtp = new smtp();
 
 /*
 if ( !$smtp->Connect() ) {
@@ -125,7 +122,7 @@ if ( !$smtp->Connect() ) {
 
 //$smtp->from = 'no_reply@free-lance.ru';
 $smtp->recipient = 'ddezinger@yandex.ru';
-$smtp->subject   = 'Тема письма - проверка рассылки';
+$smtp->subject = 'Тема письма - проверка рассылки';
 $smtp->message = 'Это тело письма';
 
 //$files = array();

@@ -1,7 +1,8 @@
-<?php 
+<?php
+
 
 /**
- * Класс для работы в мастерами, каркас
+ * Класс для работы в мастерами, каркас.
  * 
  * Работает через следующие таблицы 
  * 
@@ -12,6 +13,7 @@
  *  
  * Данные по пользователю работают через куки (текущий шаг, уникальный ИД пользователя запустившего мастера) - 
  * Для каждого мастера будут генерироватся свои куки в формате имени "{name_cookie}{self::$_id}"
+ *
  * @todo Необходимо предусмотреть ситуацию когда куки отключены, тогда можно будет сохранять промежуточные данные в сессию
  * 
  * Конкретному мастеру присвают определенный класс для обработки шагов, по умолчанию это класс step_wizard, но можно переопределить свой класс
@@ -20,165 +22,173 @@
  * @example
  * 
  * $wizard = new wizard(1, new MY_step_wizard()); -- класс готов к использованию 
- * 
  */
-class wizard 
+class wizard
 {
     /**
-     * Максимальные размер вложения файла
-     *
+     * Максимальные размер вложения файла.
      */
-	const MAX_FILE_SIZE     = 5242880;
-    
+    const MAX_FILE_SIZE = 5242880;
+
     /**
-     * Максимальное количество файлов
-     *
+     * Максимальное количество файлов.
      */
-    const MAX_FILE_COUNT    = 10;
-    
+    const MAX_FILE_COUNT = 10;
+
     /**
-     * Папка для файлов 
+     * Папка для файлов.
      */
-    const FILE_DIR = "wizard/";
-    
+    const FILE_DIR = 'wizard/';
+
     /**
-     * Максимальное время жизни данных по мастеру пользователей
+     * Максимальное время жизни данных по мастеру пользователей.
      */
     const LIFE_TIME_ACTION = '1 month';
-    
+
     /**
-     * Уникальный ИД мастера
+     * Уникальный ИД мастера.
      * 
-     * @var integer 
+     * @var int
      */
     protected $_id = 0;
-    
+
     /**
-     * Подключение к БД
+     * Подключение к БД.
      * 
      * @var object
      */
     public $_db;
-    
+
     /**
-     * Название кук используемых системой
+     * Название кук используемых системой.
      * 
      * @var array
      */
     protected $_cookie_names = array(
-        "uid"           => "W_UID",
-        "step"          => "W_STEP",
-        "role"          => "W_ROLE",
-        "categories"    => "your_categories",
-        "subcategories" => "your_subcategories",
-        "visit"         => "visited_wizard"
+        'uid' => 'W_UID',
+        'step' => 'W_STEP',
+        'role' => 'W_ROLE',
+        'categories' => 'your_categories',
+        'subcategories' => 'your_subcategories',
+        'visit' => 'visited_wizard',
     );
-    
+
     /**
-     * ИД пользователя Мастера
+     * ИД пользователя Мастера.
      * 
-     * @var string 
+     * @var string
      */
-    protected $_uid = "";
-    
+    protected $_uid = '';
+
     /**
-     * Идентификатор текущего шага
+     * Идентификатор текущего шага.
      * 
-     * @var integer 
+     * @var int
      */
     protected $_step = 0;
-    
+
     /**
-     * Содержит последний ИД события записанного в базу
+     * Содержит последний ИД события записанного в базу.
      * 
-     * @var integer 
+     * @var int
      */
     public $_action = 0;
-    
+
     /**
-     * Завершить шаг с записью в таблицу или нет
+     * Завершить шаг с записью в таблицу или нет.
      * 
-     * @var boolean 
+     * @var bool
      */
     protected $_complete_step = false;
-    
+
     /**
-     * Информация по шагам мастера
+     * Информация по шагам мастера.
      * 
-     * @var array 
+     * @var array
      */
     public $steps = array();
-    
+
     /**
-     * Конструктор класса
+     * Конструктор класса.
      * 
      * @global object $DB
-     * @param integer $id       ИД мастера
-     * @param object $obj_step  Класс обработки шагов пол умолчанию @see step_wizard;    
+     *
+     * @param int    $id       ИД мастера
+     * @param object $obj_step Класс обработки шагов пол умолчанию @see step_wizard;    
      */
-    public function __construct($id = false, $obj_step = false) {
+    public function __construct($id = false, $obj_step = false)
+    {
         global $DB;
         $this->_db = $DB;
-        
+
         $this->init($id, $obj_step);
     }
-    
+
     /**
-     * Инициализация данных для работы с мастером
+     * Инициализация данных для работы с мастером.
      * 
-     * @param type $id                  ИД мастера
-     * @param step_wizard $obj_step     Класс обработки шагов пол умолчанию @see step_wizard;    
-     * @return boolean false если ID не задан
+     * @param type        $id       ИД мастера
+     * @param step_wizard $obj_step Класс обработки шагов пол умолчанию @see step_wizard;    
+     *
+     * @return bool false если ID не задан
      */
-    public function init($id = false, $obj_step = false) {
-        if(!$id) return false;
-        
-        if($id) {
+    public function init($id = false, $obj_step = false)
+    {
+        if (!$id) {
+            return false;
+        }
+
+        if ($id) {
             $this->_id = $id;
             $this->setInitWizard();
         }
-        
-        if($obj_step instanceof step_wizard) {
+
+        if ($obj_step instanceof step_wizard) {
             $this->obj_step = $obj_step;
         } else {
             $this->obj_step = new step_wizard();
         }
-        
-        $this->_cookie_names['uid']  = "W_UID{$this->_id}";
+
+        $this->_cookie_names['uid'] = "W_UID{$this->_id}";
         $this->_cookie_names['step'] = "W_STEP{$this->_id}";
-        
+
         $this->setInitUser();
         $this->setInitSteps();
     }
-    
+
     /**
-     * Возвращает имя куки по его ключу @see self::_cookie_names
+     * Возвращает имя куки по его ключу @see self::_cookie_names.
      * 
      * @param string $key ключ куки
-     * @return boolean  Если такой куки не существует возвращает false
+     *
+     * @return bool Если такой куки не существует возвращает false
      */
-    public function getCookieName($key) {
-        if(isset($this->_cookie_names[$key])) {
+    public function getCookieName($key)
+    {
+        if (isset($this->_cookie_names[$key])) {
             return $this->_cookie_names[$key];
         }
+
         return false;
     }
-    
-    public function getWizardUID() {
+
+    public function getWizardUID()
+    {
         return $this->_uid;
     }
-    
+
     /**
-     * Проверка доступа к мастеру
+     * Проверка доступа к мастеру.
      * 
-     * @return boolean 
+     * @return bool
      */
-    public function isAccess() {
-        if(empty($this->data)) {
+    public function isAccess()
+    {
+        if (empty($this->data)) {
             $this->setInitWizard();
         }
-        
-        switch($this->access_type) {
+
+        switch ($this->access_type) {
             // Всем пользователям
             case 0:
                 return true;
@@ -190,6 +200,7 @@ class wizard
             // Только зарегистрированным пользователям
             case 2:
                 $reg = $this->checkUserIDReg();
+
                 return $reg;
                 break;
             default:
@@ -197,21 +208,23 @@ class wizard
                 break;
         }
     }
-    
+
     /**
-     * Инициализация данных мастера 
+     * Инициализация данных мастера.
      */
-    public function setInitWizard() {
-        $sql = "SELECT * FROM wizard WHERE id = ?i";
+    public function setInitWizard()
+    {
+        $sql = 'SELECT * FROM wizard WHERE id = ?i';
         $this->data = $this->_db->row($sql, $this->_id);
     }
-    
+
     /**
-     * Инициализация данных пользователя запустившего мастера 
+     * Инициализация данных пользователя запустившего мастера.
      * 
      * @todo предусмотреть использование мастера для зарегистрированных пользователей
      */
-    public function setInitUser() {
+    public function setInitUser()
+    {
         if (!isset($_COOKIE[$this->_cookie_names['uid']])) {
             $this->_uid = $this->_generateWizardUserID();
             setcookie($this->_cookie_names['uid'], $this->_uid, $this->_lifeTimeCookie(), '/', $GLOBALS['domain4cookie']);
@@ -222,56 +235,64 @@ class wizard
         }
         $_SESSION['WUID'] = $this->_uid;
     }
-    
+
     /**
-     * Генерация уникального ИД пользователя запустившего мастера
-     * @return type 
+     * Генерация уникального ИД пользователя запустившего мастера.
+     *
+     * @return type
      */
-    protected function _generateWizardUserID() {
+    protected function _generateWizardUserID()
+    {
         return substr(md5(microtime() + $_SERVER['HTTP_USER_AGENT'] + getRemoteIP()), 0, 10);
     }
     /**
-     * Время жизни куков
+     * Время жизни куков.
      * 
      * @return timestamp
      */
-    protected function _lifeTimeCookie() {
+    protected function _lifeTimeCookie()
+    {
         return time() + 3600 * 24 * 180;
     }
-    
+
     /**
-     * Проверяем связку зарегистрированного пользователя с мастером
+     * Проверяем связку зарегистрированного пользователя с мастером.
      * 
-     * @return type 
+     * @return type
      */
-    public function checkUserIDReg() {
-        $sql = "SELECT 1 FROM wizard_action WHERE reg_uid = ? AND wiz_uid = ?";
+    public function checkUserIDReg()
+    {
+        $sql = 'SELECT 1 FROM wizard_action WHERE reg_uid = ? AND wiz_uid = ?';
+
         return $this->_db->val($sql, $this->getUserIDReg(), step_wizard::getWizardUserID());
     }
-    
+
     /**
-     * Возвращаем ИД зарегистрированного пользователя
-     * @return type 
+     * Возвращаем ИД зарегистрированного пользователя.
+     *
+     * @return type
      */
-    public function getUserIDReg() {
+    public function getUserIDReg()
+    {
         return $_SESSION['uid'] ? $_SESSION['uid'] : $_SESSION['RUID'];
     }
-    
+
     /**
-     * Инициализация шагов мастера 
+     * Инициализация шагов мастера.
      */
-    public function setInitSteps() {
-        $sql = "SELECT ws.*, wts.id as id_wiz_to_spec, wts.wizard_id, wts.step_id, wts.pos, wts.type_step, wa.status, wts.depend_pos, wa.reg_uid, wa.id as action_id 
+    public function setInitSteps()
+    {
+        $sql = 'SELECT ws.*, wts.id as id_wiz_to_spec, wts.wizard_id, wts.step_id, wts.pos, wts.type_step, wa.status, wts.depend_pos, wa.reg_uid, wa.id as action_id 
                 FROM wizard_to_step wts 
                 INNER JOIN wizard_step ws ON ws.id = wts.step_id 
                 LEFT JOIN wizard_action wa ON wa.id_wizard_to_step = wts.id AND wiz_uid = ?
                 WHERE wts.wizard_id = ?i
-                ORDER BY pos ASC"; 
-        
+                ORDER BY pos ASC';
+
         $steps = $this->_db->rows($sql, $this->_uid, $this->_id);
-        if($steps) {
-            foreach($steps  as $k=>$step) {
-                if($step['reg_uid']) {
+        if ($steps) {
+            foreach ($steps  as $k => $step) {
+                if ($step['reg_uid']) {
                     $this->reg_uid = $step['reg_uid'];
                     $_SESSION['RUID'] = $step['reg_uid'];
                 }
@@ -283,63 +304,72 @@ class wizard
         }
         $this->setLastStep();
     }
-    
+
     /**
-     * Берем ИД действие пользователя по активному шагу в мастере
+     * Берем ИД действие пользователя по активному шагу в мастере.
      * 
-     * @param integer $id ИД шага
-     * @return integer 
+     * @param int $id ИД шага
+     *
+     * @return int
      */
-    public function getAction($id = false) {
-        if(!$id) {
+    public function getAction($id = false)
+    {
+        if (!$id) {
             $id = $this->steps[$this->_step]->id_wiz_to_spec;
         }
-        $sql = "SELECT id FROM wizard_action WHERE id_wizard_to_step = ?i AND wiz_uid = ?";
-        $res =  $this->_db->val($sql, $id, $this->_uid);
+        $sql = 'SELECT id FROM wizard_action WHERE id_wizard_to_step = ?i AND wiz_uid = ?';
+        $res = $this->_db->val($sql, $id, $this->_uid);
         $this->_action = $res;
+
         return $res;
     }
-    
+
     /**
-     * Проверка последнего действия
+     * Проверка последнего действия.
      * 
      * @param int $pos Позиция мастера по отношению к шагам 
-     * @return boolean 
+     *
+     * @return bool
      */
-    public function checkAction($pos) {
-        if(!$this->_action) {
+    public function checkAction($pos)
+    {
+        if (!$this->_action) {
             $res = $this->getAction();
         } else {
             $res = $this->_action;
         }
+
         return (!$res  && $pos != $this->_step && $this->isCompliteStep());
     }
-    
+
     /**
-     * Сохранение действия пользователя по шагу (например действие пройденный шаг)
+     * Сохранение действия пользователя по шагу (например действие пройденный шаг).
      * 
-     * @param object  $step      Шаг пользователя @see step_wizard();
-     * @param integer $status    Статус
-     * @return integer ИД созданного действия
+     * @param object $step   Шаг пользователя @see step_wizard();
+     * @param int    $status Статус
+     *
+     * @return int ИД созданного действия
      */
-    public function saveActionWizard($step, $status = 1) {
+    public function saveActionWizard($step, $status = 1)
+    {
         $data = array(
-            "id_wizard_to_step" => $step->id_wiz_to_spec,
-            "wiz_uid"           => $this->_uid,
-            "reg_uid"           => $this->getUserIDReg(),
-            "status"            => $status
+            'id_wizard_to_step' => $step->id_wiz_to_spec,
+            'wiz_uid' => $this->_uid,
+            'reg_uid' => $this->getUserIDReg(),
+            'status' => $status,
         );
-        
-        return $this->_db->insert("wizard_action", $data, "id");
+
+        return $this->_db->insert('wizard_action', $data, 'id');
     }
-    
+
     /**
-     * Переход на следующий шаг мастера
+     * Переход на следующий шаг мастера.
      * 
-     * @param integer $pos     Позиция шага мастера
+     * @param int $pos Позиция шага мастера
      */
-    public function setNextStep($pos) {
-        if($this->isStep($pos)) {
+    public function setNextStep($pos)
+    {
+        if ($this->isStep($pos)) {
             // Если при переходе на следующий шаг присвоен статус завершения текущего шага, пишем информацию в БД
             $this->saveCheckStep($pos);
             setcookie($this->_cookie_names['step'], $pos, $this->_lifeTimeCookie(), '/', $GLOBALS['domain4cookie']);
@@ -348,33 +378,37 @@ class wizard
             $this->setLastStep();
         }
     }
-    
+
     /**
-     * Проверка пройденности этапа и запись информации про прохождению
+     * Проверка пройденности этапа и запись информации про прохождению.
      * 
-     * @param integer $pos Шаг мастера
+     * @param int $pos Шаг мастера
      */
-    public function saveCheckStep($pos) {
-        if($this->checkAction($pos)) {
+    public function saveCheckStep($pos)
+    {
+        if ($this->checkAction($pos)) {
             $this->_action = $this->saveActionWizard($this->steps[$this->_step]);
             $this->steps[$this->_step]->setContent();
         }
     }
-    
+
     /**
-     * Проверка шага на доступность при переходе на него
+     * Проверка шага на доступность при переходе на него.
      * 
-     * @param integer $pos     Позиция шага мастера
-     * @return boolean 
+     * @param int $pos Позиция шага мастера
+     *
+     * @return bool
      */
-    public function isStep($pos) {
-        return ((isset($this->steps[$pos]) && !$this->steps[$pos]->isDisable()) || $this->isCompliteStep()) ;
+    public function isStep($pos)
+    {
+        return ((isset($this->steps[$pos]) && !$this->steps[$pos]->isDisable()) || $this->isCompliteStep());
     }
-    
+
     /**
-     *  Задаем текущий активный шаг 
+     *  Задаем текущий активный шаг.
      */
-    public function setLastStep() {
+    public function setLastStep()
+    {
         if (!isset($_COOKIE[$this->_cookie_names['step']])) {
             $this->_step = current(array_keys($this->steps));
             setcookie($this->_cookie_names['step'], $this->_step, $this->_lifeTimeCookie(), '/', $GLOBALS['domain4cookie']);
@@ -382,143 +416,167 @@ class wizard
             $this->_step = __paramValue('int', $_COOKIE[$this->_cookie_names['step']]);
         }
     }
-    
+
     /**
-     * Возвращаем текущий активный шаг
+     * Возвращаем текущий активный шаг.
      * 
      * @return object @see new step_wizard(); 
      */
-    public function getLastStep() {
+    public function getLastStep()
+    {
         return $this->steps[$this->_step];
     }
-    
+
     /**
-     * Возвращаем текущую позицию шага мастера
+     * Возвращаем текущую позицию шага мастера.
      * 
-     * @return integer
+     * @return int
      */
-    public function getPosition() {
+    public function getPosition()
+    {
         return $this->_step;
     }
-    
+
     /**
-     * Задаем активному шагу разрешение|запрет на запись статуса, шаг завершен
+     * Задаем активному шагу разрешение|запрет на запись статуса, шаг завершен.
      * 
-     * @param boolean $action 
+     * @param bool $action
      */
-    public function setCompliteStep($action = false) {
+    public function setCompliteStep($action = false)
+    {
         $this->_complete_step = $action;
     }
-    
+
     /**
-     * Проверка на разрешение|запрет на запись статуса шагу
+     * Проверка на разрешение|запрет на запись статуса шагу.
      * 
-     * @return boolean
+     * @return bool
      */
-    public function isCompliteStep() {
+    public function isCompliteStep()
+    {
         return $this->_complete_step;
     }
-    
+
     /**
-     * Метод доступа к переменным мастера 
+     * Метод доступа к переменным мастера.
      * 
-     * @param string $name    Имя переменной
+     * @param string $name Имя переменной
+     *
      * @return mixed Данные переменной 
      */
-    public function __get($name) {
-        if(!is_array($this->data)) return null;
+    public function __get($name)
+    {
+        if (!is_array($this->data)) {
+            return;
+        }
         if (array_key_exists($name, $this->data)) {
             return $this->data[$name];
         } else {
-            return null;
+            return;
             //trigger_error("Variable '{$name}',  not found", E_USER_NOTICE);  
         }
     }
-    
+
     /**
-     * Очищаем устаревшие данные , устаревшими будем считать данные которые лежат уже месяц
+     * Очищаем устаревшие данные , устаревшими будем считать данные которые лежат уже месяц.
      */
-    public function cleaningOldData() {
+    public function cleaningOldData()
+    {
         $sql = "SELECT DISTINCT wiz_uid FROM wizard_action WHERE date_complite <= NOW() - '".self::LIFE_TIME_ACTION."'";
         $uid = $this->_db->col($sql);
-        $sql = "DELETE FROM wizard_action WHERE wiz_uid IN (?l);";
+        $sql = 'DELETE FROM wizard_action WHERE wiz_uid IN (?l);';
+
         return $this->_db->query($sql, $uid);
     }
-    
+
     /**
-     * Чистим все куки по мастеру 
+     * Чистим все куки по мастеру.
      */
-    public function clearCookies() {
+    public function clearCookies()
+    {
         foreach ($this->_cookie_names as $cookie) {
             unset($_COOKIE[$cookie]);
             setcookie($cookie, null, time(), '/', $GLOBALS['domain4cookie']);
         }
     }
-    
+
     /**
-     * Чистим все куки по мастерам
+     * Чистим все куки по мастерам.
      */
-    public function clearCookiesById($id) {
+    public function clearCookiesById($id)
+    {
         foreach ($this->_cookie_names as $cookie) {
-            unset($_COOKIE[$cookie . $id]);
-            setcookie($cookie . $id, null, time(), '/', $GLOBALS['domain4cookie']);
+            unset($_COOKIE[$cookie.$id]);
+            setcookie($cookie.$id, null, time(), '/', $GLOBALS['domain4cookie']);
         }
     }
-    
+
     /**
-     * При выходе чистим базу
-     * @return type 
+     * При выходе чистим базу.
+     *
+     * @return type
      */
-    public function clearActions($uid = false) {
-        if(!$uid) $uid = $this->_uid;
-        $sql = "DELETE FROM wizard_action WHERE wiz_uid = ?";
+    public function clearActions($uid = false)
+    {
+        if (!$uid) {
+            $uid = $this->_uid;
+        }
+        $sql = 'DELETE FROM wizard_action WHERE wiz_uid = ?';
+
         return $this->_db->query($sql, $uid);
     }
-    
+
     /**
-     * При выходе чистим сессии 
+     * При выходе чистим сессии.
      */
-    public function clearSession() {
+    public function clearSession()
+    {
         unset($_SESSION['WUID'], $_SESSION['RUID'], $_SESSION['view_wizard_project']);
     }
-    
+
     /**
-     * Выход из мастера 
+     * Выход из мастера.
      * 
-     * @param boolean redirect Включено перенаправление на главную или нет
+     * @param bool redirect Включено перенаправление на главную или нет
      */
-    public function exitWizard($redirect = true) {
+    public function exitWizard($redirect = true)
+    {
         $this->clearCookies();
         $this->clearActions();
         $this->clearSession();
-        if($redirect) header("Location: /"); // Выходим из мастера
+        if ($redirect) {
+            header('Location: /');
+        } // Выходим из мастера
     }
-    
+
     /**
-     * Запись добавленных файлов в БД 
+     * Запись добавленных файлов в БД.
      * 
      * @global object $DB     Подключение к БД
-     * @param integer $attach_id   ИД файла
-     * @param integer $id          Ид рассылки
+     *
+     * @param int $attach_id ИД файла
+     * @param int $id        Ид рассылки
      */
-    public function insertAttachedFile($attach_id, $id, $type = 1) {
+    public function insertAttachedFile($attach_id, $id, $type = 1)
+    {
         $update = array('src_id' => (int) $id, 'type' => (int) $type);
-        $this->_db->update("file_wizard", $update, "fname = ?", $attach_id); 
+        $this->_db->update('file_wizard', $update, 'fname = ?', $attach_id);
     }
-    
+
     /**
-     * Добавление/удаление файлов 
+     * Добавление/удаление файлов.
      * 
-     * @param array   $files   Список файлов
-     * @param integer $id      Ид рассылки
+     * @param array $files Список файлов
+     * @param int   $id    Ид рассылки
      */
-    public function addAttachedFiles($files, $id, $type = 1) {
-        if($files) {
-            foreach($files as $file) {
-                switch($file['status']) {
+    public function addAttachedFiles($files, $id, $type = 1)
+    {
+        if ($files) {
+            foreach ($files as $file) {
+                switch ($file['status']) {
                     case 4:
                         // Удаляем файл
-                        $this->delAttach($file['id']);   
+                        $this->delAttach($file['id']);
                         break;
                     case 1:
                         // Добавляем файл
@@ -526,7 +584,7 @@ class wizard
                         $cFile->table = 'file_wizard';
                         $ext = $cFile->getext();
                         $tmp_name = $cFile->secure_tmpname(self::FILE_DIR, '.'.$ext);
-                        $tmp_name = substr_replace($tmp_name,"",0,strlen(self::FILE_DIR));
+                        $tmp_name = substr_replace($tmp_name, '', 0, strlen(self::FILE_DIR));
                         $cFile->_remoteCopy(self::FILE_DIR.$tmp_name, true);
                         $this->insertAttachedFile($cFile->name, $id, $type);
                         break;
@@ -534,90 +592,108 @@ class wizard
             }
         }
     }
-    
+
     /**
-     * удаляет файл по ID
+     * удаляет файл по ID.
      */
-    public function delAttach ($file_id) {
+    public function delAttach($file_id)
+    {
         $cFile = new CFile($file_id);
         $cFile->Delete($file_id);
     }
-    
+
     /**
-     * Биндим идишник зарегистрированного пользователя к его ИД мастера 
+     * Биндим идишник зарегистрированного пользователя к его ИД мастера.
      * 
-     * @param integer $uid ИД зарегистрированного пользователя
+     * @param int $uid ИД зарегистрированного пользователя
      */
-    public function bindUserIDReg($ruid, $wuid = false) {
-        if(!$wuid) $wuid = $this->_uid;
-        $update = array("reg_uid" => $ruid);
-        return $this->_db->update("wizard_action", $update, "wiz_uid = ?", $wuid);
+    public function bindUserIDReg($ruid, $wuid = false)
+    {
+        if (!$wuid) {
+            $wuid = $this->_uid;
+        }
+        $update = array('reg_uid' => $ruid);
+
+        return $this->_db->update('wizard_action', $update, 'wiz_uid = ?', $wuid);
     }
-    
+
     /**
-     * Берем дополнительные данные по мастеру
+     * Берем дополнительные данные по мастеру.
      * 
-     * @param string $wiz_uid  Ид мастера пользователя
-     * @return type 
+     * @param string $wiz_uid Ид мастера пользователя
+     *
+     * @return type
      */
-    public function getFieldsUser($wiz_uid = false) {
-        if(!$wiz_uid) $wiz_uid = $this->_uid;
-        
-        $sql = "SELECT * FROM wizard_fields WHERE wiz_uid = ?";
+    public function getFieldsUser($wiz_uid = false)
+    {
+        if (!$wiz_uid) {
+            $wiz_uid = $this->_uid;
+        }
+
+        $sql = 'SELECT * FROM wizard_fields WHERE wiz_uid = ?';
         $rows = $this->_db->rows($sql, $wiz_uid);
-        
-        if($rows) {
-            foreach($rows as $key=>$value) {
+
+        if ($rows) {
+            foreach ($rows as $key => $value) {
                 $result[$value['field_name']] = $value['field_value'];
             }
 
             return $result;
         }
-        
+
         return false;
     }
-    
+
     /**
-     * Записываем дополнительные данные по мастеру
+     * Записываем дополнительные данные по мастеру.
      * 
      * @param array $data
-     * @return type 
+     *
+     * @return type
      */
-    public function saveFieldsInfo($data) {
-        if(!$data) return false;
+    public function saveFieldsInfo($data)
+    {
+        if (!$data) {
+            return false;
+        }
         $this->clearFieldsInfo(array_keys($data));
-        
-        $sql = "INSERT INTO wizard_fields (field_name, field_value, field_type, wiz_uid) VALUES ";
-        foreach($data as $key=>$value) {
+
+        $sql = 'INSERT INTO wizard_fields (field_name, field_value, field_type, wiz_uid) VALUES ';
+        foreach ($data as $key => $value) {
             $insert[] = " ('{$key}', '{$value}', '".gettype($value)."', '".step_wizard::getWizardUserID()."') ";
         }
-        
-        $sql .= implode(", ", $insert);
-        
+
+        $sql .= implode(', ', $insert);
+
         return $this->_db->query($sql);
     }
-    
+
     /**
-     * Удаляем дополнительные данные по мастеру
+     * Удаляем дополнительные данные по мастеру.
      * 
-     * @param array  $fields      Поля для удаления
-     * @param string $wiz_uid     Ид пользователя мастера
-     * @return type 
+     * @param array  $fields  Поля для удаления
+     * @param string $wiz_uid Ид пользователя мастера
+     *
+     * @return type
      */
-    function clearFieldsInfo($fields, $wiz_uid = false) {
-        if(!$wiz_uid) $wiz_uid = step_wizard::getWizardUserID();
-        $sql    = "DELETE FROM wizard_fields WHERE wiz_uid = ? AND field_name IN (?l)";
+    public function clearFieldsInfo($fields, $wiz_uid = false)
+    {
+        if (!$wiz_uid) {
+            $wiz_uid = step_wizard::getWizardUserID();
+        }
+        $sql = 'DELETE FROM wizard_fields WHERE wiz_uid = ? AND field_name IN (?l)';
+
         return $this->_db->query($sql, $wiz_uid, $fields);
     }
-    
-    function isUserWizard($uid, $step, $wizard) {
+
+    public function isUserWizard($uid, $step, $wizard)
+    {
         global $DB;
-        $sql = "SELECT wa.wiz_uid, wa.id 
+        $sql = 'SELECT wa.wiz_uid, wa.id 
                 FROM wizard_action wa
                 INNER JOIN wizard_to_step wts ON wts.pos = ?i AND wizard_id = ?i
-                WHERE wa.reg_uid = ?i AND wa.id_wizard_to_step = wts.id";
+                WHERE wa.reg_uid = ?i AND wa.id_wizard_to_step = wts.id';
+
         return $DB->row($sql, $step, $wizard, $uid);
     }
 }
-
-?>

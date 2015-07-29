@@ -1,5 +1,8 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; } 
-if ( !(hasPermissions('advstat') && hasPermissions('adm')) ) {
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
+if (!(hasPermissions('advstat') && hasPermissions('adm'))) {
     exit;
 }
 
@@ -28,13 +31,15 @@ window.addEvent('domready', function() {
             <td>Название:</td> 
             <td><input type="text" name="name" size="24" value="<?=htmlspecialchars(stripslashes($_POST['name']))?>"></td>
         </tr>
-        <?php if($error&&$error->nameError) {?>
+        <?php if ($error && $error->nameError) {
+    ?>
         <tr>
             <td colspan="2">
                 <div class="errmsg"><?php print $error->nameError ?></div>
             </td>
         </tr>
-        <?php }?>
+        <?php 
+}?>
         <tr height="30">
             <td>Период размещения:</td>
             <td>
@@ -42,24 +47,28 @@ window.addEvent('domready', function() {
                 - <input type="text" name="to_date" id="to_date" size="9" maxlength="9" value="<?=htmlspecialchars(stripslashes($_POST['to_date']))?>" readonly="readonly">
             </td>
         </tr>
-        <?php if($error&&$error->dateError) {?>
+        <?php if ($error && $error->dateError) {
+    ?>
         <tr>
             <td colspan="2">
                 <div class="errmsg"><?php print $error->dateError ?></div>
             </td>
         </tr>
-        <?php }?>
+        <?php 
+}?>
         <tr height="30">
             <td>Ссылка редиректа:</td> 
             <td><input type="text" name="banner_link" size="44" value="<?=htmlspecialchars(stripslashes($_POST['banner_link']))?>"></td>
         </tr>
-        <?php if($error&&$error->linkError) {?>
+        <?php if ($error && $error->linkError) {
+    ?>
         <tr>
             <td colspan="2">
                 <div class="errmsg"><?php print $error->linkError ?></div>
             </td>
         </tr>
-        <?php }?>
+        <?php 
+}?>
         <tr height="30">
             <td>Текст ссылки:</td> 
             <td><input type="text" name="text" size="24" value="<?=htmlspecialchars(stripslashes($_POST['text']))?>"></td>
@@ -68,9 +77,11 @@ window.addEvent('domready', function() {
             <td>Где показываем</td>
             <td>
                 <select name="page_target">
-                    <? foreach(banner_promo::$target_page as $id=>$name) { ?>
-                    <option value="<?= $id?>" <?= ($_POST['page_target'] == $id ? "selected" : "")?>><?=$name?></option>
-                    <? }//foreach?>
+                    <?php foreach (banner_promo::$target_page as $id => $name) {
+    ?>
+                    <option value="<?= $id?>" <?= ($_POST['page_target'] == $id ? 'selected' : '')?>><?=$name?></option>
+                    <?php 
+}//foreach?>
                 </select>
             </td>
         </tr>
@@ -78,9 +89,11 @@ window.addEvent('domready', function() {
             <td>Тип баннера</td>
             <td>
                 <select name="type_ban" onchange="change_type_ban(this.value);">
-                    <? foreach(banner_promo::$type_ban as $id=>$name) { ?>
-                    <option value="<?= $id?>" <?= ($_POST['type_ban'] == $id ? "selected" : "")?>><?=$name?></option>
-                    <? }//foreach?>
+                    <?php foreach (banner_promo::$type_ban as $id => $name) {
+    ?>
+                    <option value="<?= $id?>" <?= ($_POST['type_ban'] == $id ? 'selected' : '')?>><?=$name?></option>
+                    <?php 
+}//foreach?>
                 </select>
             </td>
         </tr>
@@ -100,22 +113,24 @@ window.addEvent('domready', function() {
             </td>
             <td><?if($bpromo->info['name_img'] != "") {?> 
             <img src="/images/<?=$bpromo->info['name_img']?>" 
-                <?=($bpromo->info['img_title']!=""?'title="'.$bpromo->info['img_title'].'"':'')?>
-                <?=($bpromo->info['img_title']!=""?'alt="'.$bpromo->info['img_title'].'"':'')?>
-                <?=($bpromo->info['img_style']!=""?'style="'.$bpromo->info['img_style'].'"':'')?>/><?}?>
+                <?=($bpromo->info['img_title'] != '' ? 'title="'.$bpromo->info['img_title'].'"' : '')?>
+                <?=($bpromo->info['img_title'] != '' ? 'alt="'.$bpromo->info['img_title'].'"' : '')?>
+                <?=($bpromo->info['img_style'] != '' ? 'style="'.$bpromo->info['img_style'].'"' : '')?>/><?}?>
             </td>
         </tr>
         <tr height="30" class="type_image ban_types">
             <td>Загрузить новый:</td> 
             <td><input type="file" name="file_main"></td>            
         </tr>
-        <?php if($error&&$error->entityError) {?>
+        <?php if ($error && $error->entityError) {
+    ?>
         <tr>
             <td colspan="2">
                 <div class="errmsg"><?php print $error->entityError ?></div>
             </td>
         </tr>
-        <?php }?>
+        <?php 
+}?>
         <tr height="30" class="type_image ban_types">
             <td>Title картинки:</td> 
             <td><input type="text" name="img_title" size="24" value="<?=htmlspecialchars(stripslashes($_POST['img_title']))?>"></td>

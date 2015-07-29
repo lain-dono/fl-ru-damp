@@ -1,40 +1,37 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/tservices/atservices_model.php');
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/tservices/atservices_model.php';
 
 /**
  * Class TServiceModel
- * Модель типовой услуги
+ * Модель типовой услуги.
  */
-class TServiceModel extends atservices_model {
-
-	private $TABLE            = 'tservices';
-	private $TABLE_CATEGORIES = 'tservices_categories';
-	private $TABLE_FILES      = 'file_tservices';
-    private $TABLE_BLOCKED    = 'tservices_blocked';
+class TServiceModel extends atservices_model
+{
+    private $TABLE = 'tservices';
+    private $TABLE_CATEGORIES = 'tservices_categories';
+    private $TABLE_FILES = 'file_tservices';
+    private $TABLE_BLOCKED = 'tservices_blocked';
     private $TABLE_FREELANCER = 'freelancer';
-    private $TABLE_DEBT       = 'tservices_orders_debt';
-        
-    
+    private $TABLE_DEBT = 'tservices_orders_debt';
+
     /**
-     * Расширение запроса
+     * Расширение запроса.
      *  
-     * @var type 
+     * @var type
      */
     protected $_select = '';
     protected $_join = '';
 
-
-
-
     /**
      * Выбрать ТУ для списка пользователей 
-     * по указанному количеству на каждого
+     * по указанному количеству на каждого.
      * 
      * @param type $uids
      * @param type $limit
      * @param type $expire
      * @param type $group
+     *
      * @return type
      */
     public function getListByUids($uids, $limit = 3, $expire = 0, $group = false)
@@ -67,62 +64,60 @@ class TServiceModel extends atservices_model {
             WHERE q.rownum <= ?i
             ORDER BY q.id DESC, f.preview DESC, f.id 
         ", $uids, $limit);
-            
+
         $memBuff = new memBuff();
         $result = $memBuff->getSql($error, $sql, $expire, true, $group);
-        return $result;   
+
+        return $result;
     }
-    
 
     /**
-     * Расширяем запрос выборки данными пользователя владельца ТУ
+     * Расширяем запрос выборки данными пользователя владельца ТУ.
      * 
      * @return \TServiceModel
      */
     public function addOwnerInfo()
     {
-        $this->_select .= "
+        $this->_select .= '
             u.login,
             u.photo,
             u.uname,
             u.usurname,
             u.is_profi,
-        ";
-        
-        $this->_join .= "INNER JOIN {$this->TABLE_FREELANCER} AS u ON u.uid = s.user_id";        
-                
+        ';
+
+        $this->_join .= "INNER JOIN {$this->TABLE_FREELANCER} AS u ON u.uid = s.user_id";
+
         return $this;
     }
 
-    
-
     /**
-	 * Для каждой строки массива $rows извлекает сведения о типовой услуге, ID которой указан в $id_attr
-	 * Если $extend_attr указан, то сведения вписываются в строки rows отдельным ключом
-	 * Иначе ключи строк расширяются извлечёнными сведениями, при необходимости им дописываются префиксы $extend_prefix
-	 *
-	 * @param $rows
-	 * @param $id_attr
-	 * @param $extend_attr
-	 * @param $extend_prefix
-	 * @return $this
-	 */
-	public function extend(&$rows, $id_attr, $extend_attr = null, $extend_prefix = '')
-	{
-		$ids = array();
-		foreach($rows as $row) // собрать ID
-		{
-			if (!empty($row[$id_attr]))
-			{
-				$ids[$row[$id_attr]] = false;
-			}
-		}
-		if (empty($ids))
-		{
-			return $this;
-		}
+     * Для каждой строки массива $rows извлекает сведения о типовой услуге, ID которой указан в $id_attr
+     * Если $extend_attr указан, то сведения вписываются в строки rows отдельным ключом
+     * Иначе ключи строк расширяются извлечёнными сведениями, при необходимости им дописываются префиксы $extend_prefix.
+     *
+     * @param $rows
+     * @param $id_attr
+     * @param $extend_attr
+     * @param $extend_prefix
+     *
+     * @return $this
+     */
+    public function extend(&$rows, $id_attr, $extend_attr = null, $extend_prefix = '')
+    {
+        $ids = array();
+        foreach ($rows as $row) {
+            // собрать ID
 
-		$sql = <<<SQL
+            if (!empty($row[$id_attr])) {
+                $ids[$row[$id_attr]] = false;
+            }
+        }
+        if (empty($ids)) {
+            return $this;
+        }
+
+        $sql = <<<SQL
 SELECT
     DISTINCT ON (s.id)
 	s.id AS {$extend_prefix}id,
@@ -146,61 +141,62 @@ ORDER BY s.id, f.preview DESC, f.id
 SQL;
 
         $extends = $this->db()->cache(300)->rows($sql, array_keys($ids));
-            
-		foreach($extends as $extend) // разобрать строки по ID
-		{
-			$ids[$extend['id']] = $extend;
-		}
 
-		foreach($rows as $i => &$row) // подставить дополнительные сведения в исходный список строк
-		{
-			if (empty($ids[$row[$id_attr]]))
-			{
-				continue;
-			}
-			$extend = $ids[$row[$id_attr]];
-			if (false === $extend)
-			{
-				continue;
-			}
+        foreach ($extends as $extend) {
+            // разобрать строки по ID
 
-			if ($extend_attr)
-			{
-				$row[$extend_attr] = $extend; // отдельный ключ
-			} else
-			{
-				$row = array_merge($row, $extend); // расширение массива
-			}
-		}
-        
-		return $this;
-	}
+            $ids[$extend['id']] = $extend;
+        }
 
-	/**
-	 * В каждой строке списка типовых услуг добавляет массив видео-клипов
-	 *
-	 * @param array $rows
-	 * @param $src_attrs имя атрибута, где указана информация о видео-клипах
-	 * @param $dest_attr имя атрибута, в котором будет сохранён список видео-клипов
-	 * @return $this
-	 */
-	public function readVideos(&$rows, $src_attrs, $dest_attr)
-	{
-		if (empty($src_attrs) || empty($dest_attr)) {
-			return $this;
-		}
-		foreach($rows as &$row) {
-			$row[$dest_attr] = mb_unserialize($row[$src_attrs]);
-		}
-		return $this;
-	}
-        
+        foreach ($rows as $i => &$row) {
+            // подставить дополнительные сведения в исходный список строк
+
+            if (empty($ids[$row[$id_attr]])) {
+                continue;
+            }
+            $extend = $ids[$row[$id_attr]];
+            if (false === $extend) {
+                continue;
+            }
+
+            if ($extend_attr) {
+                $row[$extend_attr] = $extend; // отдельный ключ
+            } else {
+                $row = array_merge($row, $extend); // расширение массива
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * В каждой строке списка типовых услуг добавляет массив видео-клипов.
+     *
+     * @param array $rows
+     * @param $src_attrs имя атрибута, где указана информация о видео-клипах
+     * @param $dest_attr имя атрибута, в котором будет сохранён список видео-клипов
+     *
+     * @return $this
+     */
+    public function readVideos(&$rows, $src_attrs, $dest_attr)
+    {
+        if (empty($src_attrs) || empty($dest_attr)) {
+            return $this;
+        }
+        foreach ($rows as &$row) {
+            $row[$dest_attr] = mb_unserialize($row[$src_attrs]);
+        }
+
+        return $this;
+    }
+
         /**
-         * Кол-во типовых услуг всего
+         * Кол-во типовых услуг всего.
          * 
          * @return type
          */
-        public function countTservices() {
+        public function countTservices()
+        {
             return $this->db()->cache(300)->val("
                 SELECT 
                     COUNT(*) 
@@ -218,13 +214,14 @@ SQL;
                     AND u.self_deleted = FALSE
             ");
         }
-        
+
         /**
-         * Кол-во юзеров с типовыми услугами
+         * Кол-во юзеров с типовыми услугами.
          * 
          * @return type
          */
-        public function countUsers() {
+        public function countUsers()
+        {
             return $this->db()->cache(300)->val("
                 SELECT 
                     COUNT(DISTINCT s.user_id) 
@@ -243,13 +240,13 @@ SQL;
             ");
         }
 
-	/**
-	 * @return TServiceModel
-	 */
-	public static function model()
-	{
-		$class = get_called_class();
-		return new $class;
-	}
+    /**
+     * @return TServiceModel
+     */
+    public static function model()
+    {
+        $class = get_called_class();
 
+        return new $class();
+    }
 }

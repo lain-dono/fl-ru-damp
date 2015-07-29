@@ -3,22 +3,15 @@
 ini_set('max_execution_time', 0);
 ini_set('memory_limit', '512M');
 
-if(!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT']))
-{    
-    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME) . '/../../'), '/');
-} 
+if (!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT'])) {
+    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME).'/../../'), '/');
+}
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/config.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/statistic/StatisticFactory.php");
-
-
-
-
-
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/statistic/StatisticFactory.php';
 
 ///s.php?t=0&y=2014&l=b5abed10c9930d169f498b1e483baa79&h=0b10162959f17150cec25696a634ad62
 print_r(StatisticHelper::track_url(0, 2014, 'kazakov1'));
-
 
 exit;
 
@@ -44,7 +37,7 @@ $data = array(
     '2012' => 6951,
     '2007' => 6789,
     '2013' => 3499,
-    'total' => 48666
+    'total' => 48666,
 );
 
 var_dump(
@@ -54,8 +47,6 @@ var_dump(
 var_dump(
         $ga->newsletterNewProjectsEmp($data)
         );
-
-
 
 /*
 require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/vendors/UniversalAnalytics/vendor/autoload.php");
@@ -70,7 +61,6 @@ $ua = new \UniversalAnalytics\UA(array(
 print_r($ua);
 exit;
  */
-
 
 /*
 class Statistic_GA

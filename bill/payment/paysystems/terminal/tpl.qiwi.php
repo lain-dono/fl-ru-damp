@@ -1,17 +1,21 @@
-<?php if(!$print) { ?>
+<?php if (!$print) {
+    ?>
 <div class="b-layout__txt b-layout__txt_padtop_5 b-layout__txt_float_right">
     <a href="/bill/payment/print/?type=qiwi" target="_blank" class="b-layout__link">Распечатать страницу</a>
 </div>
-<?php }//?>
+<?php 
+}//?>
 <h2 class="b-layout__title b-layout__title_padbot_30">Оплата через QIWI</h2>
 <table class="b-layout__table b-layout__table_width_full">
     <tbody>
         <tr class="b-layout__tr">
-            <?php if(!$print) { ?>
+            <?php if (!$print) {
+    ?>
             <td class="b-layout__td b-layout__td_padright_20 b-layout__td_center b-layout__td_width_120">
                 <img class="b-layout__pic" width="140" height="99" alt="" src="/images/bill-qiwi-big.png">
             </td>
-            <?php }//if?>
+            <?php 
+}//if?>
             <td class="b-layout__td b-layout__td_padleft_30">
 
                 <h3 class="b-layout__h3">Инструкция</h3>
@@ -43,17 +47,22 @@
                 </div>
                 <h3 class="b-layout__h3">Что делать, если деньги не были перечислены на счет?</h3>
                 <div class="b-layout__txt">В случае, если зачисление суммы не произошло, напишите нам в <a class="b-layout__link" href="/about/feedback/">Службу поддержки</a> и пришлите копию чека об оплате (скан).</div>
-                <?php if(!$print) { ?>
-                <form method="POST" action="<?= ( is_release() ? "/bill/payment/?type={$type_payment}" : "/bill/test/osmp.php" )?>" id="<?= $type_payment ?>" name="<?= $type_payment ?>">
+                <?php if (!$print) {
+    ?>
+                <form method="POST" action="<?= (is_release() ? "/bill/payment/?type={$type_payment}" : '/bill/test/osmp.php')?>" id="<?= $type_payment ?>" name="<?= $type_payment ?>">
                     <input type="hidden" name="action" value="osmp" />
                     <input type="hidden" name="sum" value="<?= $payment_sum ?>" />
                 </form>
-                <? include ( $_SERVER['DOCUMENT_ROOT'] . "/bill/payment/paysystems/tpl.button_buy.php");?>
-                <?php }//if?>
+                <?php include $_SERVER['DOCUMENT_ROOT'].'/bill/payment/paysystems/tpl.button_buy.php';
+    ?>
+                <?php 
+}//if?>
             </td>
         </tr>
     </tbody>
 </table>
-<?php if($print) { ?>
+<?php if ($print) {
+    ?>
 <script type="text/javascript">window.print();</script> 
-<?php }//if?>
+<?php 
+}//if?>

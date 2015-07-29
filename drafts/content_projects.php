@@ -1,6 +1,7 @@
-<? require_once($_SERVER['DOCUMENT_ROOT'].'/drafts/content_header.php'); ?>
+<?php require_once $_SERVER['DOCUMENT_ROOT'].'/drafts/content_header.php'; ?>
 
-    <? if($drafts) { ?>
+    <?php if ($drafts) {
+    ?>
         <form id="draft_frm" action="/drafts/" method="post">
 				<div>
         <input type="hidden" name="p" value="projects" />
@@ -23,20 +24,25 @@
     			<col width="60" />
     		</colgroup>
             <tbody>
-                <? foreach($drafts as $draft) { ?>
+                <?php foreach ($drafts as $draft) {
+    ?>
                 <tr>
     				<td><span class="i-chk"><input type="checkbox" id="del_draft_<?=$draft['id']?>" name="del_draft[]" value="<?=$draft['id']?>" onClick="DraftsCheckToggleDeleteAll(this);" /></span></td>
-                    <td><a href="/public/?step=1&kind=<?=$draft['kind']?><?=($draft['prj_id']?"&public={$draft['prj_id']}":"")?>&draft_id=<?=$draft['id']?>&red="><?=($draft['name']!=''?reformat(str_replace(array("<", ">"), array('&lt;', '&gt;'), $draft['name']),27,0,1):'[без названия]')?></a></td>
+                    <td><a href="/public/?step=1&kind=<?=$draft['kind']?><?=($draft['prj_id'] ? "&public={$draft['prj_id']}" : '')?>&draft_id=<?=$draft['id']?>&red="><?=($draft['name'] != '' ? reformat(str_replace(array('<', '>'), array('&lt;', '&gt;'), $draft['name']), 27, 0, 1) : '[без названия]')?></a></td>
     				<td><?=$draft['pdate']?></td>
-    				<td><a href="/public/?step=1&kind=<?=$draft['kind']?><?=($draft['prj_id']?"&public={$draft['prj_id']}":"")?>&draft_id=<?=$draft['id']?>&red=&auto_draft=1">Опубликовать</a></td>
+    				<td><a href="/public/?step=1&kind=<?=$draft['kind']?><?=($draft['prj_id'] ? "&public={$draft['prj_id']}" : '')?>&draft_id=<?=$draft['id']?>&red=&auto_draft=1">Опубликовать</a></td>
     				<td><a href="" onClick="DraftDeleteSubmit(<?=$draft['id']?>); return false;" class="lnk-dred">Удалить</a></td>
     			</tr>
-                <? } ?>
+                <?php 
+}
+    ?>
     		</tbody>
         </table>
         </div>
         </form>
-    <? } else { ?>
+    <?php 
+} else {
+    ?>
         <div class="form fs-p fd-w">
     		<b class="b1"></b>
 			<b class="b2"></b>
@@ -46,4 +52,5 @@
 			<b class="b2"></b>
 			<b class="b1"></b>
 		</div>
-    <? } ?>
+    <?php 
+} ?>

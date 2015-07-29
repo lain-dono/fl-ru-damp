@@ -28,7 +28,7 @@
                 <div class="b-layout__txt b-layout__txt_padbot_15">Обращаем ваше внимание на то, что средства зачисляются <span class="b-layout__bold">в течение следующего рабочего дня после совершения перевода</span>.</div>
                 <div class="b-layout__txt b-layout__txt_padbot_15">Комиссия за платеж не взимается!</div>
                 
-                <? include ( $_SERVER['DOCUMENT_ROOT'] . "/bill/payment/paysystems/tpl.button_buy.php");?>
+                <?php include $_SERVER['DOCUMENT_ROOT'].'/bill/payment/paysystems/tpl.button_buy.php';?>
             </td>
         </tr>
     </tbody>

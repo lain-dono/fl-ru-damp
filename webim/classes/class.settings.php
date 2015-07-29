@@ -12,71 +12,71 @@
 ?>
 <?php
 
-class Settings  {
-  private $settings = null;
+class Settings
+{
+    private $settings = null;
 
+    protected $tableName = 'chatconfig';
+    protected $uniqueTableKey = 'configid';
+    private static $instance = null;
 
-  protected $tableName = 'chatconfig';
-  protected $uniqueTableKey = 'configid';
-  private static $instance = NULL;
+    public static function getInstance()
+    {
+        if (self::$instance == null) {
+            self::$instance = new self();
+        }
 
-  static function getInstance() {
-    if (self::$instance == NULL) {
-      self::$instance = new Settings();
+        return self::$instance;
     }
-    return self::$instance;
-  }
 
-  private function __construct() {
-      
-  }
-
-  private function __clone() {
-  }
-
-  static function Get($key, $defaultValue = null) {
-    $res = self::getInstance()->_get($key);
-    
-    if (isset($defaultValue) && empty($res)) {
-      $res = $defaultValue;
+    private function __construct()
+    {
     }
-    
-    return $res;
-  }
 
-  public function Set($key, $value) {
-    MapperFactory::getMapper("Config")->save(array(
-    	'configkey' => $key, 
-    	'configvalue' => $value
+    private function __clone()
+    {
+    }
+
+    public static function Get($key, $defaultValue = null)
+    {
+        $res = self::getInstance()->_get($key);
+
+        if (isset($defaultValue) && empty($res)) {
+            $res = $defaultValue;
+        }
+
+        return $res;
+    }
+
+    public function Set($key, $value)
+    {
+        MapperFactory::getMapper('Config')->save(array(
+        'configkey' => $key,
+        'configvalue' => $value,
       )
     );
-  }
-
-  private function _get($key) {
-     
-
-    
-    $this->ensureLoaded();
-    return isset($this->settings[$key]) ? $this->settings[$key] : null;
-    
-  }
-
-  public function GetAll() {
-  
-    $this->ensureLoaded();
-
-    return $this->settings;
-  
-   
-  }
-  
-  
-  private function ensureLoaded() {
-    if (!isset($this->settings)) {
-      $this->settings = MapperFactory::getMapper("Config")->enumPairs();
     }
-  }
-  
+
+    private function _get($key)
+    {
+        $this->ensureLoaded();
+
+        return isset($this->settings[$key]) ? $this->settings[$key] : null;
+    }
+
+    public function GetAll()
+    {
+        $this->ensureLoaded();
+
+        return $this->settings;
+    }
+
+    private function ensureLoaded()
+    {
+        if (!isset($this->settings)) {
+            $this->settings = MapperFactory::getMapper('Config')->enumPairs();
+        }
+    }
 
    // need to setup config
 //  function LoadSettingsPro() {
@@ -86,40 +86,34 @@ class Settings  {
 //    }
 //    return true;
 //  }
-  
+
   //====================================================================================================
-  
 
-  static function GetProductName() {
-     
-    
-    $product = Resources::Get('webim.pro.title');
-    
-    return $product;
+
+  public static function GetProductName()
+  {
+      $product = Resources::Get('webim.pro.title');
+
+      return $product;
   }
 
-  static function GetProduct() {
-     
-    
-    $product = 'pro';
-    
-    return $product;
-  }
+    public static function GetProduct()
+    {
+        $product = 'pro';
 
-  static function GetProductURL() {
-     
-    
-    $url = 'http://webim.ru/pro/?p=pro';
-    
-    return $url;
-  }
+        return $product;
+    }
 
+    public static function GetProductURL()
+    {
+        $url = 'http://webim.ru/pro/?p=pro';
 
-  static function GetProductAndVersion() {
-    return Settings::GetProductName() ." ". WEBIM_VERSION;
-  }
+        return $url;
+    }
 
-
-
+    public static function GetProductAndVersion()
+    {
+        return self::GetProductName().' '.WEBIM_VERSION;
+    }
 }
 ?>

@@ -1,9 +1,9 @@
 <?php
 /**
- * Шаблон поумолчанию popup-окна "быстрой" оплаты
+ * Шаблон поумолчанию popup-окна "быстрой" оплаты.
  */
 ?>
-<div id="<?=@$popup_id?>" data-quick-payment="<?=$unic_name?>" class="b-shadow b-shadow_block b-shadow_center b-shadow_width_520 <?=(!@$is_show)?'b-shadow_hide':'' ?> b-shadow__quick">
+<div id="<?=@$popup_id?>" data-quick-payment="<?=$unic_name?>" class="b-shadow b-shadow_block b-shadow_center b-shadow_width_520 <?=(!@$is_show) ? 'b-shadow_hide' : '' ?> b-shadow__quick">
     <div class="b-shadow__body b-shadow__body_pad_15_20">
         
         <div class="b-fon <?=@$popup_title_class_bg?>">
@@ -31,10 +31,10 @@
                 Итого к оплате: <span><?=@$reserve_price?></span><br/>
             </div>
 <?php 
-            if(!empty($items)): 
+            if (!empty($items)):
 ?>
             <form>
-                <?php foreach($items as $key => $item): ?>
+                <?php foreach ($items as $key => $item): ?>
                 <input type="hidden" name="<?=@$item['name']?>" value="<?=@$item['value']?>" />
                 <?php endforeach; ?>
             </form>
@@ -53,21 +53,21 @@
             </div>
             
             <div class="b-layout__txt b-layout__txt_padleft_20 b-layout__txt_fontsize_11">
-                Ваш статус<?php if(@$fn_url): ?> (<a href="<?=@$fn_url?>">изменить</a>)<?php endif; ?>: <?=$form_name?>, <?=$rez_name?>
+                Ваш статус<?php if (@$fn_url): ?> (<a href="<?=@$fn_url?>">изменить</a>)<?php endif; ?>: <?=$form_name?>, <?=$rez_name?>
             </div>
             
             <div class="b-layout__txt b-layout__txt_padbot_20 b-layout__txt_padleft_20 b-layout__txt_fontsize_11">
                 Вам доступны следующие способы резервирования:
             </div>
 <?php
-            if(!empty($payments)):
+            if (!empty($payments)):
 ?>
             <div>
                 <div class="b-buttons b-buttons_padleft_20 b-buttons_padbot_10"> 
-                    <?php foreach($payments as $key => $payment): ?>
+                    <?php foreach ($payments as $key => $payment): ?>
                     <a class="b-button b-button_margbot_5 b-button__pm <?=@$payment['class']?>" 
                        href="javascript:void(0);" 
-                       <?=(isset($payment['wait']))?'data-quick-payment-wait="'.$payment['wait'].'"':''?> 
+                       <?=(isset($payment['wait'])) ? 'data-quick-payment-wait="'.$payment['wait'].'"' : ''?> 
                        data-quick-payment-type="<?=$key?>"><span class="b-button__txt"><?=@$payment['title']?></span></a> 
                     <?php endforeach; ?>
                 </div>

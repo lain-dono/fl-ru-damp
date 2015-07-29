@@ -2,8 +2,8 @@
 
     $url_vacancy = sprintf('%s/public/?step=1&kind=4&public=%s&popup=1', $GLOBALS['host'], $project_id);
     $url_buy_pro = sprintf('%s/payed-emp/', $GLOBALS['host']);
-    
-    $current_price = ($is_pro)?$pro_price:$not_pro_price;
+
+    $current_price = ($is_pro) ? $pro_price : $not_pro_price;
 ?>
 Здравствуйте.
 <br />

@@ -4,7 +4,7 @@
     <input name="Sum" value="<?=$ammount?>" type=hidden />
     <input name="customerNumber" value="<?=$customerNumber?>" type="hidden" />
     <input name="paymentType" value="<?=$payment?>" type="hidden" />
-    <?php if(isset($billReserveId)): ?>
+    <?php if (isset($billReserveId)): ?>
     <input name="orderId" value="<?=$billReserveId?>" type="hidden" />
     <?php endif; ?>
 </form>

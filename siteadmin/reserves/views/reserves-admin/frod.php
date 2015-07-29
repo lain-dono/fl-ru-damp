@@ -22,23 +22,23 @@
                 <th>Дата выплаты</th>
             </tr>
         </thead>
-        <?php if(!empty($reserves)): ?>
+        <?php if (!empty($reserves)): ?>
         <tfoot>
             <tr>
                 <td colspan="7">
                     <div class="pager">
                         <?=new_paginator(
-                                $page, 
-                                ceil($page_count / $limit), 
-                                10, 
-                                "%s?action=frod&page=%d%s") ?>
+                                $page,
+                                ceil($page_count / $limit),
+                                10,
+                                '%s?action=frod&page=%d%s') ?>
                     </div>
                 </td>
             </tr>
         </tfoot>
         
         <tbody>
-                <?php foreach($reserves as $reserve): ?>
+                <?php foreach ($reserves as $reserve): ?>
             <tr class="nr-a-tbl_tr">
                 <td><a target="_blank" href="?action=details&num=<?=$reserve->getSrcId()?>"><?=$reserve->getReserveNum()?></a></td>
                 <td class="nr-a-td-sum"><?=$reserve->getPriceByKey('reserve_price', false)?></td>

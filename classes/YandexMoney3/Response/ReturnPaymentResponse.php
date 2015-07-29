@@ -2,7 +2,7 @@
 
 namespace YandexMoney3\Response;
 
-require_once(__DIR__ . '/MWSBaseResponse.php');
+require_once __DIR__.'/MWSBaseResponse.php';
 
 class ReturnPaymentResponse extends MWSBaseResponse
 {
@@ -15,5 +15,4 @@ class ReturnPaymentResponse extends MWSBaseResponse
     {
         return $this->checkAndReturn(self::CLIENT_ORDER_ID);
     }
-    
 }

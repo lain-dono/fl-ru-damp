@@ -1,4 +1,4 @@
-<? include("tpl.header.php");?>
+<?php include 'tpl.header.php';?>
 
 <table style="margin-top: 0pt; margin-left: auto; margin-right: auto; background-color: #ffffff; text-align:left" bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0" width="700">
     <tbody>
@@ -114,4 +114,4 @@
 </tbody>
 </table>
 
-<? include ("tpl.footer.php"); ?>
+<?php include 'tpl.footer.php'; ?>

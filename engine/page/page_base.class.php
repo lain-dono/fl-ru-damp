@@ -1,8 +1,11 @@
 <?php
-class page_base {    
+
+class page_base
+{
     public $uri = array();
     public $page = false;
     public $action = false;
-    public function indexAction() {}
+    public function indexAction()
+    {
+    }
 }
-?>

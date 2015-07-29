@@ -1,11 +1,10 @@
 <?php
 
 /**
-* Шаблон окошка редактирования бюджета и сроков заказа ТУ c учетом возможности выбрать тип оплаты
-*/
-
-$is_show = __paramInit('bool','tu_edit_budjet','tu_edit_budjet',false);
-$is_paytype = __paramInit('bool','paytype','paytype',false);
+ * Шаблон окошка редактирования бюджета и сроков заказа ТУ c учетом возможности выбрать тип оплаты.
+ */
+$is_show = __paramInit('bool', 'tu_edit_budjet', 'tu_edit_budjet', false);
+$is_paytype = __paramInit('bool', 'paytype', 'paytype', false);
 $title = reformat(htmlspecialchars($order['title']), 30, 0, 1);
 
 if ($is_paytype) {
@@ -13,7 +12,7 @@ if ($is_paytype) {
 }
 
 ?>
-<div id="tu_edit_budjet" class="b-shadow<?php if(!$is_show): ?> b-shadow_hide<?php endif; ?> b-shadow_pad_20 b-shadow_center b-shadow_width_500 b-shadow_zindex_4">
+<div id="tu_edit_budjet" class="b-shadow<?php if (!$is_show): ?> b-shadow_hide<?php endif; ?> b-shadow_pad_20 b-shadow_center b-shadow_width_500 b-shadow_zindex_4">
     <h2 class="b-layout__txt b-layout__txt_fontsize_18">
         Изменение заказа
     </h2>
@@ -71,7 +70,7 @@ if ($is_paytype) {
             <td class="b-layout__td" colspan="4">
                 <div class="b-radio b-radio_layout_vertical b-radio_padtop_20">
                     <div class="b-radio__item b-radio__item_padbot_10">
-                        <input tabindex="3"<?php if($order['pay_type'] == TServiceOrderModel::PAYTYPE_RESERVE): ?> checked="checked"<?php endif; ?> type="radio" value="1" name="paytype" class="b-radio__input" id="paytype1"/>
+                        <input tabindex="3"<?php if ($order['pay_type'] == TServiceOrderModel::PAYTYPE_RESERVE): ?> checked="checked"<?php endif; ?> type="radio" value="1" name="paytype" class="b-radio__input" id="paytype1"/>
                         <label for="paytype1" class="b-radio__label b-radio__label_bold b-radio__label_fontsize_13 b-radio__label_margtop_-1">
                             Безопасная сделка (с резервированием бюджета) &#160;<a class="b-layout__link" href="/promo/bezopasnaya-sdelka/" target="_blank"><span class="b-shadow__icon b-shadow__icon_quest2 b-icon_top_2"></span></a>
                         </label>
@@ -80,7 +79,7 @@ if ($is_paytype) {
                         </div>
                     </div>
                     <div class="b-radio__item b-radio__item_padbot_20">
-                        <input tabindex="4"<?php if($order['pay_type'] == TServiceOrderModel::PAYTYPE_DEFAULT): ?> checked="checked"<?php endif; ?> type="radio" value="0" name="paytype" class="b-radio__input" id="paytype0">
+                        <input tabindex="4"<?php if ($order['pay_type'] == TServiceOrderModel::PAYTYPE_DEFAULT): ?> checked="checked"<?php endif; ?> type="radio" value="0" name="paytype" class="b-radio__input" id="paytype0">
                         <label for="paytype0" class="b-radio__label b-radio__label_bold b-radio__label_fontsize_13 b-radio__label_margtop_-1">
                             Прямая оплата Исполнителю на его кошелек/счет
                         </label>

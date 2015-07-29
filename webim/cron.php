@@ -12,8 +12,8 @@
 ?>
 <?php
 
-require_once('classes/functions.php');
+require_once 'classes/functions.php';
 
-cleanup_visit_logs(); 
+cleanup_visit_logs();
 
 ?> 

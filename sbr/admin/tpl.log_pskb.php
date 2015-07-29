@@ -17,9 +17,11 @@
                     <span class="form-input">
                         <select name="logname" id="log_name">
                             <option value="">-- Не важно --</option>
-                            <? foreach ($log_pskb->getNameGroupLog($lc_id) as $v) { ?>
+                            <?php foreach ($log_pskb->getNameGroupLog($lc_id) as $v) {
+    ?>
                                 <option value="<?= $v ?>"><?= $v ?></option>
-                            <? } ?>
+                            <?php 
+} ?>
                         </select>
                     </span>
                 </div>

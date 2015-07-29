@@ -1,37 +1,48 @@
-<?
-if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
+<?php
+if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
 require_once $_SERVER['DOCUMENT_ROOT'].'/classes/HTML/projects_lenta.php';
 
-function buildNavigation($iCurrent, $iStart, $iAll, $sHref) {
+function buildNavigation($iCurrent, $iStart, $iAll, $sHref)
+{
     $sNavigation = '';
-	for ($i=$iStart; $i<=$iAll; $i++) {
-		if ($i != $iCurrent) {
-			$sNavigation .= "<a href=\"".$sHref.$i."\" >".$i."</a> ";
-		}else {
-			$sNavigation .= '<b style="margin-right: 5px">'.$i.'</b>';
-		}
-	}
-	return $sNavigation;
+    for ($i = $iStart; $i <= $iAll; ++$i) {
+        if ($i != $iCurrent) {
+            $sNavigation .= '<a href="'.$sHref.$i.'" >'.$i.'</a> ';
+        } else {
+            $sNavigation .= '<b style="margin-right: 5px">'.$i.'</b>';
+        }
+    }
+
+    return $sNavigation;
 }
 
 ?>
 
-<? include ('head.php') ?>
+<?php include ('head.php') ?>
 
 <script type="text/javascript">
 function project_banned() {
-    window.location = '<?=("/siteadmin/ban-razban/?mode=$mode".($page? "&p=$page": '').($search? "&search=$search": '').($admin? "&admin=$admin": '').($sort? "&sort=$sort": '').($group? "&group=$group": ''))?>';
+    window.location = '<?=("/siteadmin/ban-razban/?mode=$mode".($page ? "&p=$page" : '').($search ? "&search=$search" : '').($admin ? "&admin=$admin" : '').($sort ? "&sort=$sort" : '').($group ? "&group=$group" : ''))?>';
 }
 </script>
-<?
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/banned.common.php");
-if (!$no_answers) {$xajax->printJavascript('/xajax/');}
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/banned.common.php';
+if (!$no_answers) {
+    $xajax->printJavascript('/xajax/');
+}
 ?>
 
 
 <p>&nbsp;</p>
 
-<? if (empty($projects)) { print "<center><div style='font: bold 16px Tahoma'>Нет проектов.</div></center>"; return; } ?>
+<?php if (empty($projects)) {
+    print "<center><div style='font: bold 16px Tahoma'>Нет проектов.</div></center>";
+
+    return;
+} ?>
 
 <!-- Это временно, когда будет везде в админке новый дизайн - эти стили удалить -->
 <style type="text/css">
@@ -122,41 +133,46 @@ if (!$no_answers) {$xajax->printJavascript('/xajax/');}
 </style>
 
 <ol class="br-search-list"> 
-<? foreach($projects as $prj) { ?>
+<?php foreach ($projects as $prj) {
+    ?>
 								<li class="br-pl-one"> 
                                     <a name="p<?=$prj['id']?>"></a>
-									<h4><? if ($prj['payed']) { ?><img src="/images/ico_prepay.gif" width="21" height="21" border="0">&nbsp;<? } ?><a href="<?=getFriendlyURL("project", $prj['id'])?>"><?=YellowLine($prj['name'])?></a></h4> 
+									<h4><?php if ($prj['payed']) {
+    ?><img src="/images/ico_prepay.gif" width="21" height="21" border="0">&nbsp;<?php 
+}
+    ?><a href="<?=getFriendlyURL('project', $prj['id'])?>"><?=YellowLine($prj['name'])?></a></h4> 
 									<div class="project-preview-desc"> 
                                         <?=reformat($prj['descr'], 60)?>
 									</div> 
 									<ul class="project-info"> 
 										<li><?=ago_pub_x(strtotimeEx($prj['post_date']))?></li> 
-										<li>Автор: <?=(($prj['is_pro'] == 't')?' '.view_pro_emp(false, 8):'')?> <a href="/users/<?=$prj['login']?>/"><?=YellowLine($prj['uname'])?> <?=YellowLine($prj['usurname'])?></a> [<a href="/users/<?=$prj['login']?>/"><?=YellowLine($prj['login'])?></a>]</li> 
-										<li class="last">Категория: <?= projects::printCategories($prj['categories']);?></li>
-										<li class="last"><div class="project-offers"><a href="<?=getFriendlyURL("project", $prj['id'])?>">Предложения (<?=(int) $prj['offers_count']?>)</a></div></li>
+										<li>Автор: <?=(($prj['is_pro'] == 't') ? ' '.view_pro_emp(false, 8) : '')?> <a href="/users/<?=$prj['login']?>/"><?=YellowLine($prj['uname'])?> <?=YellowLine($prj['usurname'])?></a> [<a href="/users/<?=$prj['login']?>/"><?=YellowLine($prj['login'])?></a>]</li> 
+										<li class="last">Категория: <?= projects::printCategories($prj['categories']);
+    ?></li>
+										<li class="last"><div class="project-offers"><a href="<?=getFriendlyURL('project', $prj['id'])?>">Предложения (<?=(int) $prj['offers_count']?>)</a></div></li>
 									</ul> 
                                     <br clear="all" />
                                         
     									<div id="div_compliant_<?=$prj['id']?>" class="ban-report"> 
     										<h4>
-                                                <?=projects_complains::GetComplainType( $prj['type'], true )?>
+                                                <?=projects_complains::GetComplainType($prj['type'], true)?>
                                             </h4> 
-                                            <p><?=reformat(html_entity_decode($prj['msg'], ENT_QUOTES),60)?></p> 
-                                            <?
-                                            if ( $prj['c_files'] && $prj['c_files'] != 'false' ) {
+                                            <p><?=reformat(html_entity_decode($prj['msg'], ENT_QUOTES), 60)?></p> 
+                                            <?php
+                                            if ($prj['c_files'] && $prj['c_files'] != 'false') {
                                                 echo '<p>';
-                                                $files = preg_split("/,/", $prj['c_files']);
-                                                foreach($files as $file) {
+                                                $files = preg_split('/,/', $prj['c_files']);
+                                                foreach ($files as $file) {
                                                     echo '<a href="'.WDCPREFIX.'/users/'.$prj['login'].'/upload/'.$file.'">'.$file.'</a><br>';
                                                 }
                                                 echo '</p>';
                                             }
-                                            ?>
+    ?>
     										<div class="br-from"> 
-    											<?=dateFormat("d.m.Y", $prj['date'])?> <a href="/users/<?=$prj['c_login']?>/"><?=$prj['c_uname']?> <?=$prj['c_usurname']?> [<?=$prj['c_login']?>]</a>  
+    											<?=dateFormat('d.m.Y', $prj['date'])?> <a href="/users/<?=$prj['c_login']?>/"><?=$prj['c_uname']?> <?=$prj['c_usurname']?> [<?=$prj['c_login']?>]</a>  
     											<?if($prj['is_satisfied']):?>
     											<div class="br-from">
-                        							<?=(($prj['is_satisfied'] == 't') ? 'Принято' : 'Отклонено')?> админом <?=dateFormat("d.m.Y", $prj['processed_at'])?> <a href="/users/<?=$prj['admin_login']?>/"><?=$prj['admin_uname'].' '.$prj['admin_usurname']?> [<?=$prj['admin_login']?>]</a>
+                        							<?=(($prj['is_satisfied'] == 't') ? 'Принято' : 'Отклонено')?> админом <?=dateFormat('d.m.Y', $prj['processed_at'])?> <a href="/users/<?=$prj['admin_login']?>/"><?=$prj['admin_uname'].' '.$prj['admin_usurname']?> [<?=$prj['admin_login']?>]</a>
                         						</div>
     											<?endif?>
     										</div> 
@@ -166,17 +182,21 @@ if (!$no_answers) {$xajax->printJavascript('/xajax/');}
     									
                                     <div id="project-reason-<?=$prj['id']?>" style="margin-top: 10px; display: none">&nbsp;</div>
 									<div class="project-offers"> 
-                                        <?php if ( $prj['complain_cnt'] > 1 ) { ?>
+                                        <?php if ($prj['complain_cnt'] > 1) {
+    ?>
                             			<a onclick="getProjectComplaints(<?=$prj['id']?>, '<?=$group?>');" href="javascript:void(0);">Все жалобы (<?=(int) $prj['complain_cnt']?>)</a>
                             				<?if($group == 'new'):?> | <?endif?>
-                            			<?php } ?>
+                            			<?php 
+}
+    ?>
                             			<?if($group == 'new'):?>
-										<a id="prj_<?=$prj['id']?>" href="./?mode=<?=$mode?><?=($page? "&p=$page": '')?><?=($search? "&search=$search": '')?><?=($sort? "&sort=$sort": '')?><?=($admin? "&admin=$admin": '')?><?=($group? "&group=$group": '')?>&action=not_satisfycomplain&pid=<?=$prj['id']?>" style="font-weight:bold; color: #999;" onclick="return addTokenToLink('prj_<?=$prj['id']?>', 'Уверены, что хотите удалить все жалобы на проект?');">Снять все жалобы</a> | 
+										<a id="prj_<?=$prj['id']?>" href="./?mode=<?=$mode?><?=($page ? "&p=$page" : '')?><?=($search ? "&search=$search" : '')?><?=($sort ? "&sort=$sort" : '')?><?=($admin ? "&admin=$admin" : '')?><?=($group ? "&group=$group" : '')?>&action=not_satisfycomplain&pid=<?=$prj['id']?>" style="font-weight:bold; color: #999;" onclick="return addTokenToLink('prj_<?=$prj['id']?>', 'Уверены, что хотите удалить все жалобы на проект?');">Снять все жалобы</a> | 
 										<a href="javascript:;" class="lnk-br-block" onclick="banned.blockedProjectWithComplains(<?=$prj['id']?>);">Заблокировать</a>
 										<?endif?>
 									</div> 
 								</li> 
-<? } ?>
+<?php 
+} ?>
 </ol>
 
 
@@ -184,58 +204,63 @@ if (!$no_answers) {$xajax->printJavascript('/xajax/');}
 <tr>
 
     <td align="left" width="100%">
-    <div id="fl2_paginator"><?
+    <div id="fl2_paginator"><?php
 
         // Страницы
         $pages = ceil($num_threads / $log_pp);
         if ($pages > 1) {
             $maxpages = $pages;
             $i = 1;
-            $sHref = './?mode=complain'.($sort? "&sort=$sort": "").($ft? "&ft=$ft": "").($search? "&search=$search": "").($admin? "&admin=$admin": "").($log_pp ? '&log_pp='. $log_pp : '').'&p=';
-            
+            $sHref = './?mode=complain'.($sort ? "&sort=$sort" : '').($ft ? "&ft=$ft" : '').($search ? "&search=$search" : '').($admin ? "&admin=$admin" : '').($log_pp ? '&log_pp='.$log_pp : '').'&p=';
+
             if ($pages > 32) {
-                $i = floor($page/10)*10 + 1;
-                if ($i >= 10 && $page%10 < 5) $i = $i - 5;
-                $maxpages = $i + 22 - floor(log($page,10)-1)*4;
-                if ($maxpages > $pages) $maxpages = $pages;
-                if ($maxpages - $i + floor(log($page,10)-1)*4 < 22 && $maxpages - 22 > 0) $i = $maxpages - 24 + floor(log($page,10)-1)*3;
+                $i = floor($page / 10) * 10 + 1;
+                if ($i >= 10 && $page % 10 < 5) {
+                    $i = $i - 5;
+                }
+                $maxpages = $i + 22 - floor(log($page, 10) - 1) * 4;
+                if ($maxpages > $pages) {
+                    $maxpages = $pages;
+                }
+                if ($maxpages - $i + floor(log($page, 10) - 1) * 4 < 22 && $maxpages - 22 > 0) {
+                    $i = $maxpages - 24 + floor(log($page, 10) - 1) * 3;
+                }
             }
 
             $sBox = '<table width="100%"><tr>';
             if ($page == 1) {
                 $sBox .= '<td><div id="nav_pre_not_active"><span>предыдущая</span></div></td>';
             } else {
-                $sBox .= "<input type=\"hidden\" id=\"pre_navigation_link\" value=\"".($sHref.($page-1))."\">";
-                $sBox .= "<td><div id=\"nav_pre_not_active\"><a href=\"".($sHref.($page-1))."\" style=\"color: #717171\">предыдущая</a></div></td>";
+                $sBox .= '<input type="hidden" id="pre_navigation_link" value="'.($sHref.($page - 1)).'">';
+                $sBox .= '<td><div id="nav_pre_not_active"><a href="'.($sHref.($page - 1)).'" style="color: #717171">предыдущая</a></div></td>';
             }
             $sBox .= '<td width="90%" align="center">';
             //в начале
             if ($page <= 10) {
-                $sBox .= buildNavigation($page, 1, ($pages>10)?($page+4):$pages, $sHref);
+                $sBox .= buildNavigation($page, 1, ($pages > 10) ? ($page + 4) : $pages, $sHref);
                 if ($pages > 15) {
                     $sBox .= '<span style="padding-right: 5px">...</span>';
                     //$sBox .= buildNavigation($page, $pages-5, $pages, $sHref);
                 }
             }
             //в конце
-            elseif ($page >= $pages-10) {
+            elseif ($page >= $pages - 10) {
                 $sBox .= buildNavigation($page, 1, 5, $sHref);
                 $sBox .= '<span style="padding-right: 5px">...</span>';
                 //$sBox .= buildNavigation($page, $page-5, $pages, $sHref);
-            }
-            else {
+            } else {
                 $sBox .= buildNavigation($page, 1, 5, $sHref);
                 $sBox .= '<span style="padding-right: 5px">...</span>';
-                $sBox .= buildNavigation($page, $page-4, $page+4, $sHref);
+                $sBox .= buildNavigation($page, $page - 4, $page + 4, $sHref);
                 $sBox .= '<span style="padding-right: 5px">...</span>';
                 //$sBox .= buildNavigation($page, $pages-5, $pages, $sHref);
             }
             $sBox .= '</td>';
             if ($page == $pages) {
-                $sBox .= "<td><div id=\"nav_next_not_active\"><span>следующая</span></div></td>";
+                $sBox .= '<td><div id="nav_next_not_active"><span>следующая</span></div></td>';
             } else {
-                $sBox .= "<input type=\"hidden\" id=\"next_navigation_link\" value=\"".($sHref.($page+1))."\">";
-                $sBox .= "<td><div id=\"nav_next_not_active\"><a href=\"".($sHref.($page+1))."\" style=\"color: #717171\">следующая</a></div></td>";
+                $sBox .= '<input type="hidden" id="next_navigation_link" value="'.($sHref.($page + 1)).'">';
+                $sBox .= '<td><div id="nav_next_not_active"><a href="'.($sHref.($page + 1)).'" style="color: #717171">следующая</a></div></td>';
             }
             $sBox .= '</tr>';
             $sBox .= '</table>';
@@ -244,7 +269,7 @@ if (!$no_answers) {$xajax->printJavascript('/xajax/');}
         echo $sBox;
         // Страницы закончились
         
-        echo printPerPageSelect( $log_pp, 'p' );
+        echo printPerPageSelect($log_pp, 'p');
     ?></td>
 
 </tr>

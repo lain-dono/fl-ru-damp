@@ -1,26 +1,23 @@
 <?php
 
 
-ini_set('display_errors',1);
+ini_set('display_errors', 1);
 error_reporting(E_ALL ^ E_NOTICE);
-
 
 ini_set('max_execution_time', 0);
 ini_set('memory_limit', '512M');
 
-if(!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT']))
-{    
-    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME) . '/../../'), '/');
-} 
+if (!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT'])) {
+    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME).'/../../'), '/');
+}
 
-
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/config.php");
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/profiler.php");
 
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/account.php");
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/mem_storage.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . '/tu/models/TServiceOrderModel.php');
+require_once $_SERVER['DOCUMENT_ROOT'].'/tu/models/TServiceOrderModel.php';
 
 //------------------------------------------------------------------------------
 
@@ -39,24 +36,17 @@ $results = array();
 //------------------------------------------------------------------------------
 
 
-
 $code = TServiceOrderModel::model()->newOrderActivation(array(
     //'user_id' => 33,
     //'uname' => 'Вася',
     //'usurname' => 'Пупкин',
     //'email' => 'vasya-'.uniqid().'@test.lo',
     'email' => 'ddezinger@yandex.ru',
-    'tu_id' => rand(100,1000)
+    'tu_id' => rand(100, 1000),
     //'options' => NULL
 ));
 
-
-$results['code'] = sprintf('/tu/new-order/%s/',$code);
-
-
-
-
-
+$results['code'] = sprintf('/tu/new-order/%s/', $code);
 
 //$results['test'] = 'test';
 
@@ -80,8 +70,6 @@ if($ok)
 
 */
 
-
-
 //------------------------------------------------------------------------------
 
 //$profiler->stop('fill_frl_mem');
@@ -89,16 +77,12 @@ if($ok)
 //------------------------------------------------------------------------------
 
 
-
+//------------------------------------------------------------------------------
 
 
 //------------------------------------------------------------------------------
 
-
-
-//------------------------------------------------------------------------------
-
-array_walk($results, function(&$value, $key){
+array_walk($results, function (&$value, $key) {
     $value = sprintf('%s = %s'.PHP_EOL, $key, $value);
 });
 

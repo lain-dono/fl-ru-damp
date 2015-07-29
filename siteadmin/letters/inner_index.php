@@ -1,6 +1,6 @@
 <?php
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/xajax/letters.common.php' );
-$xajax->printJavascript( '/xajax/' );
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/letters.common.php';
+$xajax->printJavascript('/xajax/');
 ?>
 
 <style>
@@ -28,26 +28,26 @@ $xajax->printJavascript( '/xajax/' );
 <script type="text/javascript">
 var deliveryList = {
 					<?php
-					$deliveries = letters::getDeliveries();
-					$html = '';
-					$html .= "0:'Не выбрано',";
-					foreach($deliveries as $delivery) {
-						$html .= "{$delivery['id']}:'{$delivery['title']}',";
-					}
-					$html = preg_replace("/,$/", "", $html);
-					echo $html;
-					?>
+                    $deliveries = letters::getDeliveries();
+                    $html = '';
+                    $html .= "0:'Не выбрано',";
+                    foreach ($deliveries as $delivery) {
+                        $html .= "{$delivery['id']}:'{$delivery['title']}',";
+                    }
+                    $html = preg_replace('/,$/', '', $html);
+                    echo $html;
+                    ?>
 					};
 </script>
 
 <div id="letters_form_start"></div>
 <?php
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/siteadmin/letters/tpl.forms.php' );
+require_once $_SERVER['DOCUMENT_ROOT'].'/siteadmin/letters/tpl.forms.php';
 ?>
 
 
 	<div id="letters_add_div" class="i-shadow">
-	<?php require_once($_SERVER['DOCUMENT_ROOT'].'/siteadmin/letters/tpl.add.doc.php'); ?>
+	<?php require_once $_SERVER['DOCUMENT_ROOT'].'/siteadmin/letters/tpl.add.doc.php'; ?>
 	</div>
 
 <a name="letters_mass_action_status_div_a"></a>
@@ -212,7 +212,9 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/siteadmin/letters/tpl.forms.php' );
 								<a class="b-layout__link b-layout__link_bordbot_dot_0f71c8 b-search__ext-link" href="javascript:void(0)">Расширенный поиск</a><span class="b-ext-filter__toggler b-ext-filter__toggler_down"></span>
 							</td>
 							<td class="b-search__one b-search__one_padleft_15" style="vertical-align: middle;">
-                                <select name="dcount" onchange="letters.changeNums(<?=intval($_GET['tab'])?>, this.value); return false;"><option value="50">50</option><option value="100">100</option><? if ( intval($_GET['tab']) > 1 ) { ?><option value="0">Все</option><? } ?></select>
+                                <select name="dcount" onchange="letters.changeNums(<?=intval($_GET['tab'])?>, this.value); return false;"><option value="50">50</option><option value="100">100</option><?php if (intval($_GET['tab']) > 1) {
+    ?><option value="0">Все</option><?php 
+} ?></select>
 							</td>
 						</tr>
 					</tbody>
@@ -275,26 +277,29 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/siteadmin/letters/tpl.forms.php' );
 							</label>
 						</div>
 						<?php
-						$statuses = letters::getStatuses();
-						foreach($statuses as $status) {
-							?>
+                        $statuses = letters::getStatuses();
+                        foreach ($statuses as $status) {
+                            ?>
 							<div class="b-radio__item b-radio__item_padbot_10">
 								<input id="letters_filter_status_<?=$status['id']?>" name="letters_filter_status" type="radio" value="<?=$status['id']?>" class="b-radio__input" onClick="letters.changeStatus('filter', <?=$status['id']?>);">
 								<label for="letters_filter_status_<?=$status['id']?>" class="b-radio__label  b-radio__label_fontsize_13">
 								<?=$status['title']?>
 								</label>
-								<?php if($status['id']==2 || $status['id']==3) { ?>
+								<?php if ($status['id'] == 2 || $status['id'] == 3) {
+    ?>
 								<div id="letters_filter_status_date_div_<?=$status['id']?>" class="b-combo b-combo_inline-block b-combo_absolute b-combo_margtop_-6 b-combo_margleft_5" style="visibility: hidden;">
 									<div class="b-combo__input b-combo__input_width_125 b-combo__input_arrow-date_yes use_past_date date_format_use_text no_set_date_on_load use_past_date date_format_use_text b-combo__input_calendar">
 										<input id="letters_filter_status_date_<?=$status['id']?>" name="letters_filter_status_date_<?=$status['id']?>" class="b-combo__input-text" type="text" size="80" value="">
 										<span class="b-combo__arrow-date"></span> </div>
 								</div>
-								<?php } ?>
+								<?php 
+}
+                            ?>
 							</div>
 							<?php
-							$n = 1;
-						}
-						?>
+                            $n = 1;
+                        }
+                        ?>
 					</div>
 				</div>
 				<div class="b-form b-form_padbot_20">
@@ -375,29 +380,31 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/siteadmin/letters/tpl.forms.php' );
 
 </div>
 
-<?php if($js_cmd) { ?>
+<?php if ($js_cmd) {
+    ?>
 <script type="text/javascript">
 var is_js_cmd = true;
 window.addEvent('domready', function() {
 	<?php
-	switch($js_cmd) {
-		case 'tab':
-			?>
+    switch ($js_cmd) {
+        case 'tab':
+            ?>
 			letters.changeTabs(<?=$js_cmd_var1?>);
 			<?php
-			break;
-		case 'group':
-			?>
+            break;
+        case 'group':
+            ?>
 			letters.showGroup(<?=$js_cmd_var1?>);
 			<?php
-			break;
-		case 'doc':
-			?>
+            break;
+        case 'doc':
+            ?>
 			letters.showDoc(<?=$js_cmd_var1?>);
 			<?php
-			break;
-	}
-	?>
+            break;
+    }
+    ?>
 });
 </script>
-<?php } ?>
+<?php 
+} ?>

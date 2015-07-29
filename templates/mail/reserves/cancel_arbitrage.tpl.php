@@ -1,16 +1,16 @@
 <?php
 /**
- * Шаблон письма уведомление об отмене арбитража (П-16, П-17)
+ * Шаблон письма уведомление об отмене арбитража (П-16, П-17).
  */
 
 /**
- * Тема письма
+ * Тема письма.
  */
 $smail->subject = "Арбитраж по заказу «{$order['title']}» отменен";
 
 $role = $is_emp ? 'Исполнитель продолжил' : 'Вы можете продолжить';
 $title = reformat(htmlspecialchars($order['title']), 30, 0, 1);
-$order_url = $GLOBALS['host'] . tservices_helper::getOrderCardUrl($order['id']);
+$order_url = $GLOBALS['host'].tservices_helper::getOrderCardUrl($order['id']);
 ?>
 Здравствуйте.
 <br/>

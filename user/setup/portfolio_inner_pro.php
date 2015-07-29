@@ -1,15 +1,18 @@
-<?
+<?php
 
 //@todo: похоже шаблон не используется, но пока не трогаю
 //@todo: shop уже везде выпилин! а здесь связь магазина с портфолио что на сайте уже давно нет
 
 
-if (!$_in_setup) {header ("HTTP/1.0 403 Forbidden"); exit;}
+if (!$_in_setup) {
+    header ('HTTP/1.0 403 Forbidden');
+    exit;
+}
 unset($_SESSION['w_select']);	//сбрасываем переменную сессии отмеченных работ (для удаления работ и перетаскивания их из одного раздела в другие)
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/portfolio.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/professions.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/shop.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/kwords.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/portfolio.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/professions.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/shop.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/kwords.php';
 
 $DB = new DB('master');
 
@@ -19,76 +22,71 @@ $prfs = new professions();
 $profs = $prfs->GetSpecs($user->login);
 $size = sizeof($profs);
 $portf = new portfolio();
-$prjs = $portf->GetPortf($user->uid, "NULL", true);
+$prjs = $portf->GetPortf($user->uid, 'NULL', true);
 $portf_cnt = array();
 
 $shop_categories = shop::GetShopCategorys(false);
 
-if (!$prjs) include("portfolio_in_setup.php");
-	else {
-
-    $lp_id = 0;
-    $fp_id = 0;
-    $fprj_id = 0;
-    $lprj_id = 0;
+if (!$prjs) {
+    include 'portfolio_in_setup.php';
+} else {
+	    $lp_id = 0;
+	    $fp_id = 0;
+	    $fprj_id = 0;
+	    $lprj_id = 0;
 
     /**
      * Выбираем список профессий и считаем количество работ в каждом разделе.
      */
     $lastprof = -1;
-    $num_prjs = count($prjs);
-		$wrk_profs = $wrk_profs_names = array();
-    foreach ($prjs as $key => $prj)
-    {
-			$curprof = $prj['prof_id'];
-			$prjs[$key]['prj_pos_start'] = $prjs[$key]['prj_pos_end'] = false;
-			$prjs[$key]['wrk_pos_start'] = $prjs[$key]['wrk_pos_end'] = false;
-      $portf_cnt[$prj['prof_id']]++;
-			if ($lastprof != $curprof)
-			{
-			  $wrk_profs[] = $key;
-        $wrk_profs_names[$prj['prof_id']] = $prj['profname'];
-			  $lastprof = $curprof;
-			}
-    }
+	    $num_prjs = count($prjs);
+	    $wrk_profs = $wrk_profs_names = array();
+	    foreach ($prjs as $key => $prj) {
+	        $curprof = $prj['prof_id'];
+	        $prjs[$key]['prj_pos_start'] = $prjs[$key]['prj_pos_end'] = false;
+	        $prjs[$key]['wrk_pos_start'] = $prjs[$key]['wrk_pos_end'] = false;
+	        ++$portf_cnt[$prj['prof_id']];
+	        if ($lastprof != $curprof) {
+	            $wrk_profs[] = $key;
+	            $wrk_profs_names[$prj['prof_id']] = $prj['profname'];
+	            $lastprof = $curprof;
+	        }
+	    }
     /**
      * Начальная и конечная профессия (для сортировки).
      */
     reset($wrk_profs);
-    $prjs[current($wrk_profs)]['wrk_pos_start'] = true;
-    end($wrk_profs);
-    $prjs[current($wrk_profs)]['wrk_pos_end'] = true;
-    $last_wrk = current($wrk_profs);
+	    $prjs[current($wrk_profs)]['wrk_pos_start'] = true;
+	    end($wrk_profs);
+	    $prjs[current($wrk_profs)]['wrk_pos_end'] = true;
+	    $last_wrk = current($wrk_profs);
 
-    $lastprof = -1;
-    foreach ($wrk_profs as $key)
-    {
-      /**
+	    $lastprof = -1;
+	    foreach ($wrk_profs as $key) {
+	        /**
        * Последняя работа в профессии.
        */
-		  if (($key > 0) && !is_null($prjs[$key - 1]['name']))
-		  {
-  			$prjs[$key -1]['prj_pos_end'] = true;
+		  if (($key > 0) && !is_null($prjs[$key - 1]['name'])) {
+		      $prjs[$key - 1]['prj_pos_end'] = true;
 		  }
       /**
        * Первая работа в профессии.
        */
-		  if (($key < $num_prjs) && !is_null($prjs[$key]['name']))
-		  {
-  			$prjs[$key]['prj_pos_start'] = true;
+		  if (($key < $num_prjs) && !is_null($prjs[$key]['name'])) {
+		      $prjs[$key]['prj_pos_start'] = true;
 		  }
-    }
+	    }
     /**
      * Последняя работа.
      */
     $prjs[$num_prjs - 1]['prj_pos_end'] = true;
-    
+
     //var_dump($prjs);
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/portfoliopos.common.php");
-$xajax->printJavascript('/xajax/'); 
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/portfoliopos.common.php';
+	    $xajax->printJavascript('/xajax/'); 
 
-$aAllowedExt = array_diff( $GLOBALS['graf_array'], array('swf') )
+	    $aAllowedExt = array_diff($GLOBALS['graf_array'], array('swf'))
 ?>
 <style type="text/css">
 .flt-lnk:link, .flt-lnk:visited{
@@ -138,29 +136,61 @@ function toggle_shop() {
 errmsg1 = errmsg2 = errmsg3 = errmsg4 = errmsg5 = errmsg6 = errmsg7 = errmsg100 = errmsg201 = errmsg204 = errmsg205 = errmsg206 = errmsg202 = errmsg207 = errmsg208 = '';
 can_move = 1;
 
-<? if ($error_flag) {
-	if ($alert[1]) print("errmsg1=\"".ref_scr(view_error($alert[1]))."\";");
-  if ($alert[2]) print("errmsg2=\"".ref_scr(view_error($alert[2]))."\";");
-	if ($alert[3]) print("errmsg3=\"".ref_scr(view_error($alert[3]))."\";");
-	if ($alert[4]) print("errmsg4=\"".ref_scr(view_error($alert[4]))."\";");
-	if ($alert[5]) print("errmsg5=\"".ref_scr(view_error($alert[5]))."\";");
-	if ($alert[6]) print("errmsg6=\"".ref_scr(view_error($alert[6]))."\";");
-	if ($alert[7]) print("errmsg7=\"".ref_scr(view_error($alert[7]))."\";");
-	if ($alert[100]) print("errmsg100=\"".ref_scr(view_error($alert[100]))."\";");
-	if ($alert[201]) print("errmsg201=\"".ref_scr(view_error($alert[201]))."\";");
-	if ($alert[204]) print("errmsg204=\"".ref_scr(view_error($alert[204]))."\";");
-	if ($alert[205]) print("errmsg205=\"".ref_scr(view_error($alert[205]))."\";");
-	if ($alert[206]) print("errmsg206=\"".ref_scr(view_error($alert[206]))."\";");
-	if ($alert[202]) print("errmsg202=\"".ref_scr(view_error($alert[202]))."\";");
-	if ($alert[207]) print("errmsg207=\"".ref_scr(view_error($alert[207]))."\";");
-	if ($alert[208]) print("errmsg208=\"".ref_scr(view_error($alert[208]))."\";");
-?>
+<?php if ($error_flag) {
+    if ($alert[1]) {
+        print('errmsg1="'.ref_scr(view_error($alert[1])).'";');
+    }
+    if ($alert[2]) {
+        print('errmsg2="'.ref_scr(view_error($alert[2])).'";');
+    }
+    if ($alert[3]) {
+        print('errmsg3="'.ref_scr(view_error($alert[3])).'";');
+    }
+    if ($alert[4]) {
+        print('errmsg4="'.ref_scr(view_error($alert[4])).'";');
+    }
+    if ($alert[5]) {
+        print('errmsg5="'.ref_scr(view_error($alert[5])).'";');
+    }
+    if ($alert[6]) {
+        print('errmsg6="'.ref_scr(view_error($alert[6])).'";');
+    }
+    if ($alert[7]) {
+        print('errmsg7="'.ref_scr(view_error($alert[7])).'";');
+    }
+    if ($alert[100]) {
+        print('errmsg100="'.ref_scr(view_error($alert[100])).'";');
+    }
+    if ($alert[201]) {
+        print('errmsg201="'.ref_scr(view_error($alert[201])).'";');
+    }
+    if ($alert[204]) {
+        print('errmsg204="'.ref_scr(view_error($alert[204])).'";');
+    }
+    if ($alert[205]) {
+        print('errmsg205="'.ref_scr(view_error($alert[205])).'";');
+    }
+    if ($alert[206]) {
+        print('errmsg206="'.ref_scr(view_error($alert[206])).'";');
+    }
+    if ($alert[202]) {
+        print('errmsg202="'.ref_scr(view_error($alert[202])).'";');
+    }
+    if ($alert[207]) {
+        print('errmsg207="'.ref_scr(view_error($alert[207])).'";');
+    }
+    if ($alert[208]) {
+        print('errmsg208="'.ref_scr(view_error($alert[208])).'";');
+    }
+    ?>
 window.addEvent('domready', function() {
     if($$('div.errorBox')) {
         new Fx.Scroll(window).toElement($$('div.errorBox')[0].getPrevious());
     }
 });
-<? } ?>
+<?php 
+}
+	    ?>
 function add_preview(filepath){
   return;
   ext = filepath.value.substr(filepath.value.length-3,3);
@@ -267,14 +297,15 @@ edfrm = "<form action=\".\" method=\"post\" name=\"frm\" id=\"frm\" enctype=\"mu
 <tr>\
     <td height='45' valign='middle' colspan='2'>\
     <select id='new_prof' name='new_prof' style='width:638px'>\
-<?
-foreach ($wrk_profs_names as $key => $cname)
-{
-  if(!$is_pro && ($key==professions::BEST_PROF_ID || $key==professions::CLIENTS_PROF_ID)) continue;
+<?php
+foreach ($wrk_profs_names as $key => $cname) {
+    if (!$is_pro && ($key == professions::BEST_PROF_ID || $key == professions::CLIENTS_PROF_ID)) {
+        continue;
+    }
   //if($key==professions::BEST_PROF_ID && $portf_cnt[professions::BEST_PROF_ID] >= portfolio::MAX_BEST_WORKS) continue;
-  echo("<option value='$key'>".preg_replace('/\"/','\"',$cname)."</option>");
+  echo("<option value='$key'>".preg_replace('/\"/', '\"', $cname).'</option>');
 }
-?>
+	    ?>
     </select>\
 	<\/td>\
 <\/tr>\
@@ -304,7 +335,10 @@ foreach ($wrk_profs_names as $key => $cname)
   <td height='20' valign='bottom' colspan='2'>Загрузить работу:<\/td>\
 <\/tr>\
 <tr>\
-  <td height='auto' colspan='2'><input type='hidden' id='mfsz' name='MAX_FILE_SIZE' value='10485760'><input type='file' id='img' name='img' size='111'<? if ($is_pro) {?> onChange='add_preview(this);'<? } ?>>"+errmsg3+"\
+  <td height='auto' colspan='2'><input type='hidden' id='mfsz' name='MAX_FILE_SIZE' value='10485760'><input type='file' id='img' name='img' size='111'<?php if ($is_pro) {
+    ?> onChange='add_preview(this);'<?php 
+}
+	    ?>>"+errmsg3+"\
   <span id='renew-prev' class='renew-prew' style='visibility:hidden'><label><input name='upd_prev' value='1' type='checkbox'> Обновить превью?</label></span>\
   <span id='sdpict1' style='display:none;'>&nbsp;&nbsp;<a href='javascript:showpict(1)' class='blue'>Посмотреть загруженный файл</a>&nbsp;&nbsp;<a href='javascript:delpict(1)' title='Удалить'>[x]</a></span>\
   <br />С помощью этого поля возможно загрузить:<br />\
@@ -315,11 +349,17 @@ foreach ($wrk_profs_names as $key => $cname)
     <input type='file' id='sm_img' name='sm_img' size='111'>\
   <span id='sdpict2' style='visibility:hidden'>&nbsp;&nbsp;<a href='javascript:showpict(2)' class='blue'>Посмотреть загруженный файл</a>&nbsp;&nbsp;<a href='javascript:delpict(2)' title='Удалить'>[x]</a></span>\
     <br />С помощью этого поля возможно загрузить превью для закачиваемого файла.<br />\
-<? if(!$is_pro) { ?>    <strong>Превью отображается только у пользователей с аккаунтом <a href='/payed/' class='b-layout__link'><span title='Платный аккаунт' class='b-icon b-icon__pro b-icon__pro_f'></span></a></strong><br>\<? } ?>
-  	Формат: <?=implode(', ', $aAllowedExt )?>.<br />\
+<?php if (!$is_pro) {
+    ?>    <strong>Превью отображается только у пользователей с аккаунтом <a href='/payed/' class='b-layout__link'><span title='Платный аккаунт' class='b-icon b-icon__pro b-icon__pro_f'></span></a></strong><br>\<?php 
+}
+	    ?>
+  	Формат: <?=implode(', ', $aAllowedExt)?>.<br />\
   	Максимальный размер файла: 100 Кб.\
   <\/div>\
-  <? if ($alert[7]) { ?>"+errmsg7+"<? } ?>
+  <?php if ($alert[7]) {
+    ?>"+errmsg7+"<?php 
+}
+	    ?>
 	<\/td>\
 <\/tr>\
 <tr>\
@@ -350,9 +390,12 @@ foreach ($wrk_profs_names as $key => $cname)
 	<td colspan='2'><table style='font-size:100%; margin: 10px 0 0 20px;'><tr>\
     <td style='width: 145px; padding: 0 0 10px;'>Раздел<span style='font-weight:bold; color:#f00'>**</span>: </td><td style='padding: 0 0 10px;'>\
         <select style='width: 300px;' name='shop_category' id='shop_category' disabled='true'><option value='0'>Выберите раздел</option>\
-				<? foreach ($shop_categories as $ikey=>$cat) { ?>
+				<?php foreach ($shop_categories as $ikey => $cat) {
+    ?>
 				<option value='<?=$cat['id']?>'><?=$cat['name']?></option>\
-				<? } ?>\
+				<?php 
+}
+	    ?>\
 </select>"+errmsg208+"</td></tr><tr><td style='width: 145px; padding: 0 0 10px;'>Стоимость для продажи<span style='font-weight:bold; color:#f00'>**</span>:</td><td style='padding: 0 0 10px;'><select name='shop_cost_type' id='shop_cost_type' disabled='true'><option value='0'>USD<\/option><option value='1'>Euro<\/option><option value='2'>Руб<\/option></select> <input type='text' name='shop_cost' id='shop_cost' maxlength='6' disabled='true'/>"+errmsg100+"</td></tr><tr><td style='width: 145px; padding: 2px 0 10px; vertical-align:top;'>Теги (через запятую):</td><td style='padding: 0 0 10px;'>\
 <textarea rows='2' cols='20' style='height: 32px; width: 670px;' name='shop_tags' id='shop_tags' disabled='true' onkeyup='if (!(event.ctrlKey || event.shiftKey)) tags_count()'></textarea>\
 <div>Максимум 10 тегов по 20 символов в каждом</div>\
@@ -388,14 +431,17 @@ foreach ($wrk_profs_names as $key => $cname)
 <tr>\
 	<td height='45' valign='middle' colspan='2'>\
     <select id='v_new_prof' name='v_new_prof' style='width:638px'>\
-<?
-foreach ($wrk_profs_names as $key => $cname)
-{
-  if(!$is_pro && ($key==professions::BEST_PROF_ID || $key==professions::CLIENTS_PROF_ID)) continue;
-  if($key==professions::BEST_PROF_ID && $portf_cnt[professions::BEST_PROF_ID] >= portfolio::MAX_BEST_WORKS) continue;
-  echo("<option value='$key'>".preg_replace('/\"/','\"',$cname)."</option>");
+<?php
+foreach ($wrk_profs_names as $key => $cname) {
+    if (!$is_pro && ($key == professions::BEST_PROF_ID || $key == professions::CLIENTS_PROF_ID)) {
+        continue;
+    }
+    if ($key == professions::BEST_PROF_ID && $portf_cnt[professions::BEST_PROF_ID] >= portfolio::MAX_BEST_WORKS) {
+        continue;
+    }
+    echo("<option value='$key'>".preg_replace('/\"/', '\"', $cname).'</option>');
 }
-?>
+	    ?>
     </select>\
 	<\/td>\
 <\/tr>\
@@ -449,11 +495,17 @@ foreach ($wrk_profs_names as $key => $cname)
     <input type='file' id='v_sm_img' name='v_sm_img' size='111'>\
   <span id='v_sdpict2' style='visibility:hidden'><a href='javascript:showpict(2)' class='blue'>Посмотреть загруженный файл</a>&nbsp;&nbsp;<a href='javascript:v_delpict(2)' title='Удалить'>[x]</a></span>\
     <br />С помощью этого поля возможно загрузить превью для закачиваемого файла.<br />\
-<? if(!$is_pro) { ?>    <strong>Превью отображается только у пользователей с аккаунтом <a href='/payed/' class='b-layout__link'><span title='Платный аккаунт' class='b-icon b-icon__pro b-icon__pro_f'></span></a></strong><br />\<? } ?>
-  	Формат: <?=implode(', ', $aAllowedExt )?>.<br />\
+<?php if (!$is_pro) {
+    ?>    <strong>Превью отображается только у пользователей с аккаунтом <a href='/payed/' class='b-layout__link'><span title='Платный аккаунт' class='b-icon b-icon__pro b-icon__pro_f'></span></a></strong><br />\<?php 
+}
+	    ?>
+  	Формат: <?=implode(', ', $aAllowedExt)?>.<br />\
   	Максимальный размер файла: 100 Кб.\
   <\/div>\
-  <? if ($alert[207]) { ?>"+errmsg207+"<? } ?>
+  <?php if ($alert[207]) {
+    ?>"+errmsg207+"<?php 
+}
+	    ?>
 	<\/td>\
 <\/tr>\
 <tr>\
@@ -499,64 +551,71 @@ profnames = new Array();
 prjinprof = new Array();
 
 
-<?
+<?php
 	$ilast = $i = 0;
-  $lastprof = NULL;
-	$j = 0;
+	    $lastprof = NULL;
+	    $j = 0;
 
-  if($prjs) {
-    foreach($prjs as $ikey=>$prj) 
-    {
-
-
-        $d_shop = $DB->row("SELECT * FROM shop WHERE portfolio_id=?i", $prj['id']);
-        if ( $d_shop ) {
-            $d_shop = shop::GetItem($d_shop['id'],get_uid(), hasPermissions('shop'));
-            $prj['shop_category'] = $d_shop['category'];
-            $prj['shop_cost_type'] = $d_shop['currency'];
-            $prj['shop_cost'] = $d_shop['prise'];
-            $prj['shop_tags'] = $d_shop['tags'];
+	    if ($prjs) {
+	        foreach ($prjs as $ikey => $prj) {
+	            $d_shop = $DB->row('SELECT * FROM shop WHERE portfolio_id=?i', $prj['id']);
+	            if ($d_shop) {
+	                $d_shop = shop::GetItem($d_shop['id'], get_uid(), hasPermissions('shop'));
+	                $prj['shop_category'] = $d_shop['category'];
+	                $prj['shop_cost_type'] = $d_shop['currency'];
+	                $prj['shop_cost'] = $d_shop['prise'];
+	                $prj['shop_tags'] = $d_shop['tags'];
             //$prj['shop_info'] = $d_shop['addit'];
-            if($prj['in_shop']=='t') { $prj['in_shop'] = 1; } else { $prj['in_shop'] = 0; }
-        } else {
-            $prj['in_shop'] = 0;
-            $prj['shop_category'] = '';
-            $prj['shop_cost_type'] = '';
-            $prj['shop_cost'] = '';
-            $prj['shop_tags'] = '';
+            if ($prj['in_shop'] == 't') {
+                $prj['in_shop'] = 1;
+            } else {
+                $prj['in_shop'] = 0;
+            }
+	            } else {
+	                $prj['in_shop'] = 0;
+	                $prj['shop_category'] = '';
+	                $prj['shop_cost_type'] = '';
+	                $prj['shop_cost'] = '';
+	                $prj['shop_tags'] = '';
             //$prj['shop_info'] = '';
-        }
+	            }
 
-      if(!$is_pro && ($prj['prof_id']==professions::BEST_PROF_ID || $prj['prof_id']==professions::CLIENTS_PROF_ID)) continue;
-      if ($prj['id']) {
-        if($prj['is_video']=='t') $prj['is_video'] = 1;
-        $_POST['make_position'] = intval($_POST['make_position']);
-        $_POST['make_position_num'] = intval($_POST['make_position_num']);
-        print ("prjmpos[$i]='{$_POST['make_position']}';\nprjmpnum[$i]='{$_POST['make_position_num']}';\nprjn[".$prj['id']."] = '".$i."';\nprjid[$i] = '".$prj['id']."';\nprjname[$i] = '".htmlspecialchars_decode(input_ref_scr($prj['name']))."';\nprjpict[$i] = '".input_ref_scr($prj['pict'])."';\nprjprevpict[$i] = '".input_ref_scr($prj['prev_pict'])."';\nprjlink[$i] = '".input_ref_scr($prj['link'])."';\nprjdescr[$i] = '".htmlspecialchars_decode(input_ref_scr($prj['descr'],true))."';\nprjcost[$i] = '".$prj['prj_cost']."';\nprjcosttype[$i] = '".$prj['prj_cost_type']."';\nprjtime[$i] = '".$prj['prj_time_value']."';\nprjtimeei[$i] = '".$prj['prj_time_type']."';\nprjprevtype[$i] = '".$prj['prj_prev_type']."';\nprjinshop[$i] = '".$prj['in_shop']."';\nprjshopcosttype[$i] = '".$prj['shop_cost_type']."';\nprjshopcost[$i] = '".$prj['shop_cost']."';\nprjshopcategory[$i] = '".$prj['shop_category']."';\nprjshoptags[$i] = '".input_ref_scr($prj['shop_tags'])."';\nprjshopinfo[$i] = '".input_ref_scr($prj['shop_info'])."';\nprjisvideo[$i] = '".$prj['is_video']."';\nprjvideolink[$i] = '".input_ref_scr($prj['video_link'])."';\nprjvprevpict[$i] = '".input_ref_scr($prj['prev_pict'])."';\n\n");
-        $i++;
-      }
-      $curprof = $prj['prof_id'];
-      if ($lastprof != $curprof) {
-        // if ($lastprof != NULL && $i-$ilast > 1) print("prjinprof[".($j-1)."] = '".($i-$ilast)."';\n");
+	            if (!$is_pro && ($prj['prof_id'] == professions::BEST_PROF_ID || $prj['prof_id'] == professions::CLIENTS_PROF_ID)) {
+	                continue;
+	            }
+	            if ($prj['id']) {
+	                if ($prj['is_video'] == 't') {
+	                    $prj['is_video'] = 1;
+	                }
+	                $_POST['make_position'] = intval($_POST['make_position']);
+	                $_POST['make_position_num'] = intval($_POST['make_position_num']);
+	                print ("prjmpos[$i]='{$_POST['make_position']}';\nprjmpnum[$i]='{$_POST['make_position_num']}';\nprjn[".$prj['id']."] = '".$i."';\nprjid[$i] = '".$prj['id']."';\nprjname[$i] = '".htmlspecialchars_decode(input_ref_scr($prj['name']))."';\nprjpict[$i] = '".input_ref_scr($prj['pict'])."';\nprjprevpict[$i] = '".input_ref_scr($prj['prev_pict'])."';\nprjlink[$i] = '".input_ref_scr($prj['link'])."';\nprjdescr[$i] = '".htmlspecialchars_decode(input_ref_scr($prj['descr'], true))."';\nprjcost[$i] = '".$prj['prj_cost']."';\nprjcosttype[$i] = '".$prj['prj_cost_type']."';\nprjtime[$i] = '".$prj['prj_time_value']."';\nprjtimeei[$i] = '".$prj['prj_time_type']."';\nprjprevtype[$i] = '".$prj['prj_prev_type']."';\nprjinshop[$i] = '".$prj['in_shop']."';\nprjshopcosttype[$i] = '".$prj['shop_cost_type']."';\nprjshopcost[$i] = '".$prj['shop_cost']."';\nprjshopcategory[$i] = '".$prj['shop_category']."';\nprjshoptags[$i] = '".input_ref_scr($prj['shop_tags'])."';\nprjshopinfo[$i] = '".input_ref_scr($prj['shop_info'])."';\nprjisvideo[$i] = '".$prj['is_video']."';\nprjvideolink[$i] = '".input_ref_scr($prj['video_link'])."';\nprjvprevpict[$i] = '".input_ref_scr($prj['prev_pict'])."';\n\n");
+	                ++$i;
+	            }
+	            $curprof = $prj['prof_id'];
+	            if ($lastprof != $curprof) {
+	                // if ($lastprof != NULL && $i-$ilast > 1) print("prjinprof[".($j-1)."] = '".($i-$ilast)."';\n");
         // print ("prof_ids[$j] = '".$curprof['prof_id']."';\nprofnames[$j] = '".$curprof['name']."';\n");
-        print ("proftxt['".$curprof."']='".($curprof==$prof ? ($prev_type ? 't' : 'f') : $prj['proftext'])."';\n");
-        $j++;
-        $ilast = $i;
-        $lastprof = $curprof;
-      }
-    }
-  }
+        print ("proftxt['".$curprof."']='".($curprof == $prof ? ($prev_type ? 't' : 'f') : $prj['proftext'])."';\n");
+	                ++$j;
+	                $ilast = $i;
+	                $lastprof = $curprof;
+	            }
+	        }
+	    }
   //if ($i-$ilast > 0) print("prjinprof[".($j-1)."] = '".($i-$ilast+1)."';\n");
 ?>
 
 var prjnum = <?=$i?>;
 var profnum = <?=$j?>;
 var lastobj = 0;
-<?
-	if ($action == "portf_change" || $error_flag || $error){
- ?>
+<?php
+	if ($action == 'portf_change' || $error_flag || $error) {
+	    ?>
 	//window.navigate("#prof<?=$prof?>");
-<? } ?>
+<?php 
+	}
+	    ?>
 
   function showpict(pt) {
     var aa,sdbox;
@@ -703,9 +762,12 @@ var lastobj = 0;
 			document.getElementById('ff2').innerHTML = "<strong>Изменить видео<\/strong>";
 
     }
-<? if ($is_pro) {?>
+<?php if ($is_pro) {
+    ?>
     //add_preview_bv(prjpict[num]);
-<? } ?>
+<?php 
+}
+	    ?>
 	}
 	
 	function viewprof(profid){
@@ -870,34 +932,31 @@ var lastobj = 0;
   	}
 //-->
 </script>
-<?
+<?php
 
-if (isset($action) && $action == 'serv_change' && ($error_serv != ''))
-{
-  $frm_serv_val['tab_name_id'] = floatval($tab_name_id);
-  $frm_serv_val['exp'] = floatval($exp);
-	$frm_serv_val['cost_hour'] = $cost_hour;
-	$frm_serv_val['cost_month'] = $cost_month;
-	$frm_serv_val['cost_type_hour'] = $cost_type_hour;
-	$frm_serv_val['cost_type_month'] = $cost_type_month;
-	$frm_serv_val['text'] = $text;
-	$frm_serv_val['in_office'] = $in_office;
-	$frm_serv_val['prefer_sbr'] = $prefer_sbr;
-}
-else
-{
-  $frm_serv_val['tab_name_id'] = $user->tab_name_id;
-  $frm_serv_val['exp'] = $user->exp;
-	$frm_serv_val['cost_hour'] = $user->cost_hour;
-	$frm_serv_val['cost_month'] = $user->cost_month;
-	$frm_serv_val['cost_type_hour'] = $user->cost_type_hour;
-	$frm_serv_val['cost_type_month'] = $user->cost_type_month;
-	$frm_serv_val['text'] = $user->spec_text;
-	$frm_serv_val['in_office'] = $user->in_office;
-	$frm_serv_val['prefer_sbr'] = $user->prefer_sbr;
+if (isset($action) && $action == 'serv_change' && ($error_serv != '')) {
+    $frm_serv_val['tab_name_id'] = floatval($tab_name_id);
+    $frm_serv_val['exp'] = floatval($exp);
+    $frm_serv_val['cost_hour'] = $cost_hour;
+    $frm_serv_val['cost_month'] = $cost_month;
+    $frm_serv_val['cost_type_hour'] = $cost_type_hour;
+    $frm_serv_val['cost_type_month'] = $cost_type_month;
+    $frm_serv_val['text'] = $text;
+    $frm_serv_val['in_office'] = $in_office;
+    $frm_serv_val['prefer_sbr'] = $prefer_sbr;
+} else {
+    $frm_serv_val['tab_name_id'] = $user->tab_name_id;
+    $frm_serv_val['exp'] = $user->exp;
+    $frm_serv_val['cost_hour'] = $user->cost_hour;
+    $frm_serv_val['cost_month'] = $user->cost_month;
+    $frm_serv_val['cost_type_hour'] = $user->cost_type_hour;
+    $frm_serv_val['cost_type_month'] = $user->cost_type_month;
+    $frm_serv_val['text'] = $user->spec_text;
+    $frm_serv_val['in_office'] = $user->in_office;
+    $frm_serv_val['prefer_sbr'] = $user->prefer_sbr;
 }
 
-?>
+	    ?>
 
 <form action="." method="post" name="form_del_all" id="form_del_all">
 <div>
@@ -918,16 +977,29 @@ else
 <div>
 <input type="hidden" name="action" value="serv_change" />
 <input type="hidden" name="prjid" value="" />
-<? if ($error_serv) { ?><div style="padding:16px 32px 16px 32px;"><? print(view_error($error_serv));?></div><? } ?>
-<? if ($info_serv) { ?><div style="padding:8px 0px 0px 26px;"><?=view_info($info_serv)?></div><? } ?>
+<?php if ($error_serv) {
+    ?><div style="padding:16px 32px 16px 32px;"><?php print(view_error($error_serv));
+    ?></div><?php 
+}
+	    ?>
+<?php if ($info_serv) {
+    ?><div style="padding:8px 0px 0px 26px;"><?=view_info($info_serv)?></div><?php 
+}
+	    ?>
 <table style="width:100%" cellspacing="0" cellpadding="0">
 <tr>
 	<td style="width:100%;height:60px;padding-left:32px;padding-top:10px">
     <div class="b-select b-select_inline-block">
         <label class="b-select__label" for="b-select__select">Выберите название закладки:</label>
         <select id="tab_name_id" class="b-select__select b-select__select_inline-block b-select__select_width_110" name="tab_name_id">
-          <option value="0"<? if ($frm_serv_val['tab_name_id'] == 0) { ?> selected='selected'<? } ?>>Портфолио</option>
-          <option value="1"<? if ($frm_serv_val['tab_name_id'] == 1) { ?> selected='selected'<? } ?>>Услуги</option>
+          <option value="0"<?php if ($frm_serv_val['tab_name_id'] == 0) {
+    ?> selected='selected'<?php 
+}
+	    ?>>Портфолио</option>
+          <option value="1"<?php if ($frm_serv_val['tab_name_id'] == 1) {
+    ?> selected='selected'<?php 
+}
+	    ?>>Услуги</option>
         </select>
     </div>
 	</td>
@@ -942,23 +1014,23 @@ else
 <?php
 
 $specs_add = array();
-if ($is_pro) {
-    $specs_add = $prfs->GetProfsAddSpec(get_uid());
-}
+	    if ($is_pro) {
+	        $specs_add = $prfs->GetProfsAddSpec(get_uid());
+	    }
 
-if (!empty($specs_add)) {
-    $specs_add_array = array();
+	    if (!empty($specs_add)) {
+	        $specs_add_array = array();
 
-    for ($si = 0; $si<sizeof($specs_add); $si++) {
-        $specs_add_array[$si] = professions::GetProfNameWP($specs_add[$si], ' / ');
-    }
+	        for ($si = 0; $si < sizeof($specs_add); ++$si) {
+	            $specs_add_array[$si] = professions::GetProfNameWP($specs_add[$si], ' / ');
+	        }
 
-    $specs_add_string = join(", ", $specs_add_array);
-} else {
-    $specs_add_string = "Нет";
-}
+	        $specs_add_string = implode(', ', $specs_add_array);
+	    } else {
+	        $specs_add_string = 'Нет';
+	    }
 
-?>
+	    ?>
 <tr>
 	<td colspan="2" style="width:100%;padding-left:32px;padding-right:32px; padding-top:12px;"><a class="blue" href="/users/<?=$user->login?>/setup/specaddsetup/" id="ap11">Дополнительные специализации:</a>&nbsp;&nbsp;<?=$specs_add_string?></td>
 </tr>
@@ -975,7 +1047,7 @@ if (!empty($specs_add)) {
 </tr>
 
 
-<?
+<?php
 
 //}
 
@@ -996,9 +1068,9 @@ if (!empty($specs_add)) {
 	<td style="padding-left:6px;">
 	                    <div class="b-select">
                         <select id="cost_type_hour" class="b-select__select" name="cost_type_hour">
-                            <option value="0" <?=($frm_serv_val['cost_type_hour'] == 0 ? "selected='selected'" : "")?> >USD</option>
-                            <option value="1" <?=($frm_serv_val['cost_type_hour'] == 1 ? "selected='selected'" : "")?>>Euro</option>
-                            <option value="2" <?=($frm_serv_val['cost_type_hour'] == 2 ? "selected='selected'" : "")?>>Руб</option>
+                            <option value="0" <?=($frm_serv_val['cost_type_hour'] == 0 ? "selected='selected'" : '')?> >USD</option>
+                            <option value="1" <?=($frm_serv_val['cost_type_hour'] == 1 ? "selected='selected'" : '')?>>Euro</option>
+                            <option value="2" <?=($frm_serv_val['cost_type_hour'] == 2 ? "selected='selected'" : '')?>>Руб</option>
                         </select>
 	                    </div>
 	</td>
@@ -1011,40 +1083,49 @@ if (!empty($specs_add)) {
 	
 	                    <div class="b-select">
                         <select id="cost_type_month" class="b-select__select" name="cost_type_month">
-                            <option value="0" <?=($frm_serv_val['cost_type_month'] == 0 ? "selected='selected'" : "")?> >USD</option>
-                            <option value="1" <?=($frm_serv_val['cost_type_month'] == 1 ? "selected='selected'" : "")?>>Euro</option>
-                            <option value="2" <?=($frm_serv_val['cost_type_month'] == 2 ? "selected='selected'" : "")?>>Руб</option>
+                            <option value="0" <?=($frm_serv_val['cost_type_month'] == 0 ? "selected='selected'" : '')?> >USD</option>
+                            <option value="1" <?=($frm_serv_val['cost_type_month'] == 1 ? "selected='selected'" : '')?>>Euro</option>
+                            <option value="2" <?=($frm_serv_val['cost_type_month'] == 2 ? "selected='selected'" : '')?>>Руб</option>
                         </select>
 	                    </div>
 	
 	</td>
-	<td style="padding-left:6px;padding-right:6px;"><input type="text" id="cost_month" name="cost_month" value="<?=floatval($frm_serv_val['cost_month']);?>" maxlength="6" style="width:60px;" /></td>
+	<td style="padding-left:6px;padding-right:6px;"><input type="text" id="cost_month" name="cost_month" value="<?=floatval($frm_serv_val['cost_month']);
+	    ?>" maxlength="6" style="width:60px;" /></td>
 </tr>
 <tr>
 	<td style="height: 30px; padding-left: 32px; white-space: nowrap;">
     <div class="b-check">
-      <input type="checkbox" id="in_officel" name="in_office" value="1" <?=$frm_serv_val['in_office']=="t"?" checked='checked'":""?> class="b-check__input" />
+      <input type="checkbox" id="in_officel" name="in_office" value="1" <?=$frm_serv_val['in_office'] == 't' ? " checked='checked'" : ''?> class="b-check__input" />
       <label class="b-check__label b-check__label_bold b-check__label_color_71" for="in_officel">Ищу долгосрочную работу <span style="display:inline-block; vertical-align: baseline; line-height:1; padding: 0 0 0 15px; background: url(/images/icons-sprite.png) no-repeat -100px -337px;">в офисе</span> </label>
     </div>
  </td>
 	<td colspan="3" style="padding-left: 6px;">
 		<?/*<select  style="width: 155px;"" id="pf_country" name="w_country" onChange="cityUpd(this.value)">
-            <? foreach ($countries as $countid => $country): ?>
-            <option value="<?=$countid?>" <? if ($countid == $mFilter['country']) echo(" selected='selected'") ?> ><?=$country?></option>
-            <? endforeach; ?>
+            <?php foreach ($countries as $countid => $country): ?>
+            <option value="<?=$countid?>" <?php if ($countid == $mFilter['country']) {
+    echo(" selected='selected'");
+}
+	    ?> ><?=$country?></option>
+            <?php endforeach;
+	    ?>
         </select>&nbsp;&nbsp;&nbsp;
         <span id="frm_city">
             <select style="width: 155px;"" name="city" id="f_city">
-                <? foreach ($cities as $cityid => $city): ?>
-                <option value="<?=$cityid?>"<? if ($cityid == $mFilter['city']) echo(" selected='selected'") ?>><?=$city?></option>
-                <? endforeach; ?>
+                <?php foreach ($cities as $cityid => $city): ?>
+                <option value="<?=$cityid?>"<?php if ($cityid == $mFilter['city']) {
+    echo(" selected='selected'");
+}
+	    ?>><?=$city?></option>
+                <?php endforeach;
+	    ?>
             </select>
         </span>*/?>
 	</td>
 </tr>
 <?/* #0019741
 <tr>
-	<td style="padding-left: 32px; white-space: nowrap;"><label for="prefer_sbr"><strong><input type="checkbox" id="prefer_sbr" name="prefer_sbr" value="1" <?=$frm_serv_val['prefer_sbr']=="t"?"checked='checked'":""?> class="i-chk" style="position:relative; top:-1px;" /> Предпочитаю работать через сервис <span class="sbr-ic">Сделка без риска</span></strong></label></td>
+	<td style="padding-left: 32px; white-space: nowrap;"><label for="prefer_sbr"><strong><input type="checkbox" id="prefer_sbr" name="prefer_sbr" value="1" <?=$frm_serv_val['prefer_sbr'] == 't' ? "checked='checked'" : ''?> class="i-chk" style="position:relative; top:-1px;" /> Предпочитаю работать через сервис <span class="sbr-ic">Сделка без риска</span></strong></label></td>
 	<td colspan="3" style="padding-left: 6px;"></td>
 </tr>
  */ ?>
@@ -1063,7 +1144,7 @@ if (!empty($specs_add)) {
 </table>
 </div>
 </form>
-<? /*
+<?php /*
 <table width="100%"  cellspacing="0" cellpadding="0">
 <tr>
 	<td width="19" height="40">&nbsp;</td>
@@ -1080,69 +1161,73 @@ if (!empty($specs_add)) {
 </table>
 */?>
 
-<? $kwords = new kwords(); ?>
+<?php $kwords = new kwords();
+	    ?>
 
 
 
 
-<?
+<?php
     $lastprof = -1;
-    $j = 0;
-    $k = -1;
-    if ($prjs) foreach($prjs as $ikey=>$prj)
-    {
-      if((int)$prj['prof_id'] == 0 || (!$is_pro && ($prj['prof_id']==professions::BEST_PROF_ID || $prj['prof_id']==professions::CLIENTS_PROF_ID))) continue;
+	    $j = 0;
+	    $k = -1;
+	    if ($prjs) {
+	        foreach ($prjs as $ikey => $prj) {
+	            if ((int) $prj['prof_id'] == 0 || (!$is_pro && ($prj['prof_id'] == professions::BEST_PROF_ID || $prj['prof_id'] == professions::CLIENTS_PROF_ID))) {
+	                continue;
+	            }
 
-      $old_error_reporting = error_reporting();
-      error_reporting(0);
-      if(@$prj['prof_id'] > 0) $prof[$prj['prof_id']] = $prj['prof_id'];
-      error_reporting($old_error_reporting);      
+	            $old_error_reporting = error_reporting();
+	            error_reporting(0);
+	            if (@$prj['prof_id'] > 0) {
+	                $prof[$prj['prof_id']] = $prj['prof_id'];
+	            }
+	            error_reporting($old_error_reporting);      
 
-      $user_keys = $kwords->getUserKeys(get_uid(), $prj['prof_id']);  
-      
-			$curprof = $prj['prof_id'];
-			if ($lastprof != $curprof) {
-				$i = 1;
-				$k++;
-				if ($lastprof != -1) {
-				?>
+	            $user_keys = $kwords->getUserKeys(get_uid(), $prj['prof_id']);
+
+	            $curprof = $prj['prof_id'];
+	            if ($lastprof != $curprof) {
+	                $i = 1;
+	                ++$k;
+	                if ($lastprof != -1) {
+	                    ?>
 				</table>
 		</div>
-				<? }
-        if (isset($action) && $action == 'prof_change' && isset($saved_prof_id) && ($prj['prof_id'] == $saved_prof_id) && ($error_prof != ''))
-        {
-  				$prj['cost_hour']  = $_POST['prof_cost_hour'];
-  				$prj['cost_1000']  = $_POST['prof_cost_1000'];
-  				$prj['cost_type_hour']  = $_POST['prof_cost_type_hour'];
-  				$prj['cost_type']  = $_POST['prof_cost_type'];
-  				$prj['cost_from']  = $_POST['prof_cost_from'];
-  				$prj['cost_to']    = $_POST['prof_cost_to'];
-  				$prj['time_type']  = $_POST['prof_time_type'];
-  				$prj['time_from']  = $_POST['prof_time_from'];
-  				$prj['time_to']    = $_POST['prof_time_to'];
-        }
-        else
-        {
-  				$prj['cost_hour'] = floatval($prj['cost_hour']);
-  				$prj['cost_1000'] = floatval($prj['cost_1000']);
-  				$prj['cost_type_hour']  = intval($prj['cost_type_hour']);
-  				$prj['cost_type']  = intval($prj['cost_type']);
-  				$prj['cost_from'] = floatval($prj['cost_from']);
-  				$prj['cost_to']   = floatval($prj['cost_to']);
-  				$prj['time_type'] = intval($prj['time_type']);
-  				$prj['time_from'] = intval($prj['time_from']);
-  				$prj['time_to']   = intval($prj['time_to']);
-        }
+				<?php 
+	                }
+	                if (isset($action) && $action == 'prof_change' && isset($saved_prof_id) && ($prj['prof_id'] == $saved_prof_id) && ($error_prof != '')) {
+	                    $prj['cost_hour'] = $_POST['prof_cost_hour'];
+	                    $prj['cost_1000'] = $_POST['prof_cost_1000'];
+	                    $prj['cost_type_hour'] = $_POST['prof_cost_type_hour'];
+	                    $prj['cost_type'] = $_POST['prof_cost_type'];
+	                    $prj['cost_from'] = $_POST['prof_cost_from'];
+	                    $prj['cost_to'] = $_POST['prof_cost_to'];
+	                    $prj['time_type'] = $_POST['prof_time_type'];
+	                    $prj['time_from'] = $_POST['prof_time_from'];
+	                    $prj['time_to'] = $_POST['prof_time_to'];
+	                } else {
+	                    $prj['cost_hour'] = floatval($prj['cost_hour']);
+	                    $prj['cost_1000'] = floatval($prj['cost_1000']);
+	                    $prj['cost_type_hour'] = intval($prj['cost_type_hour']);
+	                    $prj['cost_type'] = intval($prj['cost_type']);
+	                    $prj['cost_from'] = floatval($prj['cost_from']);
+	                    $prj['cost_to'] = floatval($prj['cost_to']);
+	                    $prj['time_type'] = intval($prj['time_type']);
+	                    $prj['time_from'] = intval($prj['time_from']);
+	                    $prj['time_to'] = intval($prj['time_to']);
+	                }
 
-        $wrk_show_preview = $prj['gr_prevs'];
-				?>
+	                $wrk_show_preview = $prj['gr_prevs'];
+	                ?>
 <div id="sprof<?=$prj['prof_id']?>">
 <a name="prof<?=$curprof?>" id="prof<?=$curprof?>"></a>
 <form action="#prof<?=$curprof?>" method="post" enctype="multipart/form-data" name="frm_prof_<?=$prj['prof_id']?>" id="frm_prof_<?=$prj['prof_id']?>" onSubmit="this['btn_prof_<?=$prj['prof_id']?>'].value='Подождите'; this['btn_prof_<?=$prj['prof_id']?>'].disabled=true;">
 <div>
 <input type="hidden" name="action" value="prof_change" />
 <input type="hidden" name="prof_id" value="<?=$prj['prof_id']?>" />
-<? if ($prj['proftext'] == 't') { ?>
+<?php if ($prj['proftext'] == 't') {
+    ?>
 <input type="hidden" name="prof_cost_type" value="<?=$prj['cost_type']?>" />
 <input type="hidden" name="prof_cost_type_hour" value="<?=$prj['cost_type_hour']?>" />
 <input type="hidden" name="prof_cost_hour" value="<?=$prj['cost_hour']?>" />
@@ -1151,22 +1236,35 @@ if (!empty($specs_add)) {
 <input type="hidden" name="prof_time_type" value="<?=$prj['time_type']?>" />
 <input type="hidden" name="prof_time_from" value="<?=$prj['time_from']?>" />
 <input type="hidden" name="prof_time_to" value="<?=$prj['time_to']?>" />
-<? } else { ?>
+<?php 
+} else {
+    ?>
 <input type="hidden" name="prof_cost_1000" value="<?=$prj['cost_1000']?>" />
-<? } ?>
+<?php 
+}
+	                ?>
 
 <table style="width:100%"  cellspacing="0" cellpadding="0">
 <tr>
-  <td class="brdtop" style="width:20px;vertical-align:top;padding:8px 0px 0 12px;<?=($prj['prof_id']==professions::BEST_PROF_ID||$prj['prof_id']==professions::CLIENTS_PROF_ID?'background:#ffeda9':'')?>"><?
-      if ($prj['wrk_pos_start']) { ?><img id="icoup<?=$curprof?>" src="/images/ico_up0.gif" alt="" width="9" height="9"  onClick="changeProfPos(<?=$prj['prof_id']?>, '-1');" /><?} else { ?><img id="icoup<?=$curprof?>" src="/images/ico_up.gif" alt="" width="9" height="9"  onClick="changeProfPos(<?=$prj['prof_id']?>, '-1');" /><? } ?><br /><?
-      if ($prj['wrk_pos_end']) { ?><img id="icodn<?=$curprof?>" src="/images/ico_down0.gif" alt="" width="9" height="9"  style="margin-top:2px;" onClick="changeProfPos(<?=$prj['prof_id']?>, '1');" /><? } else { ?><img id="icodn<?=$curprof?>" src="/images/ico_down1.gif" alt="" width="9" height="9"  style="margin-top:2px;" onClick="changeProfPos(<?=$prj['prof_id']?>, '1');" /><? } ?></td>
-  <td class="brdtop" style="padding-right:22px;padding-top:4px;<?=($prj['prof_id']==professions::BEST_PROF_ID||$prj['prof_id']==professions::CLIENTS_PROF_ID?'background:#ffeda9':'')?>">
+  <td class="brdtop" style="width:20px;vertical-align:top;padding:8px 0px 0 12px;<?=($prj['prof_id'] == professions::BEST_PROF_ID || $prj['prof_id'] == professions::CLIENTS_PROF_ID ? 'background:#ffeda9' : '')?>"><?php
+      if ($prj['wrk_pos_start']) {
+          ?><img id="icoup<?=$curprof?>" src="/images/ico_up0.gif" alt="" width="9" height="9"  onClick="changeProfPos(<?=$prj['prof_id']?>, '-1');" /><?} else { ?><img id="icoup<?=$curprof?>" src="/images/ico_up.gif" alt="" width="9" height="9"  onClick="changeProfPos(<?=$prj['prof_id']?>, '-1');" /><?php 
+      }
+	                ?><br /><?php
+      if ($prj['wrk_pos_end']) {
+          ?><img id="icodn<?=$curprof?>" src="/images/ico_down0.gif" alt="" width="9" height="9"  style="margin-top:2px;" onClick="changeProfPos(<?=$prj['prof_id']?>, '1');" /><?php 
+      } else {
+          ?><img id="icodn<?=$curprof?>" src="/images/ico_down1.gif" alt="" width="9" height="9"  style="margin-top:2px;" onClick="changeProfPos(<?=$prj['prof_id']?>, '1');" /><?php 
+      }
+	                ?></td>
+  <td class="brdtop" style="padding-right:22px;padding-top:4px;<?=($prj['prof_id'] == professions::BEST_PROF_ID || $prj['prof_id'] == professions::CLIENTS_PROF_ID ? 'background:#ffeda9' : '')?>">
     <table style="width:100%"  cellspacing="0" cellpadding="0">
     <tr>
       <td style="width:60%"><h1><?=$prj['profname']?></h1></td>
       <td rowspan="3" style="vertical-align:top;text-align:right;padding-top:8px;">
         <table style="width:322px" cellspacing="0" cellpadding="0">
-<? if ($prj['proftext'] == 't') { ?>
+<?php if ($prj['proftext'] == 't') {
+    ?>
         <tr>
 
         	<td style="width:100%;"></td>
@@ -1175,9 +1273,9 @@ if (!empty($specs_add)) {
         	
 
                         <select name="prof_cost_type" id="prof_cost_type">
-                            <option value="0" <?=($prj['cost_type'] == 0 ? "selected='selected'" : "")?> >USD</option>
-                            <option value="1" <?=($prj['cost_type'] == 1 ? "selected='selected'" : "")?>>Euro</option>
-                            <option value="2" <?=($prj['cost_type'] == 2 ? "selected='selected'" : "")?>>Руб</option>
+                            <option value="0" <?=($prj['cost_type'] == 0 ? "selected='selected'" : '')?> >USD</option>
+                            <option value="1" <?=($prj['cost_type'] == 1 ? "selected='selected'" : '')?>>Euro</option>
+                            <option value="2" <?=($prj['cost_type'] == 2 ? "selected='selected'" : '')?>>Руб</option>
                         </select>
 
         	</td>
@@ -1189,22 +1287,24 @@ if (!empty($specs_add)) {
         	<td style="padding-left:6px;padding-top:4px;">
         	             <div class="b-select">
                         <select id="prof_cost_type_hour" class="b-select__select" name="prof_cost_type_hour">
-                            <option value="0" <?=($prj['cost_type_hour'] == 0 ? "selected='selected'" : "")?> >USD</option>
-                            <option value="1" <?=($prj['cost_type_hour'] == 1 ? "selected='selected'" : "")?>>Euro</option>
-                            <option value="2" <?=($prj['cost_type_hour'] == 2 ? "selected='selected'" : "")?>>Руб</option>
+                            <option value="0" <?=($prj['cost_type_hour'] == 0 ? "selected='selected'" : '')?> >USD</option>
+                            <option value="1" <?=($prj['cost_type_hour'] == 1 ? "selected='selected'" : '')?>>Euro</option>
+                            <option value="2" <?=($prj['cost_type_hour'] == 2 ? "selected='selected'" : '')?>>Руб</option>
                         </select>
         	             </div>
         	</td>
         	<td style="padding-left:6px;padding-right:6px;padding-top:4px;"><input type="text" id="prof_cost_hour" name="prof_cost_hour" value="<?=$prj['cost_hour']?>" maxlength="5" style="width:60px"/></td>
         </tr>
-<? } else { ?>
+<?php 
+} else {
+    ?>
         <tr>
         	<td style="border-bottom:1px #f0f4ff solid;padding:6px 0 6px 0;white-space:nowrap;">Стоимость работ
         	             <div class="b-select">
                         <select id="prof_cost_type" class="b-select__select" name="prof_cost_type">
-                            <option value="0" <?=($prj['cost_type'] == 0 ? "selected='selected'" : "")?> >USD</option>
-                            <option value="1" <?=($prj['cost_type'] == 1 ? "selected='selected'" : "")?>>Euro</option>
-                            <option value="2" <?=($prj['cost_type'] == 2 ? "selected='selected'" : "")?>>Руб</option>
+                            <option value="0" <?=($prj['cost_type'] == 0 ? "selected='selected'" : '')?> >USD</option>
+                            <option value="1" <?=($prj['cost_type'] == 1 ? "selected='selected'" : '')?>>Euro</option>
+                            <option value="2" <?=($prj['cost_type'] == 2 ? "selected='selected'" : '')?>>Руб</option>
                         </select>
                       </div>
         	</td>
@@ -1214,7 +1314,19 @@ if (!empty($specs_add)) {
         	<td style="border-bottom:1px #f0f4ff solid;padding:6px 0px 6px 6px;"><input type="text" id="prof_cost_from" name="prof_cost_to" value="<?=$prj['cost_to']?>" maxlength="10" style="width:60px"/></td>
         </tr>
         <tr>
-        	<td style="border-bottom:1px #f0f4ff solid;padding:6px 0 6px 0;white-space:nowrap;">Сроки &nbsp;&nbsp;&nbsp;<select id="prof_time_type" name="prof_time_type"><option value='0'<? if ($prj['time_type']==0) { ?> selected="selected"<? } ?>>в часах</option><option value='1'<? if ($prj['time_type']==1) { ?> selected="selected"<? } ?>>в днях</option><option value='2'<? if ($prj['time_type']==2) { ?>  selected="selected"<? } ?>>в месяцах</option><option value='3'<? if ($prj['time_type']==3) { ?> selected="selected"<? } ?>>в минутах</option></select></td>
+        	<td style="border-bottom:1px #f0f4ff solid;padding:6px 0 6px 0;white-space:nowrap;">Сроки &nbsp;&nbsp;&nbsp;<select id="prof_time_type" name="prof_time_type"><option value='0'<?php if ($prj['time_type'] == 0) {
+    ?> selected="selected"<?php 
+}
+    ?>>в часах</option><option value='1'<?php if ($prj['time_type'] == 1) {
+    ?> selected="selected"<?php 
+}
+    ?>>в днях</option><option value='2'<?php if ($prj['time_type'] == 2) {
+    ?>  selected="selected"<?php 
+}
+    ?>>в месяцах</option><option value='3'<?php if ($prj['time_type'] == 3) {
+    ?> selected="selected"<?php 
+}
+    ?>>в минутах</option></select></td>
         	<td style="border-bottom:1px #f0f4ff solid;padding:6px 0 6px 6px;text-align:right;">от</td>
         	<td style="border-bottom:1px #f0f4ff solid;padding:6px 6px 6px 6px;"><input type="text" id="prof_time_from" name="prof_time_from" value="<?=$prj['time_from']?>" maxlength="2" style="width:60px" /></td>
         	<td style="border-bottom:1px #f0f4ff solid;padding:6px 0 6px 6px;text-align:right;">до</td>
@@ -1225,9 +1337,9 @@ if (!empty($specs_add)) {
         	
         	             <div class="b-select">
                         <select class="b-select__select" name="prof_cost_type_hour" id="prof_cost_type_hour">
-                            <option value="0" <?=($prj['cost_type_hour'] == 0 ? "selected='selected'" : "")?>  >USD</option>
-                            <option value="1" <?=($prj['cost_type_hour'] == 1 ? "selected='selected'" : "")?>>Euro</option>
-                            <option value="2" <?=($prj['cost_type_hour'] == 2 ? "selected='selected'" : "")?>>Руб</option>
+                            <option value="0" <?=($prj['cost_type_hour'] == 0 ? "selected='selected'" : '')?>  >USD</option>
+                            <option value="1" <?=($prj['cost_type_hour'] == 1 ? "selected='selected'" : '')?>>Euro</option>
+                            <option value="2" <?=($prj['cost_type_hour'] == 2 ? "selected='selected'" : '')?>>Руб</option>
                         </select>
                       </div>
         	
@@ -1237,7 +1349,9 @@ if (!empty($specs_add)) {
         	<td style="padding:6px 0 6px 6px;"></td>
         	<td style="padding:6px 0px 6px 6px;"></td>
         </tr>
-<? } ?>
+<?php 
+}
+	                ?>
         </table>
       </td>
     </tr>
@@ -1245,25 +1359,38 @@ if (!empty($specs_add)) {
       <td>Уточнения к разделу:</td>
     </tr>
     <tr>
-    <? $profText = ($errorProfText && $saved_prof_id == $prj['prof_id']) ? $errorProfText : $prj['portf_text']; ?>
+    <?php $profText = ($errorProfText && $saved_prof_id == $prj['prof_id']) ? $errorProfText : $prj['portf_text'];
+	                ?>
       <td style="padding-top:0px;padding-right:12px;vertical-align:right; padding-bottom:10px;"><textarea cols="20" rows="4" id="prof_text" name="prof_text" style="width:90%;height:56px;" onkeyup="if (this.value.length > 300) this.value=this.value.slice(0, 300)"><?=input_ref($profText)?></textarea><br />Можно использовать &lt;b&gt;&lt;i&gt;&lt;p&gt;&lt;ul&gt;&lt;li&gt;</td>
     </tr>
-    <? if($prj['prof_id'] > 0): ?>
+    <?php if ($prj['prof_id'] > 0): ?>
     <tr>
       <td style="padding: 0 0 5px 0;"><br />Ключевые слова:</td>
     </tr>
     <tr>
       <td style="padding-top:0px;padding-right:12px;vertical-align:right;">
             <div style="position:   relative;" id="body_<?=$prj['prof_id']?>"> 
-			     <textarea  cols="20" rows="2" name="prof_keys[<?=$prj['prof_id']?>]" id="user_keys_<?=$prj['prof_id']?>" style="width:90%; height:36px;"><?=stripcslashes(implode(", ", $user_keys))?></textarea>
+			     <textarea  cols="20" rows="2" name="prof_keys[<?=$prj['prof_id']?>]" id="user_keys_<?=$prj['prof_id']?>" style="width:90%; height:36px;"><?=stripcslashes(implode(', ', $user_keys))?></textarea>
 	        </div>
 	        Ключевые слова вводятся через запятую.
       </td>
     </tr>
-    <? endif; ?>
+    <?php endif;
+	                ?>
     <tr>
       <td>
-        <? if ($is_pro) { ?> <span style="margin-right:32px;"><div class="b-check"><input id="grprev<?=$curprof?>" class="b-check__input" type="checkbox"  value="1" onClick="changeGrPrev(<?=$curprof?>, this.checked);" <? if ($prj['gr_prevs'] == 't') print "checked='checked'" ?> <? if (!$is_pro) print " disabled='disabled'" ?> /><label class="b-check__label b-check__label_bold" for="grprev<?=$curprof?>">Включить в разделе превью</label><? if (!$is_pro) { ?> <div style="padding:2px 2px 2px 4px;background-color:#FFE4C4;">Только для <a class="b-layout__link" href="/payed/"><span title="владельцев платного аккаунта" class="b-icon b-icon__pro b-icon__pro_f"></span></a></div> <? } } ?></div></span>
+        <?php if ($is_pro) {
+    ?> <span style="margin-right:32px;"><div class="b-check"><input id="grprev<?=$curprof?>" class="b-check__input" type="checkbox"  value="1" onClick="changeGrPrev(<?=$curprof?>, this.checked);" <?php if ($prj['gr_prevs'] == 't') {
+    print "checked='checked'";
+}
+    ?> <?php if (!$is_pro) {
+    print " disabled='disabled'";
+}
+    ?> /><label class="b-check__label b-check__label_bold" for="grprev<?=$curprof?>">Включить в разделе превью</label><?php if (!$is_pro) {
+    ?> <div style="padding:2px 2px 2px 4px;background-color:#FFE4C4;">Только для <a class="b-layout__link" href="/payed/"><span title="владельцев платного аккаунта" class="b-icon b-icon__pro b-icon__pro_f"></span></a></div> <?php 
+}
+}
+	                ?></div></span>
       </td>
       <td style="padding:8px 0px 12px 0px;text-align:right;"><input type="submit" id="btn_prof_<?=$prj['prof_id']?>" name="btn_prof_<?=$prj['prof_id']?>" value="Сохранить" /></td>
     </tr>
@@ -1272,21 +1399,32 @@ if (!empty($specs_add)) {
 
   </tr>
   </table>
-  <table cellspacing="0" cellpadding="0" style="width:100%;background:<?=($prj['prof_id']==professions::BEST_PROF_ID||$prj['prof_id']==professions::CLIENTS_PROF_ID?'#fff9e3':'#eef2fb')?>">
+  <table cellspacing="0" cellpadding="0" style="width:100%;background:<?=($prj['prof_id'] == professions::BEST_PROF_ID || $prj['prof_id'] == professions::CLIENTS_PROF_ID ? '#fff9e3' : '#eef2fb')?>">
   <tr>
     <td style="padding:6px 12px 6px 28px;text-align:left;vertical-align:middle;">
-      <? if ($error_prof && $saved_prof_id == $prj['prof_id']) print(view_error($error_prof)); ?>
-      <? if ($info_prof && $saved_prof_id == $prj['prof_id']) { ?><?=view_info($info_prof)?><? } ?>
+      <?php if ($error_prof && $saved_prof_id == $prj['prof_id']) {
+    print(view_error($error_prof));
+}
+	                ?>
+      <?php if ($info_prof && $saved_prof_id == $prj['prof_id']) {
+    ?><?=view_info($info_prof)?><?php 
+}
+	                ?>
       &nbsp;
     </td>
     <td style="padding:6px 4px 6px 6px;text-align:right;vertical-align:middle;">
-      <? if($portf_cnt[professions::BEST_PROF_ID] >= portfolio::MAX_BEST_WORKS && $prj['prof_id']==professions::BEST_PROF_ID) { ?>
+      <?php if ($portf_cnt[professions::BEST_PROF_ID] >= portfolio::MAX_BEST_WORKS && $prj['prof_id'] == professions::BEST_PROF_ID) {
+    ?>
         Вы не можете добавить больше <?=portfolio::MAX_BEST_WORKS?> работ в этот раздел.
-      <? } else { ?>
+      <?php 
+} else {
+    ?>
         <a href="#prof<?=$curprof?>" onClick="addprj('<?=$curprof?>');">
           <img src="/images/btnadd.gif" alt="Добавить работу" width="169" height="28" />
         </a>
-      <? } ?>
+      <?php 
+}
+	                ?>
     </td>
   </tr>
   <tr>
@@ -1295,11 +1433,9 @@ if (!empty($specs_add)) {
 	  <tr>
 	  	<td style="width:100%"><div id="w_count_selected_<?=$curprof?>" style="font-weight:bold; padding:21px 30px 21px 30px;">Выделено 0 работ</div></td>
 
-<?
-		if (sizeof($wrk_profs_names) > 1)
-		{
-
-?>
+<?php
+		if (sizeof($wrk_profs_names) > 1) {
+		    ?>
 
 	  	<td>
 	  		<div style="background:#E4E4E4; height:28px; padding:3px 5px 0px 5px;">
@@ -1310,24 +1446,26 @@ if (!empty($specs_add)) {
 			  		<select  disabled="disabled" id="w_move_<?=$curprof?>_select">
 			  		<option value="0">Выберите раздел...</option>
 
-			  		<?
+			  		<?php
 			  		
-			  		foreach($wrk_profs_names as $wkey=>$wvalue)
-			  		{
-                        if(!$is_pro && ($wkey==professions::BEST_PROF_ID || $wkey==professions::CLIENTS_PROF_ID)) continue;
-                        if($wkey==professions::BEST_PROF_ID && $portf_cnt[professions::BEST_PROF_ID] >= portfolio::MAX_BEST_WORKS) continue;
-			  			if ($wkey != $curprof)
-			  			{
-			  		
-			  		?>
+			  		foreach ($wrk_profs_names as $wkey => $wvalue) {
+			  		    if (!$is_pro && ($wkey == professions::BEST_PROF_ID || $wkey == professions::CLIENTS_PROF_ID)) {
+			  		        continue;
+			  		    }
+			  		    if ($wkey == professions::BEST_PROF_ID && $portf_cnt[professions::BEST_PROF_ID] >= portfolio::MAX_BEST_WORKS) {
+			  		        continue;
+			  		    }
+			  		    if ($wkey != $curprof) {
+			  		        ?>
 
 			  		<option value="<?=$wkey?>"><?=$wvalue?></option>
 			  		
-			  		<?
-			  			}
+			  		<?php
+
+			  		    }
 			  		}
-			  		
-			  		?>
+
+		    ?>
 
 			  		</select>
 			  	</td>
@@ -1337,10 +1475,11 @@ if (!empty($specs_add)) {
 			</div>
 	  	</td>
 
-<?
+<?php
+
 		}
 
-?>
+	                ?>
 	  	<td><div style="background:#E4E4E4; height:30px; padding:5px 0px 0px 0px; margin:0px 5px 0px 10px;"><input type="button" disabled="disabled"  id="w_delete_<?=$curprof?>_btn" value="Удалить все выделенные работы" onClick="deleteRubricWorks(<?=$curprof?>)" /><div style="display:none;" id="w_delete_<?=$curprof?>">Удалить все выделенные работы?</div></div></td>
 	  </tr>
 	  </table>
@@ -1360,67 +1499,85 @@ if (!empty($specs_add)) {
 <div id="editform<?=$curprof?>" style="visibility: hidden;"></div>
 
 <table cellspacing="0" cellpadding="4" style="width:100%">
-<? if ($prj['id']) { ?>
-<?	} else { ?>
+<?php if ($prj['id']) {
+    ?>
+<?php	
+} else {
+    ?>
 <tr>
 	<td style="text-align:center; height:20px">В этом разделе нет работ</td>
 </tr>
-<? }
-        $end_table='</table>';
-		$lastprof = $curprof;
-			}
-			if ($prj['id']) {
-				if ($error_flag && $prj_id == $prj['id']) $errprjnum = $j;
-				$prj['prj_cost'] = floatval($prj['prj_cost']);
-		?>
+<?php 
+}
+	                $end_table = '</table>';
+	                $lastprof = $curprof;
+	            }
+	            if ($prj['id']) {
+	                if ($error_flag && $prj_id == $prj['id']) {
+	                    $errprjnum = $j;
+	                }
+	                $prj['prj_cost'] = floatval($prj['prj_cost']);
+	                ?>
 <tr>
   <td id="sproj<?=$prj['id']?>a" style="padding-right:0px;padding-left:8px;padding-bottom:0px;" class="boxbt">
 		<table cellspacing="0" cellpadding="0"  style="width:100%;margin-right:0px;margin-left:0px;">
 		<tr valign="top">
       <td rowspan="3" style="width:6px;padding:7px 0px 2px 16px;"><input type="checkbox" id="w_select_<?=$curprof?>_<?=$prj['id']?>" name="w_select_<?=$curprof?>_<?=$prj['id']?>" value="1" onclick="selectRubricCount(<?=$curprof?>, <?=$prj['id']?>)" /></td>
       <td  rowspan="3" style="width:6px;padding:7px 20px 2px 3px;">
-      <? if ($prj['prj_pos_start']) { ?><img id="icoupw<?=$prj['id']?>" src="/images/ico_up0.gif" style="margin-top:2px;" alt="" width="9" height="9"  onClick="changePos(<?=$curprof?>, <?=$prj['id']?>, '-1');" /><? } else { ?><img id="icoupw<?=$prj['id']?>" src="/images/ico_up.gif" style="margin-top:2px;" alt="" width="9" height="9"  onClick="changePos(<?=$curprof?>, <?=$prj['id']?>, '-1');"/><? } ?><br />
-      <? if ($prj['prj_pos_end']) { ?><img id="icodnw<?=$prj['id']?>" src="/images/ico_down0.gif" style="margin-top:2px;" alt="" width="9" height="9"  onClick="changePos(<?=$curprof?>, <?=$prj['id']?>, '1');"/><? } else { ?><img id="icodnw<?=$prj['id']?>" src="/images/ico_down1.gif" style="margin-top:2px;" alt="" width="9" height="9"  onClick="changePos(<?=$curprof?>, <?=$prj['id']?>, '1');"/><? } ?></td>
+      <?php if ($prj['prj_pos_start']) {
+    ?><img id="icoupw<?=$prj['id']?>" src="/images/ico_up0.gif" style="margin-top:2px;" alt="" width="9" height="9"  onClick="changePos(<?=$curprof?>, <?=$prj['id']?>, '-1');" /><?php 
+} else {
+    ?><img id="icoupw<?=$prj['id']?>" src="/images/ico_up.gif" style="margin-top:2px;" alt="" width="9" height="9"  onClick="changePos(<?=$curprof?>, <?=$prj['id']?>, '-1');"/><?php 
+}
+	                ?><br />
+      <?php if ($prj['prj_pos_end']) {
+    ?><img id="icodnw<?=$prj['id']?>" src="/images/ico_down0.gif" style="margin-top:2px;" alt="" width="9" height="9"  onClick="changePos(<?=$curprof?>, <?=$prj['id']?>, '1');"/><?php 
+} else {
+    ?><img id="icodnw<?=$prj['id']?>" src="/images/ico_down1.gif" style="margin-top:2px;" alt="" width="9" height="9"  onClick="changePos(<?=$curprof?>, <?=$prj['id']?>, '1');"/><?php 
+}
+	                ?></td>
       <td  rowspan="2" id="num<?=$prj['id']?>" style="width:1px;padding-left:5px; padding-top:7px;"><?=$i?>.</td>
       <td colspan="2" style="width:522px; padding-top:7px;">
 			<a href="/users/<?=$user->login?>/viewproj.php?prjid=<?=$prj['id']?>" id="ap2<?=$j?>" target="_blank" class="blue" style="font-weight: bold; word-wrap:break-word"><?= reformat($prj['name'], 20, 0, 1)?></a><br />
-			<? /*=(($prj['descr'])?$prj['descr']."</br>":"") */?>
-			<?=(($prj['link'])?"<div style='margin-top:2px;margin-bottom:2px;'>".reformat($prj['link'])."</div>":"")?></td>
+			<?php /*=(($prj['descr'])?$prj['descr']."</br>":"") */?>
+			<?=(($prj['link']) ? "<div style='margin-top:2px;margin-bottom:2px;'>".reformat($prj['link']).'</div>' : '')?></td>
 		</tr>
 		<tr>
-      <td  style="width:200px;padding:8px 0 8px 0;text-align:left;vertical-align:top;" id="previmg<?=$prj['id']?>" is_text="<?=(int)($prj['prj_prev_type']==1)?>">
-		  <? if ($wrk_show_preview == 't') { ?>
-			<?
-        if ($is_pro)
-        {
-          if ($prj['gr_prevs'] == 't')
-          {
-            if ($prj['prj_prev_type'])
-            {
-      ?>
+      <td  style="width:200px;padding:8px 0 8px 0;text-align:left;vertical-align:top;" id="previmg<?=$prj['id']?>" is_text="<?=(int) ($prj['prj_prev_type'] == 1)?>">
+		  <?php if ($wrk_show_preview == 't') {
+    ?>
+			<?php
+        if ($is_pro) {
+            if ($prj['gr_prevs'] == 't') {
+                if ($prj['prj_prev_type']) {
+                    ?>
         <div style="width:200px"><?=reformat2($prj['descr'], 27)?></div></div>
-			<?
-            }
-            else
-            {
-      ?>
-				<div  style="width:200px;height:200px;text-align:left;vertical-align:top;"><a href="/users/<?=$user->login?>/viewproj.php?prjid=<?=$prj['id']?>" target="_blank" class="blue"><?=view_preview($user->login, $prj['prev_pict'], "upload", 'left',false,false, '', 200)?></a></div>
-			<?
-            }
-          }
-          else
-          {
-      ?>
+			<?php
+
+                } else {
+                    ?>
+				<div  style="width:200px;height:200px;text-align:left;vertical-align:top;"><a href="/users/<?=$user->login?>/viewproj.php?prjid=<?=$prj['id']?>" target="_blank" class="blue"><?=view_preview($user->login, $prj['prev_pict'], 'upload', 'left', false, false, '', 200)?></a></div>
+			<?php
+
+                }
+            } else {
+                ?>
 				<div  style="width:200px;height:200px;text-align:left;vertical-align:top;"><a href="/users/<?=$user->login?>/viewproj.php?prjid=<?=$prj['id']?>" target="_blank" class="blue"><img src="/images/unimaged.gif" width="200" height="124" alt="Изображение автором не загружено"  /></a></div>
-			<?
-          }
-       } else {
+			<?php
+
+            }
+        } else {
             ?>
 &nbsp;
-            <?
+            <?php
+
         }
-			?>
-			<? } else { ?><div style="width:200px">&nbsp;</div><? } ?></td>
+    ?>
+			<?php 
+} else {
+    ?><div style="width:200px">&nbsp;</div><?php 
+}
+	                ?></td>
 			<td  style="width:284px;padding:8px 8px 8px 32px;">
         <form action="javascript:void(null);" method="post" name="prprfrm<?=$prj['id']?>" id="prprfrm<?=$prj['id']?>" onsubmit="changePorftPrice(<?=$prj['id']?>)">
         <div>
@@ -1432,15 +1589,27 @@ if (!empty($specs_add)) {
     			
     			
                         <select name="prj_cost_type" id="prj_cost_type_<?=$prj['id']?>">
-                            <option value="0" <?=($prj['prj_cost_type'] == 0 ? "selected='selected'" : "")?> >USD</option>
-                            <option value="1" <?=($prj['prj_cost_type'] == 1 ? "selected='selected'" : "")?>>Euro</option>
-                            <option value="2" <?=($prj['prj_cost_type'] == 2 ? "selected='selected'" : "")?>>Руб</option>
+                            <option value="0" <?=($prj['prj_cost_type'] == 0 ? "selected='selected'" : '')?> >USD</option>
+                            <option value="1" <?=($prj['prj_cost_type'] == 1 ? "selected='selected'" : '')?>>Euro</option>
+                            <option value="2" <?=($prj['prj_cost_type'] == 2 ? "selected='selected'" : '')?>>Руб</option>
                         </select>
     			</td>
     		</tr>
      		<tr valign="top">
       		<td style="padding-bottom:10px;">Временные затраты</td>
-      		<td style="padding-bottom:10px;"><input type='text' id='prj_time_value_<?=$prj['id']?>' name='prj_time_value' maxlength="6" value="<?=$prj['prj_time_value']?>" style='width:47px;' onchange="document.getElementById('btn_prj_<?=$prj['id']?>').disabled=false" onkeydown="document.getElementById('btn_prj_<?=$prj['id']?>').disabled=false;document.getElementById('prj_msg_<?=$prj['id']?>').innerHTML='&nbsp;';" /> <select id='prj_time_type_<?=$prj['id']?>' name='prj_time_type' onchange="document.getElementById('btn_prj_<?=$prj['id']?>').disabled=false" onkeydown="document.getElementById('btn_prj_<?=$prj['id']?>').disabled=false;document.getElementById('prj_msg_<?=$prj['id']?>').innerHTML='&nbsp;';"><option value='0'<? if ($prj['prj_time_type'] == 0) { ?> selected='selected'<? } ?>>в часах</option><option value='1'<? if ($prj['prj_time_type'] == 1) { ?> selected='selected'<? } ?>>в днях</option><option value='2'<? if ($prj['prj_time_type'] == 2) { ?> selected='selected'<? } ?>>в месяцах</option><option value='3'<? if ($prj['prj_time_type'] == 3) { ?> selected='selected'<? } ?>>в минутах</option></select></td>
+      		<td style="padding-bottom:10px;"><input type='text' id='prj_time_value_<?=$prj['id']?>' name='prj_time_value' maxlength="6" value="<?=$prj['prj_time_value']?>" style='width:47px;' onchange="document.getElementById('btn_prj_<?=$prj['id']?>').disabled=false" onkeydown="document.getElementById('btn_prj_<?=$prj['id']?>').disabled=false;document.getElementById('prj_msg_<?=$prj['id']?>').innerHTML='&nbsp;';" /> <select id='prj_time_type_<?=$prj['id']?>' name='prj_time_type' onchange="document.getElementById('btn_prj_<?=$prj['id']?>').disabled=false" onkeydown="document.getElementById('btn_prj_<?=$prj['id']?>').disabled=false;document.getElementById('prj_msg_<?=$prj['id']?>').innerHTML='&nbsp;';"><option value='0'<?php if ($prj['prj_time_type'] == 0) {
+    ?> selected='selected'<?php 
+}
+	                ?>>в часах</option><option value='1'<?php if ($prj['prj_time_type'] == 1) {
+    ?> selected='selected'<?php 
+}
+	                ?>>в днях</option><option value='2'<?php if ($prj['prj_time_type'] == 2) {
+    ?> selected='selected'<?php 
+}
+	                ?>>в месяцах</option><option value='3'<?php if ($prj['prj_time_type'] == 3) {
+    ?> selected='selected'<?php 
+}
+	                ?>>в минутах</option></select></td>
     		</tr>
      		<tr valign="top">
       		<td style="padding-bottom:10px;"></td>
@@ -1448,17 +1617,22 @@ if (!empty($specs_add)) {
     		</tr>
 	        </table>
 
-        <div id="prj_msg_<?=$prj['id']?>" style="width:260px;text-align:left;<? if ($is_pro) { ?> margin-bottom:16px;<? } ?>"><br /></div>
+        <div id="prj_msg_<?=$prj['id']?>" style="width:260px;text-align:left;<?php if ($is_pro) {
+    ?> margin-bottom:16px;<?php 
+}
+	                ?>"><br /></div>
 		</div>
     	</form>
 
 			</td>
 		</tr>
-        <?php if ( $prj['is_blocked'] == 't' ) { ?>
+        <?php if ($prj['is_blocked'] == 't') {
+    ?>
         <tr>
             <td colspan="3">
-                <div id="portfolio-block-<?= $prj['id'] ?>" style="display: <?= ($prj['is_blocked'] == 't' ? 'block': 'none') ?>">
-                    <? if ($prj['is_blocked'] == 't') { ?>
+                <div id="portfolio-block-<?= $prj['id'] ?>" style="display: <?= ($prj['is_blocked'] == 't' ? 'block' : 'none') ?>">
+                    <?php if ($prj['is_blocked'] == 't') {
+    ?>
                     <div class='b-fon b-fon_clear_both b-fon_bg_ff6d2d b-fon_padtop_10 b-fon_padbot_10'>
                         <b class="b-fon__b1"></b>
                         <b class="b-fon__b2"></b>
@@ -1466,24 +1640,31 @@ if (!empty($specs_add)) {
                             <span class="b-fon__attent"></span>
                             <div class="b-fon__txt b-fon__txt_margleft_20">
                                     <span class="b-fon__txt_bold">Работа заблокирована</span>. <?= reformat($prj['blocked_reason'], 24, 0, 0, 1, 24) ?> <a class='b-fon__link' href='https://feedback.fl.ru/'>Служба поддержки</a>
-                                    <div class='b-fon__txt'><?php if ( hasPermissions('users') ) { ?><?= ($prj['admin_login'] ? "Заблокировал: <a class='b-fon__link' href='/users/{$prj['admin_login']}'>{$prj['admin_uname']} {$prj['admin_usurname']} [{$prj['admin_login']}]</a><br />": '') ?><?php } ?>
+                                    <div class='b-fon__txt'><?php if (hasPermissions('users')) {
+    ?><?= ($prj['admin_login'] ? "Заблокировал: <a class='b-fon__link' href='/users/{$prj['admin_login']}'>{$prj['admin_uname']} {$prj['admin_usurname']} [{$prj['admin_login']}]</a><br />" : '') ?><?php 
+}
+    ?>
                                     Дата блокировки: <?= dateFormat('d.m.Y H:i', $prj['blocked_time']) ?></div>
                             </div>
                         </div>
                         <b class="b-fon__b2"></b>
                         <b class="b-fon__b1"></b>
                     </div>
-                    <? } ?>
+                    <?php 
+}
+    ?>
                 </div>
             </td>
 		</tr>
-        <?php } ?>
-<? /*
+        <?php 
+}
+	                ?>
+<?php /*
 		<tr>
 			<td id="comments<?=$prj['id']?>"><? if ($prj['show_comms'] == 't') {?><a href="/users/<?=$user->login?>/comments/?tr=<?=$prj['id']?>" class="blue">Комментарии (<?=zin($prj['comms'])?>)</a><? } ?></td>
 		</tr>
 */ ?>
-		<? /* if (!$is_pro) { ?>
+		<?php /* if (!$is_pro) { ?>
 		<tr valign="bottom">
 			<td><a href="#prof<?=$curprof?>" name="ap1<?=$j?>" id="ap1<?=$j?>" title="Изменить" onClick="editprj(<?=$j?>,<?=$curprof?>);">Изменить</a> | <a href="#" onClick="if (warning(5)) {frm.action.value='portf_del';document.getElementById('frm').prjid.value=<?=$prj['id']?>; delprj();} else return(false);">Удалить</a></td>
 		</tr>
@@ -1491,7 +1672,8 @@ if (!empty($specs_add)) {
 		</table>
 	</td>
 
-	<? if ($is_pro) { ?>
+	<?php if ($is_pro) {
+    ?>
   <td class="box5fill" id="sproj<?=$prj['id']?>d" style="padding:0px 5px 0px 45px; text-align:center; vertical-align:middle"><input type="button" name="ap1<?=$j?>" id="ap1<?=$j?>" value="Изменить" onClick="editprj(<?=$j?>,<?=$curprof?>);window.location='#prof<?=$curprof?>';" /></td>
 	<td  class="boxbtfill" id="sproj<?=$prj['id']?>e" style="padding:0px 20px 0px 0px; text-align:center; vertical-align:middle">
   	<form action="." method="post" name="frmdel<?=$prj['id']?>" id="frmdel<?=$prj['id']?>">
@@ -1502,7 +1684,9 @@ if (!empty($specs_add)) {
     </form>
 	<input type="button" value="x Удалить" onClick="if (warning(5)) {delprj(<?=$prj['id']?>);} else return(false);" />
   </td>
-	<? } else { ?>
+	<?php 
+} else {
+    ?>
 	<td class="box5fill" id="sproj<?=$prj['id']?>d" style="padding:0px 5px 0px 45px; text-align:center; vertical-align:middle"><input type="button" name="ap1<?=$j?>" id="ap1<?=$j?>" value="Изменить" onClick="window.location='#prof<?=$curprof?>';editprj(<?=$j?>,<?=$curprof?>);" /></td>
 	<td  class="boxbtfill" id="sproj<?=$prj['id']?>e" style="padding:0px 20px 0px 0px; text-align:center; vertical-align:middle">
   	<form action="." method="post" name="frmdel<?=$prj['id']?>" id="frmdel<?=$prj['id']?>">
@@ -1513,10 +1697,16 @@ if (!empty($specs_add)) {
     </form>
 	<input type="button" value="x Удалить" onClick="if (warning(5)) {delprj(<?=$prj['id']?>);} else return(false);" />
   </td>
-	<? } ?>
+	<?php 
+}
+	                ?>
 </tr>
-		<? $i++; $j++;}
-		 } ?>
+		<?php ++$i;
+	                ++$j;
+	            }
+	        }
+	    }
+	    ?>
 <?=$end_table?>
 
 <?if($is_pro && count($prof) > 0):?>
@@ -1531,26 +1721,39 @@ window.onload = function() {
 }
 </script>
 <?endif;?>    
-<?
-if ($action == "portf_change" && $error_flag) { ?>
+<?php
+if ($action == 'portf_change' && $error_flag) {
+    ?>
 <textarea id="portf_change_hidden_descr" name="portf_change_hidden_descr" style="display:none;"><?=$descr?></textarea>
 	<script language="JavaScript" type="text/javascript">
 <!--
-	<? if ($prj_id) { ?>
+	<?php if ($prj_id) {
+    ?>
 	editprj(<?=$errprjnum?>,<?=$prof?>);
-	<? } else { ?>
+	<?php 
+} else {
+    ?>
 	addprj(<?=$prof?>);
-    <? if($is_video=='t') { ?>toggle_form('video');<? } ?>
-	<? } ?>
+    <?php if ($is_video == 't') {
+    ?>toggle_form('video');<?php 
+}
+    ?>
+	<?php 
+}
+    ?>
 
-  <?php if ($_POST['make_position']=="first" || $_POST['make_position']=="last") {?>
+  <?php if ($_POST['make_position'] == 'first' || $_POST['make_position'] == 'last') {
+    ?>
   $('make_position_<?=htmlspecialchars($_POST['make_position'], ENT_QUOTES)?>').set('checked', true);
-  <?php }//if?>
+  <?php 
+}//if?>
   
-  <?php if ($_POST['make_position_num']!="") {?>
+  <?php if ($_POST['make_position_num'] != '') {
+    ?>
   $('make_position_num').set('checked', true);
   $('_make_position_num').set('value', "<?= htmlspecialchars($_POST['make_position_num'], ENT_QUOTES)?>");
-  <?php }//if?>
+  <?php 
+}//if?>
 	
   var _frm = document.getElementById('frm');
   _frm.pname.value =  "<?=str_replace('"', '\"', htmlspecialchars_decode($name))?>";
@@ -1558,7 +1761,7 @@ if ($action == "portf_change" && $error_flag) { ?>
   _frm.pcosttype.value = "<?=$cost_type?>";
   _frm.ptime.value = "<?=$time_value?>";
   _frm.ptimeei.value = "<?=$time_type?>";
-  _frm.link.value = "<?=str_replace('"','\"',input_ref_scr($link))?>";
+  _frm.link.value = "<?=str_replace('"', '\"', input_ref_scr($link))?>";
   _frm.descr.value = $('portf_change_hidden_descr').get('value');
 
   var _frm2 = document.getElementById('frm2');
@@ -1566,8 +1769,8 @@ if ($action == "portf_change" && $error_flag) { ?>
   _frm2.v_pcost.value = "<?=$cost?>";
   _frm2.v_ptime.value = "<?=$time_value?>";
   _frm2.v_ptimeei.value = "<?=$time_type?>";
-  _frm2.v_video_link.value = "<?=str_replace('"','\"',input_ref_scr($video_link))?>";
-  _frm2.v_descr.value = "<?=str_replace('"', '\"', htmlspecialchars_decode( str_replace("\n", "\\n", $descr)) )?>";
+  _frm2.v_video_link.value = "<?=str_replace('"', '\"', input_ref_scr($video_link))?>";
+  _frm2.v_descr.value = "<?=str_replace('"', '\"', htmlspecialchars_decode(str_replace("\n", '\\n', $descr)))?>";
 
 
   if(<?=$in_shop?>==1) {
@@ -1588,6 +1791,9 @@ if ($action == "portf_change" && $error_flag) { ?>
 	setform();
 //-->
 </script>
-<? } ?>
-<? } ?>
+<?php 
+}
+	    ?>
+<?php 
+	} ?>
 

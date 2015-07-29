@@ -8,13 +8,13 @@
                                 
                                 <section class="b-form-section b-form-login-section">
                                     <div class="b-text-field">
-                                        <input type="text" name="a_login" value="<?= ($anti_login != 'Логин')?$anti_login:'' ?>" placeholder="Логин" class="b-text-field-entity"  size="80" />
+                                        <input type="text" name="a_login" value="<?= ($anti_login != 'Логин') ? $anti_login : '' ?>" placeholder="Логин" class="b-text-field-entity"  size="80" />
                                     </div>
                                 </section>
 
                                 <section class="b-form-section b-form-password-section">
                                     <div class="b-text-field">
-                                        <input type="password" name="passwd" placeholder="Пароль" class="b-text-field-entity"  size="80" value="<?= ($anti_login != 'Логин')?'******':'' ?>" <?php if($anti_login != 'Логин'): ?>onfocus="if(this.value=='******') {this.value='';}" onblur="if(this.value==''){this.value='******';}"<?php endif; ?> />
+                                        <input type="password" name="passwd" placeholder="Пароль" class="b-text-field-entity"  size="80" value="<?= ($anti_login != 'Логин') ? '******' : '' ?>" <?php if ($anti_login != 'Логин'): ?>onfocus="if(this.value=='******') {this.value='';}" onblur="if(this.value==''){this.value='******';}"<?php endif; ?> />
                                     </div>
                                 </section>
 

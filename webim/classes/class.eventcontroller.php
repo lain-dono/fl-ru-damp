@@ -11,55 +11,53 @@
  */
 ?>
 <?php
-class EventController {
-	const EVENT_OPERATOR_STATUS = "status";
-	const EVENT_OPERATOR_PING = "operator_ping";
-	
-	protected $listeners;
-	protected static $instance;
-	
-	protected function __construct() {
-		$this->listeners = array();
-	}
-	
-	public function getInstance() {
-		if(self::$instance === null) {
-			$class_name = __CLASS__;
-			self::$instance = new $class_name();	
-		}
-		
-		return self::$instance;
-	}
-	
-	public function addEventListener($event, $listener) {
+class EventController
+{
+    const EVENT_OPERATOR_STATUS = 'status';
+    const EVENT_OPERATOR_PING = 'operator_ping';
 
-		
-		if(!is_callable($listener)) {
+    protected $listeners;
+    protected static $instance;
 
-			return false;
-		}
-		
-		if(!isset($this->listeners[$event])) {
-			$this->listeners[$event] = array();
-		}
-		
-		$this->listeners[$event][] = $listener;
+    protected function __construct()
+    {
+        $this->listeners = array();
+    }
 
-		return true;
-	}
-	
-	public function dispatchEvent($event, $params = array()) {
-		if(!isset($this->listeners[$event])) {
+    public function getInstance()
+    {
+        if (self::$instance === null) {
+            $class_name = __CLASS__;
+            self::$instance = new $class_name();
+        }
 
-			return;
-		}
-		
-		
-		foreach($this->listeners[$event] as $listener) {
+        return self::$instance;
+    }
 
-	
-			call_user_func_array($listener, $params);
-		}
-	}
+    public function addEventListener($event, $listener)
+    {
+        if (!is_callable($listener)) {
+            return false;
+        }
+
+        if (!isset($this->listeners[$event])) {
+            $this->listeners[$event] = array();
+        }
+
+        $this->listeners[$event][] = $listener;
+
+        return true;
+    }
+
+    public function dispatchEvent($event, $params = array())
+    {
+        if (!isset($this->listeners[$event])) {
+            return;
+        }
+
+        foreach ($this->listeners[$event] as $listener) {
+            call_user_func_array($listener, $params);
+        }
+    }
 }
 ?>

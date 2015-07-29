@@ -1,28 +1,28 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/rating.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/professions.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/rating.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/professions.php';
 
-if(!defined('IN_STDF')) { 
-    header("HTTP/1.0 404 Not Found");
+if (!defined('IN_STDF')) {
+    header('HTTP/1.0 404 Not Found');
     exit();
 }
 if (!$xajax) {
-    if ( $_GET['p'] == 'opinion' ) {
+    if ($_GET['p'] == 'opinion') {
         if (strpos($_SERVER['REQUEST_URI'], 'from=norisk')) {
-            require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/sbr.common.php");
+            require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/sbr.common.php';
         } else {
-            require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/opinions.common.php");
+            require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/opinions.common.php';
         }
-    } elseif ( $_GET['p'] == 'tu-orders' ){ 
-        require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/tservices_orders.common.php");
+    } elseif ($_GET['p'] == 'tu-orders') {
+        require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/tservices_orders.common.php';
     } else {
-        require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/commune.common.php");
+        require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/commune.common.php';
     }
     $xajax->printJavascript('/xajax/');
 }
 ?>
 
-        <? /* if($p_user->is_pro == 'f' && !is_emp($p_user->role)) {
+        <?php /* if($p_user->is_pro == 'f' && !is_emp($p_user->role)) {
                if (!is_emp() && $p_user->uid == $_SESSION['uid']) {
                     // 3 случайных проекта для ПРО
                     $pro_projects = projects::getProjectPromo($p_user->uid);
@@ -61,10 +61,14 @@ if (!$xajax) {
         </div>
         <? } */ ?>
         <div class="page-profile">
-            <?php include ($fpath . "header.php") ?>
-            <?php include ($fpath . "usermenu.php") ?>
+            <?php include($fpath.'header.php') ?>
+            <?php include($fpath.'usermenu.php') ?>
             <div class="blog-tabs">
-                <?php if ($inner) include ($fpath . $inner); else print('&nbsp;') ?>
+                <?php if ($inner) {
+    include $fpath.$inner;
+} else {
+    print('&nbsp;');
+} ?>
             </div>
         </div>
         <?php 
@@ -72,7 +76,7 @@ if (!$xajax) {
         <h2 class="b-layout__txt b-layout__txt_fontsize_11 b-layout__txt_color_666 b-layout_top_100 b-layout__txt_padbot_10 b-layout__txt_weight_normal">
             <?php echo SeoTags::getInstance()->getFooterText() ?>
         </h2>
-        */ 
+        */
         ?>
 
 

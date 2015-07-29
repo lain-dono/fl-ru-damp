@@ -1,10 +1,10 @@
 <?php
-if(!defined('IN_STDF')) {
-	header("HTTP/1.0 404 Not Found");
-	exit;
+if (!defined('IN_STDF')) {
+    header('HTTP/1.0 404 Not Found');
+    exit;
 }
 
-/**
+/*
  * Разметка страницы с правым сайдбаром
  */
 
@@ -18,9 +18,8 @@ global $g_page_id; // уникальный код страницы для тар
 
 $uid = get_uid(false);
 
-
 unset($g_page_id);
-include (ABS_PATH . '/templates/top/new_project_button.php'); 
+include ABS_PATH.'/templates/top/new_project_button.php';
 
 ?>
 <a name="frl" id="frl_anc"></a>
@@ -28,7 +27,7 @@ include (ABS_PATH . '/templates/top/new_project_button.php');
 <?php echo $this->renderClip('header') ?>
 
 <div class="b-layout__one b-layout__one_width_25ps b-layout__one_float_right b-page__desktop">
-    <?php if(!isset($new_project_button_is_visible) && (is_emp() || !$uid)):  ?>
+    <?php if (!isset($new_project_button_is_visible) && (is_emp() || !$uid)):  ?>
         <div class="b-layout b-layout_padbot_20">
             <a class="b-button b-button_flat b-button_flat_orange2 b-button_block b-button_margtop_-1" href="/public/?step=1&kind=1&red=">Бесплатно опубликовать задание</a>
         </div>
@@ -38,7 +37,7 @@ include (ABS_PATH . '/templates/top/new_project_button.php');
         <?= printBanner240(false); ?>
 	<!-- end of Banner 240x400 -->
     
-    <?php if(!$uid): ?>
+    <?php if (!$uid): ?>
         <div id="seo_block" class="b-layout b-layout_padtop_20">
             <h2 class="b-layout__txt b-layout__txt_color_666 b-layout__txt_bold b-layout__txt_padbot_10">
                 <?php echo SeoTags::getInstance()->getSideHead() ?>

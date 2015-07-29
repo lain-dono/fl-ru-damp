@@ -59,7 +59,7 @@ window.onload=function() {
             <label for="path" style="padding-right:7px; width:100%">Каталог на dav сервере *</label>
         </div>
         <div style="float:right; width:80%">
-            <input id="path" type="text" name="path" style="padding-right:7px; width:100%;" value="<?=($path ? $path : "about/documents") ?>"/><br/>
+            <input id="path" type="text" name="path" style="padding-right:7px; width:100%;" value="<?=($path ? $path : 'about/documents') ?>"/><br/>
             <span style="color:red;font-size:8pt" id="pathError"><?=$error_folder ?></span>
             <span style="color:green;fomnt-size:8pt;display:none" id="pathLegend"></span>
         </div>

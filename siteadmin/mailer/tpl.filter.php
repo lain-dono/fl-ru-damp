@@ -12,13 +12,13 @@
                         </td>
                         <td class="b-layout__one b-layout__one_width_130">
                             <div class="b-check b-check_padtop_3">
-                                <input id="b-check1" class="b-check__input" name="frl" type="checkbox" value="1" <?= $filter['frl']?"checked":""?>/>
+                                <input id="b-check1" class="b-check__input" name="frl" type="checkbox" value="1" <?= $filter['frl'] ? 'checked' : ''?>/>
                                 <label for="b-check1" class="b-check__label">Фрилансеры</label>
                             </div>
                         </td>
                         <td class="b-layout__one b-layout__one_width_170">
                             <div class="b-check b-check_padtop_3">
-                                <input id="b-check2" class="b-check__input" name="emp" type="checkbox" value="1" <?= $filter['emp']?"checked":""?>/>
+                                <input id="b-check2" class="b-check__input" name="emp" type="checkbox" value="1" <?= $filter['emp'] ? 'checked' : ''?>/>
                                 <label for="b-check2" class="b-check__label">Работодатели</label>
                             </div>
                         </td>
@@ -27,11 +27,16 @@
                                 <label class="b-select__label b-select__label_fontsize_11" for="b-select__select">Отправитель&#160;&#160;</label>
                                 <select id="b-select__select" name="users" class="b-select__select b-select__select_width_140">
                                     <option value="0">Любой</option>
-                                    <?php if($usersSender) {?>
-                                        <?php foreach($usersSender as $user) { ?>
-                                        <option value="<?=$user['uid']?>" <?= ($filter['users'] == $user['uid']?'selected="selected"':'');?>><?= "{$user['uname']} {$user['usurname']} [{$user['login']}]"?></option>
-                                        <?php }//foreach?>
-                                    <?php }//if?>
+                                    <?php if ($usersSender) {
+    ?>
+                                        <?php foreach ($usersSender as $user) {
+    ?>
+                                        <option value="<?=$user['uid']?>" <?= ($filter['users'] == $user['uid'] ? 'selected="selected"' : '');
+    ?>><?= "{$user['uname']} {$user['usurname']} [{$user['login']}]"?></option>
+                                        <?php 
+}//foreach?>
+                                    <?php 
+}//if?>
                                 </select>
                             </div>
                         </td>
@@ -81,25 +86,25 @@
                         </td>
                         <td class="b-layout__one b-layout__one_width_130">
                             <div class="b-check b-check_padtop_3">
-                                <input id="b-check3" class="b-check__input" name="sending" type="checkbox" value="1" <?= $filter['sending']?"checked":""?>/>
+                                <input id="b-check3" class="b-check__input" name="sending" type="checkbox" value="1" <?= $filter['sending'] ? 'checked' : ''?>/>
                                 <label for="b-check3" class="b-check__label">Разосланные</label>
                             </div>
                         </td>
                         <td class="b-layout__one b-layout__one_width_130">
                             <div class="b-check b-check_padtop_3">
-                                <input id="b-check4" class="b-check__input" name="draft" type="checkbox" value="1" <?= $filter['draft']?"checked":""?>/>
+                                <input id="b-check4" class="b-check__input" name="draft" type="checkbox" value="1" <?= $filter['draft'] ? 'checked' : ''?>/>
                                 <label for="b-check4" class="b-check__label">Черновики</label>
                             </div>
                         </td>
                         <td class="b-layout__one b-layout__one_width_170">
                             <div class="b-check b-check_padtop_3">
-                                <input id="b-check5" class="b-check__input" name="regular" type="checkbox" value="1" <?= $filter['regular']?"checked":""?>/>
+                                <input id="b-check5" class="b-check__input" name="regular" type="checkbox" value="1" <?= $filter['regular'] ? 'checked' : ''?>/>
                                 <label for="b-check5" class="b-check__label">Регулярные: рассылаемые</label>
                             </div>
                         </td>
                         <td class="b-layout__one">
                             <div class="b-check b-check_padtop_3">
-                                <input id="b-check6" class="b-check__input" name="pause" type="checkbox" value="1" <?= $filter['pause']?"checked":""?>/>
+                                <input id="b-check6" class="b-check__input" name="pause" type="checkbox" value="1" <?= $filter['pause'] ? 'checked' : ''?>/>
                                 <label for="b-check6" class="b-check__label">Регулярные: на паузе</label>
                             </div>
                         </td>
@@ -110,13 +115,13 @@
                         </td>
                         <td class="b-layout__one">
                             <div class="b-check b-check_padtop_3">
-                                <input id="digest-check6" class="b-check__input" name="digest" type="checkbox" value="1" <?= $filter['digest']?"checked":""?>/>
+                                <input id="digest-check6" class="b-check__input" name="digest" type="checkbox" value="1" <?= $filter['digest'] ? 'checked' : ''?>/>
                                 <label for="digest-check6" class="b-check__label">Дайджест</label>
                             </div>
                         </td>
                         <td class="b-layout__one" colspan="3">
                             <div class="b-check b-check_padtop_3">
-                                <input id="mailer-check6" class="b-check__input" name="mailer" type="checkbox" value="1" <?= $filter['mailer']?"checked":""?>/>
+                                <input id="mailer-check6" class="b-check__input" name="mailer" type="checkbox" value="1" <?= $filter['mailer'] ? 'checked' : ''?>/>
                                 <label for="mailer-check6" class="b-check__label">Рассылка</label>
                             </div>
                         </td>

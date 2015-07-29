@@ -31,7 +31,7 @@
         <td valign="top" width="70" ><a href="<?=$host?>" target="_blank"><img src="<?=$host?>/images/logo_50x50.png" width="55" height="55" border="0"></a></td>
         <td valign="middle" >
             <font color="#000000" size="6" face="arial">
-                <?=$title?> за <?=date( 'j', $date ) . ' ' . monthtostr(date('n', $date),true);?>
+                <?=$title?> за <?=date('j', $date).' '.monthtostr(date('n', $date), true);?>
             </font>
         </td>
         <td  bgcolor="#ffffff" width="20"></td>
@@ -57,7 +57,9 @@
         <td  bgcolor="#ffffff" width="20"></td>
     </tr>
     <tr>
-        <td  bgcolor="#ffffff" width="20" height="20" colspan="3"><?php if($track_url){ ?><img src="<?=$track_url?>" /><?php } ?></td>
+        <td  bgcolor="#ffffff" width="20" height="20" colspan="3"><?php if ($track_url) {
+    ?><img src="<?=$track_url?>" /><?php 
+} ?></td>
     </tr>
 </tbody>
 </table>

@@ -1,13 +1,12 @@
 <?php
 
 /**
- * 2ой этап 2х-этапной авторизации
+ * 2ой этап 2х-этапной авторизации.
  */
-
 define('IS_AUTH_SECOND', true);
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/opauth/OpauthModel.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/opauth/OpauthModel.php';
 
 $uid = get_uid(false);
 
@@ -18,8 +17,8 @@ if ($uid > 0) {
     exit;
 } elseif (!isset($_SESSION['2fa_provider'])) {
     //Если это не 2ой этап то на регистрацию
-    header("Location: /registration/");
-    exit;    
+    header('Location: /registration/');
+    exit;
 }
 
 //Передаем во вьюшку тип 2ого этапа
@@ -41,7 +40,7 @@ $alert_message = session::getFlashMessages('/auth/second/');
 $hide_banner_top = true;
 //Скрыть форму авторизации в меню
 $registration_page = true;
-$js_file[] = "/css/block/b-eye/b-eye.js";
+$js_file[] = '/css/block/b-eye/b-eye.js';
 $js_file[] = 'registration/login.js';
-$content = "content.php";
-include ("../../template3.php");
+$content = 'content.php';
+include '../../template3.php';

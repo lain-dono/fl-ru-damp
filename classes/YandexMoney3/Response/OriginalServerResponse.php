@@ -2,10 +2,9 @@
 
 namespace YandexMoney3\Response;
 
-require_once(__DIR__ . '/../Exception/ApiException.php');
+require_once __DIR__.'/../Exception/ApiException.php';
 
 use YandexMoney3\Exception\ApiException;
-
 
 class OriginalServerResponse
 {
@@ -34,12 +33,8 @@ class OriginalServerResponse
      */
     //private $bodyJsonDecoded;
 
-    
-    
+
     private $bodyXmlDecoded;
-
-
-
 
     /**
      * @var int
@@ -51,17 +46,13 @@ class OriginalServerResponse
      */
     private $errorMessage;
 
-    
-    
-    
     public function getBodyXmlDecoded()
     {
         $this->checkBodyRaw();
         $this->decodeXmlToArray();
+
         return $this->bodyXmlDecoded;
     }
-
-    
 
     /**
      * @param $bodyRaw
@@ -137,6 +128,7 @@ class OriginalServerResponse
 
     /**
      * @param $name
+     *
      * @return null| string
      */
     public function getHeader($name)
@@ -145,6 +137,7 @@ class OriginalServerResponse
         if (is_array($this->headersArray) && array_key_exists($name, $this->headersArray)) {
             $headerValue = $this->headersArray[$name];
         }
+
         return $headerValue;
     }
 
@@ -172,19 +165,17 @@ class OriginalServerResponse
         }
     }
 
-    
-    
     private function decodeXmlToArray()
     {
-        try{
+        try {
             $xml = simplexml_load_string($this->bodyRaw);
             $json = json_encode($xml);
-            $decodedArray = json_decode($json,TRUE); 
-        }catch(\Exception $e){
+            $decodedArray = json_decode($json, true);
+        } catch (\Exception $e) {
             throw new ApiException("Invalid response body from API: {$this->bodyRaw} (HTTP response code was {$this->code})", $this->code, $this->bodyRaw);
         }
-        
-        if(!isset($decodedArray['@attributes'])){
+
+        if (!isset($decodedArray['@attributes'])) {
             throw new ApiException("Invalid response body from API: {$this->bodyRaw} (HTTP response code was {$this->code})", $this->code, $this->bodyRaw);
         }
 
@@ -194,6 +185,7 @@ class OriginalServerResponse
     private function parseHeadersToLinesArrays()
     {
         $dividedHeadersArray = explode("\n", $this->headersRaw);
+
         return $dividedHeadersArray;
     }
 
@@ -205,12 +197,13 @@ class OriginalServerResponse
 
         foreach ($dividedHeadersArray as $header) {
             if (stripos($header, 'HTTP/') === false && !empty($header)) {
-                $headerDivided = explode(":", trim($header), 2);
+                $headerDivided = explode(':', trim($header), 2);
                 if (count($headerDivided) > 1) {
                     $this->headersArray[trim($headerDivided[0])] = trim($headerDivided[1]);
                 }
             }
         }
+
         return $this->headersArray;
     }
-} 
+}

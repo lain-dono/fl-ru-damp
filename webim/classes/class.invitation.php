@@ -11,60 +11,70 @@
  */
 ?>
 <?php 
-require_once('common.php');
-require_once('models/generic/class.mapperfactory.php');
+require_once 'common.php';
+require_once 'models/generic/class.mapperfactory.php';
 
-class Invitation  {
-  private static $instance = NULL;
+class Invitation
+{
+    private static $instance = null;
 
-  static function GetInstance() {
-    if (self::$instance == NULL) {
-      self::$instance = new Invitation();
+    public static function GetInstance()
+    {
+        if (self::$instance == null) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
     }
-    return self::$instance;
-  }
 
-  public function CreateInvitation($threadid) {
-    return MapperFactory::getMapper("Invitation")->save(
+    public function CreateInvitation($threadid)
+    {
+        return MapperFactory::getMapper('Invitation')->save(
       array(
-      	'state' => INVITATION_CAN_BE_SENT,
-      	'threadid' => $threadid
+          'state' => INVITATION_CAN_BE_SENT,
+          'threadid' => $threadid,
       )
     );
-  }
-
-  public function UpdateInvitationMessage($threadid, $inviteMessageId) {
-     MapperFactory::getMapper("Invitation")->updateInvitationMessageByThreadId($threadid, $inviteMessageId);
-  }
-
-  public function GetInvitationByVisitedPageId($visitedpageid) {
-    $visitedpage = VisitedPage::GetInstance()->GetVisitedPageById($visitedpageid);
-    if(!is_array($visitedpage) || !isset($visitedpage['invitationid']) || empty($visitedpage['invitationid'])) {
-  		return null;
-  	}
-    
-    $invitation = MapperFactory::getMapper("Invitation")->getById($visitedpage['invitationid']);
-
-    return $invitation;
-  }
-
-  function GetInvitationState($visitedpageid) {
-    $visitedpage = VisitedPage::GetInstance()->GetVisitedPageById($visitedpageid);    
-
-    $state = INVITATION_UNINITIALIZED;
-    if (!empty($visitedpage['invitationid'])) {
-      $invitation = MapperFactory::getMapper("Invitation")->getById($visitedpage['invitationid']);
-      $state = $invitation['state'];
     }
-    return $state;
-  }
 
-  function GetInvitationById($invitationId) {
-    return MapperFactory::getMapper("Invitation")->getById($invitationId);
-  }
-  
-  function GetInvitationMessageById($messageId) {
-    return MapperFactory::getMapper("Message")->getById($messageId);
-  }
+    public function UpdateInvitationMessage($threadid, $inviteMessageId)
+    {
+        MapperFactory::getMapper('Invitation')->updateInvitationMessageByThreadId($threadid, $inviteMessageId);
+    }
+
+    public function GetInvitationByVisitedPageId($visitedpageid)
+    {
+        $visitedpage = VisitedPage::GetInstance()->GetVisitedPageById($visitedpageid);
+        if (!is_array($visitedpage) || !isset($visitedpage['invitationid']) || empty($visitedpage['invitationid'])) {
+            return;
+        }
+
+        $invitation = MapperFactory::getMapper('Invitation')->getById($visitedpage['invitationid']);
+
+        return $invitation;
+    }
+
+    public function GetInvitationState($visitedpageid)
+    {
+        $visitedpage = VisitedPage::GetInstance()->GetVisitedPageById($visitedpageid);
+
+        $state = INVITATION_UNINITIALIZED;
+        if (!empty($visitedpage['invitationid'])) {
+            $invitation = MapperFactory::getMapper('Invitation')->getById($visitedpage['invitationid']);
+            $state = $invitation['state'];
+        }
+
+        return $state;
+    }
+
+    public function GetInvitationById($invitationId)
+    {
+        return MapperFactory::getMapper('Invitation')->getById($invitationId);
+    }
+
+    public function GetInvitationMessageById($messageId)
+    {
+        return MapperFactory::getMapper('Message')->getById($messageId);
+    }
 }
 ?>

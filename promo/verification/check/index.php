@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Проверка и обработка данных верификации
+ * Проверка и обработка данных верификации.
  */
 
 //Если пришли от WM отключаем проверку CSRF  
@@ -10,8 +10,8 @@ if (isset($_POST['WmLogin_WMID'])) {
     define('NO_CSRF', 1);
 }
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/classes/stdf.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/classes/Verification.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Verification.php';
 
 $uid = get_uid(false);
 
@@ -20,18 +20,17 @@ if ($uid <= 0) {
 }
 
 $service = __paramInit('string', 'service');
-$verification = new Verification;
+$verification = new Verification();
 
 switch ($service) {
-    
-    case 'webmoney': 
+
+    case 'webmoney':
         if (!$verification->webmoney($uid)) {
             $error = $verification->getError();
             session::setFlashMessage($error, 'verify_error');
         }
         break;
-    
-        
+
     //@todo: можно перенести из income обработку ЯД верификации    
 
     default:

@@ -1,10 +1,11 @@
 <?php
 /**
- * Шаблон попап формы быстрого редактирования предложения по проектам (!не конкурс)
+ * Шаблон попап формы быстрого редактирования предложения по проектам (!не конкурс).
+ *
  * @author Max 'BlackHawk' Yastrembovich
  */
-if ( !defined('IN_STDF') ) { 
-    header("HTTP/1.0 404 Not Found"); // ибо нефиг
+if (!defined('IN_STDF')) {
+    header('HTTP/1.0 404 Not Found'); // ибо нефиг
     exit();
 }
 
@@ -93,9 +94,15 @@ $sPostText = rtrim(input_ref(strip_tags($offer['dialogue'][0]['post_text'])));
         <label class="b-form__name b-form__name_relative b-form__name_bold b-form__name_padtop_3">&nbsp;</label>
         <div class="b-input_inline-block b-input_width_90">
             <select id="adm_edit_time_type" name="ps_time_type" class="b-select__select b-select__select_width_full">
-                <option value="0"<? if ($offer['time_type'] == 0) { ?> selected<? } ?>>в часах</option>
-                <option value="1"<? if ($offer['time_type'] == 1) { ?> selected<? } ?>>в днях</option>
-                <option value="2"<? if ($offer['time_type'] == 2) { ?> selected<? } ?>>в месяцах</option>
+                <option value="0"<?php if ($offer['time_type'] == 0) {
+    ?> selected<?php 
+} ?>>в часах</option>
+                <option value="1"<?php if ($offer['time_type'] == 1) {
+    ?> selected<?php 
+} ?>>в днях</option>
+                <option value="2"<?php if ($offer['time_type'] == 2) {
+    ?> selected<?php 
+} ?>>в месяцах</option>
             </select>
         </div>
     </div>
@@ -111,11 +118,10 @@ $sPostText = rtrim(input_ref(strip_tags($offer['dialogue'][0]['post_text'])));
 
 <div id="adm_edit_tab_div2" style="display: none;">
     <?php 
-    if ( $user->is_pro == 'f' ) { 
-        ?><div class="b-form">Функция доступна только для предложений от владельцев аккаунта PRO</div><? 
-    } 
-    else {
-    ?>
+    if ($user->is_pro == 'f') {
+        ?><div class="b-form">Функция доступна только для предложений от владельцев аккаунта PRO</div><?php 
+    } else {
+        ?>
     <input id="ps_work_1_id" name="ps_work_1_id" type="hidden" value="" />
     <input id="ps_is_color" name="ps_is_color" type="hidden" value="<?= $offer['is_color']?>" />
     <input id="ps_payed_items" name="ps_payed_items" type="hidden" value="<?= $offer['payed_items']?>" />
@@ -139,17 +145,31 @@ $sPostText = rtrim(input_ref(strip_tags($offer['dialogue'][0]['post_text'])));
             <div class="pic_blank_cnt">&nbsp;</div>
             <div style="margin-top:6px; font-size:100%;">&nbsp;</div>
         </td>
-        <td id="td_pic_sort_1" class="pic_sort"><?
-        if (($offer['portfolio_work_1'] == '') && ($offer['portfolio_work_2'] == '')) { ?><img id="ico_right<?=$curprof?>" src="/images/ico_right0.gif" alt="" width="9" height="9" border="0"><?} else { ?><img id="ico_right<?=$curprof?>" src="/images/ico_right.gif" alt="" width="9" height="9" border="0" /><? } ?><br /><?
-        if (($offer['portfolio_work_1'] == '') && ($offer['portfolio_work_2'] == '')) { ?><img id="ico_left<?=$curprof?>" src="/images/ico_left0.gif" alt="" width="9" height="9" border="0" style="margin-top:2px;" /><? } else { ?><img id="ico_left<?=$curprof?>" src="/images/ico_left.gif" alt="" width="9" height="9" border="0" style="margin-top:2px;" /><? }
+        <td id="td_pic_sort_1" class="pic_sort"><?php
+        if (($offer['portfolio_work_1'] == '') && ($offer['portfolio_work_2'] == '')) {
+            ?><img id="ico_right<?=$curprof?>" src="/images/ico_right0.gif" alt="" width="9" height="9" border="0"><?} else { ?><img id="ico_right<?=$curprof?>" src="/images/ico_right.gif" alt="" width="9" height="9" border="0" /><?php 
+        }
+        ?><br /><?php
+        if (($offer['portfolio_work_1'] == '') && ($offer['portfolio_work_2'] == '')) {
+            ?><img id="ico_left<?=$curprof?>" src="/images/ico_left0.gif" alt="" width="9" height="9" border="0" style="margin-top:2px;" /><?php 
+        } else {
+            ?><img id="ico_left<?=$curprof?>" src="/images/ico_left.gif" alt="" width="9" height="9" border="0" style="margin-top:2px;" /><?php 
+        }
         ?></td>
         <td id="td_pic_2" class="pic_blank">
             <div class="pic_blank_cnt">&nbsp;</div>
             <div style="margin-top:6px; font-size:100%;">&nbsp;</div>
         </td>
-        <td id="td_pic_sort_2" class="pic_sort"><?
-        if (($offer['portfolio_work_2'] == '') && ($offer['portfolio_work_3'] == '')) { ?><img id="ico_right<?=$curprof?>" src="/images/ico_right0.gif" alt="" width="9" height="9" border="0" /><?} else { ?><img id="ico_right<?=$curprof?>" src="/images/ico_right.gif" alt="" width="9" height="9" border="0" /><? } ?><br /><?
-        if (($offer['portfolio_work_2'] == '') && ($offer['portfolio_work_3'] == '')) { ?><img id="ico_left<?=$curprof?>" src="/images/ico_left0.gif" alt="" width="9" height="9" border="0" style="margin-top:2px;" /><? } else { ?><img id="ico_left<?=$curprof?>" src="/images/ico_left.gif" alt="" width="9" height="9" border="0" style="margin-top:2px;" /><? }
+        <td id="td_pic_sort_2" class="pic_sort"><?php
+        if (($offer['portfolio_work_2'] == '') && ($offer['portfolio_work_3'] == '')) {
+            ?><img id="ico_right<?=$curprof?>" src="/images/ico_right0.gif" alt="" width="9" height="9" border="0" /><?} else { ?><img id="ico_right<?=$curprof?>" src="/images/ico_right.gif" alt="" width="9" height="9" border="0" /><?php 
+        }
+        ?><br /><?php
+        if (($offer['portfolio_work_2'] == '') && ($offer['portfolio_work_3'] == '')) {
+            ?><img id="ico_left<?=$curprof?>" src="/images/ico_left0.gif" alt="" width="9" height="9" border="0" style="margin-top:2px;" /><?php 
+        } else {
+            ?><img id="ico_left<?=$curprof?>" src="/images/ico_left.gif" alt="" width="9" height="9" border="0" style="margin-top:2px;" /><?php 
+        }
         ?></td>
         <td id="td_pic_3" class="pic_blank">
             <div class="pic_blank_cnt">&nbsp;</div>
@@ -162,20 +182,24 @@ $sPostText = rtrim(input_ref(strip_tags($offer['dialogue'][0]['post_text'])));
         <label class="b-form__name b-form__name_relative b-form__name_bold b-form__name_width_60 b-form__name_padtop_3">Работы</label>
         <div class="b-input_inline-block b-input_width_545">
             <select id="adm_edit_prof" name="professions" onchange="adm_edit_content.prjOfferLoadWorks();" class="b-select__select b-select__select_width_220" tabindex="300">
-            <?php if ( $professions ) {
-                foreach ( $professions as $key => $value ) { 
-                    ?><option value="<?=$value['id']?>" <?=$sSelected?> ><?=$value['name']?></option><?php
-                }
-            } ?>
+            <?php if ($professions) {
+    foreach ($professions as $key => $value) {
+        ?><option value="<?=$value['id']?>" <?=$sSelected?> ><?=$value['name']?></option><?php
+
+    }
+}
+        ?>
             </select>
             
             <div class="b-input_inline-block" id="adm_edit_works_div">
                 <select id="adm_edit_works" name="works" class="b-select__select b-select__select_width_220" tabindex="300">
-                <?php if ( $portf_works ) {
-                    foreach ( $portf_works as $key => $value ) {
-                        ?><option value="<?=$value['id']?>"><?=$value['name']?></option><?php
-                    }
-                } ?>
+                <?php if ($portf_works) {
+    foreach ($portf_works as $key => $value) {
+        ?><option value="<?=$value['id']?>"><?=$value['name']?></option><?php
+
+    }
+}
+        ?>
                 </select>
             </div>
             <input type="button" onclick="adm_edit_content.prjOfferAddWork($('adm_edit_works').get('value'));" id="adm_edit_pict_add" name="adm_edit_pict_add" value="Подгрузить">
@@ -191,6 +215,7 @@ $sPostText = rtrim(input_ref(strip_tags($offer['dialogue'][0]['post_text'])));
     
     <div class="b-form" id="adm_edit_work_msg" style="display: none;">Чтобы добавить другие работы, удалите одну из выбранных</div>
     <?php
+
     }
     ?>
 </div>

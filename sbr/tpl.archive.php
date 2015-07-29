@@ -5,11 +5,11 @@
 <?php }//if */?>
 <h1 class="b-page__title">Мои сделки</h1>
 
-<? 
+<?php 
 // Окно помощи
-include ($_SERVER['DOCUMENT_ROOT'] . "/sbr/tpl.help.php");
+include $_SERVER['DOCUMENT_ROOT'].'/sbr/tpl.help.php';
 // Шапка СБР
-include ($_SERVER['DOCUMENT_ROOT'] . "/sbr/tpl.header.php");
+include $_SERVER['DOCUMENT_ROOT'].'/sbr/tpl.header.php';
 // Список СБР
 ?>
 <div class="body">

@@ -1,14 +1,16 @@
-<?php define( 'IS_SITE_ADMIN', 1 );
-$rpath = "../../";
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/account.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/users.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/maslen.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/pf.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/projects.php");
-	session_start();
-	get_uid(false);
-if (!(hasPermissions('statsaccounts') || hasPermissions('tmppayments'))) { exit; }
+<?php define('IS_SITE_ADMIN', 1);
+$rpath = '../../';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/account.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/users.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/maslen.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/pf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/projects.php';
+    session_start();
+    get_uid(false);
+if (!(hasPermissions('statsaccounts') || hasPermissions('tmppayments'))) {
+    exit;
+}
 $DB = new DB('master');
 $idMonth = date('m'); //дефолтный месяц
 $idYear = date('Y'); //дефотлный год
@@ -21,79 +23,84 @@ if (InGet('y') == 'all') {
 $iHeight = 20; //отступ снизу
 $sFont = ABS_PATH.'/siteadmin/account/Aricyr.ttf';
 $graphStyle = array();
-$ignored_uids = "";
+$ignored_uids = '';
 
 // Максимальная высота отдельного блока
 $blockMaxHeight = 200;
 
-function getOPProject($from_date = '2000-01-01', $to_date = 'now()', $bYear = false, $bYearAll = false, $ignore_str = '', $addit) {
+function getOPProject($from_date = '2000-01-01', $to_date = 'now()', $bYear = false, $bYearAll = false, $ignore_str = '', $addit)
+{
     global $DB;
     $query = $select = array();
-    $type       = $addit['type'];
+    $type = $addit['type'];
     $is_konkurs = $addit['is_konkurs'];
-    $is_bonus   = $addit['is_bonus'];
-    
+    $is_bonus = $addit['is_bonus'];
+
     if ($ignore_str) {
         //$query[] = "account.uid NOT IN ({$ignore_str})";
         $ignore_str = "INNER JOIN account ON account.id=ac.billing_id AND account.uid NOT IN ($ignore_str)";
     }
-    
-    if($type !== '') {
+
+    if ($type !== '') {
         $query[] = "pay_type = {$type}";
-        $select[] = "SUM(round(p.ammount,2)) as sum, COUNT(p.*) as ammount ";
+        $select[] = 'SUM(round(p.ammount,2)) as sum, COUNT(p.*) as ammount ';
         if ($bYear) {
             $to_char = 'MM';
-            if ($bYearAll) $to_char = 'YYYY';
+            if ($bYearAll) {
+                $to_char = 'YYYY';
+            }
             $select[] = "to_char(ac.op_date,'{$to_char}') as _day";
-            $group    = " GROUP BY to_char(op_date,'{$to_char}') ORDER BY to_char(op_date,'{$to_char}')";
+            $group = " GROUP BY to_char(op_date,'{$to_char}') ORDER BY to_char(op_date,'{$to_char}')";
         } else {
-            $select[] = "extract(day from ac.op_date) as _day";
-            $group    = " GROUP BY _day ORDER BY  _day";
+            $select[] = 'extract(day from ac.op_date) as _day';
+            $group = ' GROUP BY _day ORDER BY  _day';
         }
     } else {
-        if($is_bonus) {
-            $select[] = " SUM(round(ac.bonus_ammount,2)) as sum, COUNT(ac.*) as ammount";
+        if ($is_bonus) {
+            $select[] = ' SUM(round(ac.bonus_ammount,2)) as sum, COUNT(ac.*) as ammount';
         } else {
-            $select[] = " SUM(round(ac.ammount,2)) as sum, COUNT(*) as ammount";
+            $select[] = ' SUM(round(ac.ammount,2)) as sum, COUNT(*) as ammount';
         }
         if ($bYear) {
             $to_char = 'MM';
-            if ($bYearAll) $to_char = 'YYYY';
+            if ($bYearAll) {
+                $to_char = 'YYYY';
+            }
             $select[] = "to_char(op_date,'{$to_char}') as _day";
-            $group    = " GROUP BY to_char(op_date,'{$to_char}') ORDER BY to_char(op_date,'{$to_char}')";
+            $group = " GROUP BY to_char(op_date,'{$to_char}') ORDER BY to_char(op_date,'{$to_char}')";
         } else {
-            $select[] = "extract(day from op_date) as _day";
-            $group    = " GROUP BY _day ORDER BY  _day";
+            $select[] = 'extract(day from op_date) as _day';
+            $group = ' GROUP BY _day ORDER BY  _day';
         }
     }
-        
-    if($is_konkurs) {
+
+    if ($is_konkurs) {
         $contestOpCodes = new_projects::getContestOpCodes();
         $contestOpCodesSql = implode(',', $contestOpCodes);
         $query[] = "ac.op_code IN ($contestOpCodesSql) ";
-        if($is_bonus) {
-            $query[] = "ac.bonus_ammount <> 0";
+        if ($is_bonus) {
+            $query[] = 'ac.bonus_ammount <> 0';
         } else {
-            $query[] = "ac.bonus_ammount = 0";
+            $query[] = 'ac.bonus_ammount = 0';
         }
     } else {
-        if($is_bonus) {
-            $query[] = "ac.op_code = 54";
+        if ($is_bonus) {
+            $query[] = 'ac.op_code = 54';
         } else {
-            $query[] = "ac.op_code IN (8,53)";
-         }
+            $query[] = 'ac.op_code IN (8,53)';
+        }
     }
-    $select_str = implode(", ", $select);    
-    $query_str = implode(" AND ", $query);
-  
-    if($type === '') {
+    $select_str = implode(', ', $select);
+    $query_str = implode(' AND ', $query);
+
+    if ($type === '') {
         $sql = "SELECT 
                     {$select_str}
                 FROM 
                     account_operations as ac 
                     INNER JOIN account ON account.id=ac.billing_id AND NOT (op_date >= '2011-01-01' AND account.uid IN (SELECT uid FROM users WHERE ignore_in_stats = TRUE))
                 WHERE 
-                    op_date >= '$from_date'::date AND op_date < '$to_date'::date+'1 day'::interval AND {$query_str} {$group};";   
+                    op_date >= '$from_date'::date AND op_date < '$to_date'::date+'1 day'::interval AND {$query_str} {$group};";
     } else {
         $sql = "SELECT 
                     {$select_str}
@@ -103,84 +110,88 @@ function getOPProject($from_date = '2000-01-01', $to_date = 'now()', $bYear = fa
                     {$ignore_str}
                     WHERE ac.op_date >= '$from_date'::date AND ac.op_date < '$to_date'::date+'1 day'::interval AND {$query_str} {$group};";
     }
-    
+
     return $DB->rows($sql);
 }
 
-function getOP($op, $date_from='2006-10-10', $date_to='now()', $bYear=false, $addit="", $ignore_str = "", $bYearAll = FALSE) {
+function getOP($op, $date_from = '2006-10-10', $date_to = 'now()', $bYear = false, $addit = '', $ignore_str = '', $bYearAll = false)
+{
     global $DB;
     if ($op[0] == 23) {
-        $cond = " AND ammount>=0 ";
+        $cond = ' AND ammount>=0 ';
     } else {
-        $cond = "";
+        $cond = '';
     }
     if (in_array($op[0], array('p0', 'p1', 'p2', 'p3'))) {
         $is_prj_addit = true;
-        $bonus_str = "ac.op_code IN (8,53) AND";
-        $sss = "prj.kind <> 2 AND prj.kind <> 7 AND";
-        $prj_op = "pay_type IN (".str_replace('p', '', $op[0]).")";
+        $bonus_str = 'ac.op_code IN (8,53) AND';
+        $sss = 'prj.kind <> 2 AND prj.kind <> 7 AND';
+        $prj_op = 'pay_type IN ('.str_replace('p', '', $op[0]).')';
     }
-    
+
     if (in_array($op[0], array('p4', 'p5', 'p6', 'p7'))) {
         $is_konk = $is_prj_addit = true;
-        $sss = "(prj.kind = 2 OR prj.kind = 7) AND";
-        $prj_op = "pay_type IN (".(str_replace('p', '', $op[0]) - 4).")";
+        $sss = '(prj.kind = 2 OR prj.kind = 7) AND';
+        $prj_op = 'pay_type IN ('.(str_replace('p', '', $op[0]) - 4).')';
     }
-    
+
     if (in_array($op[0], array('p8', 'p9', 'p10', 'p11'))) {
         $is_prj_addit = true;
-        $bonus_str = "ac.op_code = 54 AND";
-        $sss = "prj.kind <> 2 AND prj.kind <> 7 AND";
-        if(count($op) > 1) {
-            foreach($op as $k=>$v) {
+        $bonus_str = 'ac.op_code = 54 AND';
+        $sss = 'prj.kind <> 2 AND prj.kind <> 7 AND';
+        if (count($op) > 1) {
+            foreach ($op as $k => $v) {
                 $ops[] = (str_replace('p', '', $v) - 8);
             }
-            $prj_op = "pay_type IN (".(implode(',', $ops)).")";
+            $prj_op = 'pay_type IN ('.(implode(',', $ops)).')';
         } else {
-            $prj_op = "pay_type IN (".(str_replace('p', '', $op[0]) - 8).")";
+            $prj_op = 'pay_type IN ('.(str_replace('p', '', $op[0]) - 8).')';
         }
     }
-    
-    if ($addit)
-        $addit = " AND " . $addit;
-    
-    $sum = $op[0] == 71 ? "SUM(trs_sum)/2" : "SUM(round(ammount,2))";
-     
+
+    if ($addit) {
+        $addit = ' AND '.$addit;
+    }
+
+    $sum = $op[0] == 71 ? 'SUM(trs_sum)/2' : 'SUM(round(ammount,2))';
+
     // расчет по масленичной акции #0016070
     // PRO за 19FM + карусель в каталоге за 1FM
     if (is_array($op) && in_array(48, $op) && in_array(76, $op)) {
         $op[] = maslen::OP_CODE;
-        $sum = "SUM(CASE WHEN op_code = ".maslen::OP_CODE." THEN -19 ELSE ammount END)";
+        $sum = 'SUM(CASE WHEN op_code = '.maslen::OP_CODE.' THEN -19 ELSE ammount END)';
     }
     if ($op[0] == 73 || $op[0] == 109) {
         $op[] = maslen::OP_CODE;
-        $sum = "SUM(CASE WHEN op_code = ".maslen::OP_CODE." THEN -1 ELSE ammount END)";
+        $sum = 'SUM(CASE WHEN op_code = '.maslen::OP_CODE.' THEN -1 ELSE ammount END)';
     }
-    
-    $op = (is_array($op)) ? "op_code IN ('" . implode("','", $op) . "')" : "op_code = '$op'";
+
+    $op = (is_array($op)) ? "op_code IN ('".implode("','", $op)."')" : "op_code = '$op'";
 
     if ($ignore_str) {
         $addit .= " AND account.uid NOT IN ({$ignore_str})";
     }
-    
+
     if ($bYear) {
         $to_char = 'MM';
-        if ($bYearAll) $to_char = 'YYYY';
-        
+        if ($bYearAll) {
+            $to_char = 'YYYY';
+        }
+
         if ($is_prj_addit) {
             if ($ignore_str) {
                 $ignore_str = "INNER JOIN account ON account.id=ac.billing_id AND account.uid NOT IN ($ignore_str)";
             }
-            
+
             $sql = "SELECT SUM(round(p.ammount, 2)) as sum, COUNT(p.*) as ammount, to_char(ac.op_date,'{$to_char}') as _day FROM
                     projects_payments as p 
                     INNER JOIN projects prj ON prj.id = p.project_id
                     INNER JOIN account_operations as ac ON p.opid=ac.id 
                     {$ignore_str}
-                    WHERE {$bonus_str} {$sss} ac.op_date >= '" . $date_from . "' AND ac.op_date < '" . $date_to . "' AND " . $prj_op . "  GROUP BY to_char(ac.op_date,'{$to_char}') ORDER BY to_char(ac.op_date,'{$to_char}')";
+                    WHERE {$bonus_str} {$sss} ac.op_date >= '".$date_from."' AND ac.op_date < '".$date_to."' AND ".$prj_op."  GROUP BY to_char(ac.op_date,'{$to_char}') ORDER BY to_char(ac.op_date,'{$to_char}')";
         } else {
-            $sql = "SELECT " . $sum . " as sum, COUNT(*) as ammount, to_char(op_date,'{$to_char}') as _day FROM
-                    account_operations INNER JOIN account ON account.id=account_operations.billing_id INNER JOIN users ON users.uid=account.uid WHERE op_date >= '" . $date_from . "' AND op_date < '" . $date_to . "' AND " . $op . $cond . $addit . "  GROUP BY to_char(op_date,'{$to_char}') ORDER BY to_char(op_date,'{$to_char}')";
+            $sql = 'SELECT '.$sum." as sum, COUNT(*) as ammount, to_char(op_date,'{$to_char}') as _day FROM
+                    account_operations INNER JOIN account ON account.id=account_operations.billing_id INNER JOIN users ON users.uid=account.uid WHERE op_date >= '".$date_from."' AND op_date < '".$date_to."' AND ".$op.$cond.$addit."  GROUP BY to_char(op_date,'{$to_char}') ORDER BY to_char(op_date,'{$to_char}')";
         }
     } else {
         if ($is_prj_addit) {
@@ -192,15 +203,16 @@ function getOP($op, $date_from='2006-10-10', $date_to='now()', $bYear=false, $ad
                     INNER JOIN projects prj ON prj.id = p.project_id
                     INNER JOIN account_operations as ac ON p.opid=ac.id 
                     {$ignore_str} 
-                    WHERE {$bonus_str} {$sss} ac.op_date >= '" . $date_from . "' AND ac.op_date < '" . $date_to . "'::date+'1day'::interval  AND " . $prj_op . " GROUP BY _day ORDER BY  _day";
+                    WHERE {$bonus_str} {$sss} ac.op_date >= '".$date_from."' AND ac.op_date < '".$date_to."'::date+'1day'::interval  AND ".$prj_op.' GROUP BY _day ORDER BY  _day';
         } else {
-            $sql = "SELECT " . $sum . " as sum, COUNT(*) as ammount, extract(day from op_date) as _day FROM
-                    account_operations INNER JOIN account ON account.id=account_operations.billing_id INNER JOIN users ON users.uid=account.uid WHERE op_date >= '" . $date_from . "' AND op_date < '" . $date_to . "'::date+'1day'::interval  AND " . $op . $cond . $addit . " GROUP BY _day ORDER BY  _day";
+            $sql = 'SELECT '.$sum." as sum, COUNT(*) as ammount, extract(day from op_date) as _day FROM
+                    account_operations INNER JOIN account ON account.id=account_operations.billing_id INNER JOIN users ON users.uid=account.uid WHERE op_date >= '".$date_from."' AND op_date < '".$date_to."'::date+'1day'::interval  AND ".$op.$cond.$addit.' GROUP BY _day ORDER BY  _day';
         }
     }
 
 //    echo $sql.'<br>';die();
     $res = $DB->rows($sql);
+
     return $res;
 }
 
@@ -210,38 +222,38 @@ $bYear = false;
 $bYearAll = false;
 if (is_numeric(InGet('y'))) {
     if (is_numeric(InGet('m'))) {
-        $date_from = InGet('y') . '-' . InGet('m') . '-1';
-        $date_to = InGet('y') . '-' . InGet('m') . '-' . date('t', mktime(0, 0, 0, InGet('m') + 1, null, InGet('y')));
+        $date_from = InGet('y').'-'.InGet('m').'-1';
+        $date_to = InGet('y').'-'.InGet('m').'-'.date('t', mktime(0, 0, 0, InGet('m') + 1, null, InGet('y')));
 
         $iMonth = InGet('m');
         $iYear = InGet('y');
     } else {
-        $date_from = InGet('y') . '-1-1';
-        $date_to = (InGet('y') + 1) . '-01-01';
+        $date_from = InGet('y').'-1-1';
+        $date_to = (InGet('y') + 1).'-01-01';
         $bYear = true;
         $iMonth = $idMonth;
         $iYear = InGet('y');
     }
 } elseif (InGet('y') == 'all') {
     $date_from = '2006-10-10';
-    $date_to = date('Y-m-') . date('t');
-    $bYearAll = $bYear = TRUE;
+    $date_to = date('Y-m-').date('t');
+    $bYearAll = $bYear = true;
     $iMonth = date('m', strtotime($date_from));
     $iYear = date('Y', strtotime($date_from));
 } else {
     //echo $idMonth.'<br>';
     //echo date('t',mktime(0,0,0, intval($idMonth), 1, intval($idYear)));
-    $date_from = $idYear . '-' . $idMonth . '-1';
-    $date_to = $idYear . '-' . $idMonth . '-' . date('t', mktime(0, 0, 0, intval($idMonth), 1, intval($idYear)));
+    $date_from = $idYear.'-'.$idMonth.'-1';
+    $date_to = $idYear.'-'.$idMonth.'-'.date('t', mktime(0, 0, 0, intval($idMonth), 1, intval($idYear)));
     $iMonth = $idMonth;
     $iYear = $idYear;
 }
 
-$iMaxDays = $iMax = ($bYear) ? 12 : date('t',mktime(0,0,0, $iMonth, 1, $iYear)); //Вычисление максимального количества дней\месяцев в текущем месяце\годе
+$iMaxDays = $iMax = ($bYear) ? 12 : date('t', mktime(0, 0, 0, $iMonth, 1, $iYear)); //Вычисление максимального количества дней\месяцев в текущем месяце\годе
 if ($bYearAll) {
-    $iMaxDays = $iMax = date('Y') - $iYear +1;
+    $iMaxDays = $iMax = date('Y') - $iYear + 1;
 }
-$iFMperPX = (!$bYear)?30:(30*30); //масштаб
+$iFMperPX = (!$bYear) ? 30 : (30 * 30); //масштаб
 
 
 if (intval($iYear) >= 2011) {
@@ -252,9 +264,9 @@ if (intval($iYear) >= 2011) {
         foreach ($users_ignore as $row) {
             $ignored_uids[] = $row['uid'];
         }
-    
+
         if (count($ignored_uids)) {
-            $ignored_uids = implode(", ", $ignored_uids);
+            $ignored_uids = implode(', ', $ignored_uids);
         }
     }
 }
@@ -263,39 +275,39 @@ $op_codes_pro = array(1,2,3,4,5,6,15,48,49,50,51,76,131,132);
 /*
 При добавлении новых полей и измнении их порядка необходимо обновить переменную $is_number_project соотвествующими значения
 */
-$graphStyle[1]['op_codes'] 	= array(23);
-$graphStyle[2]['op_codes'] 	= array(72, 88, 104);
-$graphStyle[3]['op_codes'] 	= array(7, 87, 103);
+$graphStyle[1]['op_codes'] = array(23);
+$graphStyle[2]['op_codes'] = array(72, 88, 104);
+$graphStyle[3]['op_codes'] = array(7, 87, 103);
 
-$graphStyle[4]['op_codes']  = array('p0');
-$graphStyle[5]['op_codes']  = array('p1');
-$graphStyle[6]['op_codes']  = array('p2');
-$graphStyle[7]['op_codes']  = array('p3');
-$graphStyle[8]['op_codes'] 	= array(9, 86);
+$graphStyle[4]['op_codes'] = array('p0');
+$graphStyle[5]['op_codes'] = array('p1');
+$graphStyle[6]['op_codes'] = array('p2');
+$graphStyle[7]['op_codes'] = array('p3');
+$graphStyle[8]['op_codes'] = array(9, 86);
 
-$graphStyle[9]['op_codes']  = array('p0');
-$graphStyle[10]['op_codes']  = array('p1');
-$graphStyle[11]['op_codes']  = array('p2');
-$graphStyle[12]['op_codes']  = array('p3');
-$graphStyle[13]['op_codes'] 	= $contestOpCodes;
+$graphStyle[9]['op_codes'] = array('p0');
+$graphStyle[10]['op_codes'] = array('p1');
+$graphStyle[11]['op_codes'] = array('p2');
+$graphStyle[12]['op_codes'] = array('p3');
+$graphStyle[13]['op_codes'] = $contestOpCodes;
 
-$graphStyle[14]['op_codes'] 	= array(21);
-$graphStyle[15]['op_codes'] 	= array(20);
-$graphStyle[16]['op_codes'] 	= array(19);
-$graphStyle[17]['op_codes'] 	= array(10,11);
-$graphStyle[18]['op_codes'] 	= array(16,17,18,34,35);
+$graphStyle[14]['op_codes'] = array(21);
+$graphStyle[15]['op_codes'] = array(20);
+$graphStyle[16]['op_codes'] = array(19);
+$graphStyle[17]['op_codes'] = array(10,11);
+$graphStyle[18]['op_codes'] = array(16,17,18,34,35);
 
-$graphStyle[19]['op_codes']  = array('p0');
-$graphStyle[20]['op_codes']  = array('p1');
-$graphStyle[21]['op_codes']  = array('p2');
-$graphStyle[22]['op_codes']  = array('p3');
-$graphStyle[23]['op_codes']  = array(8,53);
+$graphStyle[19]['op_codes'] = array('p0');
+$graphStyle[20]['op_codes'] = array('p1');
+$graphStyle[21]['op_codes'] = array('p2');
+$graphStyle[22]['op_codes'] = array('p3');
+$graphStyle[23]['op_codes'] = array(8,53);
 
-$graphStyle[24]['op_codes']  = array('p0');
-$graphStyle[25]['op_codes']  = array('p1');
-$graphStyle[26]['op_codes']  = array('p2');
-$graphStyle[27]['op_codes']  = array('p3');
-$graphStyle[28]['op_codes']  = array(54);
+$graphStyle[24]['op_codes'] = array('p0');
+$graphStyle[25]['op_codes'] = array('p1');
+$graphStyle[26]['op_codes'] = array('p2');
+$graphStyle[27]['op_codes'] = array('p3');
+$graphStyle[28]['op_codes'] = array(54);
 
 $graphStyle[29]['op_codes'] = array(15);
 $graphStyle[30]['op_codes'] = $op_codes_pro;
@@ -359,33 +371,33 @@ $graphStyle[32]['addit'] = '';
 $graphStyle[33]['addit'] = '';
 $graphStyle[34]['addit'] = '';
 $graphStyle[35]['addit'] = '';
-$graphStyle[36]['addit'] 	= '';
-$graphStyle[37]['addit'] 	= '';
-$graphStyle[38]['addit'] 	= '';
-$graphStyle[39]['addit'] 	= '';
-$graphStyle[40]['addit'] 	= '';
-$graphStyle[41]['addit'] 	= '';
-$graphStyle[42]['addit'] 	= '';
-$graphStyle[43]['addit'] 	= '';
+$graphStyle[36]['addit'] = '';
+$graphStyle[37]['addit'] = '';
+$graphStyle[38]['addit'] = '';
+$graphStyle[39]['addit'] = '';
+$graphStyle[40]['addit'] = '';
+$graphStyle[41]['addit'] = '';
+$graphStyle[42]['addit'] = '';
+$graphStyle[43]['addit'] = '';
 //$graphStyle[44]['addit'] 	= '';
 //$graphStyle[45]['addit'] 	= '';
 //$graphStyle[46]['addit'] 	= '';
-$graphStyle[44]['addit'] 	= 'account_operations.id IN (SELECT account_op_id FROM mass_sending WHERE is_accepted = TRUE)';
-$graphStyle[45]['addit'] 	= '';
+$graphStyle[44]['addit'] = 'account_operations.id IN (SELECT account_op_id FROM mass_sending WHERE is_accepted = TRUE)';
+$graphStyle[45]['addit'] = '';
 
 // индексы $graphStyle которы не должны учитываться при подсчете общей суммы
 // помимо них игнорируются элементы с p0, p1, p2, p3 (см.ниже в коде)
 $graphStyleSummIgnor = array(1, 46);
 
-for ($i=1; $i<=count($graphStyle); $i++) {
-	for ($j=0; $j<= $iMaxDays; $j++) {
-		$graphValues[$i][$j] = 0;
-		$graphValues2[$i][$j] = 0;
-	}
+for ($i = 1; $i <= count($graphStyle); ++$i) {
+    for ($j = 0; $j <= $iMaxDays; ++$j) {
+        $graphValues[$i][$j] = 0;
+        $graphValues2[$i][$j] = 0;
+    }
 }
 
 $graphLabels = array();
-for ($j = 1; $j <= $iMaxDays; $j++) {
+for ($j = 1; $j <= $iMaxDays; ++$j) {
     $graphLabels[] = $j;
 }
 
@@ -393,11 +405,11 @@ if ($bYearAll) {
     $graphValues = $graphValues2 = array();
 
     $graphLabels = array();
-    for ($j = 0; $j <= $iMaxDays; $j++) {
+    for ($j = 0; $j <= $iMaxDays; ++$j) {
         $graphLabels[] = ($iYear + $j);
     }
-    
-    for ($i = 1; $i <= count($graphStyle); $i++) {
+
+    for ($i = 1; $i <= count($graphStyle); ++$i) {
         foreach ($graphLabels as $j => $yr) {
             $graphValues[$i][$j] = 0;
             $graphValues2[$i][$j] = 0;
@@ -437,8 +449,8 @@ $imgHeight = 0;
 // список для СБР тип графика => номер в массиве полученной статистике (из sbr_adm::getStatsByDay)
 //$graphTypesMap = array(44 => 4, 45 => 5, 46 => 0);
 
-for ($i=1; $i<=count($graphStyle); $i++) {
-    
+for ($i = 1; $i <= count($graphStyle); ++$i) {
+
     // подсчет для СБР (зарезервировано, выплачено работодателям, выплачено фрилансерам)
     /*if (in_array($i, array_keys($graphTypesMap))) {
         $res  = array();
@@ -477,68 +489,69 @@ for ($i=1; $i<=count($graphStyle); $i++) {
             }
         }
     }*/
-    
-    if($i == 43) {
+
+    if ($i == 43) {
         $res = pf::getOp($date_from, $date_to, $bYear, $bYearAll);
-        foreach ($res as $kRes=>$iRes) {
-            $res[$kRes]['sum'] = round($iRes['sum'] / EXCH_TR, 2); 
-        } 
+        foreach ($res as $kRes => $iRes) {
+            $res[$kRes]['sum'] = round($iRes['sum'] / EXCH_TR, 2);
+        }
     }
-     
-    if($i!=43 && !in_array($i, $is_number_project)) {
-	    $res = getOP($graphStyle[$i]['op_codes'], $date_from, $date_to, $bYear, $graphStyle[$i]['addit'], $ignored_uids, $bYearAll);
+
+    if ($i != 43 && !in_array($i, $is_number_project)) {
+        $res = getOP($graphStyle[$i]['op_codes'], $date_from, $date_to, $bYear, $graphStyle[$i]['addit'], $ignored_uids, $bYearAll);
     }
-    if(in_array($i, $is_number_project)) {
+    if (in_array($i, $is_number_project)) {
         $res = getOPProject($date_from, $date_to, $bYear, $bYearAll, $ignored_uids, $graphStyle[$i]['addit']);
     }
-	$aTemp = $res;
+    $aTemp = $res;
 
- if ($bYearAll) {
-     for ($ii = 0; $ii < count($aTemp); $ii++) {
-         $aTemp[$ii]['_day'] = array_search($aTemp[$ii]['_day'], $graphLabels)+1;
-     }
- }
+    if ($bYearAll) {
+        for ($ii = 0; $ii < count($aTemp); ++$ii) {
+            $aTemp[$ii]['_day'] = array_search($aTemp[$ii]['_day'], $graphLabels) + 1;
+        }
+    }
 
     if (isset($aTemp[0]['_day'])) {
-        
-		for ($j=0; $j<count($aTemp); $j++) {
-			$iAmount = abs($aTemp[$j]['sum']/$iFMperPX);
-            
-            $graphValues[$i][$aTemp[$j]['_day']-1] = $iAmount;
-			$graphValues2[$i][$aTemp[$j]['_day']-1] = $aTemp[$j]['ammount'];
-            if($aTemp[$j]['sum']<0) {
-			    $graphValues3[$i][$aTemp[$j]['_day']-1] += -1*$aTemp[$j]['sum'];
+        for ($j = 0; $j < count($aTemp); ++$j) {
+            $iAmount = abs($aTemp[$j]['sum'] / $iFMperPX);
+
+            $graphValues[$i][$aTemp[$j]['_day'] - 1] = $iAmount;
+            $graphValues2[$i][$aTemp[$j]['_day'] - 1] = $aTemp[$j]['ammount'];
+            if ($aTemp[$j]['sum'] < 0) {
+                $graphValues3[$i][$aTemp[$j]['_day'] - 1] += -1 * $aTemp[$j]['sum'];
             } else {
-			    $graphValues3[$i][$aTemp[$j]['_day']-1] += $aTemp[$j]['sum'];
+                $graphValues3[$i][$aTemp[$j]['_day'] - 1] += $aTemp[$j]['sum'];
             }
         }
     }
 }
 
 $k = 0; $graphStyle[0]['max'] = 0;
-for ($i=0; $i<=$iMaxDays; $i++) {
-	$iSumm = 0; $iSumm2 = 0;
-	for ($j=2; $j<count($graphValues); $j++) { //2 потому что переводы не считаем
-		if (isset($graphValues[$j][$i]) && !in_array($graphStyle[$j]['op_codes'][0], array('p0','p1','p2','p3')) && !in_array($j, $graphStyleSummIgnor)) { // Резерв заключенных не суммируем #0014833
-			$iSumm += $graphValues[$j][$i];
+for ($i = 0; $i <= $iMaxDays; ++$i) {
+    $iSumm = 0;
+    $iSumm2 = 0;
+    for ($j = 2; $j < count($graphValues); ++$j) { //2 потому что переводы не считаем
+        if (isset($graphValues[$j][$i]) && !in_array($graphStyle[$j]['op_codes'][0], array('p0', 'p1', 'p2', 'p3')) && !in_array($j, $graphStyleSummIgnor)) { // Резерв заключенных не суммируем #0014833
+            $iSumm += $graphValues[$j][$i];
         }
 
-		if (isset($graphValues2[$j][$i])) {
-			$iSumm2 += $graphValues2[$j][$i];
+        if (isset($graphValues2[$j][$i])) {
+            $iSumm2 += $graphValues2[$j][$i];
         }
     }
 
-	for ($j=2; $j<count($graphValues2); $j++) {
-		if (isset($graphValues2[$j][$i])) {
-			$iSumm2 += $graphValues2[$j][$i];
+    for ($j = 2; $j < count($graphValues2); ++$j) {
+        if (isset($graphValues2[$j][$i])) {
+            $iSumm2 += $graphValues2[$j][$i];
         }
     }
 
     $graphValues[0][$k] = $iSumm;
-	$graphValues2[0][$k] = $iSumm*$iFMperPX;
-    if ($iSumm > $graphStyle[0]['max'])
+    $graphValues2[0][$k] = $iSumm * $iFMperPX;
+    if ($iSumm > $graphStyle[0]['max']) {
         $graphStyle[0]['max'] = $iSumm;
-    $k++;
+    }
+    ++$k;
 }
 
 // максимальное значение в строке
@@ -554,36 +567,37 @@ foreach ($graphValues as $row => $cols) {
 $tmp = array();
 $mpl = 1;
 foreach ($graphStyle as $k => $v) {
-    if($k == 0 && $bYear) continue;
+    if ($k == 0 && $bYear) {
+        continue;
+    }
     $tmp[] = $v['max'];
 }
 if (count($tmp)) {
     rsort($tmp);
     $max_h = $tmp[0];
-    $mpl = $blockMaxHeight/$max_h;
+    $mpl = $blockMaxHeight / $max_h;
 }
 $mpl = $mpl > 1 ? 1 : $mpl;
-if($bYear) {
-    $bmpl = $blockMaxHeight/$graphStyle[0]['max'];
-    $bmpl = $bmpl > 1 ? 1: $bmpl;
+if ($bYear) {
+    $bmpl = $blockMaxHeight / $graphStyle[0]['max'];
+    $bmpl = $bmpl > 1 ? 1 : $bmpl;
 } else {
     $bmpl = $mpl;
 }
 
 foreach ($graphStyle as $k => $v) {
-    if($k == 0) {
-        $graphStyle[$k]['max'] = $graphStyle[$k]['max'] * $bmpl;    
+    if ($k == 0) {
+        $graphStyle[$k]['max'] = $graphStyle[$k]['max'] * $bmpl;
     } else {
         $graphStyle[$k]['max'] = $graphStyle[$k]['max'] * $mpl;
     }
     $imgHeight += $graphStyle[$k]['max'];
 }
 //echo '<pre>'; print_r($graphValues); echo '</pre>';
-$imgHeight += count($graphValues)*27; //прибавляем промежутки к максимальной высоте графика
-$imgWidth = $iMax*$iBarWidth+100;
+$imgHeight += count($graphValues) * 27; //прибавляем промежутки к максимальной высоте графика
+$imgWidth = $iMax * $iBarWidth + 100;
 
-
-$image=imagecreate($imgWidth, $imgHeight); //создаем график с учетом максимальной высоты и ширины.
+$image = imagecreate($imgWidth, $imgHeight); //создаем график с учетом максимальной высоты и ширины.
 imagecolorallocate($image, 255, 255, 255);
 
 $graphStyle[0]['color'] = imagecolorallocate($image, 0, 0, 0); //Сумма
@@ -639,44 +653,44 @@ $graphStyle[43]['color'] = imagecolorallocate($image, 90, 60, 90); // Комис
 $graphStyle[44]['color'] = imagecolorallocate($image, 111, 177, 92); // Платные рассылки
 $graphStyle[45]['color'] = imagecolorallocate($image, 111, 177, 92); // Верификация FF
 
-$graphStyle[0]['text'] 	= 'Сумма';
-$graphStyle[1]['text'] 	= 'Перевели денег';
-$graphStyle[2]['text']  = 'Подняли конкурс';
-$graphStyle[3]['text'] 	= 'Подняли проект';
+$graphStyle[0]['text'] = 'Сумма';
+$graphStyle[1]['text'] = 'Перевели денег';
+$graphStyle[2]['text'] = 'Подняли конкурс';
+$graphStyle[3]['text'] = 'Подняли проект';
 
-$graphStyle[4]['text'] 	= '- логотип';
+$graphStyle[4]['text'] = '- логотип';
 $graphStyle[5]['text'] = '- фон';
 $graphStyle[6]['text'] = '- шрифт';
 $graphStyle[7]['text'] = '- закрепление';
-$graphStyle[8]['text'] 	= 'Конкурсы';
+$graphStyle[8]['text'] = 'Конкурсы';
 
-$graphStyle[9]['text'] 	= '- логотип (б)';
+$graphStyle[9]['text'] = '- логотип (б)';
 $graphStyle[10]['text'] = '- фон (б)';
 $graphStyle[11]['text'] = '- шрифт (б)';
 $graphStyle[12]['text'] = '- закрепление (б)';
-$graphStyle[13]['text'] 	= 'Конкурсы (б)';
+$graphStyle[13]['text'] = 'Конкурсы (б)';
 
-$graphStyle[14]['text'] 	= 'Перемешения';
-$graphStyle[15]['text'] 	= 'Места внутри кат.';
-$graphStyle[16]['text'] 	= 'Места в каталоге';
-$graphStyle[17]['text'] 	= 'Места на первой';
-$graphStyle[18]['text'] 	= 'Подарки';
-$graphStyle[19]['text'] 	= '- логотип';
+$graphStyle[14]['text'] = 'Перемешения';
+$graphStyle[15]['text'] = 'Места внутри кат.';
+$graphStyle[16]['text'] = 'Места в каталоге';
+$graphStyle[17]['text'] = 'Места на первой';
+$graphStyle[18]['text'] = 'Подарки';
+$graphStyle[19]['text'] = '- логотип';
 $graphStyle[20]['text'] = '- фон';
 $graphStyle[21]['text'] = '- шрифт';
 $graphStyle[22]['text'] = '- закрепление';
-$graphStyle[23]['text'] 	= 'Платные проекты';
-$graphStyle[24]['text'] 	= '- логотип (б)';
+$graphStyle[23]['text'] = 'Платные проекты';
+$graphStyle[24]['text'] = '- логотип (б)';
 $graphStyle[25]['text'] = '- фон (б)';
 $graphStyle[26]['text'] = '- шрифт (б)';
 $graphStyle[27]['text'] = '- закрепление (б)';
-$graphStyle[28]['text'] 	= 'Платные пр-ты (б)';
+$graphStyle[28]['text'] = 'Платные пр-ты (б)';
 $graphStyle[29]['text'] = 'PRO р-тель';
 $graphStyle[30]['text'] = 'PRO фрилансер';
 $graphStyle[31]['text'] = 'PRO тест';
 $graphStyle[32]['text'] = 'Сервис «Сделаю»';// Платные рекомендации
 $graphStyle[33]['text'] = 'Рекомендации';// Платные рекомендации
-$graphStyle[34]['text'] = 'Ответы на проекты'; 
+$graphStyle[34]['text'] = 'Ответы на проекты';
 $graphStyle[35]['text'] = 'Карусель';
 $graphStyle[36]['text'] = 'Смена логина';
 $graphStyle[37]['text'] = 'Восстанов. пароля';
@@ -692,56 +706,50 @@ $graphStyle[43]['text'] = 'Подбор фр-ов(бн)';
 $graphStyle[44]['text'] = 'Платн. рассылки';
 $graphStyle[45]['text'] = 'Верификация FF';
 
+$colorWhite = imagecolorallocate($image, 255, 255, 255);
+$colorGrey = imagecolorallocate($image, 192, 192, 192);
+$colorDarkBlue = imagecolorallocate($image, 153, 153, 153);
 
+for ($i = 0; $i < count($graphValues); ++$i) {
+    //вычисляем откуда начать прорисовку графика
+    if ($i) {
+        $iMaxHeight = $graphValues[$i - 1][0];
+        for ($k = 1; $k < count($graphValues[$i - 1]); ++$k) {
+            $iMaxHeight = ($graphValues[$i - 1][$k] > $iMaxHeight) ? $graphValues[$i - 1][$k] : $iMaxHeight;
+        }
+        $iHeight += $iMaxHeight * ($i == 1 ? $bmpl : $mpl) + 25; // +15 - расстояние между строчками
+    }
+    for ($j = 0; $j < count($graphValues[$i]); ++$j) {
+        imageline($image, $j * $iBarWidth + 2 + 100, $imgHeight - $iHeight, $j * $iBarWidth + $iBarWidth + 100, $imgHeight - $iHeight, $colorGrey);
+        if (!$i) {
+            $iz = ($j + 1 > 9) ? 3.7 : 2.5;
+            imagefttext($image, '7', 0, $j * $iBarWidth + round($iBarWidth / $iz) + 100, $imgHeight - 5, $colorDarkBlue, $sFont, $graphLabels[$j]);
+        }
 
-$colorWhite=imagecolorallocate($image, 255, 255, 255);
-$colorGrey=imagecolorallocate($image, 192, 192, 192);
-$colorDarkBlue=imagecolorallocate($image, 153, 153, 153);
-
-
-for ($i=0; $i<count($graphValues); $i++) {
-	//вычисляем откуда начать прорисовку графика
-	if ($i) {
-		$iMaxHeight = $graphValues[$i-1][0];
-		for ($k=1; $k<count($graphValues[$i-1]); $k++) {
-			$iMaxHeight = ($graphValues[$i-1][$k] > $iMaxHeight)?$graphValues[$i-1][$k]:$iMaxHeight;
-		}
-		$iHeight += $iMaxHeight*($i==1?$bmpl:$mpl)+25; // +15 - расстояние между строчками
-		
-	}
-	for ($j=0; $j<count($graphValues[$i]); $j++) {
-
-		imageline($image, $j*$iBarWidth+2 + 100, $imgHeight-$iHeight, $j*$iBarWidth+$iBarWidth + 100, $imgHeight-$iHeight, $colorGrey);
-		if (!$i) {
-			$iz = ($j+1 > 9)?3.7:2.5;
-			imagefttext($image, '7', 0, $j*$iBarWidth+round($iBarWidth/$iz) + 100, $imgHeight - 5, $colorDarkBlue, $sFont, $graphLabels[$j]);
-		}
-        
         if ($graphValues2[$i][$j]) {
-			imagefilledrectangle($image, $j*$iBarWidth+2 + 100, ($imgHeight-$iHeight-round($graphValues[$i][$j]*($i==0?$bmpl:$mpl))), ($j+1)*$iBarWidth + 100, $imgHeight-$iHeight, $graphStyle[$i]['color']);
-			//надпись количества FM
-			$addD = ($i == 18)?2:1; ///Если подарки, то результат делим на 2
-            $color = (!$i)?$graphStyle[$i]['color']:$colorDarkBlue;
-            if($i!=0) {
-                imagefttext($image, '7', 0, $j*$iBarWidth + 100+2, $imgHeight-$iHeight-($graphValues[$i][$j]*($i==0?$bmpl:$mpl))-12, $color, $sFont, round($graphValues2[$i][$j]/$addD)."\n".$graphValues3[$i][$j]);
+            imagefilledrectangle($image, $j * $iBarWidth + 2 + 100, ($imgHeight - $iHeight - round($graphValues[$i][$j] * ($i == 0 ? $bmpl : $mpl))), ($j + 1) * $iBarWidth + 100, $imgHeight - $iHeight, $graphStyle[$i]['color']);
+            //надпись количества FM
+            $addD = ($i == 18) ? 2 : 1; ///Если подарки, то результат делим на 2
+            $color = (!$i) ? $graphStyle[$i]['color'] : $colorDarkBlue;
+            if ($i != 0) {
+                imagefttext($image, '7', 0, $j * $iBarWidth + 100 + 2, $imgHeight - $iHeight - ($graphValues[$i][$j] * ($i == 0 ? $bmpl : $mpl)) - 12, $color, $sFont, round($graphValues2[$i][$j] / $addD)."\n".$graphValues3[$i][$j]);
             } else {
                 $iCount = 0;
-                for($k=1; $k<count($graphValues2); $k++) {
-                    $addD = ($k == 18)?2:1;
-                    if(!in_array($graphStyle[$k]['op_codes'][0],array('p0','p1','p2','p3')) && !in_array($k, $graphStyleSummIgnor)) {
-                        $iCount += round($graphValues2[$k][$j]/$addD, 1);
+                for ($k = 1; $k < count($graphValues2); ++$k) {
+                    $addD = ($k == 18) ? 2 : 1;
+                    if (!in_array($graphStyle[$k]['op_codes'][0], array('p0', 'p1', 'p2', 'p3')) && !in_array($k, $graphStyleSummIgnor)) {
+                        $iCount += round($graphValues2[$k][$j] / $addD, 1);
                     }
                 }
-                imagefttext($image, '7', 0, $j*$iBarWidth + 100+2, $imgHeight-$iHeight-($graphValues[$i][$j]*($i==0?$bmpl:$mpl))-12, $color, $sFont, round($graphValues2[$i][$j]/$addD, 1)."\n".$iCount);
+                imagefttext($image, '7', 0, $j * $iBarWidth + 100 + 2, $imgHeight - $iHeight - ($graphValues[$i][$j] * ($i == 0 ? $bmpl : $mpl)) - 12, $color, $sFont, round($graphValues2[$i][$j] / $addD, 1)."\n".$iCount);
             }
-		}
-	}
-	$iFontSizeTitle = 8;
-	$aBox = imageftbbox($iFontSizeTitle, 0, $sFont,$graphStyle[$i]['text']);
-	$width = abs($aBox[0]) + abs($aBox[2]);
-    imagefttext($image, $iFontSizeTitle, 0, 92-$width, $imgHeight-$iHeight, $graphStyle[$i]['color'], $sFont, $graphStyle[$i]['text']);
+        }
+    }
+    $iFontSizeTitle = 8;
+    $aBox = imageftbbox($iFontSizeTitle, 0, $sFont, $graphStyle[$i]['text']);
+    $width = abs($aBox[0]) + abs($aBox[2]);
+    imagefttext($image, $iFontSizeTitle, 0, 92 - $width, $imgHeight - $iHeight, $graphStyle[$i]['color'], $sFont, $graphStyle[$i]['text']);
 }
-
 
 $aMonthes[1] = 'Январь';
 $aMonthes[2] = 'Февраль';

@@ -1,13 +1,12 @@
 <?php
 
 /**
- * Шаблон превью работ/услуг для каталога фрилансеров
+ * Шаблон превью работ/услуг для каталога фрилансеров.
  */
-
 if ($list):
     $item = current($list);
 
-    if($item->isPortfolio()):
+    if ($item->isPortfolio()):
         if ($item->isText()):
 ?>
             <h4 class="b-layout__txt b-layout__txt_center b-layout__txt_fontsize_11 b-layout__txt_ellipsis b-layout__txt_width_225">
@@ -16,7 +15,7 @@ if ($list):
                 </a>
             </h4>
 			<?=$item->getDescr()?>       
-<?php        
+<?php 
         else:
 ?>
             <h4 class="b-layout__txt b-layout__txt_center  b-layout__txt_fontsize_11 b-layout__txt_ellipsis b-layout__txt_width_225 b-layout_center b-layout__txt_padbot_5">
@@ -25,17 +24,17 @@ if ($list):
                 </a>
             </h4>
             <a href="<?=$item->getUrl()?>" target="_blank" title="<?=$item->getAttrTitle()?>"><?=$item->getThumbnail()?></a>
-            <?php if(false): //@todo: непонятно зачем на каждой картинке один и тот же текст? ?>
+            <?php if (false): //@todo: непонятно зачем на каждой картинке один и тот же текст? ?>
             <span class="b-layout_hide" itemprop="description"><?=SeoTags::getInstance()->getImageDescription() ?></span>   
             <?php endif; ?>
-<?php        
+<?php 
         endif;
     else:
 ?>
             <div class="i-pic i-pic_port i-pic_port_z-index_inherit i-pic_pad_10 i-pic_height_220 i-pic_bord_green_hover i-pic_port_inline_block">
                 <div class="b-layout b-layout_relative">
                     <a href="<?=$item->getUrl()?>" class="b-pic__lnk b-pic__lnk_relative">
-                        <?php if($item->hasVideo()): ?>
+                        <?php if ($item->hasVideo()): ?>
                             <div class="b-icon b-icon__play b-icon_absolute b-icon_bot_4 b-icon_left_4"></div>
                         <?php endif; ?>
                         <?php if ($image_url = $item->getThumbnailUrl()): ?>

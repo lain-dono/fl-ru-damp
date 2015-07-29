@@ -1,7 +1,7 @@
 <?php
 
 $settings_url = sprintf('/users/%s/setup/main/', $login);
-$contact_url = sprintf('/contacts/?from=%s',$freelancer['login']);
+$contact_url = sprintf('/contacts/?from=%s', $freelancer['login']);
 $fullname = "{$freelancer['uname']} {$freelancer['usurname']} [{$freelancer['login']}]";
 
 ?>

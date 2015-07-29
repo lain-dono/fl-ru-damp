@@ -1,10 +1,10 @@
 <?php
 /**
- * Шаблон письма уведомление исполнителю об изменении цены и срока заказа
+ * Шаблон письма уведомление исполнителю об изменении цены и срока заказа.
  */
 
 /**
- * Тема письма
+ * Тема письма.
  */
 $smail->subject = "Бюджет и сроки заказа «{$order['title']}» изменены";
 
@@ -12,7 +12,7 @@ $order_price = tservices_helper::cost_format($order['order_price'], true, false,
 $order_days = tservices_helper::days_format($order['order_days']);
 
 $title = reformat(htmlspecialchars($order['title']), 30, 0, 1);
-$order_url = $GLOBALS['host'] . tservices_helper::getOrderCardUrl($order['id']);
+$order_url = $GLOBALS['host'].tservices_helper::getOrderCardUrl($order['id']);
 
 ?>
 Здравствуйте.<br /><br />

@@ -1,91 +1,94 @@
 <?php
 
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/bill.common.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/account.php");
-
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/bill.common.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/account.php';
 
 /**
- * Удаление файла счета пользователя
+ * Удаление файла счета пользователя.
  * 
  * @param type $invoice_id
+ *
  * @return \xajaxResponse
  */
 function removeBillInvoice($invoice_id)
 {
     $objResponse = &new xajaxResponse();
-    
+
     $uid = get_uid(false);
     if ($uid <= 0) {
         return $objResponse;
     }
 
-    require_once(ABS_PATH . '/bill/models/BillInvoicesModel.php');
+    require_once ABS_PATH.'/bill/models/BillInvoicesModel.php';
     $billInvoicesModel = new BillInvoicesModel();
     $file_id = $billInvoicesModel->getInvoiceFileId($invoice_id, $uid);
-    
-    if($file_id) {
+
+    if ($file_id) {
         $file = new CFile();
         $file->Delete($file_id);
-        
+
         $objResponse->script("
             $('bill_invoice_remove').addClass('b-layout_hide').empty();
             $('bill_invoice_create').removeClass('b-layout_hide');
         ");
     }
-    
+
     return $objResponse;
 }
 
-
-function ShowBillComms($bill_id, $uid = 0, $mode = 1){
-	global $session;
-	session_start();
+function ShowBillComms($bill_id, $uid = 0, $mode = 1)
+{
+    global $session;
+    session_start();
     $objResponse = new xajaxResponse();
-    
+
     if ($uid && !hasPermissions('payments')) {
         return $objResponse;
     } elseif (!$uid) {
         $uid = $_SESSION['uid'];
     }
-	
+
     $account = new account();
-    if ($account->checkOperationOwner((int)$bill_id, (int)$uid)) {
+    if ($account->checkOperationOwner((int) $bill_id, (int) $uid)) {
         $info = $account->GetHistoryInfo($bill_id, $uid, $mode);
     }
-	
-	if (isset($info) && $info){
-		$objResponse->assign("bil".$bill_id,"innerHTML", ($mode==2 ? '<br/>' : '' ).$info);
-	}
-	return $objResponse;
+
+    if (isset($info) && $info) {
+        $objResponse->assign('bil'.$bill_id, 'innerHTML', ($mode == 2 ? '<br/>' : '').$info);
+    }
+
+    return $objResponse;
 }
 
-function ShowBillText($bill_id){
-	global $session, $DB;
-	session_start();
+function ShowBillText($bill_id)
+{
+    global $session, $DB;
+    session_start();
     $uid = get_uid(false);
-	$objResponse = new xajaxResponse();
-        $info = false;
-		if ($bill_id) {
-                $row = $DB->row("
+    $objResponse = new xajaxResponse();
+    $info = false;
+    if ($bill_id) {
+        $row = $DB->row('
 					SELECT ao.*, b.op_name 
 					FROM account_operations ao 
 					INNER JOIN op_codes b ON (ao.op_code = b.id) 
                     INNER JOIN account a ON a.id = ao.billing_id 
-					WHERE ao.id = ?i AND a.uid = ?i", $bill_id, $uid);
-                if($row) {
-        	        if(!empty($row['op_name'])){
-                            $info = account::GetHistoryText($row);
-                        }
-        	    }
-		}
+					WHERE ao.id = ?i AND a.uid = ?i', $bill_id, $uid);
+        if ($row) {
+            if (!empty($row['op_name'])) {
+                $info = account::GetHistoryText($row);
+            }
+        }
+    }
 
-	if ($info){
-	    $info = str_replace( '%username%', $_SESSION['login'], $info );
-		$objResponse->assign("bil".$bill_id,"innerHTML", ($br?"<br>":'').$info);
-	}
-	return $objResponse;
+    if ($info) {
+        $info = str_replace('%username%', $_SESSION['login'], $info);
+        $objResponse->assign('bil'.$bill_id, 'innerHTML', ($br ? '<br>' : '').$info);
+    }
+
+    return $objResponse;
 }
 
 /*function CheckUser($login) {
@@ -102,9 +105,9 @@ function ShowBillText($bill_id){
     
     $res      = get_object_vars($user);
     if((int)$res['uid'] <= 0) {
-	   $objResponse->script("billing.tipView({id:'login'}, 'Нет такого пользователя');");
+       $objResponse->script("billing.tipView({id:'login'}, 'Нет такого пользователя');");
        return $objResponse;
-	}
+    }
     
     if((int)$res['uid'] == $_SESSION['uid']) {
        $objResponse->script("billing.tipView({id:'login'}, 'Вы не можете перевести деньги самому себе');");
@@ -119,7 +122,7 @@ function ShowBillText($bill_id){
     
     $objResponse->assign("get_user_info", "innerHTML", $html);
     
-	return $objResponse;
+    return $objResponse;
 }
  */
 
@@ -128,73 +131,73 @@ function CheckUserType($login, $alert=false){
         $objResponse = new xajaxResponse();
         global $session, $DB;
         
-	require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/users.php");
+    require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/users.php");
         
-	$check_user = new users();
-	$role = $check_user->GetRole($login, $error);
+    $check_user = new users();
+    $role = $check_user->GetRole($login, $error);
     
-	
-	// если нет role то и пользователя нет
-	if($role == "") {
-	   $objResponse->script("billing.tipView({id:'login'}, 'Нет такого пользователя');"); 
+    
+    // если нет role то и пользователя нет
+    if($role == "") {
+       $objResponse->script("billing.tipView({id:'login'}, 'Нет такого пользователя');"); 
 
-	   return $objResponse;   
-	}
-	
-	if (substr($role, 0, 1)  != '0')	$user_type = "emp";
-	else					$user_type = "frl";
+       return $objResponse;   
+    }
+    
+    if (substr($role, 0, 1)  != '0')	$user_type = "emp";
+    else					$user_type = "frl";
    
-	$objResponse->assign("usertype", "value", $user_type);
-	
-	if($user_type == 'emp' && !$alert) {
-		$objResponse->script('$("pay").set("html", 10); ');
-	} else if(!$alert) {
-		$objResponse->script('$("pay").set("html", 19); ');
-	}
-	
-	if($alert) {
-	    if($user_type == 'emp') {
-	       $objResponse->script("billing.tipView({id:'login'}, 'Пользователь не является фрилансером');");
-	    }
-	}
+    $objResponse->assign("usertype", "value", $user_type);
+    
+    if($user_type == 'emp' && !$alert) {
+        $objResponse->script('$("pay").set("html", 10); ');
+    } else if(!$alert) {
+        $objResponse->script('$("pay").set("html", 19); ');
+    }
+    
+    if($alert) {
+        if($user_type == 'emp') {
+           $objResponse->script("billing.tipView({id:'login'}, 'Пользователь не является фрилансером');");
+        }
+    }
         $objResponse->script('monthCheck($("month"));');
-	return $objResponse;
+    return $objResponse;
 }
 */
 
 /*
 function changeCalendarMonth($month, $year) {
-	global $session;
-	session_start();
-	if (!$uid) $uid = $_SESSION['uid'];
-	
-	$account = new account();
+    global $session;
+    session_start();
+    if (!$uid) $uid = $_SESSION['uid'];
+    
+    $account = new account();
 
-	if($month == date('m') && $year == date('Y')) {
-		$day = date('d');
-	} else {
-		$day = -1;
-	}
-	
-	$month_name = array(1=>"Январь", 2=>"Февраль", 3=>"Март", 4=>"Апрель", 5=>"Май", 6=>"Июнь", 7=>"Июль", 8=>"Август", 9=>"Сентябрь", 10=>"Октябрь", 11=>"Ноябрь", 12=>"Декабрь");
-	$name_page = 'bill';
-	$monthDay = date('t', mktime(0,0,0,$month, 1, $year));
-	$xajax = true;
-	
-	$month = $month<10?"0".(int)$month:$month;
-	
-	$calendar = $account->getDateBillOperation($month, (int)$uid, false, $year);
-	
-	ob_start();
-	include_once($_SERVER['DOCUMENT_ROOT']."/engine/templates/bill/bill_history_calendar.tpl");
-	$data = ob_get_contents();
-	ob_get_clean();
-	
-	$objResponse = new xajaxResponse();
+    if($month == date('m') && $year == date('Y')) {
+        $day = date('d');
+    } else {
+        $day = -1;
+    }
+    
+    $month_name = array(1=>"Январь", 2=>"Февраль", 3=>"Март", 4=>"Апрель", 5=>"Май", 6=>"Июнь", 7=>"Июль", 8=>"Август", 9=>"Сентябрь", 10=>"Октябрь", 11=>"Ноябрь", 12=>"Декабрь");
+    $name_page = 'bill';
+    $monthDay = date('t', mktime(0,0,0,$month, 1, $year));
+    $xajax = true;
+    
+    $month = $month<10?"0".(int)$month:$month;
+    
+    $calendar = $account->getDateBillOperation($month, (int)$uid, false, $year);
+    
+    ob_start();
+    include_once($_SERVER['DOCUMENT_ROOT']."/engine/templates/bill/bill_history_calendar.tpl");
+    $data = ob_get_contents();
+    ob_get_clean();
+    
+    $objResponse = new xajaxResponse();
     //$objResponse->script("alert($year.$month);");  
-	$objResponse->assign("calendar_content", "innerHTML", $data);
-	
-	return $objResponse;
+    $objResponse->assign("calendar_content", "innerHTML", $data);
+    
+    return $objResponse;
 }
 */
 
@@ -491,29 +494,31 @@ function cancelReservedOrders($id) {
 }
 */
 
-function ShowReserveOrders($id) {
-    require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/billing.php");
+function ShowReserveOrders($id)
+{
+    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/billing.php';
     $objResponse = new xajaxResponse();
-    
+
     $uid = get_uid(false);
-    if(!$uid) {
+    if (!$uid) {
         return $objResponse;
     }
-    
+
     $bill = new billing($uid);
     $info = $bill->getOrderInfo($id, 'comment');
-    $info = array_map(create_function('$array', 'return $array["comment"];' ), $info);
-    
-    if ($info){
-        $info = implode(", ", $info);
+    $info = array_map(create_function('$array', 'return $array["comment"];'), $info);
+
+    if ($info) {
+        $info = implode(', ', $info);
         $info .= ' &#160;&#160;&#160;<a class="b-layout__link b-layout__link_fontsize_11 b-layout__link_bordbot_dot_80 b-layout__link_inline-block b-layout__link_lineheight_1" onclick="xajax_ShowReserveText('.$id.');" href="javascript:void(0);">Скрыть</a>';
-		$objResponse->assign("res".$id,"innerHTML", $info);
-	}
-    
+        $objResponse->assign('res'.$id, 'innerHTML', $info);
+    }
+
     return $objResponse;
 }
-function ShowReserveText($reserve_id){
-    require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/billing.php");
+function ShowReserveText($reserve_id)
+{
+    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/billing.php';
     global $session, $DB;
     session_start();
     $uid = get_uid(false);
@@ -526,19 +531,20 @@ function ShowReserveText($reserve_id){
                 WHERE reserve_id = ?i
                 GROUP BY reserve_id
             )
-            SELECT 'Список заказов №'|| id ||' на сумму ' || round(bq.ammount, 2) || ' руб' as op_name, id, " . billing::RESERVE_OP_CODE . " as op_code
+            SELECT 'Список заказов №'|| id ||' на сумму ' || round(bq.ammount, 2) || ' руб' as op_name, id, ".billing::RESERVE_OP_CODE.' as op_code
             FROM bill_reserve
             INNER JOIN bill_queue_ammount as bq ON bq.reserve_id = bill_reserve.id
-            WHERE id = ?i AND uid = ?i";
+            WHERE id = ?i AND uid = ?i';
         $row = $DB->row($sql, $reserve_id, $reserve_id, $uid);
         if ($row && !empty($row['op_name'])) {
             $info = account::GetHistoryText($row);
         }
     }
 
-    if ($info){
-        $objResponse->assign("res" . $reserve_id, "innerHTML", $info);
+    if ($info) {
+        $objResponse->assign('res'.$reserve_id, 'innerHTML', $info);
     }
+
     return $objResponse;
 }
 

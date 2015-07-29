@@ -1,4 +1,4 @@
-<div class="b-layout b-layout_padleft_60 b-layout__txt_padleft_null_iphone<?=$is_scroll?' autoscroll':''?>" id="form-block">
+<div class="b-layout b-layout_padleft_60 b-layout__txt_padleft_null_iphone<?=$is_scroll ? ' autoscroll' : ''?>" id="form-block">
     <h3 class="b-layout__h3">Обсуждение заказа</h3>
     <form  id="message-form" action="#" method="post" enctype="multipart/form-data">
         <input type="hidden" name="hash" value="<?=$param_hash?>" />

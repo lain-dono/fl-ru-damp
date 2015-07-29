@@ -5,12 +5,11 @@ $current_uid = get_uid(false);
 //Не показываем блок при условии
 if ($current_uid <= 0 || !is_emp() || (isset($kind) && ($kind == 4 || $kind == 2)) ||
     (isset($g_page_id) && in_array($g_page_id, array('0|991', '0|992')))) {
-    
     return;
 }
 
 //Если есть проект то не показываем
-require_once(ABS_PATH . "/classes/projects.php");
+require_once ABS_PATH.'/classes/projects.php';
 if (projects::isExistProjects($current_uid)) {
     return;
 }

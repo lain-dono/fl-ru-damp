@@ -1,8 +1,10 @@
 <form id="sbr_op_form">
     <input type="hidden" name="feedback_id" value="<?= $id ?>"/>
-    <?php if(isset($hash)){ ?>
+    <?php if (isset($hash)) {
+    ?>
     <input type="hidden" name="hash" value="<?php echo $hash ?>" />
-    <?php } ?>
+    <?php 
+} ?>
     <div class="b-username b-username_bold b-username_padbot_10">Ваш отзыв</div>
     <div class="b-textarea b-textarea_padtop_10">
         <textarea rows="5" cols="80" name="feedback" id="sbr_op_text" class="b-textarea__textarea  b-textarea__textarea__height_50"><?= $feedback ?></textarea>

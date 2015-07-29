@@ -14,10 +14,10 @@
     <div class="b-layout__txt b-layout__txt_fontsize_11 b-layout__txt_padleft_30 b-layout__txt_padbot_40">указать профессиональную информацию и заполнить портфолио.</div>
 </div>
 
-<?
-if ( !empty($_SESSION['is_new_user']) ) {
+<?php
+if (!empty($_SESSION['is_new_user'])) {
     unset($_SESSION['is_new_user']);
-?>
+    ?>
 <script language="javascript" src="http://www.everestjs.net/static/st.v2.js"></script>
 <script language="javascript">
 var ef_event_type="transaction";
@@ -33,6 +33,7 @@ var ef_fb_is_app = 0;
 effp();
 </script>
 <noscript><img src='http://pixel.everesttech.net/3208/t?ev_reg_worker=1&ev_reg_employer=0&ev_reg_worker_master=0&ev_reg_employer_master=0&ev_transid=<?=md5($_SESSION['uid'])?>' width='1' height='1'/></noscript>
-<?
+<?php
+
 }
 ?>

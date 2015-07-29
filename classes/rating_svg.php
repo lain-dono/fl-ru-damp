@@ -1,187 +1,189 @@
 <?php
+
 /*
  * Основной класс для построения svg графика
  *
  */
 
-abstract class Rating_Svg {
-
+abstract class Rating_Svg
+{
     /**
-     * Массив с данными
+     * Массив с данными.
      *
-     * @var array 
+     * @var array
      */
     public $_data;
 
     /**
-     * Размеры svg-объекта (ширина, высота)
+     * Размеры svg-объекта (ширина, высота).
      *
      * @var array
      */
     public $_canvasSize = array(744, 180);
 
     /**
-     * Размеры графика (ширина, высота)
+     * Размеры графика (ширина, высота).
      *
      * @var array
      */
     public $_graphSize = array(744, 140);
 
     /**
-     * Коэффициент, определяющий максимальную высоту графика по вертикали
+     * Коэффициент, определяющий максимальную высоту графика по вертикали.
      *
      * @var float
      */
     public $_zoom = 0.95;
 
     /**
-     * Радиус точек
+     * Радиус точек.
      *
      * @var int
      */
     public $_dotsRadius = 3;
 
     /**
-     * Массив с периодами, когда у пользователя был оплачен ПРО аккаунт
+     * Массив с периодами, когда у пользователя был оплачен ПРО аккаунт.
      *
      * @var array
      */
     public $_pro = array();
 
     /**
-     * Цвет линии
+     * Цвет линии.
      *
      * @var string
      */
     public $_stroke = '#5f5f5f';
 
     /**
-     * Цвет линии для ПРО
+     * Цвет линии для ПРО.
      *
      * @var string
      */
     public $_strokePro = '#ff6d1b';
 
     /**
-     * Цвет нижней заливки
+     * Цвет нижней заливки.
      *
      * @var string
      */
     public $_fill = '#BDBDBD';
 
     /**
-     * Цвет нижней заливки для ПРО
+     * Цвет нижней заливки для ПРО.
      *
      * @var string
      */
     public $_fillPro = '#FFEBAF';
 
     /**
-     * Цвет основного фона
+     * Цвет основного фона.
      *
      * @var string
      */
     public $_bg = '#eeeeee';
 
     /**
-     * Цвет основного фона для ПРО
+     * Цвет основного фона для ПРО.
      *
      * @var string
      */
     public $_bgPro = '#FFF9E7';
 
     /**
-     * Количество сегментов по горизонтали
+     * Количество сегментов по горизонтали.
      *
      * @var int
      */
     public $_columns;
 
     /**
-     * Время в формате unix timestamp
+     * Время в формате unix timestamp.
      *
      * @var int
      */
     public $_time;
 
     /**
-     * Максимальное значение рейтинга
+     * Максимальное значение рейтинга.
      *
      * @var float
      */
     public $_max = null;
 
     /**
-     * Минимальное значение рейтинга
+     * Минимальное значение рейтинга.
      *
      * @var float
      */
     public $_min = null;
 
     /**
-     * Ширина сегмента
+     * Ширина сегмента.
      *
-     * @var integer
+     * @var int
      */
     public $_columnWidth;
-
 
     public $_ratingData = array();
     public $_last = 0;
     public $_next;
 
-
     /**
-     * Массив с координатами пути
+     * Массив с координатами пути.
      *
      * @var array
      */
     public $_path = array();
 
     /**
-     * Массив с координатами пути в формате SVG
+     * Массив с координатами пути в формате SVG.
      *
      * @var array
      */
     public $_pathCoord = array();
 
     /**
-     * Массив с координатами нижней заливки в формате SVG
+     * Массив с координатами нижней заливки в формате SVG.
      *
      * @var array
      */
     public $_fillCoord = array();
 
     /**
-     * Массив с координатами точек на графике
+     * Массив с координатами точек на графике.
      *
      * @var array
      */
     public $_dots = array();
 
     /**
-     * Конструктор класса
+     * Конструктор класса.
      *
-     * @param integer $_time Время графика в формате unix timestamp
+     * @param int   $_time Время графика в формате unix timestamp
      * @param array $_data Массив с данными
      */
-    public function __construct($_time, $_data) {
+    public function __construct($_time, $_data)
+    {
         $this->_time = $_time;
         $this->_data = $_data;
 
-        if (method_exists($this, 'init'))
+        if (method_exists($this, 'init')) {
             $this->init();
+        }
     }
 
     /**
-     * Добавляет сетку к графику
+     * Добавляет сетку к графику.
      */
-    public function addGrid() {
+    public function addGrid()
+    {
         // сетка
         $g = $this->doc->createElement('g');
 //        $g->setAttribute('opacity', '0.5');
         $this->svg->appendChild($g);
-        for ($i = 0; $i < $this->_columns - 1; $i++) {
+        for ($i = 0; $i < $this->_columns - 1; ++$i) {
             $lines = $this->doc->createElement('rect');
             $lines->setAttribute('x', $this->_columnWidth * $i + $this->_columnWidth);
             $lines->setAttribute('y', 0);
@@ -193,10 +195,10 @@ abstract class Rating_Svg {
     }
 
     /**
-     * Создает SVG документ и базовые элементы
+     * Создает SVG документ и базовые элементы.
      */
-    public function createDocument() {
-
+    public function createDocument()
+    {
         $this->_columnWidth = $this->_graphSize[0] / $this->_columns;
 
         // документ
@@ -227,15 +229,17 @@ abstract class Rating_Svg {
     }
 
     /**
-     * Добавляет текстовый элемент
+     * Добавляет текстовый элемент.
      *
-     * @param integer $x
-     * @param integer $y
-     * @param string $_text Текст
-     * @param array $params Массив с параметрами (опционально)
+     * @param int    $x
+     * @param int    $y
+     * @param string $_text  Текст
+     * @param array  $params Массив с параметрами (опционально)
+     *
      * @return DOMElement
      */
-    public function addText($x, $y, $_text, $params = array()) {
+    public function addText($x, $y, $_text, $params = array())
+    {
         $_text = iconv('CP1251', 'UTF-8', $_text);
         $text = $this->doc->createElement('text');
         $text->setAttribute('x', $x);
@@ -244,17 +248,19 @@ abstract class Rating_Svg {
         $text->setAttribute('style', 'font-family: Tahoma; font-size: 11px;');
         $text->setAttribute('font', '11px Tahoma');
         $text->setAttribute('stroke', 'none');
-        
-        $text->setAttribute('fill', '#666666');
-        if (isset($params['fill'])) $text->setAttribute('fill', $params['fill']);
 
-        if(isset($params['font'])) {
+        $text->setAttribute('fill', '#666666');
+        if (isset($params['fill'])) {
+            $text->setAttribute('fill', $params['fill']);
+        }
+
+        if (isset($params['font'])) {
             preg_match_all('/(\d+)px\s(.*?)$/', $params['font'], $font);
 //            var_dump($font);
             $text->setAttribute('style', "font-family: {$font[2][0]}; font-size: {$font[1][0]}px;");
             $text->setAttribute('font', $params['font']);
         }
-        
+
         $this->svg->appendChild($text);
 
         // число
@@ -266,39 +272,43 @@ abstract class Rating_Svg {
     }
 
     /**
-     * Добавляет прямоугольник
+     * Добавляет прямоугольник.
      *
      * @param <type> $x
      * @param <type> $y
-     * @param <type> $width ширина
+     * @param <type> $width  ширина
      * @param <type> $height высота
      * @param <type> $params Массив с параметрами (опционально)
+     *
      * @return DOMElement
      */
-    public function addRect($x, $y = 0, $width, $height, $params = array()) {
-
+    public function addRect($x, $y = 0, $width, $height, $params = array())
+    {
         $x = ceil($x);
         $y = ceil($y);
-
 
         $bg = $this->doc->createElement('rect');
         $bg->setAttribute('width', $width);
         $bg->setAttribute('height', $height);
         $bg->setAttribute('x', $x);
 
-        if (isset($params['fill']))
+        if (isset($params['fill'])) {
             $bg->setAttribute('fill', $params['fill']);
-        if (isset($params['stroke']))
+        }
+        if (isset($params['stroke'])) {
             $bg->setAttribute('stroke', $params['stroke']);
-        if (isset($params['stroke-width']))
+        }
+        if (isset($params['stroke-width'])) {
             $bg->setAttribute('stroke-width', $params['stroke-width']);
+        }
         if (isset($params['r'])) {
             $bg->setAttribute('r', $params['r']);
             $bg->setAttribute('rx', $params['r']);
             $bg->setAttribute('ry', $params['r']);
         }
-        if (isset($params['style']))
+        if (isset($params['style'])) {
             $bg->setAttribute('stroke-width', $params['$style']);
+        }
 
         $this->svg->appendChild($bg);
 
@@ -306,9 +316,10 @@ abstract class Rating_Svg {
     }
 
     /**
-     * Создает тултип )
+     * Создает тултип ).
      */
-    public function addTooltip() {
+    public function addTooltip()
+    {
         $g = $this->doc->createElement('g');
         $g->setAttribute('id', 'gToolTip');
         $g->setAttribute('style', 'display:none;');
@@ -319,7 +330,7 @@ abstract class Rating_Svg {
                 'r' => 5,
                 'fill' => '#ffffff',
                 'stroke' => $this->_strokePro,
-                'stroke-width' => 2
+                'stroke-width' => 2,
             ));
 
         $g->appendChild($t);
@@ -328,20 +339,22 @@ abstract class Rating_Svg {
         $g->appendChild($rating);
         $date = $this->addText(50, 30.5, '01.01.2010', array(
             'fill' => $this->_strokePro,
-            'font' => '10px Tahoma'
+            'font' => '10px Tahoma',
             ));
         $g->appendChild($date);
     }
 
     /**
-     * Добавляет точку
+     * Добавляет точку.
      *
      * @param <type> $x
      * @param <type> $y
      * @param <type> $params Массив с параметрами (опционально)
+     *
      * @return DOMElement
      */
-    public function addCircle($x, $y, $params = array()) {
+    public function addCircle($x, $y, $params = array())
+    {
         $x = floor($x);
         $y = floor($y);
         $circle = $this->doc->createElement('circle');
@@ -354,8 +367,12 @@ abstract class Rating_Svg {
             $circle->setAttribute('fill', $params['fill']);
         }
 
-        if (isset($params['ratingvalue'])) $circle->setAttribute('ratingvalue', $params['ratingvalue']);
-        if (isset($params['ratingdate'])) $circle->setAttribute('ratingdate', $params['ratingdate']);
+        if (isset($params['ratingvalue'])) {
+            $circle->setAttribute('ratingvalue', $params['ratingvalue']);
+        }
+        if (isset($params['ratingdate'])) {
+            $circle->setAttribute('ratingdate', $params['ratingdate']);
+        }
 
         $circle->setAttribute('stroke', '#ffffff');
         $circle->setAttribute('stroke-width', 2);
@@ -366,23 +383,22 @@ abstract class Rating_Svg {
     /**
      * Рисует кусок графика (линию и заливку снизу) на основании координат,
      * указанных в массиве $this->_pathCoord.
-     * Очищает массив $this->_pathCoord
+     * Очищает массив $this->_pathCoord.
      *
-     * @param <type> $isPro Выделять или нет цветом ПРО данный кусок графика
+     * @param <type> $isPro  Выделять или нет цветом ПРО данный кусок графика
      * @param <type> $drawBg
      */
-    public function drawPart($isPro = false, $drawBg = true) {
-
+    public function drawPart($isPro = false, $drawBg = true)
+    {
         if ($isPro && $drawBg) {
-            $x = preg_replace("/M(.*?),.*/", "$1", $this->_pathCoord[0]);
-            $x2 = preg_replace("/L(.*?),.*/", "$1", $this->_pathCoord[(count($this->_pathCoord) - 1)]);
+            $x = preg_replace('/M(.*?),.*/', '$1', $this->_pathCoord[0]);
+            $x2 = preg_replace('/L(.*?),.*/', '$1', $this->_pathCoord[(count($this->_pathCoord) - 1)]);
             $w = $x2 - $x;
 
             $this->addRect($x, 0, $w, $this->_graphSize[1], array(
-                'fill' => $this->_bgPro
+                'fill' => $this->_bgPro,
             ));
         }
-
 
         // нижняя заливка
         if ($this->_fillCoord) {
@@ -390,12 +406,12 @@ abstract class Rating_Svg {
             $path->setAttribute('fill', ($isPro ? $this->_fillPro : $this->_fill));
             $path->setAttribute('stroke', 'none');
 
-            $this->_fillCoord[] = preg_replace("/L(.*?),(.*?)$/", "L$1, {$this->_graphSize[1]}Z", $this->_fillCoord[count($this->_fillCoord) - 1]);
-            $path_c = implode(" ", $this->_fillCoord);
-            $path->setAttribute('d', implode(" ", $this->_fillCoord));
+            $this->_fillCoord[] = preg_replace('/L(.*?),(.*?)$/', "L$1, {$this->_graphSize[1]}Z", $this->_fillCoord[count($this->_fillCoord) - 1]);
+            $path_c = implode(' ', $this->_fillCoord);
+            $path->setAttribute('d', implode(' ', $this->_fillCoord));
             $this->svg->appendChild($path);
         }
-        
+
         // линия
         $path = $this->doc->createElement('path');
         $path->setAttribute('fill', 'none');
@@ -403,7 +419,7 @@ abstract class Rating_Svg {
         $path->setAttribute('stroke-width', 1.2);
         $p = $this->_pathCoord;
 //        unset($p[1]);
-        $path->setAttribute('d', implode(" ", $p));
+        $path->setAttribute('d', implode(' ', $p));
         $this->svg->appendChild($path);
 
         $this->_pathCoord = array();
@@ -411,38 +427,44 @@ abstract class Rating_Svg {
     }
 
     /**
-     * Устанавливает периоды ПРО
+     * Устанавливает периоды ПРО.
      *
      * @param array $arr
      */
-    public function setPro($arr = array()) {
+    public function setPro($arr = array())
+    {
         $this->_pro = is_array($arr) ? $arr : array();
     }
 
     /**
-     * Генерирует график и возвращает результат в виде xml
+     * Генерирует график и возвращает результат в виде xml.
      *
      * @return string
      */
-    public function render() {
+    public function render()
+    {
         $this->createDocument();
         $this->createGraph();
         $this->addGrid();
         $this->addTooltip();
-        
+
         return $this->doc->saveXML();
     }
 
     /**
-     * Возвращает минимальный рейтинг
+     * Возвращает минимальный рейтинг.
      * 
      * @return int
      */
-    public function _getMin() {
-        if(!count($this->_data)) return;
+    public function _getMin()
+    {
+        if (!count($this->_data)) {
+            return;
+        }
 
-        if ($this->_min !== null)
+        if ($this->_min !== null) {
             return $this->_min;
+        }
 
         foreach ($this->_data as $row) {
             $this->_min[] = $row['rating'];
@@ -455,7 +477,7 @@ abstract class Rating_Svg {
 
     /**
      * Метод, в котором должны быть расчитаны координаты
-     * линий и заливки в графике. ($_pathCoord, $_fillCoord)
+     * линий и заливки в графике. ($_pathCoord, $_fillCoord).
      */
     abstract public function createGraph();
 }

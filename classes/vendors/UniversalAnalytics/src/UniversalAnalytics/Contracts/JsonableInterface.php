@@ -1,13 +1,15 @@
-<?php namespace UniversalAnalytics\Contracts;
+<?php
 
-interface JsonableInterface {
+namespace UniversalAnalytics\Contracts;
 
+interface JsonableInterface
+{
     /**
      * Convert the object to its JSON representation.
      *
-     * @param  int  $options
+     * @param int $options
+     *
      * @return string
      */
     public function toJson($options = 0);
-
 }

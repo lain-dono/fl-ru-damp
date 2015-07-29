@@ -1,12 +1,12 @@
 <?php
 
 if (!$_in_setup) {
-    header ("HTTP/1.0 403 Forbidden"); 
+    header('HTTP/1.0 403 Forbidden');
     exit;
 }
 
 if ($is_adm) {
-    require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/account.common.php");
+    require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/account.common.php';
     $xajax->printJavascript('/xajax/');
 }
 
@@ -20,7 +20,7 @@ if ($is_adm) {
             Ваши данные будут восстановлены на сайте после запроса в бухгалтерию.
         </div>
     </div>
-    <?php if($is_adm): ?>
+    <?php if ($is_adm): ?>
     <div class="b-buttons b-buttons_padtop_20">
        <a href="javascript:void(0)" 
            onclick="confirm('Восстановить финансовые данные пользователя?') && xajax_repairFinData(<?=$uid?>);" 

@@ -1,43 +1,44 @@
 <?php
+
 /**
- *  Optional include file for SimpleTest
- *  @package    SimpleTest
- *  @subpackage UnitTester
+ *  Optional include file for SimpleTest.
+ *
  *  @version    $Id: default_reporter.php 1704 2008-03-25 00:47:04Z lastcraft $
  */
 
 /**#@+
  *  include other SimpleTest class files
  */
-require_once(dirname(__FILE__) . '/simpletest.php');
-require_once(dirname(__FILE__) . '/scorer.php');
-require_once(dirname(__FILE__) . '/reporter.php');
-require_once(dirname(__FILE__) . '/xml.php');
+require_once dirname(__FILE__).'/simpletest.php';
+require_once dirname(__FILE__).'/scorer.php';
+require_once dirname(__FILE__).'/reporter.php';
+require_once dirname(__FILE__).'/xml.php';
 /**#@-*/
 
 /**
  *    Parser for command line arguments. Extracts
  *    the a specific test to run and engages XML
  *    reporting when necessary.
- *    @package SimpleTest
- *    @subpackage UnitTester
  */
-class SimpleCommandLineParser {
-    var $_to_property = array(
+class SimpleCommandLineParser
+{
+    public $_to_property = array(
             'case' => '_case', 'c' => '_case',
             'test' => '_test', 't' => '_test',
-            'xml' => '_xml', 'x' => '_xml');
-    var $_case = '';
-    var $_test = '';
-    var $_xml = false;
-    var $_no_skips = false;
-    
+            'xml' => '_xml', 'x' => '_xml', );
+    public $_case = '';
+    public $_test = '';
+    public $_xml = false;
+    public $_no_skips = false;
+
     /**
      *    Parses raw command line arguments into object properties.
+     *
      *    @param string $arguments        Raw commend line arguments.
      */
-    function SimpleCommandLineParser($arguments) {
-        if (! is_array($arguments)) {
+    public function SimpleCommandLineParser($arguments)
+    {
+        if (!is_array($arguments)) {
             return;
         }
         foreach ($arguments as $i => $argument) {
@@ -56,40 +57,44 @@ class SimpleCommandLineParser {
             }
         }
     }
-    
+
     /**
      *    Run only this test.
+     *
      *    @return string        Test name to run.
-     *    @access public
      */
-    function getTest() {
+    public function getTest()
+    {
         return $this->_test;
     }
-    
+
     /**
      *    Run only this test suite.
+     *
      *    @return string        Test class name to run.
-     *    @access public
      */
-    function getTestCase() {
+    public function getTestCase()
+    {
         return $this->_case;
     }
-    
+
     /**
      *    Output should be XML or not.
-     *    @return boolean        True if XML desired.
-     *    @access public
+     *
+     *    @return bool        True if XML desired.
      */
-    function isXml() {
+    public function isXml()
+    {
         return $this->_xml;
     }
-    
+
     /**
      *    Output should suppress skip messages.
-     *    @return boolean        True for no skips.
-     *    @access public
+     *
+     *    @return bool        True for no skips.
      */
-    function noSkips() {
+    public function noSkips()
+    {
         return $this->_no_skips;
     }
 }
@@ -98,32 +103,31 @@ class SimpleCommandLineParser {
  *    The default reporter used by SimpleTest's autorun
  *    feature. The actual reporters used are dependency
  *    injected and can be overridden.
- *    @package SimpleTest
- *    @subpackage UnitTester
  */
-class DefaultReporter extends SimpleReporterDecorator {
-    
+class DefaultReporter extends SimpleReporterDecorator
+{
     /**
      *  Assembles the appopriate reporter for the environment.
      */
-    function DefaultReporter() {
+    public function DefaultReporter()
+    {
         //if (SimpleReporter::inCli()) {
-        if (in_array($_REQUEST["format"], array("xml", "text", "json"))) {
+        if (in_array($_REQUEST['format'], array('xml', 'text', 'json'))) {
             global $argv;
             $parser = new SimpleCommandLineParser($argv);
-            
-            switch($_REQUEST["format"]) {
-            case "xml":
+
+            switch ($_REQUEST['format']) {
+            case 'xml':
                 $interfaces = array('XmlReporter');
             break;
-            case "text":
+            case 'text':
                 $interfaces = array('TextReporter');
             break;
-            case "json":
+            case 'json':
                 $interfaces = array('JsonReporter');
             break;
             }
-            
+
             //$interfaces = $parser->isXml() ? array('XmlReporter') : array('TextReporter');
             $reporter = &new SelectiveReporter(
                     SimpleTest::preferred($interfaces),
@@ -144,4 +148,3 @@ class DefaultReporter extends SimpleReporterDecorator {
         $this->SimpleReporterDecorator($reporter);
     }
 }
-?>

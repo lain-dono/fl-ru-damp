@@ -4,19 +4,19 @@
 
 require_once '../classes/stdf.php';
 
-$r = pg_query(DBConnect(), "SELECT MAX(id) AS max_id FROM surveys");
+$r = pg_query(DBConnect(), 'SELECT MAX(id) AS max_id FROM surveys');
 $m = pg_fetch_array($r);
-pg_query(DBConnect(),"ALTER SEQUENCE surveys_id_seq RESTART WITH ".($m['max_id']+1));
+pg_query(DBConnect(), 'ALTER SEQUENCE surveys_id_seq RESTART WITH '.($m['max_id'] + 1));
 
-$r = pg_query(DBConnect(), "SELECT MAX(id) AS max_id FROM surveys_questions");
+$r = pg_query(DBConnect(), 'SELECT MAX(id) AS max_id FROM surveys_questions');
 $m = pg_fetch_array($r);
-pg_query(DBConnect(),"ALTER SEQUENCE surveys_questions_id_seq RESTART WITH ".($m['max_id']+1));
+pg_query(DBConnect(), 'ALTER SEQUENCE surveys_questions_id_seq RESTART WITH '.($m['max_id'] + 1));
 
-$r = pg_query(DBConnect(), "SELECT MAX(id) AS max_id FROM surveys_questions_options");
+$r = pg_query(DBConnect(), 'SELECT MAX(id) AS max_id FROM surveys_questions_options');
 $m = pg_fetch_array($r);
-pg_query(DBConnect(),"ALTER SEQUENCE surveys_questions_options_id_seq RESTART WITH ".($m['max_id']+1));
+pg_query(DBConnect(), 'ALTER SEQUENCE surveys_questions_options_id_seq RESTART WITH '.($m['max_id'] + 1));
 
-pg_query(DBConnect(), "START TRANSACTION");
+pg_query(DBConnect(), 'START TRANSACTION');
 
 $res = pg_query(DBConnect(), "INSERT INTO surveys (title, description, date_begin, date_end, code, visibility, thanks_text, u_count, e_count, f_count) VALUES (
 'Сколько времени вы проводите в социальных сетях?',
@@ -66,9 +66,6 @@ $res = pg_query(DBConnect(), "INSERT INTO surveys_questions (title, description,
 ('Находили ли вы заказчиков/исполнителей в социальных сетях?', '', 2, 't', 1, 7, {$opros_id}, 0, 't', NULL, NULL)
 RETURNING id");
 list($question_7) = pg_fetch_row($res);
-
-
-
 
 //--
 
@@ -199,7 +196,6 @@ $res = pg_query(DBConnect(), "INSERT INTO surveys_questions_options (title, is_o
 RETURNING id");
 list($answer_72) = pg_fetch_row($res);
 
+pg_query(DBConnect(), 'COMMIT');
 
-pg_query(DBConnect(), "COMMIT");
-
-echo "Done";
+echo 'Done';

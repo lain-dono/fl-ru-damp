@@ -1,7 +1,7 @@
 <?php
 
-$smail->subject = "Подозрительная сделка на FL.ru";
-$order_url = $GLOBALS['host'] . tservices_helper::getOrderCardUrl($order_id);
+$smail->subject = 'Подозрительная сделка на FL.ru';
+$order_url = $GLOBALS['host'].tservices_helper::getOrderCardUrl($order_id);
 
 if ($date_reserve) {
     $date_reserve = date('d.m.Y H:i:s',  strtotime($date_reserve));

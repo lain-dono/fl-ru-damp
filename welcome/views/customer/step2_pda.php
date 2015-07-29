@@ -12,7 +12,7 @@
     <select class="b-select b-select__select_width_full b-select_margbot_40">
     <?php 
         $itemblocks = array();
-        foreach ($professions as $profession): 
+        foreach ($professions as $profession):
 
             if ($profession['gid'] <= 0):
                 continue;
@@ -22,7 +22,7 @@
             $itemblocks[$profession['gid']][] = $profession;
             if (!$is_exist):
     ?>
-        <option value="<?=$profession['gid']?>" <?php if($default_group == $profession['gid']):?>selected<?php endif; ?>><?=$profession['gname']?></option>
+        <option value="<?=$profession['gid']?>" <?php if ($default_group == $profession['gid']):?>selected<?php endif; ?>><?=$profession['gname']?></option>
      <?php  endif; ?>
      <?php endforeach; ?>
     </select>    

@@ -1,10 +1,10 @@
-<?
-if(!defined('IN_STDF')) { 
-    header("HTTP/1.0 404 Not Found");
+<?php
+if (!defined('IN_STDF')) {
+    header('HTTP/1.0 404 Not Found');
     exit();
 }
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/professions.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/portfolio.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/professions.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/portfolio.php';
 $prfs = new professions();
 $uid = $user->GetUid($err);
 $error .= $err;
@@ -23,16 +23,20 @@ prjid = new Array();
 prof_ids = new Array();
 profnames = new Array();
 
-<?
+<?php
 	$i = 0;
-	if ($prjs) foreach ($prjs as $prj){
-		print ("prjprof_id[$i] = '".$prj['prof_id']."';\nprjid[$i] = '".$prj['id']."';\nprjname[$i] = '".$prj['name']."';\nprjlink[$i] = '".$prj['link']."';\nprjdescr[$i] = '".$prj['descr']."';\n\n");
-		$i++;
+	if ($prjs) {
+	    foreach ($prjs as $prj) {
+	        print ("prjprof_id[$i] = '".$prj['prof_id']."';\nprjid[$i] = '".$prj['id']."';\nprjname[$i] = '".$prj['name']."';\nprjlink[$i] = '".$prj['link']."';\nprjdescr[$i] = '".$prj['descr']."';\n\n");
+	        ++$i;
+	    }
 	}
 	$j = 0;
-	if ($profs) foreach($profs as $prof){
-		print ("prof_ids[$j] = '".$prof['prof_id']."';\nprofnames[$j] = '".$prof['name']."';\n");
-		$j++;
+	if ($profs) {
+	    foreach ($profs as $prof) {
+	        print ("prof_ids[$j] = '".$prof['prof_id']."';\nprofnames[$j] = '".$prof['name']."';\n");
+	        ++$j;
+	    }
 	}
 		?>
 
@@ -97,23 +101,29 @@ var profnum = <?=$j?>;
 	
 //-->
 </script>
-<? if (($_SESSION['login'] == $user->login) && ($user->is_pro != 't')) { ?>
-<?=view_error4('Внимание! Вы отображаетесь в каталоге только по своей специализации. Чтобы увеличить количество специализаций, необходимо перейти на аккаунт ' . view_pro()); ?>
-<? } ?>
+<?php if (($_SESSION['login'] == $user->login) && ($user->is_pro != 't')) {
+    ?>
+<?=view_error4('Внимание! Вы отображаетесь в каталоге только по своей специализации. Чтобы увеличить количество специализаций, необходимо перейти на аккаунт '.view_pro());
+    ?>
+<?php 
+} ?>
 <table width="100%" cellspacing="0" cellpadding="0" bgcolor="FFFFFF">
 <tr><td height="20" colspan="3">&nbsp;</td></tr>
 <tr>
 	<td width="14">&nbsp;</td>
 	<td>
 		<table width="100%" border="0" cellspacing="0" cellpadding="4">
-		<?
-			if ($profs) foreach($profs as $prof){
-		?>
+		<?php
+			if ($profs) {
+			    foreach ($profs as $prof) {
+			        ?>
 		<tr>
 			<td width="11"><img src="/images/ico_down.gif" alt="" width="11" height="11" border="0"></td>
 			<td><a href="#" class="blue" id="proflink<?=$prof['prof_id']?>" onClick="viewprof(<?=$prof['prof_id']?>);"><?=$prof['name']?></a></td>
 		</tr>
-		<? } ?>
+		<?php 
+			    }
+			} ?>
 		<tr>
 			<td width="11"><img src="/images/ico_down.gif" alt="" width="11" height="11" border="0"></td>
 			<td><a href="#" class="blue" id="proflinkall" onClick="viewprof(-1);">Все портфолио</a></td>

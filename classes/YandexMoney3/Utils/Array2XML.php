@@ -2,7 +2,7 @@
 
 namespace YandexMoney3\Utils;
 
-use \DOMDocument;
+use DOMDocument;
 use YandexMoney3\Exception;
 
 /*
@@ -52,8 +52,7 @@ use YandexMoney3\Exception;
 
 class Array2XML
 {
-  private
-    $xml = null,
+    private $xml = null,
     $encoding = null,
     $topNodeName = null,
     $convertFromEncoding = null;
@@ -67,12 +66,13 @@ class Array2XML
    * @return this
    *
   **/
-  public  function init( $version='1.0', $encoding='UTF-8', $formatOutput=true )
+  public function init($version = '1.0', $encoding = 'UTF-8', $formatOutput = true)
   {
-    $this->xml = new DOMDocument( $version, $encoding );
-    $this->xml->formatOutput = $formatOutput;
-    $this->encoding = $encoding;
-    return $this;
+      $this->xml = new DOMDocument($version, $encoding);
+      $this->xml->formatOutput = $formatOutput;
+      $this->encoding = $encoding;
+
+      return $this;
   }
 
   /*
@@ -84,11 +84,13 @@ class Array2XML
   **/
   public function setTopNodeName($topNodeName)
   {
-    if( ! $this->xml )
-      $this->init();
+      if (!$this->xml) {
+          $this->init();
+      }
 
-    $this->topNodeName = $topNodeName;
-    return $this;
+      $this->topNodeName = $topNodeName;
+
+      return $this;
   }
 
   /*
@@ -97,29 +99,26 @@ class Array2XML
    * @return this
    *
   **/
-  public function importArray( $data=array() )
+  public function importArray($data = array())
   {
-    if( ! $this->xml || ! $this->topNodeName )
-      throw new Exception('[Array2xml] Top node name not set');
+      if (!$this->xml || !$this->topNodeName) {
+          throw new Exception('[Array2xml] Top node name not set');
+      }
 
-    $this->xml->appendChild( $this->parse( $this->topNodeName, $data ));
-    return $this;
+      $this->xml->appendChild($this->parse($this->topNodeName, $data));
+
+      return $this;
   }
 
-  
-  public function setConvertFromEncoding($encoding = 'windows-1251')
-  {
-      $this->convertFromEncoding = $encoding;
-  }
-  
+    public function setConvertFromEncoding($encoding = 'windows-1251')
+    {
+        $this->convertFromEncoding = $encoding;
+    }
 
-  private function convert($value)
-  {
-      return ($this->convertFromEncoding)?iconv($this->convertFromEncoding, $this->encoding, $value):$value; 
-  }
-
-
-
+    private function convert($value)
+    {
+        return ($this->convertFromEncoding) ? iconv($this->convertFromEncoding, $this->encoding, $value) : $value;
+    }
 
   /*
    * Recursively parse an array to xml
@@ -128,62 +127,54 @@ class Array2XML
    * @param array $data - aray to be converterd
    * @return DOMNode
   **/
-  private function parse( $topNodeName, $data )
+  private function parse($topNodeName, $data)
   {
-    $node = $this->xml->createElement($topNodeName);
+      $node = $this->xml->createElement($topNodeName);
 
-    if( is_array($data))
-    {
-      // Loop through attributes first
-      if( isset($data['@attributes']))
-      {
-        foreach( $data['@attributes'] as $key=>$value )
-        {
-          if( ! $this->tagNameIsValid($key))
-          {
-            throw new Exception('[Array2xml] Illegal character in attribute name: attribute '.$key.' in node '.$topNodeName);
+      if (is_array($data)) {
+          // Loop through attributes first
+      if (isset($data['@attributes'])) {
+          foreach ($data['@attributes'] as $key => $value) {
+              if (!$this->tagNameIsValid($key)) {
+                  throw new Exception('[Array2xml] Illegal character in attribute name: attribute '.$key.' in node '.$topNodeName);
+              }
+              $node->setAttribute($key, htmlspecialchars($this->bool2str($value), ENT_QUOTES, $this->encoding));
           }
-          $node->setAttribute( $key, htmlspecialchars($this->bool2str($value), ENT_QUOTES, $this->encoding) );
-        }
-        unset($data['@attributes']);
+          unset($data['@attributes']);
       }
       // If a hard value is set in @value or @cdata, set value and escape (values can't contain child nodes)
-      if( isset($data['@value']))
-      {
-        $node->appendChild( $this->xml->createTextNode(htmlspecialchars( $this->bool2str($data['@value']), ENT_QUOTES, $this->encoding )));
-        return $node;
-      }
-      else if( isset($data['@cdata']))
-      {
-        $node->appendChild( $this->xml->createCDATASection($this->bool2str($data['@cdata']) ));
-        return $node;
+      if (isset($data['@value'])) {
+          $node->appendChild($this->xml->createTextNode(htmlspecialchars($this->bool2str($data['@value']), ENT_QUOTES, $this->encoding)));
+
+          return $node;
+      } elseif (isset($data['@cdata'])) {
+          $node->appendChild($this->xml->createCDATASection($this->bool2str($data['@cdata'])));
+
+          return $node;
       }
 
       // Not escaped, loop through child nodes
-      foreach( $data as $key=>$value )
-      {
-        if( ! $this->tagNameIsValid($key))
-        {
-          throw new Exception('[Array2xml] Illegal character in tag name: tag '.$key.' in node '.$topNodeName);
-        }
-        // Loop through numerically indexed nodes
-        if( is_array($value) && isset($value[0]) )
-        {
-          foreach( $value as $key2=>$value2 )
-          {
-            $node->appendChild( $this->parse( $key, $value2 ));
+      foreach ($data as $key => $value) {
+          if (!$this->tagNameIsValid($key)) {
+              throw new Exception('[Array2xml] Illegal character in tag name: tag '.$key.' in node '.$topNodeName);
           }
+        // Loop through numerically indexed nodes
+        if (is_array($value) && isset($value[0])) {
+            foreach ($value as $key2 => $value2) {
+                $node->appendChild($this->parse($key, $value2));
+            }
+        } else {
+            // Only one node of its kind
+          $node->appendChild($this->parse($key, $value));
         }
-        else
-          // Only one node of its kind
-          $node->appendChild( $this->parse($key, $value));
       }
-    }
+      }
     // If not an array, check for a text value to append
-    else
-      $node->appendChild( $this->xml->createTextNode(htmlspecialchars( $this->bool2str($data), ENT_QUOTES, $this->encoding )));
+    else {
+        $node->appendChild($this->xml->createTextNode(htmlspecialchars($this->bool2str($data), ENT_QUOTES, $this->encoding)));
+    }
 
-    return $node;
+      return $node;
   }
 
   /*
@@ -195,7 +186,7 @@ class Array2XML
   **/
   private function bool2str($v)
   {
-    return $v === true || $v === false ? (bool)$v : $this->convert($v);
+      return $v === true || $v === false ? (bool) $v : $this->convert($v);
   }
 
   /*
@@ -208,7 +199,7 @@ class Array2XML
   **/
   private function tagNameIsValid($tag)
   {
-    return preg_match( '/^[a-z_]+[a-z0-9\:\-\.\_]*[^:]*$/i', $tag, $matches ) && $matches[0] == $tag;
+      return preg_match('/^[a-z_]+[a-z0-9\:\-\.\_]*[^:]*$/i', $tag, $matches) && $matches[0] == $tag;
   }
 
   /*
@@ -220,8 +211,11 @@ class Array2XML
   **/
   public function saveXml()
   {
-    return $this->xml->saveXML();
+      return $this->xml->saveXML();
   }
 
-  public function __tostring() { return $this->saveXml(); }
+    public function __tostring()
+    {
+        return $this->saveXml();
+    }
 }

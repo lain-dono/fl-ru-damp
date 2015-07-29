@@ -1,9 +1,9 @@
 <?php
 /**
- * Шаблон поумолчанию popup-окна "быстрой" оплаты
+ * Шаблон поумолчанию popup-окна "быстрой" оплаты.
  */
 ?>
-<div id="<?=@$popup_id?>" data-quick-payment="<?=$unic_name?>" class="b-shadow b-shadow_block b-shadow_center b-shadow_width_520 <?=(!@$is_show)?'b-shadow_hide':'' ?> b-shadow__quick">
+<div id="<?=@$popup_id?>" data-quick-payment="<?=$unic_name?>" class="b-shadow b-shadow_block b-shadow_center b-shadow_width_520 <?=(!@$is_show) ? 'b-shadow_hide' : '' ?> b-shadow__quick">
     <div class="b-shadow__body b-shadow__body_pad_15_20">
         
         <div class="b-fon <?=@$popup_title_class_bg?>">
@@ -55,16 +55,16 @@
                 <span id="pay_full">Ее вы можете оплатить одним из способов:</span>
             </div>
 <?php
-            if(!empty($payments)):
+            if (!empty($payments)):
 ?>
             <div id="payments">
                 <div class="b-buttons b-buttons_padleft_20 b-buttons_padbot_10"> 
-                    <?php foreach($payments as $key => $payment): ?>
+                    <?php foreach ($payments as $key => $payment): ?>
                         <?php if (isset($payment['title'])): ?>
                             <a class="b-button b-button_margbot_5 b-button__pm <?=@$payment['class']?>" 
                                href="javascript:void(0);" 
-                               <?=(isset($payment['data-maxprice']))?'data-maxprice="'.$payment['data-maxprice'].'"':''?> 
-                               <?=(isset($payment['wait']))?'data-quick-payment-wait="'.$payment['wait'].'"':''?> 
+                               <?=(isset($payment['data-maxprice'])) ? 'data-maxprice="'.$payment['data-maxprice'].'"' : ''?> 
+                               <?=(isset($payment['wait'])) ? 'data-quick-payment-wait="'.$payment['wait'].'"' : ''?> 
                                data-quick-payment-type="<?=$key?>"><span class="b-button__txt"><?=@$payment['title']?></span></a> 
                             <?php if (isset($payment['content_after'])): ?>
                             <div class="<?=$key?>_text b-layout__txt b-layout__txt_fontsize_11 b-layout__txt_inline-block b-layout__txt_valign_middle b-layout__txt_width_440">

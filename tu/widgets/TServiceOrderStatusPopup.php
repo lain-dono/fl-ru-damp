@@ -2,22 +2,23 @@
 
 /**
  * Class TServiceOrderStatusPopup
- * Виджет показывает попап фрилансеру перед сменой статуса с заказе ТУ
+ * Виджет показывает попап фрилансеру перед сменой статуса с заказе ТУ.
  */
-
-class TServiceOrderStatusPopup extends CWidget 
+class TServiceOrderStatusPopup extends CWidget
 {
     public $data = array();
 
-    public function init($data = array()) 
+    public function init($data = array())
     {
         parent::init();
-        if(!empty($data)) $this->data = $data;
+        if (!empty($data)) {
+            $this->data = $data;
+        }
     }
 
-    public function run() 
+    public function run()
     {
         //собираем шаблон
-        $this->render("t-service-order-status-frl-popup", $this->data);
+        $this->render('t-service-order-status-frl-popup', $this->data);
     }
 }

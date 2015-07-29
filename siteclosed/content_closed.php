@@ -1,6 +1,6 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/static_compress.php");
-$stc = new static_compress;
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/static_compress.php';
+$stc = new static_compress();
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -54,7 +54,7 @@ $stc = new static_compress;
 									<li class="b-social__item"><a class="b-social__link b-social__link_y" target="_blank" href="http://www.youtube.com/user/rufreelance"></a></li>
 							</ul>
 						</div>
-   <? include_once ('form.php'); ?>
+   <?php include_once 'form.php'; ?>
             <br/><br/><br/><br/><br/>
 		</div>
 	</body>

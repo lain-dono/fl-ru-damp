@@ -2,36 +2,35 @@
 
 /**
  * Class quickPaymentPopupFactory
- * Фабрика для создания обьектов "быстрой" оплаты
+ * Фабрика для создания обьектов "быстрой" оплаты.
  */
-class quickPaymentPopupFactory 
+class quickPaymentPopupFactory
 {
     const QPP_PROCESS_SESSION = 'quickPaymentPopupProcess';
-    
+
     /**
      * Сущности использующие 
-     * быстрые способы оплаты
+     * быстрые способы оплаты.
      * 
-     * @var type 
+     * @var type
      */
     protected static $models = array(
-        'reserve'           => 'reserve',
-        'autoresponse'      => 'autoresponse',
-        'frlbind'           => 'frlbind',
-        'frlbindup'         => 'frlbindup',
-        'carusel'           => 'carusel',
-        'tservicebind'      => 'tservicebind',
-        'tservicebindup'    => 'tservicebindup',
-        'billinvoice'       => 'billInvoice',
-        'account'           => 'account',
-        'masssending'       => 'masssending',
-        'pro'               => 'pro'
+        'reserve' => 'reserve',
+        'autoresponse' => 'autoresponse',
+        'frlbind' => 'frlbind',
+        'frlbindup' => 'frlbindup',
+        'carusel' => 'carusel',
+        'tservicebind' => 'tservicebind',
+        'tservicebindup' => 'tservicebindup',
+        'billinvoice' => 'billInvoice',
+        'account' => 'account',
+        'masssending' => 'masssending',
+        'pro' => 'pro',
     );
 
-    
     /**
      * Получить список существующих папов быстрой оплаты
-     * для создания через фабрику
+     * для создания через фабрику.
      * 
      * @return array
      */
@@ -40,9 +39,8 @@ class quickPaymentPopupFactory
         return array_keys(static::$models);
     }
 
-    
     /**
-     * Есть ли ключ в сессии
+     * Есть ли ключ в сессии.
      * 
      * @return type
      */
@@ -51,35 +49,34 @@ class quickPaymentPopupFactory
         return isset($_SESSION[self::QPP_PROCESS_SESSION]);
     }
 
-    
-
     /**
-     * Фабрика подключает и инициализирует объект нужной нам сущности по ее типу
+     * Фабрика подключает и инициализирует объект нужной нам сущности по ее типу.
      * 
      * @param type $type - тип оплаты
+     *
      * @return object
+     *
      * @throws Exception
      */
-    public static function getInstance($type = null) 
+    public static function getInstance($type = null)
     {
-        $type = (!$type)?@$_SESSION[self::QPP_PROCESS_SESSION]:$type;
+        $type = (!$type) ? @$_SESSION[self::QPP_PROCESS_SESSION] : $type;
         if (!$type || !in_array($type, array_keys(self::$models))) {
-            throw new Exception("The type not found.");
+            throw new Exception('The type not found.');
         }
-        
-        $class = 'quickPaymentPopup' . ucfirst(self::$models[$type]);
-        
+
+        $class = 'quickPaymentPopup'.ucfirst(self::$models[$type]);
+
         if (!class_exists($class, false)) {
             $filename = sprintf('%s/%s.php', __DIR__, $class);
-            
+
             if (!file_exists($filename)) {
                 throw new Exception("The class name $class could not be instantiated.");
             }
-            
+
             require_once $filename;
         }
-        
+
         return $class::getInstance();
-    }  
-    
+    }
 }

@@ -1,9 +1,11 @@
-							<? if($sbr->error['new_version']) { ?>
+							<?php if ($sbr->error['new_version']) {
+    ?>
 							<div class="nr-cancel-reason c">
 								<p>Операция (отказ) была отменена, так как заказчик успел внести новые изменения в условия задачи. Пожалуйста, ознакомтесь и примите решение.</p>
 							</div>
 							<br />
-							<? } ?>
+							<?php 
+} ?>
 							<div class="form form-changed-btns">
 								<b class="b1"></b>
 								<b class="b2"></b>

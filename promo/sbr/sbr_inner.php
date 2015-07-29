@@ -36,9 +36,11 @@
     <p class="promo-norisk-btns">
 <?php if (!$uid) { //пользователь неавторизован ?>
             <a href="/registration/" class="btn btn-orng"><span class="btn-lc"><span class="btn-m"><span class="btn-txt">Зарегистрироваться</span></span></span></a>&nbsp;&nbsp;&nbsp; <a href="/login/">Выполнить вход</a>
-<?php } else { // авторизованный пользователь ?>
+<?php 
+} else { // авторизованный пользователь ?>
             <a href="/norisk2/ " class="btn btn-green"><span class="btn-lc"><span class="btn-m"><span class="btn-txt">Начать «Безопасную Сделку»</span></span></span></a>
-<?php } ?>
+<?php 
+} ?>
     </p>
     <ul class="promo-norisk-info c">
         <li class="cbr-a1">Сделка происходит в установленные сроки с утвержденным бюджетом. Эти параметры вносятся работодателем на согласование исполнителю</li>
@@ -75,7 +77,8 @@
                     </ul>
                 </div>
             </div>
-<?php } elseif (is_emp ()) { // работодатель ?>
+<?php 
+} elseif (is_emp()) { // работодатель ?>
             <div class="promo-norisk-plus-list">
                 <h4>Преимущества для вас:</h4>
                 <ul>
@@ -86,7 +89,8 @@
                     <li>Количество «Безопасных Сделок» отображается в аккаунте и повышает авторитет среди пользователей</li>
                 </ul>
             </div>
-<?php } else { // фрилансер ?>
+<?php 
+} else { // фрилансер ?>
             <div class="promo-norisk-plus-list">
                 <h4>Преимущества для вас:</h4>
                 <ul>
@@ -97,7 +101,8 @@
                     <li>Завершенные «Безопасные Сделки» в аккаунте повышают доверие работодателей  к фрилансеру</li>
                 </ul>
             </div>
-<?php } ?>
+<?php 
+} ?>
 
         </div>
         <b class="b2"></b>

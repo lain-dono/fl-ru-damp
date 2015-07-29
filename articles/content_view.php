@@ -1,25 +1,33 @@
-<?
+<?php
 $_url = array();
-if($ord) $_url['ord'] = $ord;
-if($page) $_url['p'] = $page;
-if($tab == 'unpublished' && hasPermissions('articles')) $_url['page'] = 'unpublished';
+if ($ord) {
+    $_url['ord'] = $ord;
+}
+if ($page) {
+    $_url['p'] = $page;
+}
+if ($tab == 'unpublished' && hasPermissions('articles')) {
+    $_url['page'] = 'unpublished';
+}
 $back_url = http_build_query($_url);
 
 $goto = __paramInit('int', 'goto');
 
-$show_nav = !($article['approved'] == 'f' && $uid && !hasPermissions('articles')) ;
+$show_nav = !($article['approved'] == 'f' && $uid && !hasPermissions('articles'));
 
 ?>
 
-<? if($goto) { ?>
+<?php if ($goto) {
+    ?>
 <script>
 window.addEvent('domready', function() {
     document.location.href = '#c_<?=$goto?>';
 });
 </script>
-<? } ?>
+<?php 
+} ?>
 <?php
-$fs = !empty($_COOKIE['article_fs']) ? (int)$_COOKIE['article_fs'] : 12;
+$fs = !empty($_COOKIE['article_fs']) ? (int) $_COOKIE['article_fs'] : 12;
 ?>
 <script type="text/javascript">
 window.addEvent('domready', function() {
@@ -61,11 +69,15 @@ window.addEvent('domready', function() {
 											}
 										});
 
-           <?php if($fs <= 6){?>
+           <?php if ($fs <= 6) {
+    ?>
                $(document.body).getElement('.post-fs-minus').addClass('post-fs-d');
-            <?php }elseif($fs >= 24){?>
+            <?php 
+} elseif ($fs >= 24) {
+    ?>
                $(document.body).getElement('.post-fs-plus').addClass('post-fs-d');
-            <?php } ?>
+            <?php 
+} ?>
 									});
 </script>
 <script type="text/javascript">
@@ -86,9 +98,9 @@ window.addEvent('domready', function() {
 
 <?php
 $crumbs = array();
-$crumbs[] = array("title"=>"Статьи и интервью", "url"=>"/articles/");
-$crumbs[] = array("title"=>"Статьи", "url"=>"/articles/");
-$crumbs[] = array("title"=>reformat($article['title'], 100, 0, 1));
+$crumbs[] = array('title' => 'Статьи и интервью', 'url' => '/articles/');
+$crumbs[] = array('title' => 'Статьи', 'url' => '/articles/');
+$crumbs[] = array('title' => reformat($article['title'], 100, 0, 1));
 ?>
 <div class="b-menu b-menu_crumbs  b-menu_padbot_20"><?=getCrumbs($crumbs)?></div>
 
@@ -96,26 +108,33 @@ $crumbs[] = array("title"=>reformat($article['title'], 100, 0, 1));
 <div class="page-interview">
     <div class="tnav-interview">
         <div class="interview-pager">
-        <? if($show_nav) { ?>
+        <?php if ($show_nav) {
+    ?>
 
-            <? if(isset($navigation['prev'])) { 
-                ?>
+            <?php if (isset($navigation['prev'])) {
+    ?>
                 <a class="b-layout__link" href="<?=getFriendlyURL('article', $navigation['prev']['id'])?>">&laquo; <?=($navigation['prev']['title'] ? reformat($navigation['prev']['title'], 32, 0, 1) : 'Без названия')?></a>
-            <? } else { 
-                /* ?>
+            <?php 
+} else {
+    /* ?>
                 <span>&laquo; предыдущая статья</span>
                 <? */
-            } ?>
+}
+    ?>
             &nbsp;&nbsp;&nbsp;
-            <? if(isset($navigation['next'])) { ?>
+            <?php if (isset($navigation['next'])) {
+    ?>
                 <a class="b-layout__link" href="<?=getFriendlyURL('article', $navigation['next']['id'])?>"><?=($navigation['next']['title'] ? reformat($navigation['next']['title'], 32, 0, 1) : 'Без названия')?> &raquo;</a>
-            <? } else { 
-                /* ?>
+            <?php 
+} else {
+    /* ?>
                 <span>следующая статья &raquo;</span>
-                <? */ 
-            } ?>
+                <? */
+}
+    ?>
 
-        <? } ?>
+        <?php 
+} ?>
         </div>
         <a id="articles_back1" class="b-layout__link" href="javascript:void(0);">Вернуться к списку статей</a>
     </div>
@@ -126,66 +145,97 @@ $crumbs[] = array("title"=>reformat($article['title'], 100, 0, 1));
             </a>
         </div>
         <div class="interview-one">
-            <? if($article['approved'] == 't') { ?>
-                <? $classname = $article['rating'] < 0 ? 'pr-minus' : ($article['rating'] >= 1 ? 'pr-plus' : '') ; ?>
+            <?php if ($article['approved'] == 't') {
+    ?>
+                <?php $classname = $article['rating'] < 0 ? 'pr-minus' : ($article['rating'] >= 1 ? 'pr-plus' : '');
+    ?>
                 <div class="post-rate" id="rate_<?=$article['id']?>">
-                    <? if($uid) { ?>
+                    <?php if ($uid) {
+    ?>
                     <a href="?page=rate&id=<?=$article['id']?>&to=down"><img src="/images/btn-drate<?=$article['rate_value'] < 0 ? '-dis' : ''?>.png" alt="" /></a>
-                    <? } else { ?>
+                    <?php 
+} else {
+    ?>
                     <img src="/images/btn-drate-dis.png" alt="" />
-                    <? } ?>
+                    <?php 
+}
+    ?>
                     <span class="post-rate-val <?=$classname?>">
-                        <?= ($article['rating'] > 0 ? '+' : '') . intval($article['rating'])?>
+                        <?= ($article['rating'] > 0 ? '+' : '').intval($article['rating'])?>
                     </span>
-                    <? if($uid) { ?>
+                    <?php if ($uid) {
+    ?>
                     <a href="?page=rate&id=<?=$article['id']?>&to=up"><img src="/images/btn-urate<?=$article['rate_value'] > 0 ? '-dis' : ''?>.png" alt="" /></a>
-                    <? } else { ?>
+                    <?php 
+} else {
+    ?>
                     <img src="/images/btn-urate-dis.png" alt="" />
-                    <? } ?>
+                    <?php 
+}
+    ?>
                 </div>
-            <? } ?>
+            <?php 
+} ?>
             <div class="post-fsize">
 									<a href="javascript:void(0);" class="post-fs-minus">-</a>
 									<a href="javascript:void(0);" class="post-fs-plus">+</a>
 								</div>
             <div class="aih">
                 <span class="interview-date">
-                    <?=date('d.m.Y в H:i', strtotime( ($article['approved'] == 't' ?  $article['approve_date'] : $article['post_time']) ))?>
+                    <?=date('d.m.Y в H:i', strtotime(($article['approved'] == 't' ?  $article['approve_date'] : $article['post_time'])))?>
                 </span>
                 <span class="interview-date">
                     <a href="/users/<?=$article['login']?>">
-                        <?= $article['uname'] . ' ' . $article['usurname'] . ' [' . $article['login'] . ']'?>
+                        <?= $article['uname'].' '.$article['usurname'].' ['.$article['login'].']'?>
                     </a>
                 </span>
-                <? if(hasPermissions('articles')) { ?>
+                <?php if (hasPermissions('articles')) {
+    ?>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" class="lnk-ai" onclick="editArticle(<?=$article['id']?>)">Редактировать</a> |
-                    <? if($article['approved'] == 'f') { ?>
+                    <?php if ($article['approved'] == 'f') {
+    ?>
                         <a href="javascript:void(0)" class="lnk-ai" onclick="delArticleForm(<?=$article['id']?>);">Удалить</a>
-                    <? } else { ?>
+                    <?php 
+} else {
+    ?>
                         <a href="/articles/?task=del-article&id=<?=$article['id']?>" class="lnk-ai" onclick="return (confirm('Вы уверены?'));">Удалить</a>
-                    <? } ?>
-                <? } ?>
-                <? if($article['declined'] == 'f' && $article['approved'] == 'f' && (hasPermissions('articles'))) { ?>
+                    <?php 
+}
+    ?>
+                <?php 
+} ?>
+                <?php if ($article['declined'] == 'f' && $article['approved'] == 'f' && (hasPermissions('articles'))) {
+    ?>
                     &nbsp;|&nbsp;
                     <a href="javascript:void(0)"  class="lnk-ai" id="moderator_decline">Отклонить</a>
-                <? } else if(hasPermissions('articles')) {?>
+                <?php 
+} else {
+    if (hasPermissions('articles')) {
+        ?>
                     &nbsp;|&nbsp;
                     <a href="javascript:void(0)" style="color: #A23E3E;" id="moderator_undecline">На модерацию</a>
-                <? } //?>
-                <? if($article['approved'] == 'f' && (hasPermissions('articles'))) { ?>
+                <?php 
+    }
+} //?>
+                <?php if ($article['approved'] == 'f' && (hasPermissions('articles'))) {
+    ?>
                     &nbsp;|&nbsp;
                     <a href="javascript:void(0)" id="moderator_approve">Подтвердить</a>
-                <? } ?>
+                <?php 
+} ?>
             </div>
             
-            <? if (hasPermissions('articles')) { ?>
+            <?php if (hasPermissions('articles')) {
+    ?>
                 <form method="post" id="moderator_form">
                     <input type="hidden" name="task" id="moderator_form_task" />
                     <input type="hidden" name="id" id="moderator_form_article_id" value="<?= $article['id'] ?>" />
                 </form>
-            <? } ?>
+            <?php 
+} ?>
 
-            <? if($article['approved'] == 'f' && (hasPermissions('articles'))) { ?>
+            <?php if ($article['approved'] == 'f' && (hasPermissions('articles'))) {
+    ?>
             <div id="del-article-form" class="form fs-o form-adel" style="display: none;">
                 <b class="b1"></b>
                 <b class="b2"></b>
@@ -209,7 +259,8 @@ $crumbs[] = array("title"=>reformat($article['title'], 100, 0, 1));
                 <b class="b2"></b>
                 <b class="b1"></b>
             </div>
-            <? } ?>
+            <?php 
+} ?>
             
             <h1><?=!$article['title'] ? 'Без названия' : reformat($article['title'], 59, 0, 1) ?></h1>
             
@@ -217,22 +268,27 @@ $crumbs[] = array("title"=>reformat($article['title'], 100, 0, 1));
                 <?//=reformat($article['msgtext'], 55, 0, 0, 1)?>
                 <?= textWrap($article['msgtext'], 70) ?>
             </div>
-            <?php if(($count_tags = count($article['kwords']))>0) { ?>
+            <?php if (($count_tags = count($article['kwords'])) > 0) {
+    ?>
         <div class="b-tags">
         	<span class="b-tags__txt">Темы:</span>
         	<ul class="b-tags__list">
-        	   <?php foreach($article['kwords'] as $n=>$word) { ?> 
-        		<li class="b-tags__item"><a class="b-tags__link" href="/articles/?tag=<?=$word['word_id']?>"><?=htmlspecialchars(reformat($word['name'], 25, 0, 1))?></a><?= ( ($count_tags != $n+1 )?", ":"")?></li>
-        	   <?php }// foreach?>
+        	   <?php foreach ($article['kwords'] as $n => $word) {
+    ?> 
+        		<li class="b-tags__item"><a class="b-tags__link" href="/articles/?tag=<?=$word['word_id']?>"><?=htmlspecialchars(reformat($word['name'], 25, 0, 1))?></a><?= (($count_tags != $n + 1) ? ', ' : '')?></li>
+        	   <?php 
+}// foreach?>
         	</ul>
         </div>
-        <?php } else {//if?>
+        <?php 
+} else {//if?>
         <div class="b-tags">
         	<span class="b-tags__txt" style="display:none">Темы:</span>
         	<ul class="b-tags__list">
         	</ul>
         </div>
-        <?php }?>
+        <?php 
+}?>
         </div>
         
     </div>
@@ -240,31 +296,42 @@ $crumbs[] = array("title"=>reformat($article['title'], 100, 0, 1));
     <?= ViewSocialButtons('articles', $article['title'], true)?>
 	
     <div class="p-interview-in" style="padding-left:120px">
-        <? if($article['approved'] == 't') include('comments.php'); ?>
+        <?php if ($article['approved'] == 't') {
+    include 'comments.php';
+} ?>
     </div>
-    <? if(hasPermissions('articles')) include('form.php'); ?>
+    <?php if (hasPermissions('articles')) {
+    include 'form.php';
+} ?>
     <div class="bnav-interview">
         <div class="interview-pager">
-        <? if($show_nav) { ?>
+        <?php if ($show_nav) {
+    ?>
             
-            <? if(isset($navigation['prev'])) { 
-                ?>
+            <?php if (isset($navigation['prev'])) {
+    ?>
                 <a class="b-layout__link" href="<?=getFriendlyURL('article', $navigation['prev']['id'])?>">&laquo; <?=($navigation['prev']['title'] ? (reformat($navigation['prev']['title'], 32, 0, 1)) : 'Без названия')?></a>
-            <? } else { 
-                /* ?>
+            <?php 
+} else {
+    /* ?>
                 <span>&laquo; предыдущая статья</span>
                 <? */
-            } ?>
+}
+    ?>
             &nbsp;&nbsp;&nbsp;
-            <? if(isset($navigation['next'])) { ?>
+            <?php if (isset($navigation['next'])) {
+    ?>
                 <a class="b-layout__link" href="<?=getFriendlyURL('article', $navigation['next']['id'])?>"><?=($navigation['next']['title'] ? (reformat($navigation['next']['title'], 32, 0, 1)) : 'Без названия')?> &raquo;</a>
-            <? } else { 
-                /* ?>
+            <?php 
+} else {
+    /* ?>
                 <span>следующая статья &raquo;</span>
-                <? */ 
-            } ?>
+                <? */
+}
+    ?>
 
-        <? } ?>
+        <?php 
+} ?>
         </div>
         <a id="articles_back2" class="b-layout__link" href="javascript:void(0);">Вернуться к списку статей</a>
     </div>

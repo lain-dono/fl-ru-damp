@@ -4,7 +4,6 @@ global $session;
 global $page_title;
 $page_title = 'Предложить заказ';
 
-
 ?>
 <h1 class="b-page__title">
     <?=$title?>
@@ -26,12 +25,12 @@ $page_title = 'Предложить заказ';
                     <?=view_fullname($freelancer)?>
                 </a>
                 <?=view_mark_user(array(
-                    "login"         => $freelancer->login,
-                    "is_pro"        => $freelancer->is_pro,
-                    "is_profi"      => $freelancer->is_profi,
-                    "is_pro_test"   => $freelancer->is_pro_test,
-                    "is_team"       => $freelancer->is_team,
-                    "role"          => $freelancer->role), '', true, "&nbsp;");
+                    'login' => $freelancer->login,
+                    'is_pro' => $freelancer->is_pro,
+                    'is_profi' => $freelancer->is_profi,
+                    'is_pro_test' => $freelancer->is_pro_test,
+                    'is_team' => $freelancer->is_team,
+                    'role' => $freelancer->role, ), '', true, '&nbsp;');
                 ?>
             </td>
             <td class="b-layout__td b-layout__td_width_70 b-layout__td_padbot_20"></td>
@@ -55,7 +54,9 @@ $page_title = 'Предложить заказ';
         <tr class="b-layout__tr">
             <?php
                 $pay_type_element = $form->getElement('pay_type');
-                if($pay_type_element) echo $pay_type_element->render(); 
+                if ($pay_type_element) {
+                    echo $pay_type_element->render();
+                }
             ?>
             <td class="b-layout__td b-layout__td_width_70 b-layout__td_padbot_20"></td>
         </tr>

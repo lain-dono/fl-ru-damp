@@ -4,9 +4,11 @@ $statuses = letters::getStatuses();
 <script type="text/javascript">
 	var statuses_list = new Array();
 	statuses_list[0] = 'Добавить статус';
-	<?php foreach($statuses as $status) { ?>
+	<?php foreach ($statuses as $status) {
+    ?>
 		statuses_list[<?=$status['id']?>] = '<?=$status['title']?>';
-	<?php } ?>
+	<?php 
+} ?>
 
 </script>
 
@@ -54,16 +56,17 @@ $statuses = letters::getStatuses();
 										<label class="b-radio__label  b-radio__label_fontsize_13" for="letters_form_delivery_field_data_0">Не выбрано</label>
 									</div>
 								<?php
-								$f_deliveries = letters::getDeliveries();
-								foreach($f_deliveries as $f_delivery) {
-									?>
+                                $f_deliveries = letters::getDeliveries();
+                                foreach ($f_deliveries as $f_delivery) {
+                                    ?>
 									<div class="b-radio__item b-radio__item_padbot_10">
 										<input id="letters_form_delivery_field_data_<?=$f_delivery['id']?>" name="letters_form_delivery_field_data" type="radio" class="b-radio__input" value="<?=$f_delivery['id']?>">
 										<label class="b-radio__label  b-radio__label_fontsize_13" for="letters_form_delivery_field_data_<?=$f_delivery['id']?>"><?=$f_delivery['title']?></label>
 									</div>
 									<?php
-								}
-								?>
+
+                                }
+                                ?>
 								</form>
 							</div>
 							<div class="b-buttons b-buttons_padleft_20">
@@ -195,26 +198,29 @@ $statuses = letters::getStatuses();
 							<div class="b-radio b-radio_layout_vertical b-radio_inline-block">
 								<form id="letters_form_status_form">
 								<?php
-								$n = 0;
-								foreach($statuses as $status) {
-									?>
+                                $n = 0;
+                                foreach ($statuses as $status) {
+                                    ?>
 									<div class="b-radio__item b-radio__item_padbot_10">
-										<input id="letters_form_status_<?=$status['id']?>" type="radio" name="letters_form_field_status" value="<?=$status['id']?>" class="b-radio__input" <?=($n==0 ? 'checked' : '')?> onClick="letters.changeStatus('popup', <?=$status['id']?>);">
+										<input id="letters_form_status_<?=$status['id']?>" type="radio" name="letters_form_field_status" value="<?=$status['id']?>" class="b-radio__input" <?=($n == 0 ? 'checked' : '')?> onClick="letters.changeStatus('popup', <?=$status['id']?>);">
 										<label for="" class="b-radio__label  b-radio__label_fontsize_13">
 											<?=$status['title']?>
 										</label>
-										<?php if($status['id']==2 || $status['id']==3) { ?>
+										<?php if ($status['id'] == 2 || $status['id'] == 3) {
+    ?>
 										<div id="letters_form_status_date_div_<?=$status['id']?>" class="b-combo b-combo_inline-block b-combo_absolute b-combo_margtop_-6 b-combo_margleft_5" style="visibility: hidden;">
 											<div class="b-combo__input b-combo__input_width_125 b-combo__input_arrow-date_yes use_past_date date_format_use_text no_set_date_on_load use_past_date date_format_use_text b-combo__input_calendar">
 												<input id="letters_form_status_date_<?=$status['id']?>" class="b-combo__input-text" type="text" size="80" value="">
 												<span class="b-combo__arrow-date"></span> </div>
 										</div>
-										<?php } ?>
+										<?php 
+}
+                                    ?>
 									</div>
 									<?php
-									$n = 1;
-								}
-								?>
+                                    $n = 1;
+                                }
+                                ?>
 								</form>
 							</div>
 							<div class="b-buttons b-buttons_padleft_20">
@@ -249,22 +255,26 @@ $statuses = letters::getStatuses();
 									<label for="letters_doc_frm_div_statuses_st_0" class="b-radio__label  b-radio__label_fontsize_13">Не выбрано</label>
 								</div>
 								<?php
-								foreach($statuses as $status) {
-									?>
+                                foreach ($statuses as $status) {
+                                    ?>
 									<div class="b-radio__item b-radio__item_padbot_10">
 										<input id="letters_doc_frm_div_statuses_st_<?=$status['id']?>" type="radio" name="letters_doc_frm_div_statuses_st" value="<?=$status['id']?>" class="b-radio__input" onClick="letters.changeStatus('newpopup', <?=$status['id']?>);">
 										<label for="letters_doc_frm_div_statuses_st_<?=$status['id']?>" class="b-radio__label  b-radio__label_fontsize_13"><?=$status['title']?></label>
-										<?php if($status['id']==2 || $status['id']==3) { ?>
+										<?php if ($status['id'] == 2 || $status['id'] == 3) {
+    ?>
 										<div id="letters_doc_frm_div_statuses_st_date_div_<?=$status['id']?>" class="b-combo b-combo_inline-block b-combo_absolute b-combo_margtop_-6 b-combo_margleft_5" style="visibility: hidden;">
 											<div class="b-combo__input b-combo__input_width_125 b-combo__input_arrow-date_yes use_past_date date_format_use_text no_set_date_on_load use_past_date date_format_use_text b-combo__input_calendar">
 												<input id="letters_doc_frm_div_statuses_st_date_<?=$status['id']?>" class="b-combo__input-text" type="text" size="80" value="">
 												<span class="b-combo__arrow-date"></span> </div>
 										</div>
-										<?php } ?>
+										<?php 
+}
+                                    ?>
 									</div>
 									<?php
-								}
-								?>
+
+                                }
+                                ?>
 							</div>
 							<div class="b-buttons b-buttons_padleft_20">
 								<a id="letters_doc_frm_div_statuses_btn_submit" class="b-button b-button_flat b-button_flat_green" href="javascript:void()" onClick="letters.statusesSet(); return false;">Выбрать</a>

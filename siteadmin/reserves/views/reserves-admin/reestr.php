@@ -131,7 +131,7 @@ $line_css = 'b-layout__txt b-layout__txt_padtop_5 b-layout__txt_fontsize_11 b-la
                     <input type="checkbox" name="bs_ids[]" value="<?=$el['bs_id']?>" checked="checked" />
                 </td>
                 <?php endif; ?>
-                <?php foreach ($fields as $param=>$field): ?>
+                <?php foreach ($fields as $param => $field): ?>
                 <td><?= $reestrModel->format($el[$param], $param) ?></td>
                 <?php endforeach; ?>
             </tr>

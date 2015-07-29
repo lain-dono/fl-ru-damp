@@ -1,17 +1,21 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
 
 $sTitle = admin_log::$aObj[$aActions[0]['obj_code']]['name'].': '.$aActions[0]['act_name'];
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/xajax/admin_log.common.php' );
-$xajax->printJavascript( '/xajax/' );
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/admin_log.common.php';
+$xajax->printJavascript('/xajax/');
 ?>
 <form method="GET">
 Действие: <select name="act_sel" id="act_sel" onchange="this.form.submit();">
-<?php foreach ( $aActions as $aOne ) { 
-    $sSel   = ($aOne['id'] == $act_sel) ? ' selected' : '';
+<?php foreach ($aActions as $aOne) {
+    $sSel = ($aOne['id'] == $act_sel) ? ' selected' : '';
     $sTitle = ($aOne['id'] == $act_sel) ? admin_log::$aObj[$aOne['obj_code']]['name'].': '.$aOne['act_name'] : $sTitle;
-?>
+    ?>
 <option value="<?=$aOne['id']?>" <?=$sSel?>><?=admin_log::$aObj[$aOne['obj_code']]['name']?>: <?=$aOne['act_name']?></option>
-<?php } ?>
+<?php 
+} ?>
 </select>
 </form>
 
@@ -41,10 +45,9 @@ $xajax->printJavascript( '/xajax/' );
 	<td width="300">
        <?php
        $sCheched = '';
-       if ( isset($_POST['cmd']) ) {
+       if (isset($_POST['cmd'])) {
            $sCheched = !empty($_POST['is_bold']) ? ' checked' : '';
-       }
-       else {
+       } else {
            $sCheched = $aReason['is_bold'] == 't' ? ' checked' : '';
        }
        ?>
@@ -56,7 +59,7 @@ $xajax->printJavascript( '/xajax/' );
 	<td height="40" colspan="2" align="right">
 	   <input type="hidden" name="cmd" value="go">
 	
-    	<?php if ( $sAction == 'edit' ): ?>
+    	<?php if ($sAction == 'edit'): ?>
     	
     	<input type="submit" name="btn" value="Изменить" class="btn">
     	<input type="button" name="btn" value="Отменить" class="btn" onClick="window.location='/siteadmin/proj_reasons?act_sel=<?=$act_sel?>';">
@@ -80,8 +83,8 @@ $xajax->printJavascript( '/xajax/' );
     <td>Указать вручную</td>
     <td style="padding-left: 25px;">Изменить&nbsp;|&nbsp;Удалить&nbsp;|&nbsp;Выделять жирным</td>
 </tr>
-<?php if ( $aReasons ): ?>
-    <?php foreach ( $aReasons as $aOne ): ?>
+<?php if ($aReasons): ?>
+    <?php foreach ($aReasons as $aOne): ?>
 <tr>
     <td><?=reformat($aOne['reason_name'])?></td>
     <td style="padding-left: 25px;">

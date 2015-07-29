@@ -21,12 +21,12 @@
                 </div>
                 </div>                          
 
-                <div class="b-layout__txt b-layout__txt_padbot_5">Вы купили <span class="b-layout__txt b-layout__txt_bold"><?= $answers . ending($answers, " ответ", " ответа", " ответов") ?></span> за <span class="b-layout__txt b-layout__txt_bold b-layout__txt_color_fd6c30"><?= round($cost,2) ?> <?= ending(round($cost), 'рубль', 'рубля', 'рублей');?></span></div>
+                <div class="b-layout__txt b-layout__txt_padbot_5">Вы купили <span class="b-layout__txt b-layout__txt_bold"><?= $answers.ending($answers, ' ответ', ' ответа', ' ответов') ?></span> за <span class="b-layout__txt b-layout__txt_bold b-layout__txt_color_fd6c30"><?= round($cost, 2) ?> <?= ending(round($cost), 'рубль', 'рубля', 'рублей');?></span></div>
 
 
-                <?
+                <?php
                 $teasersExclude = array('offers');
-                include($abs_path . '/teasers/include-teaser.php');
+                include $abs_path.'/teasers/include-teaser.php';
                 ?>
 
             </td>							

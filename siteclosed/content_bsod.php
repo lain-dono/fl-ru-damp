@@ -30,7 +30,7 @@
 	<body>
 		<div class="container">
 			<img src="/images/logo.png" alt="Free-lance.ru" class="logo" />
-			<? include_once ('form.php'); ?>
+			<?php include_once 'form.php'; ?>
 	    </div>
 	</body>
 </html>

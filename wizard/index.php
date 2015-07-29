@@ -1,4 +1,4 @@
 <?php
-header("Location: /wizard/registration/");
+
+header('Location: /wizard/registration/');
 exit;
-?>

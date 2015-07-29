@@ -2,10 +2,8 @@
 
 namespace YandexMoney3\Domain;
 
-
 class Base
 {
-
     /**
      * @var array of mixed
      */
@@ -18,7 +16,6 @@ class Base
 
     /**
      * @param string $key of response parameter
-     * @return null | mixed
      */
     public function checkAndReturn($key)
     {
@@ -26,6 +23,7 @@ class Base
         if (array_key_exists($key, $this->params)) {
             $value = $this->params[$key];
         }
+
         return $value;
     }
-} 
+}

@@ -1,25 +1,24 @@
 <?php
 
 /**
- * Шаблон превью работ/услуг для каталога фрилансеров
+ * Шаблон превью работ/услуг для каталога фрилансеров.
  */
-
 if ($list):
 ?>
 <table class="cat-txt-prew" cellpadding="0" cellspacing="0" border="0" width="100%">
     <tr>    
 <?php 
 
-for($pos = 1; $pos <= $max; $pos ++):
+for ($pos = 1; $pos <= $max; ++$pos):
 
-    $item = isset($list[$pos-1])?$list[$pos-1]:null;
+    $item = isset($list[$pos - 1]) ? $list[$pos - 1] : null;
 
-    if($item && $item->fp_pos == $pos):
-    if($item->isPortfolio()):
+    if ($item && $item->fp_pos == $pos):
+    if ($item->isPortfolio()):
         if ($item->isText()):
 ?>
         <td class="b-portfolio-text-clause">
-            <?php if($is_owner): ?>
+            <?php if ($is_owner): ?>
             <div id="preview_pos_<?=$pos?>">
             <?php endif; ?>            
             
@@ -30,16 +29,16 @@ for($pos = 1; $pos <= $max; $pos ++):
             </h4>
 			<?=$item->getDescr()?> 
             
-            <?php if($is_owner): ?>
+            <?php if ($is_owner): ?>
             </div>
             <a href="javascript:void(0);" data-preview-pos="<?=$pos?>" data-popup="<?=FreelancersPreviewEditorPopup::getInstance()->getPopupId()?>">Изменить</a>
             <?php endif; ?>            
         </td>        
-<?php        
+<?php 
         else:
 ?>
         <td itemscope itemtype="http://schema.org/ImageObject">
-            <?php if($is_owner): ?>
+            <?php if ($is_owner): ?>
             <div id="preview_pos_<?=$pos?>">
             <?php endif; ?>   
                 
@@ -49,27 +48,27 @@ for($pos = 1; $pos <= $max; $pos ++):
                     </a>
                 </h4>
                 <a href="<?=$item->getUrl()?>" target="_blank" title="<?=$item->getAttrTitle()?>"><?=$item->getThumbnail()?></a>
-                <?php if(false): //@todo: непонятно зачем на каждой картинке один и тот же текст? ?>
+                <?php if (false): //@todo: непонятно зачем на каждой картинке один и тот же текст? ?>
                 <span class="b-layout_hide" itemprop="description"><?=SeoTags::getInstance()->getImageDescription() ?></span>   
                 <?php endif; ?>
                 
-            <?php if($is_owner): ?>    
+            <?php if ($is_owner): ?>    
             </div>
             <a href="javascript:void(0);" data-preview-pos="<?=$pos?>" data-popup="<?=FreelancersPreviewEditorPopup::getInstance()->getPopupId()?>">Изменить</a>
             <?php endif; ?>
         </td> 
-<?php        
+<?php 
         endif;
     else:
 ?>
         <td itemscope itemtype="http://schema.org/ImageObject">
-            <?php if($is_owner): ?>
+            <?php if ($is_owner): ?>
             <div id="preview_pos_<?=$pos?>">
             <?php endif; ?>  
                 <div class="i-pic i-pic_port i-pic_port_z-index_inherit i-pic_pad_10 i-pic_height_220 i-pic_bord_green_hover i-pic_port_inline_block">
                     <div class="b-layout b-layout_relative">
                         <a href="<?=$item->getUrl()?>" class="b-pic__lnk b-pic__lnk_relative">
-                            <?php if($item->hasVideo()): ?>
+                            <?php if ($item->hasVideo()): ?>
                                 <div class="b-icon b-icon__play b-icon_absolute b-icon_bot_4 b-icon_left_4"></div>
                             <?php endif; ?>
                             <?php if ($image_url = $item->getThumbnailUrl()): ?>
@@ -88,7 +87,7 @@ for($pos = 1; $pos <= $max; $pos ++):
                         <a href="<?=$item->getUrl()?>" class="b-layout__link b-layout__link_no-decorat b-layout__link_color_000 b-layout__link_inline-block"><?=$item->getTitle()?></a>
                     </div>
                 </div>
-            <?php if($is_owner): ?>
+            <?php if ($is_owner): ?>
             </div>
             <a href="javascript:void(0);" data-preview-pos="<?=$pos?>" data-popup="<?=FreelancersPreviewEditorPopup::getInstance()->getPopupId()?>">Изменить</a>
             <?php endif; ?>            
@@ -97,11 +96,11 @@ for($pos = 1; $pos <= $max; $pos ++):
 <?php else: ?>
         <td>
 <?php
-    if($is_owner):
+    if ($is_owner):
 ?>
             <div id="preview_pos_<?=$pos?>"><?=str_repeat('<br/>', 6);?></div>
             <a href="javascript:void(0);" data-preview-pos="<?=$pos?>" data-popup="<?=FreelancersPreviewEditorPopup::getInstance()->getPopupId()?>">Изменить</a>
-<?php            
+<?php 
     else:
         echo '&nbsp;';
     endif;

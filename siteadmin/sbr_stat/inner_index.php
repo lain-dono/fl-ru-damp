@@ -1,5 +1,5 @@
-<?
-if (!defined('IS_SITE_ADMIN') || !(hasPermissions('sbr') || hasPermissions('tmppayments')) ) {
+<?php
+if (!defined('IS_SITE_ADMIN') || !(hasPermissions('sbr') || hasPermissions('tmppayments'))) {
     header_location_exit('/404.php');
 }
 ?>
@@ -45,8 +45,8 @@ if (!defined('IS_SITE_ADMIN') || !(hasPermissions('sbr') || hasPermissions('tmpp
 
                 <div class="b-combo b-combo_inline-block">
                     <div class="b-combo__input b-combo__input_width_140 b-combo__input_max-width_140 b-combo__input_arrow_yes b-combo__input_calendar b-combo__input_resize date_format_use_dot use_past_date no_set_date_on_load year_min_limit_1900">
-                        <? $custom_period_from = $custom_period_from ? $custom_period_from : date("d.m.Y", time()) ?>
-                        <input id="data1" class="b-combo__input-text" name="custom_period_from" type="text" size="80" value="<?= $custom_period_from ? $custom_period_from : (date("d.m.Y", time())) ?>" maxlength="10" />
+                        <?php $custom_period_from = $custom_period_from ? $custom_period_from : date('d.m.Y', time()) ?>
+                        <input id="data1" class="b-combo__input-text" name="custom_period_from" type="text" size="80" value="<?= $custom_period_from ? $custom_period_from : (date('d.m.Y', time())) ?>" maxlength="10" />
                         <span class="b-combo__arrow-date"></span>
                     </div>          
                 </div>
@@ -55,7 +55,7 @@ if (!defined('IS_SITE_ADMIN') || !(hasPermissions('sbr') || hasPermissions('tmpp
 
                 <div class="b-combo b-combo_inline-block b-combo_margright_10">
                     <div class="b-combo__input b-combo__input_width_140 b-combo__input_max-width_140 b-combo__input_arrow_yes b-combo__input_calendar b-combo__input_resize date_format_use_dot use_past_date no_set_date_on_load year_min_limit_1900">
-                        <? $custom_period_to = $custom_period_to ? $custom_period_to : date("d.m.Y", time()) ?>
+                        <?php $custom_period_to = $custom_period_to ? $custom_period_to : date('d.m.Y', time()) ?>
                         <input id="data2" class="b-combo__input-text" name="custom_period_to" type="text" size="80" value="<?= $custom_period_to ?>" maxlength="10" />
                         <span class="b-combo__arrow-date"></span>
                     </div>          
@@ -83,7 +83,8 @@ if (!defined('IS_SITE_ADMIN') || !(hasPermissions('sbr') || hasPermissions('tmpp
     
 </form>
 
-<? if ($show_results) { ?>
+<?php if ($show_results) {
+    ?>
 
 <div class="b-menu b-menu_tabs  b-menu_padtop_20 b-menu_padbot_20">
     <ul class="b-menu__list b-menu__list_padleft_10">
@@ -100,10 +101,10 @@ if (!defined('IS_SITE_ADMIN') || !(hasPermissions('sbr') || hasPermissions('tmpp
     </ul>
 </div>
 
-<?
-include("inner_table.php");
-include("inner_graph.php");
-?>
+<?php
+include 'inner_table.php';
+    include 'inner_graph.php';
+    ?>
 
 <script type="text/javascript">
     window.addEvent('domready', function(){
@@ -139,4 +140,5 @@ include("inner_graph.php");
     });
 </script>
 
-<? } ?>
+<?php 
+} ?>

@@ -1,22 +1,21 @@
 <?php
 
 /**
- * Модель истории изменений типовых услуг
+ * Модель истории изменений типовых услуг.
  */
-class tservices_history {
-	private $TABLE = 'tservices_history';
-	
-	
-	public static function save($old_tservice, $new_tservice) {
-		if (!$old_tservice) {
-			$this->saveNew($new_tservice);
-		} else {
-			
-			$this->saveStatus($new_tservice['TODO']);
-		}		
-	}
-}
+class tservices_history
+{
+    private $TABLE = 'tservices_history';
 
+    public static function save($old_tservice, $new_tservice)
+    {
+        if (!$old_tservice) {
+            $this->saveNew($new_tservice);
+        } else {
+            $this->saveStatus($new_tservice['TODO']);
+        }
+    }
+}
 
 /*
  * В истории изменений отслеживать изменения публикаций/блокировок карточки, изменений срока, цены, названия, специализации карточки.

@@ -1,5 +1,9 @@
-<?php namespace UniversalAnalytics\Exception;
+<?php
 
-use \OutOfBoundsException;
+namespace UniversalAnalytics\Exception;
 
-class InvalidAttributeException extends OutOfBoundsException {}
+use OutOfBoundsException;
+
+class InvalidAttributeException extends OutOfBoundsException
+{
+}

@@ -7,13 +7,12 @@ require_once '../classes/stdf.php';
 require_once '../classes/memBuff.php';
 require_once '../classes/smtp.php';
 
- 
-if ( defined('HTTP_PREFIX') ) {
-    $pHttp = str_replace("://", "", HTTP_PREFIX); // Введено с учетом того планируется включение HTTPS на серверах (для писем в ЛС)
+if (defined('HTTP_PREFIX')) {
+    $pHttp = str_replace('://', '', HTTP_PREFIX); // Введено с учетом того планируется включение HTTPS на серверах (для писем в ЛС)
 } else {
     $pHttp = 'http';
 }
-$pHost = str_replace("$pHttp://", "", $GLOBALS['host']);
+$pHost = str_replace("$pHttp://", '', $GLOBALS['host']);
 $eHost = $GLOBALS['host'];
 
 $pMessage = "
@@ -35,18 +34,18 @@ $pMessage = "
 ";
 
 $DB = new DB('plproxy');
-$M  = new DB('master');
- 
+$M = new DB('master');
+
 // подготавливаем рассылку
-$msgid = $DB->val("SELECT masssend(103, '$pMessage', '{}', '')");  
+$msgid = $DB->val("SELECT masssend(103, '$pMessage', '{}', '')");
 $i = 0;
 // Только всем незабаненным (is_banned = B'0') 
 //$testloginlist = " AND login IN ('land_f', 'bolvan1', 'vg_rabot1') ";
-$testloginlist = "";
+$testloginlist = '';
 $sql = "SELECT uid FROM users WHERE substring(subscr from 8 for 1)::integer = 1 AND is_banned = B'0' {$testloginlist} LIMIT 3000 OFFSET ?";
-while ( $users = $M->col($sql, $i) ) {
-    $DB->query("SELECT masssend_bind(?, 103, ?a)", $msgid, $users);
+while ($users = $M->col($sql, $i)) {
+    $DB->query('SELECT masssend_bind(?, 103, ?a)', $msgid, $users);
     $i = $i + 3000;
 }
-$DB->query("SELECT masssend_commit(?, 103)", $msgid);
-echo "OK";
+$DB->query('SELECT masssend_commit(?, 103)', $msgid);
+echo 'OK';

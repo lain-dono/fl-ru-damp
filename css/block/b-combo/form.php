@@ -10,10 +10,10 @@
                <link type="text/css" href="http://betadav.free-lance.ru/wdstatic/2bade4cfc0b1b892ab5fbd574989ca0b_1335164244.css" rel="stylesheet" />                                                  
 
 <script type="text/javascript" src="/scripts/mootools-new.js"></script>
-<script type="text/javascript" src="/scripts/b-combo/b-combo-dynamic-input.js?rand=<?=rand(1000,9999)?>"></script>
-<script type="text/javascript" src="/scripts/b-combo/b-combo-multidropdown.js?rand=<?=rand(1000,9999)?>"></script>
+<script type="text/javascript" src="/scripts/b-combo/b-combo-dynamic-input.js?rand=<?=rand(1000, 9999)?>"></script>
+<script type="text/javascript" src="/scripts/b-combo/b-combo-multidropdown.js?rand=<?=rand(1000, 9999)?>"></script>
 <script type="text/javascript" src="/scripts/b-combo/b-combo-autocomplete.js"></script>
-<script type="text/javascript" src="/scripts/b-combo/b-combo-calendar.js?rand=<?=rand(1000,9999)?>"></script>
+<script type="text/javascript" src="/scripts/b-combo/b-combo-calendar.js?rand=<?=rand(1000, 9999)?>"></script>
 <script type="text/javascript" src="/scripts/b-combo/b-combo-manager.js"></script>
 
         
@@ -34,10 +34,10 @@
         
         <script type="text/javascript">
            var ___WDCPREFIX = 'http://betadav.free-lance.ru';
- <?
- require_once $_SERVER["DOCUMENT_ROOT"]."/classes/stdf.php";
- require_once $_SERVER["DOCUMENT_ROOT"]."/classes/memBuff2.php";
- require_once $_SERVER["DOCUMENT_ROOT"]."/classes/search/sphinxapi.php";
+ <?php
+ require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+ require_once $_SERVER['DOCUMENT_ROOT'].'/classes/memBuff2.php';
+ require_once $_SERVER['DOCUMENT_ROOT'].'/classes/search/sphinxapi.php';
   ?> 
  var _TOKEN_KEY = '<?=$_SESSION['rand']?>';           
            var _UID = 237151;

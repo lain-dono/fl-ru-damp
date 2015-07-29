@@ -4,19 +4,19 @@
 
 require_once '../classes/stdf.php';
 
-$r = pg_query(DBConnect(), "SELECT MAX(id) AS max_id FROM opros");
+$r = pg_query(DBConnect(), 'SELECT MAX(id) AS max_id FROM opros');
 $m = pg_fetch_array($r);
-pg_query(DBConnect(),"ALTER SEQUENCE opros_id_seq RESTART WITH ".($m['max_id']+1));
+pg_query(DBConnect(), 'ALTER SEQUENCE opros_id_seq RESTART WITH '.($m['max_id'] + 1));
 
-$r = pg_query(DBConnect(), "SELECT MAX(id) AS max_id FROM opros_questions");
+$r = pg_query(DBConnect(), 'SELECT MAX(id) AS max_id FROM opros_questions');
 $m = pg_fetch_array($r);
-pg_query(DBConnect(),"ALTER SEQUENCE opros_questions_id_seq RESTART WITH ".($m['max_id']+1));
+pg_query(DBConnect(), 'ALTER SEQUENCE opros_questions_id_seq RESTART WITH '.($m['max_id'] + 1));
 
-$r = pg_query(DBConnect(), "SELECT MAX(id) AS max_id FROM opros_answers");
+$r = pg_query(DBConnect(), 'SELECT MAX(id) AS max_id FROM opros_answers');
 $m = pg_fetch_array($r);
-pg_query(DBConnect(),"ALTER SEQUENCE opros_answers_id_seq RESTART WITH ".($m['max_id']+1));
+pg_query(DBConnect(), 'ALTER SEQUENCE opros_answers_id_seq RESTART WITH '.($m['max_id'] + 1));
 
-pg_query(DBConnect(), "START TRANSACTION");
+pg_query(DBConnect(), 'START TRANSACTION');
 
 $res = pg_query(DBConnect(), "INSERT INTO opros (name, descr, flags, is_active, is_multi_page, content) VALUES (
 'Фултайм VS Фри-ланс',
@@ -57,8 +57,6 @@ $res = pg_query(DBConnect(), "INSERT INTO opros_questions (name, opros_id, max_a
 ('Вы бы пошли работать в офис, если бы:', $opros_id, 0, 1, 6, 2)
 RETURNING id");
 list($question_6) = pg_fetch_row($res);
-
-
 
 $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, value, num, is_m_other, move_question_id, orig_answer_id, is_m_block, block_questions, is_m_number, block_answer) VALUES
 ('Да', $question_1, 1, 1, FALSE, NULL, NULL, FALSE, NULL, NULL, NULL)
@@ -195,6 +193,6 @@ $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, valu
 RETURNING id");
 list($answer_27) = pg_fetch_row($res);
 
-pg_query(DBConnect(), "COMMIT");
+pg_query(DBConnect(), 'COMMIT');
 
-echo "Done";
+echo 'Done';

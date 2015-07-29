@@ -12,7 +12,7 @@
     </div>
 </form>
 
-<?php if(!empty($files)): ?>
+<?php if (!empty($files)): ?>
 <h3>Загруженные реестры</h3>
 <br/>
 <table class="nr-a-tbl" cellspacing="5" style="table-layout:fixed">
@@ -34,23 +34,23 @@
             <td colspan="2">
                 <div class="pager">
                     <?=new_paginator(
-                            $page, 
-                            ceil($page_count / $limit), 
-                            10, 
-                            "%s?action=factura&page=%d%s") ?>
+                            $page,
+                            ceil($page_count / $limit),
+                            10,
+                            '%s?action=factura&page=%d%s') ?>
                 </div>
             </td>
         </tr>
     </tfoot>
 
     <tbody>
-            <?php foreach($files as $file): ?>
+            <?php foreach ($files as $file): ?>
         <tr class="nr-a-tbl_tr">
             <td>
                 <?=date('d.m.Y H:i', strtotime($file['modified']))?>
             </td>
             <td>
-                <a href="<?=WDCPREFIX . $file['path'] . $file['fname']?>">
+                <a href="<?=WDCPREFIX.$file['path'].$file['fname']?>">
                     <?=$file['original_name']?>
                 </a>
             </td>

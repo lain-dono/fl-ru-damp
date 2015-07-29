@@ -1,11 +1,11 @@
 <?php
 /**
- * Форма добавления статьи
+ * Форма добавления статьи.
  */
 ?>
 <?php
-if ( hasPermissions('articles') ) {
-    require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/uploader/uploader.php");
+if (hasPermissions('articles')) {
+    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/uploader/uploader.php';
     $templates = array(
         uploader::getTemplate('uploader', 'wysiwyg/'),
         uploader::getTemplate('uploader.file', 'wysiwyg/'),
@@ -14,13 +14,13 @@ if ( hasPermissions('articles') ) {
     uploader::init(array(), $templates, 'wysiwyg');
 }
 ?>
-<? if(count($alert)): ?>
+<?php if (count($alert)): ?>
 <script>
 window.addEvent('domready', function() {
    $('frm').scrollIntoView(true);
 });
 </script>
-<? endif; ?>
+<?php endif; ?>
 <script>
     window.addEvent('domready', function() {
 
@@ -28,8 +28,8 @@ window.addEvent('domready', function() {
             articlesFileInput(el);
         });
         <?php
-        if ( hasPermissions('articles') ) {
-        ?>CKEDITOR.config.customConfig = '/scripts/ckedit/config_admin.js';<?php 
+        if (hasPermissions('articles')) {
+            ?>CKEDITOR.config.customConfig = '/scripts/ckedit/config_admin.js';<?php 
         }
         ?>
         CKEDITOR.replace('msgtext', {
@@ -54,7 +54,7 @@ window.addEvent('domready', function() {
     });
 </script>
 <h2>Статьи и интервью</h2>
-<? include($mpath . '/tabs.php'); ?>
+<?php include $mpath.'/tabs.php'; ?>
 <div class="page-interview">
     <div class="tnav-interview">
         <a class="b-layout__link" href="./">Вернуться к списку статей</a>
@@ -84,7 +84,9 @@ window.addEvent('domready', function() {
 												<input class="b-input__text " type="text" name="title" value="<?=$title?>"  />
 											</div>
 										</div>
-                    <? if ($alert[0])  print(view_error($alert[0])) . '<br />' ?>
+                    <?php if ($alert[0]) {
+    print(view_error($alert[0])).'<br />';
+} ?>
 										<div class="b-form">
                     	<label class="b-form__name b-form__name_fontsize_13">Анонс:</label>
                     	<div class="b-textarea">
@@ -92,7 +94,9 @@ window.addEvent('domready', function() {
 											</div>
                     </div>
 
-                    <? if ($alert[1])  print(view_error($alert[1])) . '<br />' ?>
+                    <?php if ($alert[1]) {
+    print(view_error($alert[1])).'<br />';
+} ?>
 										<div class="b-form">
 											<label class="b-form__name b-form__name_fontsize_13">Текст статьи:</label>
 											<div >
@@ -108,17 +112,21 @@ window.addEvent('domready', function() {
 											</div>
 											<div class="b-form__txt b-form__txt_fontsize_11">Ключевые слова вводятся через запятую.</div>
 										</div>
-                    <? if ($alert[2])  print(view_error($alert[2])) . '<br />' ?>
+                    <?php if ($alert[2]) {
+    print(view_error($alert[2])).'<br />';
+} ?>
                     <div class="cl-form-files c">
                         <ul class="form-files-list">
                             <li class="c"><input type="file" size="23" class="i-file b-fon" name="attach" onchange="if($(this).getParent().getParent().getParent().getElement('.errorBox') != undefined) { $(this).getParent().getParent().getParent().getElement('.errorBox').set('html', ''); }"/> </li>
                         </ul>
                         <div class="form-files-inf">
-                            <?php $aAllowedExt = array_diff( $GLOBALS['graf_array'], array('swf') ) ?>
-                            <strong class="form-files-max">Максимальный размер файла: <?=articles::ARTICLE_MAX_LOGOSIZE/(1024*1024)?> Мб.</strong>
-                             Картинка: 100х100px, <?=implode(', ', $aAllowedExt )?><br />
+                            <?php $aAllowedExt = array_diff($GLOBALS['graf_array'], array('swf')) ?>
+                            <strong class="form-files-max">Максимальный размер файла: <?=articles::ARTICLE_MAX_LOGOSIZE / (1024 * 1024)?> Мб.</strong>
+                             Картинка: 100х100px, <?=implode(', ', $aAllowedExt)?><br />
                         </div>
-                        <? if ($alert[3])  print(view_error($alert[3])) ?>
+                        <?php if ($alert[3]) {
+    print(view_error($alert[3]));
+} ?>
                     </div>
                     <div class="cl-form-btns">
                         <a href="javascript:void(0)" id="btn-send-articles" onclick="if(!$(this).hasClass('btnr-disabled')) {  saveArticle($('frm')); $(this).addClass('btnr-disabled'); }" class="btnr btnr-grey "><span class="btn-lc"><span class="btn-m"><span class="btn-txt" id="btn_name">Отправить на модерацию</span></span></span></a>

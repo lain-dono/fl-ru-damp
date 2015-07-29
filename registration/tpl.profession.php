@@ -1,5 +1,5 @@
 <?php
-    require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/quickpro.common.php");
+    require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/quickpro.common.php';
     $xajax->printJavascript('/xajax/');
 ?>
 <div class="b-layout">
@@ -14,25 +14,25 @@
     
     <form action="" method="post">
 
-        <?php if($professions_data): ?>
+        <?php if ($professions_data): ?>
 <?php
                 $items = array();
                 foreach ($professions_data as $profession_data):
                     $gid = $profession_data['gid'];
                     $id = $profession_data['id'];
-                    
+
                     if (!$id || $gid <= 0):
                         continue;
                     endif;
-                    
+
                     if (!isset($items[$gid])):
                         $items[$gid] = $profession_data;
                         $items[$gid]['elements'] = array();
                     endif;
-                    
+
                     $items[$gid]['elements'][$id] = $profession_data;
-                endforeach; 
-                
+                endforeach;
+
 ?>
         <div class="b-select b-select_margbot_20">
         <select class="b-select__select b-select__select_flat" name="profession">

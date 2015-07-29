@@ -1,4 +1,5 @@
-<? if($this->name) { ?>
+<?php if ($this->name) {
+    ?>
 <table style="margin-top: 0pt; margin-left: auto; margin-right: auto; background-color: #ffffff; text-align:left" bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0" width="740">
     <tbody>
         <tr>
@@ -6,11 +7,17 @@
             <td  width="20"></td>
             <td  >
                 <font color="#000000" size="5" face="arial,sans-serif">
-                    <? if($this->link) { ?>
-                    <a href="<?= $this->link;?>" style="color:#0F71C8" target="_blank"><?= $this->name; ?></a>
-                    <? } else { //if?>
-                    <?= $this->name; ?>
-                    <? }//else?>
+                    <?php if ($this->link) {
+    ?>
+                    <a href="<?= $this->link;
+    ?>" style="color:#0F71C8" target="_blank"><?= $this->name;
+    ?></a>
+                    <?php 
+} else { //if?>
+                    <?= $this->name;
+    ?>
+                    <?php 
+}//else?>
                 </font>
             </td>
             <td ></td>
@@ -19,7 +26,8 @@
         </tr>
     </tbody>
 </table>
-<? }//if?>
+<?php 
+}//if?>
 
 <table style="margin-top: 0pt; margin-left: auto; margin-right: auto; background-color: #ffffff; text-align:left" bgcolor="#ffffff" border="0" cellpadding="0" cellspacing="0" width="740">
     <tbody>

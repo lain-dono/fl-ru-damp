@@ -4,55 +4,59 @@ $xajax->printJavascript('/xajax/');
 
 ?><script type="text/javascript">
 	
-	<?=(empty($params['sbr'])? "var vsbr = 0; // sbr rank spoiler \n": "var vsbr = 1; \n")?>
+	<?=(empty($params['sbr']) ? "var vsbr = 0; // sbr rank spoiler \n" : "var vsbr = 1; \n")?>
 	var exrate = 1;//<?=$exrates[14]?>;
-	var mysum = <?=round($_SESSION['ac_sum'],2)?>;
+	var mysum = <?=round($_SESSION['ac_sum'], 2)?>;
 	
 	var profs = [ ];
-	<?
+	<?php
 	$gr = 0;
-	for ($i=0; $i<count($professions); $i++) {
-		if ($gr != $professions[$i]['prof_group']) {
-			echo "\tprofs[{$professions[$i]['prof_group']}] = [];\n";
-			$gr = $professions[$i]['prof_group'];
-		}
-		echo "\tprofs[{$professions[$i]['prof_group']}][ profs[{$professions[$i]['prof_group']}].length ] = { id: {$professions[$i]['id']}, name: '".trim($professions[$i]['name'])."' };\n";
+	for ($i = 0; $i < count($professions); ++$i) {
+	    if ($gr != $professions[$i]['prof_group']) {
+	        echo "\tprofs[{$professions[$i]['prof_group']}] = [];\n";
+	        $gr = $professions[$i]['prof_group'];
+	    }
+	    echo "\tprofs[{$professions[$i]['prof_group']}][ profs[{$professions[$i]['prof_group']}].length ] = { id: {$professions[$i]['id']}, name: '".trim($professions[$i]['name'])."' };\n";
 	}
 	?>
 
 </script>
 <script type="text/javascript">
-<? 
+<?php 
 // восстанавливаем массивы с данными, если была сессия
 
 if (!empty($params['locations'])) {
-	$tmp = array();
-	foreach ($params['locations'] as $val) {
-		if ($val['country']['id']) {
-			$tmp[] = "locations.values[locations.values.length] = {
+    $tmp = array();
+    foreach ($params['locations'] as $val) {
+        if ($val['country']['id']) {
+            $tmp[] = "locations.values[locations.values.length] = {
 				country: { id: {$val['country']['id']}, name: '".htmlspecialchars($val['country']['name'])."' },
-				city: { id: ".intval($val['city']['id']).", name: '".(intval($val['city']['id'])? htmlspecialchars($val['city']['name']): '')."' },
+				city: { id: ".intval($val['city']['id']).", name: '".(intval($val['city']['id']) ? htmlspecialchars($val['city']['name']) : '')."' },
 				count: {$val['count']},
 				cost: {$val['cost']}
 			}\n";
-		}
-	}
-	for ($i=0; $i<count($tmp)-1; $i++) echo $tmp[$i];
+        }
+    }
+    for ($i = 0; $i < count($tmp) - 1; ++$i) {
+        echo $tmp[$i];
+    }
 }
 
 if (!empty($params['professions'])) {
-	$tmp = array();
-	foreach ($params['professions'] as $val) {
-		if ($val['group']['id']) {
-			$tmp[] = "professions.values[professions.values.length] = {
+    $tmp = array();
+    foreach ($params['professions'] as $val) {
+        if ($val['group']['id']) {
+            $tmp[] = "professions.values[professions.values.length] = {
 				group: { id: {$val['group']['id']}, name: '".htmlspecialchars($val['group']['name'])."' },
-				profession: { id: ".intval($val['profession']['id']).", name: '".(intval($val['profession']['id'])? htmlspecialchars($val['profession']['name']): '')."' },
+				profession: { id: ".intval($val['profession']['id']).", name: '".(intval($val['profession']['id']) ? htmlspecialchars($val['profession']['name']) : '')."' },
 				count: {$val['count']},
 				cost: {$val['cost']}
 			}\n";
-		}
-	}
-	for ($i=0; $i<count($tmp)-1; $i++) echo $tmp[$i];
+        }
+    }
+    for ($i = 0; $i < count($tmp) - 1; ++$i) {
+        echo $tmp[$i];
+    }
 }
 ?>
 </script>
@@ -71,13 +75,13 @@ if (!empty($params['professions'])) {
 <div class="masssending-block c">
 <form id="frm" action="<?=$_SERVER['REQUEST_URI']?>" method="POST">
 	<div class="masssending-content">
-        <? if ($fromSearch === 0) {
-            include($_SERVER['DOCUMENT_ROOT'] . "/masssending/tpl.masssending.php");
-        } elseif ($fromSearch === 2) {
-            include($_SERVER['DOCUMENT_ROOT'] . "/masssending/tpl.masssending_from_search.php");
-        } else {
-            include($_SERVER['DOCUMENT_ROOT'] . "/masssending/tpl.masssending_from_search_new.php");
-        }
+        <?php if ($fromSearch === 0) {
+    include $_SERVER['DOCUMENT_ROOT'].'/masssending/tpl.masssending.php';
+} elseif ($fromSearch === 2) {
+    include $_SERVER['DOCUMENT_ROOT'].'/masssending/tpl.masssending_from_search.php';
+} else {
+    include $_SERVER['DOCUMENT_ROOT'].'/masssending/tpl.masssending_from_search_new.php';
+}
         ?>
 	</div>
 
@@ -98,15 +102,15 @@ var MultiFileSetting = {
 			
 var i = 0;
 var uploaded = [ ];
-<?
+<?php
 if (!empty($_COOKIE['mass-files']) && !empty($_SESSION['masssending']['files']) && is_array($_SESSION['masssending']['files'])) {
     $files = explode(',', $_COOKIE['mass-files']);
-    for ($i=0; $i<count($files); $i++) {
+    for ($i = 0; $i < count($files); ++$i) {
         foreach ($_SESSION['masssending']['files'] as $file) {
             if ($files[$i] == $file['id']) {
                 $filename = addslashes($file['displayname']);
-                if(strlen($filename) > 45) {
-                    $filename = substr($filename, 0, 30) . "..." . substr($filename, strlen($filename)-10, strlen($filename));
+                if (strlen($filename) > 45) {
+                    $filename = substr($filename, 0, 30).'...'.substr($filename, strlen($filename) - 10, strlen($filename));
                 }
                 echo "
                     uploaded[i++] = { 
@@ -123,24 +127,27 @@ if (!empty($_COOKIE['mass-files']) && !empty($_SESSION['masssending']['files']) 
 
 new MultiFile(MultiFileSetting, uploaded);
 
-<?
+<?php
 $i = 0;
 if (!empty($params['costs'])) {
     foreach ($params['costs'] as $val) {
         if (intval($val['cost_from']) || intval($val['cost_to'])) {
-?>
+            ?>
             costs.add( { cost_from: <?=intval($val['cost_from'])?>, cost_to: <?=intval($val['cost_to'])?>, cost_period: '<?=$val['cost_period']?>', cost_type: <?=intval($val['cost_type'])?> } );
-<?
-            $i++;
+<?php
+            ++$i;
         }
     }
 }
-if (!$i) echo "costs.add();";
+if (!$i) {
+    echo 'costs.add();';
+}
 ?>
 
 </script>
 
-<? if (!empty($params) && !$fromSearch) { ?>
+<?php if (!empty($params) && !$fromSearch) {
+    ?>
 <script type="text/javascript">
 
 if ( document.getElementById('sbr_is_positive') ) {
@@ -167,4 +174,5 @@ spam.values.msg = document.getElementById('msg').value;
 spam.send();
 
 </script>
-<? } ?>
+<?php 
+} ?>

@@ -1,4 +1,4 @@
-<?
+<?php
 $opID = $isFeedback ? $comment['feedback_id'] : $comment['opinion_id'];
 $prefix = $isFeedback ? 'feedback_' : '';
 ?>
@@ -17,12 +17,14 @@ $prefix = $isFeedback ? 'feedback_' : '';
             <div class="b-post__txt b-post__txt_padtop_5" id="<?= $prefix ?>comment_text_<?= $opID ?>">
                 <?= reformat($comment['comment'], 40)?>
             </div>
-            <?php if($comment['user_id'] == $_SESSION['uid'] || hasPermissions('users')) {?>
+            <?php if ($comment['user_id'] == $_SESSION['uid'] || hasPermissions('users')) {
+    ?>
             <div class="b-post__foot b-post__foot_padtop_10 ">
                 <a class="b-post__link b-post__link_dot_c10601" href="javascript:void(0)" id="<?= $prefix ?>opinion_btn_edit_comment_<?= $opID ?>" onclick="if(!this.disabled) { this.disabled = true; xajax_AddOpComentForm('<?= $opID ?>', '<?=$ops_type?>' <?= $isFeedback ? ', true' : '' ?>); } return false;">Редактировать</a> &#160;&#160; 
                 <a class="b-post__link b-post__link_dot_c10601" href="javascript:void(0)" onclick="if (confirm('Вы действительно хотите удалить комментарий?')) xajax_DeleteOpinionComm('<?= $opID ?>', '<?=$comment['id']?>', '<?=$ops_type?>' <?= $isFeedback ? ', true' : '' ?>); return false;">Удалить</a>
             </div>
-            <?php }//if?>
+            <?php 
+}//if?>
         </div>
     </div>
 </div>

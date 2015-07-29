@@ -3,119 +3,139 @@
 /**
  * Базовый класс для всех API.
  */
-abstract class externalApi extends externalBase {
-
+abstract class externalApi extends externalBase
+{
     const OBJTYPE_TABLE = 1;
-    
+
     const METHOD_PREFIX = 'x____';
 
-    static $apis = array();
-    
+    public static $apis = array();
+
     protected $_sess;
 
     protected $_mName;
     protected $_mCfg;
 
-
     /**
      * Получает экземпляр необходимого API-класса в соотвествии с заданным пространством имен.
      *
-     * @param string $ns   пространство имен (по-другому идентификатор класса API -- uri, см. схему), соотвествующее нужному классу.
-     * @param externalSession $sess   объект сессии.
-     * @return externalApi   инициализированный экземпляр.
+     * @param string          $ns   пространство имен (по-другому идентификатор класса API -- uri, см. схему), соотвествующее нужному классу.
+     * @param externalSession $sess объект сессии.
+     *
+     * @return externalApi инициализированный экземпляр.
      */
-    static function getInst($ns, $sess) {
-        $api = NULL;
-        if(isset(externalApi::$apis[$ns]))
-            $api = externalApi::$apis[$ns];
-        if(!$api) {
+    public static function getInst($ns, $sess)
+    {
+        $api = null;
+        if (isset(self::$apis[$ns])) {
+            $api = self::$apis[$ns];
+        }
+        if (!$api) {
             $api_name = basename($ns);
-            $api_path = EXTERNAL_API_PATH . "/{$api_name}.php";
-            if(file_exists($api_path)) {
-                require_once($api_path);
+            $api_path = EXTERNAL_API_PATH."/{$api_name}.php";
+            if (file_exists($api_path)) {
+                require_once $api_path;
                 $api_cls = 'externalApi_'.$api_name;
-                if(class_exists($api_cls)) {
+                if (class_exists($api_cls)) {
                     $api = new $api_cls($sess);
                     // @here проверка прав доступа для закрытых api.
-                    if($api->getNamespase() !== $ns)
+                    if ($api->getNamespase() !== $ns) {
                         unset($api);
+                    }
                 }
             }
         }
-        if($api) {
-            externalApi::$apis[$ns] = $api;
+        if ($api) {
+            self::$apis[$ns] = $api;
         }
+
         return $api;
     }
 
     /**
      * Главный конструктор.
      *
-     * @param externalSession $sess   объект сессии.
+     * @param externalSession $sess объект сессии.
      */
-    function __construct($sess) {
+    public function __construct($sess)
+    {
         $this->_sess = $sess;
     }
 
     /**
      * Вернуть пространство имен (uri) данного API-класса.
+     *
      * @return string
      */
-    function getNamespase() {
+    public function getNamespase()
+    {
         return $this->API_NAMESPACE;
     }
 
     /**
      * Вернуть префикс пространства имен данного API-класса.
+     *
      * @return string
      */
-    function getDefaultPrefix() {
+    public function getDefaultPrefix()
+    {
         return $this->API_DEFAULT_PREFIX;
     }
-    
+
     /**
      * Выполняет заданный метод. Если пространство имен имеет общие ограничения на свои методы, то выдается ошибка и NULL в результате.
+     *
      * @see externalApi::_methodsDenied()
      *
-     * @param string $method   имя метода, согласно схеме протокола обмена (внутреннее имя отличается, добавляется префикс и т.д.)
-     * @param array $args   параметры, которые нужно передать методу.
-     * @return mixed    результат работы метода.
+     * @param string $method имя метода, согласно схеме протокола обмена (внутреннее имя отличается, добавляется префикс и т.д.)
+     * @param array  $args   параметры, которые нужно передать методу.
+     *
+     * @return mixed результат работы метода.
      */
-    function invoke($method, $args) {
+    public function invoke($method, $args)
+    {
         $xmethod = self::METHOD_PREFIX.$method;
-        if(!method_exists($this, $xmethod))
-            return $this->warning( EXTERNAL_WARN_UNDEFINED_METHOD );
+        if (!method_exists($this, $xmethod)) {
+            return $this->warning(EXTERNAL_WARN_UNDEFINED_METHOD);
+        }
         $this->_mName = $method;
-        $this->_mCfg = $this->_methodsCfg ? $this->_methodsCfg[$this->_mName] : NULL;
+        $this->_mCfg = $this->_methodsCfg ? $this->_methodsCfg[$this->_mName] : null;
         $denied = false;
-        if(!method_exists(__CLASS__, $xmethod))
+        if (!method_exists(__CLASS__, $xmethod)) {
             $denied = $this->_methodsDenied();
-        return $denied ? NULL : $this->$xmethod($args);
-    }
+        }
 
+        return $denied ? null : $this->$xmethod($args);
+    }
 
     /**
      * Заглушка для расшифровки переданного клиентом пароля.
      */
-    private function _decriptPasswd($passwd) {
+    private function _decriptPasswd($passwd)
+    {
         return $passwd;
     }
-    
 
     /**
      * Вызывается для проверки доступности авторизации данного пользователя.
      * Перегружается в отдельных пространствах имен, если те требуют доп. проверок.
      *
-     * @param object $user   пользователь (инициализированный экземпляр класса users).
-     * @return integer   код ошибки или 0 -- можно авторизировать.
+     * @param object $user пользователь (инициализированный экземпляр класса users).
+     *
+     * @return int код ошибки или 0 -- можно авторизировать.
      */
-    protected function _authDenied($user) {
-        if(!$user->uid)
+    protected function _authDenied($user)
+    {
+        if (!$user->uid) {
             return EXTERNAL_ERR_USER_NOTFOUND;
-        if($user->is_banned)
+        }
+        if ($user->is_banned) {
             return EXTERNAL_ERR_USER_BANNED;
-        if($user->active != 't')
+        }
+        if ($user->active != 't') {
             return EXTERNAL_ERR_USER_NOTACTIVE;
+        }
+
         return 0;
     }
 
@@ -125,13 +145,12 @@ abstract class externalApi extends externalBase {
      * Доступны $this->_mName и $this->_mCfg.
      * Например, в методах freetray запрещены вызовы без авторизации, а также работодательским аккаунтам.
      *
-     * @return integer   код ошибки или 0 -- метод разрешен.
+     * @return int код ошибки или 0 -- метод разрешен.
      */
-    protected function _methodsDenied() {
+    protected function _methodsDenied()
+    {
         return 0;
     }
-
-
 
     /////// external protocol public functions //////////////////////////////////////////
 
@@ -142,6 +161,7 @@ abstract class externalApi extends externalBase {
     protected function x____test($args)
     {
         list($arg) = $args;
+
         return $arg;
     }
 
@@ -151,7 +171,7 @@ abstract class externalApi extends externalBase {
     protected function x____testError($args)
     {
         list($err_code) = $args;
-        $this->error( $err_code, 'You have been fucking testError()' );
+        $this->error($err_code, 'You have been fucking testError()');
     }
 
     /**
@@ -160,7 +180,7 @@ abstract class externalApi extends externalBase {
     protected function x____testWarning($args)
     {
         list($err_code) = $args;
-        $this->warning( $err_code, 'You have been fucking testWarning()' );
+        $this->warning($err_code, 'You have been fucking testWarning()');
     }
 
     /**
@@ -171,24 +191,27 @@ abstract class externalApi extends externalBase {
      * Note: может получится так, что обошли ограничения, вызвав auth() из другого пространства имен. Но в таком случае
      * методы (в ограниченном NS) все равно будут недоступны, если правильно описать $this->_methodsDenied().
      *
-     * @param string $login   логин пользователя.
-     * @param string $passwd   пароль пользователя в md5.
-     * @return int   EXTERNAL_TRUE, если все ок.
+     * @param string $login  логин пользователя.
+     * @param string $passwd пароль пользователя в md5.
+     *
+     * @return int EXTERNAL_TRUE, если все ок.
      */
-    final
-    protected function x____auth($args)
+    final protected function x____auth($args)
     {
         list($login, $passwd) = $args;
-        if(!isset($passwd) || !isset($login))
-            $this->error( EXTERNAL_ERR_INVALID_METHOD_ARG, 'Use auth(string login, string passwd)' );
+        if (!isset($passwd) || !isset($login)) {
+            $this->error(EXTERNAL_ERR_INVALID_METHOD_ARG, 'Use auth(string login, string passwd)');
+        }
 
-        require_once(ABS_PATH.'/classes/users.php');
+        require_once ABS_PATH.'/classes/users.php';
         $user = new users();
         $user->GetUserByLoginPasswd($login, users::hashPasswd($this->_decriptPasswd($passwd), 1));
-        if(!$user->uid)
-            $this->error( EXTERNAL_ERR_WRONG_AUTH );
-        if($err = $this->_authDenied($user))
-            $this->error( $err );
+        if (!$user->uid) {
+            $this->error(EXTERNAL_ERR_WRONG_AUTH);
+        }
+        if ($err = $this->_authDenied($user)) {
+            $this->error($err);
+        }
 
         $this->_sess->fillU($user);
 
@@ -198,60 +221,65 @@ abstract class externalApi extends externalBase {
     /**
      * Проверяет соотвествие пары логин/пароль.
      *
-     * @param string $login   логин пользователя.
-     * @param string $passwd   пароль пользователя в md5.
-     * @return int   0:все ок; N:код ошибки.
+     * @param string $login  логин пользователя.
+     * @param string $passwd пароль пользователя в md5.
+     *
+     * @return int 0:все ок; N:код ошибки.
      */
-    final
-    protected function x____checkAuth($args)
+    final protected function x____checkAuth($args)
     {
         list($login, $passwd) = $args;
-        if(!isset($passwd) || !isset($login))
-            $this->error( EXTERNAL_ERR_INVALID_METHOD_ARG, 'Use checkAuth(string login, string passwd)' );
+        if (!isset($passwd) || !isset($login)) {
+            $this->error(EXTERNAL_ERR_INVALID_METHOD_ARG, 'Use checkAuth(string login, string passwd)');
+        }
 
-        require_once(ABS_PATH.'/classes/users.php');
+        require_once ABS_PATH.'/classes/users.php';
         $user = new users();
         $user->GetUserByLoginPasswd($login, users::hashPasswd($this->_decriptPasswd($passwd), 1));
+
         return $this->_authDenied($user);
     }
 
     /**
      * Обновляет данные сессии.
      *
-     * @return int   успешно?
+     * @return int успешно?
      */
-    final
-    protected function x____refresh()
+    final protected function x____refresh()
     {
-        if(!$this->_sess->id)
-            $this->error( EXTERNAL_ERR_NEED_AUTH );
+        if (!$this->_sess->id) {
+            $this->error(EXTERNAL_ERR_NEED_AUTH);
+        }
         $this->_sess->refresh();
+
         return EXTERNAL_TRUE;
     }
 
     /**
      * Возвращает все коды ошибок с кратким описанием.
      *
-     * @return array   коды ошибок.
+     * @return array коды ошибок.
      */
     protected function x____getErrCodes()
     {
         return $this->getErrCodes();
     }
-    
+
     /**
      * Возвращает имена всех видимых данному API протокольных методов.
      *
-     * @return array   имена методов.
+     * @return array имена методов.
      */
     protected function x____getMethods()
     {
         $mm = get_class_methods($this);
         $rm = array();
-        foreach($mm as $m) {
-            if(strpos($m, self::METHOD_PREFIX) === 0)
+        foreach ($mm as $m) {
+            if (strpos($m, self::METHOD_PREFIX) === 0) {
                 $rm[] = preg_replace('/^'.self::METHOD_PREFIX.'(.*)$/', '$1', $m);
+            }
         }
+
         return $rm;
     }
 }

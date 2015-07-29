@@ -86,7 +86,7 @@
     </a>
 </div>
 */ ?>
-<? unset($_SESSION['splash_prj_id']); ?>
+<?php unset($_SESSION['splash_prj_id']); ?>
 
 
                         </div>

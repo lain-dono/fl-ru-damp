@@ -1,7 +1,7 @@
 <?php
 
 if (isset($uid) && $uid > 0) {
-    require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/quickver.common.php");
+    require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/quickver.common.php';
     $xajax->printJavascript('/xajax/');
 }
 
@@ -26,16 +26,26 @@ if (isset($uid) && $uid > 0) {
 
 <div class="b-buttons">
 
-    <? if(isset($uid) && $uid > 0) { ?>
-        <? if($_SESSION['is_verify']=='t') { ?>
+    <?php if (isset($uid) && $uid > 0) {
+    ?>
+        <?php if ($_SESSION['is_verify'] == 't') {
+    ?>
             <a href="javascript:void(0);" class="b-button b-button_flat b-button_flat_green b-button_flat_big b-button_disabled">Вы уже верифицированы</a> 
-        <? } else { ?>
-            <? $quick_verification = 1; ?>
+        <?php 
+} else {
+    ?>
+            <?php $quick_verification = 1;
+    ?>
             <a href="javascript:quickVerShow();" class="b-button b-button_flat b-button_flat_green b-button_flat_big">Пройти верификацию</a>             
-        <? } ?>
-    <? } else { ?>
+        <?php 
+}
+    ?>
+    <?php 
+} else {
+    ?>
             <a href="/registration/?user_action=promo_verification" class="b-button b-button_flat b-button_flat_green b-button_flat_big">Пройти верификацию</a>             
-    <? } ?>
+    <?php 
+} ?>
 
 </div>                  
                     
@@ -44,4 +54,7 @@ if (isset($uid) && $uid > 0) {
     </table>
 </div>
 
-<? if($quick_verification==1 || $_GET['vok']) { $quick_verification_type = 'promo'; require_once($_SERVER['DOCUMENT_ROOT'] . "/templates/quick_verification.php"); } ?>
+<?php if ($quick_verification == 1 || $_GET['vok']) {
+    $quick_verification_type = 'promo';
+    require_once $_SERVER['DOCUMENT_ROOT'].'/templates/quick_verification.php';
+} ?>

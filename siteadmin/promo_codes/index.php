@@ -1,13 +1,14 @@
-<?
-define( 'IS_SITE_ADMIN', 1 );
+<?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/template.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/PromoCodes.php");
+define('IS_SITE_ADMIN', 1);
+
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/template.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/PromoCodes.php';
 session_start();
 
 $no_banner = 1;
-$rpath = "../../";
+$rpath = '../../';
 
 $uid = get_uid();
 //if(!hasPermissions('sbr') && !hasPermissions('sbr_finance'))
@@ -15,20 +16,20 @@ $uid = get_uid();
     
 $promoCodes = new PromoCodes();
 
-$content = "../content2.php";
-$template = "template2.php";
+$content = '../content2.php';
+$template = 'template2.php';
 
 $services = array(
-    10 => "ПРО",
-    15 => "платные опции в проектах",
-    20 => "публикация конкурса",
-    25 => "публикация вакансии",
-    30 => "закрепление профиля",
-    35 => "закрепление услуг",
-    40 => "карусель",
-    45 => "предложения фрилансеров",
-    55 => "автоответы",
-    60 => "рассылка по каталогу"
+    10 => 'ПРО',
+    15 => 'платные опции в проектах',
+    20 => 'публикация конкурса',
+    25 => 'публикация вакансии',
+    30 => 'закрепление профиля',
+    35 => 'закрепление услуг',
+    40 => 'карусель',
+    45 => 'предложения фрилансеров',
+    55 => 'автоответы',
+    60 => 'рассылка по каталогу',
 );
 
 $action = __paramInit('string', 'action', null, 'add');
@@ -47,12 +48,12 @@ switch ($action) {
             }
             $date_s = __paramInit('string', null, 'date_s_eng_format');
             $date = new DateTime($date_s);
-            $date_start = $date->format("Y-m-d H:i:s");
-             
+            $date_start = $date->format('Y-m-d H:i:s');
+
             $date_e = __paramInit('string', null, 'date_e_eng_format');
             $date = new DateTime($date_e);
-            $date_end = $date->format("Y-m-d H:i:s");
-            
+            $date_end = $date->format('Y-m-d H:i:s');
+
             $discount = __paramInit('int', null, 'discount');
             if ($discount <= 0) {
                 $error .= 'Скидка некорректна<br />';
@@ -75,7 +76,7 @@ switch ($action) {
                         'date_end' => $date_end,
                         'discount_percent' => ($is_percent ? $discount : 0),
                         'discount_price' => (!$is_percent ? $discount : 0),
-                        'count' => $count
+                        'count' => $count,
                     ), $post_services);
                     header_location_exit('/siteadmin/promo_codes/');
                 } else {
@@ -85,42 +86,43 @@ switch ($action) {
                         'date_end' => $date_end,
                         'discount_percent' => ($is_percent ? $discount : 0),
                         'discount_price' => (!$is_percent ? $discount : 0),
-                        'count' => $count
+                        'count' => $count,
                     ), $post_services);
                     header_location_exit('/siteadmin/promo_codes/');
                 }
-                
             }
         }
         $card = $promoCodes->getById($id);
-        
+
         break;  
     case 'delete':
         $promoCodes->delete($id);
         header_location_exit('/siteadmin/promo_codes/');
         break;
     default:
-        
+
         break;
 }
 
 $codesArray = $promoCodes->getList();
 foreach ($codesArray as $key => $code) {
-    $codesArray[$key]['service_string'] = "";
+    $codesArray[$key]['service_string'] = '';
     foreach ($code['services'] as $k => $value) {
-        if ($k > 0) $codesArray[$key]['service_string'] .= ", ";
+        if ($k > 0) {
+            $codesArray[$key]['service_string'] .= ', ';
+        }
         $codesArray[$key]['service_string'] .= $services[$value];
     }
 }
 $list = Template::render('list.php', array(
-    'data' => $codesArray
+    'data' => $codesArray,
 ));
-        
-$css_file = array( 'moderation.css', 'new-admin.css', 'nav.css' );
-$inner_page = "content.php";
-$header = $rpath."header.php";
-$footer = $rpath."footer.html";
 
-include ($rpath.$template);
+$css_file = array('moderation.css', 'new-admin.css', 'nav.css');
+$inner_page = 'content.php';
+$header = $rpath.'header.php';
+$footer = $rpath.'footer.html';
+
+include $rpath.$template;
 
 ?>

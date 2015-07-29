@@ -2,7 +2,7 @@
 
 define('IS_PHP_JS', true);
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/search_parser.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/search_parser.php';
 
 $type = __paramInit('string', 'type');
 

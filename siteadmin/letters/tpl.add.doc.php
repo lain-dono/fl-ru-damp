@@ -16,15 +16,16 @@
 									<select onchange="letters.selectTemplate(this.value);">
 										<option value="0">Выберите шаблон</option>
 										<?php
-										$templates = letters::getTemplatesList();
-										if($templates) {
-											foreach($templates as $template) {
-												?>
+                                        $templates = letters::getTemplatesList();
+                                        if ($templates) {
+                                            foreach ($templates as $template) {
+                                                ?>
 												<option value="<?=$template['id']?>"><?=($template['title'] ? htmlspecialchars($template['title']) : '[без названия]')?></option>
 												<?php
-											}
-										}
-										?>
+
+                                            }
+                                        }
+                                        ?>
 									</select>
 								</div>
 								<div id="l_form_1" class="b-shadow__title b-shadow__title_padbot_15">Новый документ <div id="l_form_1_1" class="b-layout__txt b-layout__txt_inline-block"><a class="b-button b-button_poll_plus" href="" onClick="letters.M_InsertNewDoc(); return false;"></a> <a class="b-layout__link b-layout__link_fontsize_15 b-layout__link_bordbot_dot_0f71c8" href="" onClick="letters.M_InsertNewDoc(); return false;">добавить</a></div></div>
@@ -143,17 +144,17 @@
 								<div id="letters_div_attach" class="b-file b-file_padleft_80 b-file_padbot_15">												
 
 									<div id="attachedfiles">
-		 					 	   	<?php require_once($_SERVER['DOCUMENT_ROOT'].'/siteadmin/letters/tpl.attachedfiles.php'); ?>
+		 					 	   	<?php require_once $_SERVER['DOCUMENT_ROOT'].'/siteadmin/letters/tpl.attachedfiles.php'; ?>
 		 					 	    </div>
 									<script type="text/javascript">
 									    (function () {
 									        var attachedfiles_list = new Array();
 							    		    <?php
-							        		require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/attachedfiles.php");
-										    $attachedfiles = new attachedfiles('', true);
-    										$asid = $attachedfiles->createSessionID();
-    										$attachedfiles->addNewSession($asid);
-							        		?>
+                                            require_once $_SERVER['DOCUMENT_ROOT'].'/classes/attachedfiles.php';
+                                            $attachedfiles = new attachedfiles('', true);
+                                            $asid = $attachedfiles->createSessionID();
+                                            $attachedfiles->addNewSession($asid);
+                                            ?>
 							   	    		attachedFiles.initComm( 'attachedfiles', 
 							                                		'<?=$asid?>',
 							                                		attachedfiles_list, 

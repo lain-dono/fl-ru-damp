@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Уведомление работодателям
+ * Уведомление работодателям.
  * */
 ini_set('max_execution_time', '0');
 ini_set('memory_limit', '512M');
@@ -9,8 +10,7 @@ require_once '../classes/stdf.php';
 require_once '../classes/memBuff.php';
 require_once '../classes/smtp2.php';
 
-
-/**
+/*
  * Логин пользователя от кого осуществляется рассылка
  * 
  */
@@ -18,18 +18,18 @@ $sender = 'admin';
 
 // Всем пользователям, активированным (active = true), незабаненным (is_banned = B'0'), с включенными рассылками (substring(subscr from 8 for 1)::integer = 1)
 
-$sql = "SELECT uid, email, login, uname, usurname, subscr FROM users WHERE substring(subscr from 8 for 1)::integer = 1 AND is_banned = B'0' AND active = true"; 
+$sql = "SELECT uid, email, login, uname, usurname, subscr FROM users WHERE substring(subscr from 8 for 1)::integer = 1 AND is_banned = B'0' AND active = true";
 
 $eHost = $GLOBALS['host'];
 
-$eSubject = "Поздравляем с Новым годом!";
+$eSubject = 'Поздравляем с Новым годом!';
 
-$mail = new smtp2;
+$mail = new smtp2();
 
-$cid1  = $mail->cid();
-$cid2  = $mail->cid();
+$cid1 = $mail->cid();
+$cid2 = $mail->cid();
 
-$mail->attach(ABS_PATH . '/images/letter/sneg.gif', $cid1);
+$mail->attach(ABS_PATH.'/images/letter/sneg.gif', $cid1);
 //$mail->attach(ABS_PATH . '/images/letter/ng13.png', $cid2);
 
 $eMessage = '
@@ -241,8 +241,7 @@ $DB = new DB('plproxy');
 $master = new DB('master');
 $cnt = 0;
 
-
-$sender = $master->row("SELECT * FROM users WHERE login = ?", $sender);
+$sender = $master->row('SELECT * FROM users WHERE login = ?', $sender);
 if (empty($sender)) {
     die("Unknown Sender\n");
 }
@@ -253,7 +252,9 @@ $mail->subject = $eSubject;  // заголовок письма
 $mail->message = $eMessage; // текст письма
 $mail->recipient = ''; // свойство 'получатель' оставляем пустым
 $spamid = $mail->masssend();
-if (!$spamid) die('Failed!');
+if (!$spamid) {
+    die('Failed!');
+}
 // с этого момента рассылка создана, но еще никому не отправлена!
 // допустим нам нужно получить список получателей с какого-либо запроса
 $i = 0;
@@ -262,14 +263,14 @@ $res = $master->query($sql);
 while ($row = pg_fetch_assoc($res)) {
     $mail->recipient[] = array(
         'email' => "{$row['uname']} {$row['usurname']} [{$row['login']}] <{$row['email']}>",
-        'extra' => array('USER_LOGIN' => $row['login'])
+        'extra' => array('USER_LOGIN' => $row['login']),
     );
     if (++$i >= 30000) {
         $mail->bind($spamid);
         $mail->recipient = array();
         $i = 0;
     }
-    $cnt++;
+    ++$cnt;
 }
 if ($i) {
     $mail->bind($spamid);

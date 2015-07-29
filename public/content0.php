@@ -19,7 +19,8 @@
 												<tr class="b-layout__tr">
 													<td class="b-layout__left b-layout__left_padright_20">
 														<div class="b-promo">
-                                                            <?php if(!is_pro()) { ?>
+                                                            <?php if (!is_pro()) {
+    ?>
 															<div class="b-promo__note">
 																	<div class="b-promo__note-inner">
 																			<h3 class="b-promo__h3">С <span class="b-promo__pro b-promo__pro_emp"></span>&#160;дешевле</h3>
@@ -27,7 +28,8 @@
 																			<p class="b-promo__p b-promo__p_fontsize_13">и публикация конкурса будет стоить всего <span class="b-promo__txt b-promo__txt_bold b-promo__txt_color_fd6c30">3000 рублей</span>.</p>
 																	</div>
 															</div>
-                                                            <?php }//if?>
+                                                            <?php 
+}//if?>
 														</div>				
 													</td>
 													<td class="b-layout__right b-layout__right_width_72ps">

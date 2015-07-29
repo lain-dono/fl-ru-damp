@@ -5,7 +5,7 @@
  */
 ?>
 <p>Здравствуйте.</p>
-<p>По результатам сотрудничества в проекте «<a href="<?php echo $project_url ?>"><?php echo $project_title ?></a>» исполнитель <?php echo $frl_fullname ?> оставил вам <?php echo $rating > 0 ? 'положительный':'отрицательный'?> отзыв:</p>
+<p>По результатам сотрудничества в проекте «<a href="<?php echo $project_url ?>"><?php echo $project_title ?></a>» исполнитель <?php echo $frl_fullname ?> оставил вам <?php echo $rating > 0 ? 'положительный' : 'отрицательный'?> отзыв:</p>
 <br />
 <p><em><?php echo $text ?></em></p>
 <br />

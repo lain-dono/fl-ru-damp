@@ -20,9 +20,11 @@ return;
                     <textarea class="b-textarea__textarea b-textarea__textarea_height_120 tawl" rel="<?= paid_advices::MAX_DESCR_ADVICE?>" id="advice_text" name="name" cols="80" rows="5"></textarea>
                 </div>
             </form>
-            <?php if(!is_emp($_SESSION['role'])) { ?>
+            <?php if (!is_emp($_SESSION['role'])) {
+    ?>
             <div class="b-post__foot b-post__foot_padtop_15">У вас должен быть заполнен раздел «<a class="b-post__link" href="/users/<?=$_SESSION['login']?>/setup/finance/" target="_blank">Финансы</a>»</div>
-            <?php }//if?>
+            <?php 
+}//if?>
         </div>
     </div>
     <div class="b-post__foot b-post__foot_padtop_15 b-post__foot_padleft_60 b-buttons">
@@ -33,6 +35,6 @@ return;
                 </span>
             </span>
         </a>
-        <span class="b-buttons__txt b-buttons__txt_padleft_5">рекомендацию на проверку <?= is_emp($user->role)?'работодателю':'фрилансеру'?> или</span> <a class="b-buttons__link b-buttons__link_dot_c10601" onclick="adviceAddFormClose()" href="javascript:void(0)"> закрыть не отправляя </a>
+        <span class="b-buttons__txt b-buttons__txt_padleft_5">рекомендацию на проверку <?= is_emp($user->role) ? 'работодателю' : 'фрилансеру'?> или</span> <a class="b-buttons__link b-buttons__link_dot_c10601" onclick="adviceAddFormClose()" href="javascript:void(0)"> закрыть не отправляя </a>
     </div>
 </div>

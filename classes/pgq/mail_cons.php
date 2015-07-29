@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Модуль для обработки очереди "mail_simple" консюмером "mail_simple_cons".
  * Данная очередь предназначена для отправки уведомлений по e-mail из
@@ -9,9 +10,9 @@
 define('IS_PGQ', 1);
 
 define('DEBUG_DAEMON', 0);
-define('CONFIGURATION', dirname(__FILE__) . '/conf/mail_cons.php');
-require(CONFIGURATION);
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/pmail.php");
+define('CONFIGURATION', dirname(__FILE__).'/conf/mail_cons.php');
+require CONFIGURATION;
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/pmail.php';
 
 /**
  * Консюмер -- обработчик событий очереди "mail_simple".
@@ -29,48 +30,49 @@ class PGQMailSimpleConsumer extends PGQConsumer
      * 
      * @var array
      */
-    private $_lastBatch = NULL;
+    private $_lastBatch = null;
 
     /**
      * Размер текущего пакета (для дальнейшего контроля).
      * 
-     * @var integer
+     * @var int
      */
     private $_lastBatchSize = 0;
-    
-    
-    private $_mainDb = NULL;
 
+    private $_mainDb = null;
 
-	/**
-	 * Метод наследуется от PGQConsumer и запускается при start или restart методах.
-	 */
-	public function run() {
-		if (DEBUG_DAEMON) {
-			parent::run();
-			return;
-		}
-		// $this->_reCreateCheck();
-		parent::run();
-	}
-	
-	/**
+    /**
+     * Метод наследуется от PGQConsumer и запускается при start или restart методах.
+     */
+    public function run()
+    {
+        if (DEBUG_DAEMON) {
+            parent::run();
+
+            return;
+        }
+        // $this->_reCreateCheck();
+        parent::run();
+    }
+
+    /**
      * Инициализирует необходимые параметры из массива $Config, определенного в
      * файле CONFIGURATION. Вызывается при старте демона, или по команде reload.
      */
     public function config()
     {
         unset($Config);
-        if($this->log !== null)
+        if ($this->log !== null) {
             $this->log->notice("Reloading configuration (HUP) from '%s':", CONFIGURATION);
+        }
         global $Config;
         require CONFIGURATION;
-        $this->loglevel = $Config["LOGLEVEL"];
-        $this->logfile  = $Config["LOGFILE"];
-        $this->delay    = $Config["DELAY"];
-		$this->restart_events_interval = $Config["RESTART_EVENTS_INTERVAL"];
-		$this->restart_events_count    = $Config["RESTART_EVENTS_COUNT"];
-	}
+        $this->loglevel = $Config['LOGLEVEL'];
+        $this->logfile = $Config['LOGFILE'];
+        $this->delay = $Config['DELAY'];
+        $this->restart_events_interval = $Config['RESTART_EVENTS_INTERVAL'];
+        $this->restart_events_count = $Config['RESTART_EVENTS_COUNT'];
+    }
 
     /**
      * Обработка одного события, вызывается из PGOConsumer::process_event().
@@ -78,10 +80,11 @@ class PGQMailSimpleConsumer extends PGQConsumer
      */
     public function process_event(&$event)
     {
-        if($event->type) {
+        if ($event->type) {
             $this->_lastBatch[$event->type][] = count($event->data) > 1 ? $event->data : $event->data['id'];
-            $this->_lastBatchSize++;
+            ++$this->_lastBatchSize;
         }
+
         return PGQ_EVENT_OK;
     }
 
@@ -92,56 +95,60 @@ class PGQMailSimpleConsumer extends PGQConsumer
      */
     protected function finish_batch($batch_id)
     {
-        if($this->_lastBatch) {
+        if ($this->_lastBatch) {
             $this->log->notice('Получен пакет (%d событий).', $this->_lastBatchSize);
             $sm = new pmail();
             $this->force_connect();
-            
-            foreach($this->_lastBatch as $sender=>$data) {
+
+            foreach ($this->_lastBatch as $sender => $data) {
                 // Рабочие значания $sender: BlogNewComment, CommuneNewComment.
-                if(!$data) continue;
+                if (!$data) {
+                    continue;
+                }
                 $this->log->notice('%s: %d сообщений на входе.', $sender, count($data));
                 $this->log->notice('%s: %d писем обработано.', $sender, $sm->$sender($data, $this->pg_src_con));
             }
         }
 
         $this->_lastBatchSize = 0;
-        $this->_lastBatch = NULL;
+        $this->_lastBatch = null;
 
         return parent::finish_batch($batch_id);
     }
-    
-    
-    protected  function force_connect() {
+
+    protected function force_connect()
+    {
         global $DB;
-        
+
         if (!$this->_mainDb) {
             //$this->log->notice('CONNECT: Force new connection to main DB');
-            $this->_mainDb = $DB->connect(TRUE);
+            $this->_mainDb = $DB->connect(true);
         }
-        
+
         return $this->_mainDb;
     }
-    
-    
-	/**
-	 * При запуске консьюмера проверяет, созданы ли консьюмер и очередь в схеме таблиц pgq.
-	 * Если созданы, то проверяет не достигло ли количество событий "критического" значения.
-	 * Если достигнуты или очереди с консьюмером не существует, то они создаются.
-	 *
-	 * "Критические" значения это: если скопившееся количество событий с момента последней их обработки
-	 * больше $Config["RESTART_EVENTS_COUNT"] или время между последним созданным событием и временем
-	 * последней их обработки больше $Config["RESTART_EVENTS_INTERVAL"]. Подробнее conf/mail_cons.php
-	 *
-	 * Метод наследуется от PGQConsumer и запускается при start или restart методах.
-	 */
-    private function _reCreateCheck() {
-		$restart = TRUE;
-		if ($this->check()) {
-		    if ($this->connect() === FALSE) return FALSE;
-			$restart = FALSE;
-			if ($this->restart_events_count > 0) {
-				$sql = "
+
+    /**
+     * При запуске консьюмера проверяет, созданы ли консьюмер и очередь в схеме таблиц pgq.
+     * Если созданы, то проверяет не достигло ли количество событий "критического" значения.
+     * Если достигнуты или очереди с консьюмером не существует, то они создаются.
+     *
+     * "Критические" значения это: если скопившееся количество событий с момента последней их обработки
+     * больше $Config["RESTART_EVENTS_COUNT"] или время между последним созданным событием и временем
+     * последней их обработки больше $Config["RESTART_EVENTS_INTERVAL"]. Подробнее conf/mail_cons.php
+     *
+     * Метод наследуется от PGQConsumer и запускается при start или restart методах.
+     */
+    private function _reCreateCheck()
+    {
+        $restart = true;
+        if ($this->check()) {
+            if ($this->connect() === false) {
+                return false;
+            }
+            $restart = false;
+            if ($this->restart_events_count > 0) {
+                $sql = "
 					SELECT
 						COUNT(*)
 					FROM
@@ -156,12 +163,12 @@ class PGQMailSimpleConsumer extends PGQConsumer
 								sub_queue = (SELECT queue_id FROM pgq.queue WHERE queue_name = '{$this->qname}')
 						)
 				";
-				$res = pg_query($this->pg_src_con, $sql);
-				$row = pg_fetch_row($res);
-				$restart = ($row[0] > $this->restart_events_count);
-			}
-			if (!$restart && $this->restart_events_interval > 0) {
-				$sql = "
+                $res = pg_query($this->pg_src_con, $sql);
+                $row = pg_fetch_row($res);
+                $restart = ($row[0] > $this->restart_events_count);
+            }
+            if (!$restart && $this->restart_events_interval > 0) {
+                $sql = "
 					SELECT
 						extract('epoch' from (NOW() - sub_active - interval '{$this->restart_events_interval} seconds'))
 					FROM
@@ -169,21 +176,25 @@ class PGQMailSimpleConsumer extends PGQConsumer
 					WHERE
 						sub_queue = (SELECT queue_id FROM pgq.queue WHERE queue_name = '{$this->qname}')
 				";
-				$res = pg_query($this->pg_src_con, $sql);
-				$row = pg_fetch_row($res);
-				if ($row[0] > 0) $restart = TRUE;
-			}
-			if ($restart) {
-				$this->unregister();
-				$this->drop_queue();
-			}
-		} else {
-			if ($this->connect() === FALSE) return FALSE;
-		}
-		if ($restart) {
-			$this->create_queue();
-			$this->register();
-			$sql = "
+                $res = pg_query($this->pg_src_con, $sql);
+                $row = pg_fetch_row($res);
+                if ($row[0] > 0) {
+                    $restart = true;
+                }
+            }
+            if ($restart) {
+                $this->unregister();
+                $this->drop_queue();
+            }
+        } else {
+            if ($this->connect() === false) {
+                return false;
+            }
+        }
+        if ($restart) {
+            $this->create_queue();
+            $this->register();
+            $sql = "
 				UPDATE
 					pgq.queue
 				SET
@@ -192,15 +203,13 @@ class PGQMailSimpleConsumer extends PGQConsumer
 				WHERE 
 					queue_name = '{$this->qname}'
 			";
-			pg_query($this->pg_src_con, $sql);
-			$this->log->notice("mPGQMailSimpleConsumer.run(): консьюмер {$this->cname} создан, очередь {$this->qname} создана.");
-		} else {
-			$this->log->notice("PGQMailSimpleConsumer.run(): создание очереди {$this->qname} не требуется.");
-		}
-		$this->disconnect();
+            pg_query($this->pg_src_con, $sql);
+            $this->log->notice("mPGQMailSimpleConsumer.run(): консьюмер {$this->cname} создан, очередь {$this->qname} создана.");
+        } else {
+            $this->log->notice("PGQMailSimpleConsumer.run(): создание очереди {$this->qname} не требуется.");
+        }
+        $this->disconnect();
     }
-
 }
 
 $daemon = new PGQMailSimpleConsumer('mail_simple_cons', 'mail_simple', $argc, $argv, PGQ_DB_CONN);
-?>

@@ -1,13 +1,12 @@
 <?php
 
 /**
- * Class OdnoklassnikiStrategy
- *
+ * Class OdnoklassnikiStrategy.
  */
-class OdnoklassnikiStrategy extends OpauthStrategy {
-
+class OdnoklassnikiStrategy extends OpauthStrategy
+{
     /**
-     * Compulsory config keys, listed as unassociative arrays
+     * Compulsory config keys, listed as unassociative arrays.
      */
     public $expects = array('app_id', 'app_secret', 'app_public');
 
@@ -18,15 +17,15 @@ class OdnoklassnikiStrategy extends OpauthStrategy {
 
     /**
      * Optional config keys with respective default values, listed as associative arrays
-     * eg. array('scope' => 'email');
+     * eg. array('scope' => 'email');.
      */
     public $defaults = array(
         'redirect_uri' => '{complete_url_to_strategy}oauth2callback',
-        'scope' => ''
+        'scope' => '',
     );
 
     /**
-     * Auth request
+     * Auth request.
      */
     public function request()
     {
@@ -42,7 +41,7 @@ class OdnoklassnikiStrategy extends OpauthStrategy {
     }
 
     /**
-     * Internal callback to get the code and request que authorization token, after Odnoklassniki's OAuth
+     * Internal callback to get the code and request que authorization token, after Odnoklassniki's OAuth.
      */
     public function int_callback()
     {
@@ -53,18 +52,18 @@ class OdnoklassnikiStrategy extends OpauthStrategy {
                 'client_id' => $this->strategy['app_id'],
                 'client_secret' => $this->strategy['app_secret'],
                 'redirect_uri' => $this->strategy['redirect_uri'],
-                'grant_type' => 'authorization_code'
+                'grant_type' => 'authorization_code',
             );
-            
+
             $response = $this->serverPost($url, $params, false, $headers);
-            
+
             if (empty($response)) {
                 $error = array(
                     'code' => 'Get access token error',
                     'message' => 'Failed when attempting to get access token',
                     'raw' => array(
-                        'headers' => $headers
-                    )
+                        'headers' => $headers,
+                    ),
                 );
                 exit();
                 $this->errorCallback($error);
@@ -79,9 +78,9 @@ class OdnoklassnikiStrategy extends OpauthStrategy {
                 ),
                 'credentials' => array(
                     'token' => $results['access_token'],
-                    'expires' => date('c', time() + $results['expires_in'])
+                    'expires' => date('c', time() + $results['expires_in']),
                 ),
-                'raw' => $okUser
+                'raw' => $okUser,
             );
 
             if (!empty($okUser['first_name'])) {
@@ -90,7 +89,7 @@ class OdnoklassnikiStrategy extends OpauthStrategy {
             if (!empty($okUser['gender'])) {
                 $this->auth['info']['gender'] = ($okUser['sex'] == 'female') ? 'female' : 'male';
             }
-            if (!empty($okUser['pic_2'])) { 
+            if (!empty($okUser['pic_2'])) {
                 $this->auth['info']['image'] = $okUser['pic_2'];
             }
 
@@ -98,36 +97,36 @@ class OdnoklassnikiStrategy extends OpauthStrategy {
         } else {
             $error = array(
                 'code' => isset($_GET['error']) ? $_GET['error'] : 0,
-                'raw' => $_GET
+                'raw' => $_GET,
             );
 
             $this->errorCallback($error);
         }
     }
-    
+
     private function getUser($access_token)
     {
-        $param_string = 'application_key=' . $this->strategy['app_public'] . 'method=users.getCurrentUser';
-        $md5 = md5($access_token . $this->strategy['app_secret']);
-        $sig = strtolower(md5($param_string . $md5));
-        
+        $param_string = 'application_key='.$this->strategy['app_public'].'method=users.getCurrentUser';
+        $md5 = md5($access_token.$this->strategy['app_secret']);
+        $sig = strtolower(md5($param_string.$md5));
+
         $okUser = $this->serverget('http://api.ok.ru/fb.do', array(
             'application_key' => $this->strategy['app_public'],
             'method' => 'users.getCurrentUser',
             'access_token' => $access_token,
-            'sig' => $sig
+            'sig' => $sig,
         ));
-        
+
         if (!empty($okUser)) {
-            return json_decode($okUser,true);
+            return json_decode($okUser, true);
         } else {
             $error = array(
                 'code' => 'Get User error',
                 'message' => 'Failed when attempting to query for user information',
                 'raw' => array(
-                    'access_token' => $access_token,	
-                    'headers' => $headers
-                )
+                    'access_token' => $access_token,
+                    'headers' => $headers,
+                ),
             );
             $this->errorCallback($error);
         }

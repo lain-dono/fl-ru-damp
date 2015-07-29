@@ -1,22 +1,21 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/classes/stdf.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/classes/account.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/classes/freelancer.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/account.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/freelancer.php';
 
-$g_page_id = "0|35";
+$g_page_id = '0|35';
 $stretch_page = true;
-$showMainDiv  = true;
+$showMainDiv = true;
 
 session_start();
 $uid = get_uid();
-$rpath = "../../";
+$rpath = '../../';
 
-$page_title = "Получи MacBook PRO 13\" оплачивая услуги fl.ru в июне чаще других";
-$header = "../../header.php";
-$footer = "../../footer.html";
-$content = "content.php";
-
+$page_title = 'Получи MacBook PRO 13" оплачивая услуги fl.ru в июне чаще других';
+$header = '../../header.php';
+$footer = '../../footer.html';
+$content = 'content.php';
 
 $macbook_top_10_all = $DB->rows(
     "select count(*) as nums, billing_id from account_operations
@@ -36,7 +35,7 @@ $macbook_top_10_total = sizeof($macbook_top_10_all);
 
 $uid = get_uid();
 $billing_id = $DB->val(
-    "SELECT id from account where uid=?", $uid
+    'SELECT id from account where uid=?', $uid
 );
 
 $user_position = 0;
@@ -46,7 +45,7 @@ $macbook_top_10 = array();
 foreach ($macbook_top_10_all as $key => $value) {
     if ($key < 10) {
         $user_id = $DB->val(
-            "SELECT freelancer.uid from freelancer INNER JOIN account ON account.uid=freelancer.uid WHERE account.id = ?", 
+            'SELECT freelancer.uid from freelancer INNER JOIN account ON account.uid=freelancer.uid WHERE account.id = ?',
             $value['billing_id']
         );
 
@@ -63,8 +62,7 @@ foreach ($macbook_top_10_all as $key => $value) {
     if ($key > 10 && $user_position > 0) {
         break;
     }
-
 }
 
-$js_file  = array( '/css/block/b-shadow/b-shadow.js', 'timer.js' , 'verification.js' );
-include "../../template3.php";
+$js_file = array('/css/block/b-shadow/b-shadow.js', 'timer.js' , 'verification.js');
+include '../../template3.php';

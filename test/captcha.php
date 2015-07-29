@@ -1,5 +1,5 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/captcha.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/captcha.php';
 $captcha = new captcha();
 $captcha->setNumber();
 ?>

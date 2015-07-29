@@ -11,15 +11,18 @@
  */
 ?>
 <?php
-require_once (dirname(__FILE__) . '/class.basemapper.php');
+require_once dirname(__FILE__).'/class.basemapper.php';
 
-class OperatorOnlineMapper extends BaseMapper {
-	public function __construct(DBDriver $db, $model_name) {
- 		parent::__construct($db, $model_name, array("updated"), false, "id");	 	
-  	}
-  	
-  	public function updateOperatorOnlineTime($operatorid, $threadid = -1) {
-//  		$sql = '
+class OperatorOnlineMapper extends BaseMapper
+{
+    public function __construct(DBDriver $db, $model_name)
+    {
+        parent::__construct($db, $model_name, array('updated'), false, 'id');
+    }
+
+    public function updateOperatorOnlineTime($operatorid, $threadid = -1)
+    {
+        //  		$sql = '
 //			MERGE INTO "{operatoronline}" oo 
 //  			USING "{operatoronline}" s
 //  			ON (s."operatorid" = oo."operatorid" AND s."threadid" = oo."threadid")
@@ -38,7 +41,7 @@ class OperatorOnlineMapper extends BaseMapper {
 //  				INSERT ("date", "operatorid", "threadid", "seconds")
 //  				VALUES (TO_DATE(:p_date, \'YYYYMMDD\'), :operatorid, :threadid, :p_seconds) 
 //  		 ';
-  		
+
 //  	    $sql = '
 //  			IF EXITS(SELECT "operatorid" FROM "{operatoronline}" WHERE "operatorid"=:operatorid) THEN
 //  			INSERT INTO {operatoronline}
@@ -52,60 +55,59 @@ class OperatorOnlineMapper extends BaseMapper {
 //  						seconds + 1
 //  						)
 //  			ENDIF';
-  		try {
-//        	/$this->db->Query($sql, array(
+        try {
+            //        	/$this->db->Query($sql, array(
 //        		"p_date" => date("Ymd"), 
 //        		"operatorid" => $operatorid, 
 //        		"p_seconds" => 0,
 //        		"timeout" => TIMEOUT_OPERATOR_PING,
 //        		"threadid" => $threadid
 //        	));
-      	} catch (Exception $e) {
-
-      	}	
-  	}
-	
-  	public function pushOnlineStatsForOperator($operatorid, $stats) {
-  	  
-  	    $min_date = 0;
-  	    foreach ($stats as $d) {
-  	      foreach (array_keys($d) as $date) {
-  	        $cur_time = strtotime($date);
-  	        if($min_date == 0) {
-  	          $min_date = $cur_time;  
-  	        }
-  	        
-  	        $min_date = min($cur_time, $min_date);
-  	      }
-  	    }
-  	    
-  	    $min_date = date("Y-m-d", $min_date);
-  	      
-  	    $results = $this->makeSearch('"operatorid" = :operatorid AND "date" >= TO_DATE(:min_date,\'YYYY-MM-DD\')', array("operatorid" => $operatorid, "min_date" => $min_date), 't.*, TO_CHAR("date", \'YYYY-MM-DD\') "date"');
-  	    $db_stats = array();
-        foreach ($results as $r) {
-          if(!isset($db_stats[$r['threadid']])) {
-            $db_stats[$r['threadid']] = array();
-          } 
-          
-          $db_stats[$r['threadid']][$r['date']] = $r;
+        } catch (Exception $e) {
         }
-        
-        foreach ($stats as $id => $d) {
-          foreach ($d as $date => $v ) {
-            if(isset($db_stats[$id], $db_stats[$id][$date])) {
-              $data = $db_stats[$id][$date];
-              $data['seconds'] += $v['seconds'];
-              $data['updated'] = date("Y-m-d H:i:s", $v['updated']);
-              $this->update($data); 
-            } else {
-              $data = $v;
-              $data['operatorid'] = $operatorid;
-              $data['updated'] = date("Y-m-d H:i:s", $data['updated']);
-              $this->add($data);
+    }
+
+    public function pushOnlineStatsForOperator($operatorid, $stats)
+    {
+        $min_date = 0;
+        foreach ($stats as $d) {
+            foreach (array_keys($d) as $date) {
+                $cur_time = strtotime($date);
+                if ($min_date == 0) {
+                    $min_date = $cur_time;
+                }
+
+                $min_date = min($cur_time, $min_date);
             }
-          }
-        } 
-  	}
+        }
+
+        $min_date = date('Y-m-d', $min_date);
+
+        $results = $this->makeSearch('"operatorid" = :operatorid AND "date" >= TO_DATE(:min_date,\'YYYY-MM-DD\')', array('operatorid' => $operatorid, 'min_date' => $min_date), 't.*, TO_CHAR("date", \'YYYY-MM-DD\') "date"');
+        $db_stats = array();
+        foreach ($results as $r) {
+            if (!isset($db_stats[$r['threadid']])) {
+                $db_stats[$r['threadid']] = array();
+            }
+
+            $db_stats[$r['threadid']][$r['date']] = $r;
+        }
+
+        foreach ($stats as $id => $d) {
+            foreach ($d as $date => $v) {
+                if (isset($db_stats[$id], $db_stats[$id][$date])) {
+                    $data = $db_stats[$id][$date];
+                    $data['seconds'] += $v['seconds'];
+                    $data['updated'] = date('Y-m-d H:i:s', $v['updated']);
+                    $this->update($data);
+                } else {
+                    $data = $v;
+                    $data['operatorid'] = $operatorid;
+                    $data['updated'] = date('Y-m-d H:i:s', $data['updated']);
+                    $this->add($data);
+                }
+            }
+        }
+    }
 }
 ?>

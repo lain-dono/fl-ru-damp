@@ -1,4 +1,4 @@
-<? /*if($template == 'template2.php') { ?>
+<?php /*if($template == 'template2.php') { ?>
  	
  	<h1 class="b-page__title">Настройки</h1>
  	<div class="acc-settings">
@@ -22,9 +22,13 @@
         </div>        
     <?php endif; ?>
     <div class="b-layout b-layout_padbot_20">
-       <? include ($fpath."info.php")?>
+       <?php include ($fpath.'info.php')?>
     </div>
-    <? include ($fpath."usermenu.php")?>
-    <?  if ($inner) include ($fpath.$inner); else print("&nbsp;")?>
+    <?php include ($fpath.'usermenu.php')?>
+    <?php  if ($inner) {
+     include $fpath.$inner;
+ } else {
+     print('&nbsp;');
+ }?>
     <?php /* if(!is_emp($user->role)) printBanner240(is_pro() ,0,$g_page_id); */ ?>
 </div>

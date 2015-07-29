@@ -1,5 +1,6 @@
-<?
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
+<?php
+
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
 
 $redirect = is_emp() ? '/payed-emp/' : '/payed/';
 header_location_exit($redirect);

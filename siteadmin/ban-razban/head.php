@@ -1,4 +1,7 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; } ?>
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+} ?>
 <script type="text/javascript">
 
 var hm_opened = false;
@@ -27,32 +30,68 @@ function hm_close(num) {
     <td class="caption">Бан-разбан</td>
     <td class="search" align="right">
     <form action="./" method="get">
-    <input name="mode" value="<?=(in_array($mode, array('users', 'blogs', 'projects', 'commune', 'complain','offers','sdelau'))? $mode: 'users')?>" type="hidden">
+    <input name="mode" value="<?=(in_array($mode, array('users', 'blogs', 'projects', 'commune', 'complain', 'offers', 'sdelau')) ? $mode : 'users')?>" type="hidden">
     <input type="hidden" id="log_pp" name="log_pp" value="<?=$log_pp?>">
-    <? if ($mode != 'moders') { ?><input name="ft" value="<?=$ft?>" type="hidden"><? } ?>
-    <?=($admin? '<input name="admin" value="'.$admin.'" type="hidden">': '')?>
-    <?=(($mode == 'complain') ? '<input name="group" value="'.$group.'" type="hidden">': '')?>
+    <?php if ($mode != 'moders') {
+    ?><input name="ft" value="<?=$ft?>" type="hidden"><?php 
+} ?>
+    <?=($admin ? '<input name="admin" value="'.$admin.'" type="hidden">' : '')?>
+    <?=(($mode == 'complain') ? '<input name="group" value="'.$group.'" type="hidden">' : '')?>
     <table cellpadding="0" cellspacing="0" border="0" align="right">
     <tr>
         <td>
-        <input name="search" style="width: 300px" type="text" value="<?=($search? $search: 'поиск...')?>" class="search-str"<? if (!$search) { ?> onfocus="if(this.value=='поиск...'){this.value=''}" onblur="if(this.value==''){this.value='поиск...'}"<? } ?> />
+        <input name="search" style="width: 300px" type="text" value="<?=($search ? $search : 'поиск...')?>" class="search-str"<?php if (!$search) {
+    ?> onfocus="if(this.value=='поиск...'){this.value=''}" onblur="if(this.value==''){this.value='поиск...'}"<?php 
+} ?> />
 		<input type="submit" value="Найти" />
         </td>
     </tr>
     <tr>
         <td class="sort-str">
-		<? if ($mode == 'moders') { ?>
+		<?php if ($mode == 'moders') {
+    ?>
             <span>Показать</span>
-            <span><? if ($ft == 2) { ?><strong>облаками</strong><? } else { ?><a href="./?mode=moders&ft=2&log_pp=<?=$log_pp?>">облаками</a><? } ?></span>
-            <span><? if ($ft != 2) { ?><strong>по алфавиту</strong><? } else { ?><a href="./?mode=moders&log_pp=<?=$log_pp?>">по алфавиту</a><? } ?></span>
-        <? } else { ?>
+            <span><?php if ($ft == 2) {
+    ?><strong>облаками</strong><?php 
+} else {
+    ?><a href="./?mode=moders&ft=2&log_pp=<?=$log_pp?>">облаками</a><?php 
+}
+    ?></span>
+            <span><?php if ($ft != 2) {
+    ?><strong>по алфавиту</strong><?php 
+} else {
+    ?><a href="./?mode=moders&log_pp=<?=$log_pp?>">по алфавиту</a><?php 
+}
+    ?></span>
+        <?php 
+} else {
+    ?>
             <span>Сортировать по</span>
-            <span><? if ($sort == 'btime') { ?><strong>дате <?=(($mode == 'users' && ($ft == 3 || $ft == 4))? 'посл.предупреждения': 'блокировки')?></strong><? } else { ?><a href="./?mode=<?=$mode?>&log_pp=<?=$log_pp?>&sort=btime<?=($ft? "&ft=$ft": "")?><?=($search? "&search=$search": "")?><?=($admin? "&admin=$admin": "")?><?=(($mode == 'complain')? "&group=$group": "")?>">дате <?=(($mode == 'users' && ($ft == 3 || $ft == 4))? 'посл.предупреждения': 'блокировки')?></a><? } ?></span>
-            <? if ($mode == 'users' && $ft != 3 && $ft != 4) { ?>
-            <span><? if ($sort == 'utime') { ?><strong>дате разблокировки</strong><? } else { ?><a href="./?mode=<?=$mode?>&log_pp=<?=$log_pp?>&sort=utime<?=($ft? "&ft=$ft": "")?><?=($search? "&search=$search": "")?><?=($admin? "&admin=$admin": "")?><?=(($mode == 'complain')? "&group=$group": "")?>">дате разблокировки</a><? } ?></span>
-            <? } ?>
-            <span><? if ($sort == 'login') { ?><strong>логину</strong><? } else { ?><a href="./?mode=<?=$mode?>&log_pp=<?=$log_pp?>&sort=login<?=($ft? "&ft=$ft": "")?><?=($search? "&search=$search": "")?><?=($admin? "&admin=$admin": "")?><?=(($mode == 'complain')? "&group=$group": "")?>">логину</a><? } ?></span>
-        <? } ?>
+            <span><?php if ($sort == 'btime') {
+    ?><strong>дате <?=(($mode == 'users' && ($ft == 3 || $ft == 4)) ? 'посл.предупреждения' : 'блокировки')?></strong><?php 
+} else {
+    ?><a href="./?mode=<?=$mode?>&log_pp=<?=$log_pp?>&sort=btime<?=($ft ? "&ft=$ft" : '')?><?=($search ? "&search=$search" : '')?><?=($admin ? "&admin=$admin" : '')?><?=(($mode == 'complain') ? "&group=$group" : '')?>">дате <?=(($mode == 'users' && ($ft == 3 || $ft == 4)) ? 'посл.предупреждения' : 'блокировки')?></a><?php 
+}
+    ?></span>
+            <?php if ($mode == 'users' && $ft != 3 && $ft != 4) {
+    ?>
+            <span><?php if ($sort == 'utime') {
+    ?><strong>дате разблокировки</strong><?php 
+} else {
+    ?><a href="./?mode=<?=$mode?>&log_pp=<?=$log_pp?>&sort=utime<?=($ft ? "&ft=$ft" : '')?><?=($search ? "&search=$search" : '')?><?=($admin ? "&admin=$admin" : '')?><?=(($mode == 'complain') ? "&group=$group" : '')?>">дате разблокировки</a><?php 
+}
+    ?></span>
+            <?php 
+}
+    ?>
+            <span><?php if ($sort == 'login') {
+    ?><strong>логину</strong><?php 
+} else {
+    ?><a href="./?mode=<?=$mode?>&log_pp=<?=$log_pp?>&sort=login<?=($ft ? "&ft=$ft" : '')?><?=($search ? "&search=$search" : '')?><?=($admin ? "&admin=$admin" : '')?><?=(($mode == 'complain') ? "&group=$group" : '')?>">логину</a><?php 
+}
+    ?></span>
+        <?php 
+} ?>
         </td>
     </tr>
     </table>
@@ -60,7 +99,7 @@ function hm_close(num) {
     </td>
 </tr>
 
-<? $ustat = users::GetBannedStat() ?>
+<?php $ustat = users::GetBannedStat() ?>
 
 <tr>
     <td colspan="2" class="all-stat" style="padding-top: 10px;">
@@ -74,20 +113,36 @@ function hm_close(num) {
             <tr><td><a href="/siteadmin/ban-razban/?mode=users&ft=3">С предупреждениями</a> <span><?=$ustat['warns']?></span></td></tr>
             </table>
         </td>
-        <td><? if ($mode == 'blogs') { ?><strong>Блоги</strong><? } else { ?><a href="/siteadmin/ban-razban/?mode=blogs">Блоги</a><? } ?> <span><?=blogs::NumsBlockedThreads()?></span></td>
+        <td><?php if ($mode == 'blogs') {
+    ?><strong>Блоги</strong><?php 
+} else {
+    ?><a href="/siteadmin/ban-razban/?mode=blogs">Блоги</a><?php 
+} ?> <span><?=blogs::NumsBlockedThreads()?></span></td>
         <td>
-            <? if ($mode == 'projects') { ?><strong onmouseover="hm_open(2)" onmouseout="hm_close(2)">Проекты</strong><? } else { ?><a href="/siteadmin/ban-razban/?mode=projects" onmouseover="hm_open(2)" onmouseout="hm_close(2)">Проекты</a><? } ?> <span><?=projects::NumsBlockedProjects()?></span><br>
+            <?php if ($mode == 'projects') {
+    ?><strong onmouseover="hm_open(2)" onmouseout="hm_close(2)">Проекты</strong><?php 
+} else {
+    ?><a href="/siteadmin/ban-razban/?mode=projects" onmouseover="hm_open(2)" onmouseout="hm_close(2)">Проекты</a><?php 
+} ?> <span><?=projects::NumsBlockedProjects()?></span><br>
             <table cellpadding="0" cellspacing="0" border="0" class="in-stat-menu" style="display: none; width: 160px" id="in-stat-menu2" onmouseover="hm_open(2)" onmouseout="hm_close(2)">
             <tr><td><a href="/siteadmin/ban-razban/?mode=complain">Жалобы на проект</a></td></tr>
             </table>
         </td>
         <td>
-            <? if ($mode == 'sdelau') { ?><strong onmouseover="hm_open(3)" onmouseout="hm_close(3)">Предложения "Сделаю"</strong><? } else { ?><a href="/siteadmin/ban-razban/?mode=sdelau" onmouseover="hm_open(3)" onmouseout="hm_close(3)">Предложения "Сделаю"</a><? } ?> <span><?=freelancer_offers::GetCountFreelancerBlockedOffers()?></span><br>
+            <?php if ($mode == 'sdelau') {
+    ?><strong onmouseover="hm_open(3)" onmouseout="hm_close(3)">Предложения "Сделаю"</strong><?php 
+} else {
+    ?><a href="/siteadmin/ban-razban/?mode=sdelau" onmouseover="hm_open(3)" onmouseout="hm_close(3)">Предложения "Сделаю"</a><?php 
+} ?> <span><?=freelancer_offers::GetCountFreelancerBlockedOffers()?></span><br>
             <table cellpadding="0" cellspacing="0" border="0" class="in-stat-menu" style="display: none; width: 160px" id="in-stat-menu3" onmouseover="hm_open(3)" onmouseout="hm_close(3)">
             <tr><td><a href="/siteadmin/ban-razban/?mode=offers">Жалобы на предложения</a></td></tr>
             </table>
         </td>
-        <td><? if ($mode == 'commune') { ?><strong>Сообщества</strong><? } else { ?><a href="/siteadmin/ban-razban/?mode=commune">Сообщества</a><? } ?> <span><?=commune::NumsBlockedCommunes()?></span></td>
+        <td><?php if ($mode == 'commune') {
+    ?><strong>Сообщества</strong><?php 
+} else {
+    ?><a href="/siteadmin/ban-razban/?mode=commune">Сообщества</a><?php 
+} ?> <span><?=commune::NumsBlockedCommunes()?></span></td>
     </tr>
     </table>
     </td>
@@ -98,9 +153,9 @@ function hm_close(num) {
 <!-- Группы "Новые|Принятые|Отклоненные" -->
 <div class="b-menu b-menu_tabs b-menu_relative margtop_20 padtop_10 padbot_5">
 	<ul class="b-menu__list">
-		<li class="b-menu__item<?=(($group == 'new') ? ' b-menu__item_active' : '')?>"><a class="b-menu__link" href="<?=("/siteadmin/ban-razban/?mode=$mode".($page? "&p=$page": '').($search? "&search=$search": '').($admin? "&admin=$admin": '').($sort? "&sort=$sort": ''))?>&group=new"><span class="b-menu__b1">Новые</span></a></li>
-		<li class="b-menu__item<?=(($group == 'approved') ? ' b-menu__item_active' : '')?>"><a class="b-menu__link" href="<?=("/siteadmin/ban-razban/?mode=$mode".($page? "&p=$page": '').($search? "&search=$search": '').($admin? "&admin=$admin": '').($sort? "&sort=$sort": ''))?>&group=approved"><span class="b-menu__b1">Принятые</span></a></li>
-		<li class="b-menu__item<?=(($group == 'refused') ? ' b-menu__item_active' : '')?>"><a class="b-menu__link" href="<?=("/siteadmin/ban-razban/?mode=$mode".($page? "&p=$page": '').($search? "&search=$search": '').($admin? "&admin=$admin": '').($sort? "&sort=$sort": ''))?>&group=refused"><span class="b-menu__b1">Отклоненные</span></a></li>
+		<li class="b-menu__item<?=(($group == 'new') ? ' b-menu__item_active' : '')?>"><a class="b-menu__link" href="<?=("/siteadmin/ban-razban/?mode=$mode".($page ? "&p=$page" : '').($search ? "&search=$search" : '').($admin ? "&admin=$admin" : '').($sort ? "&sort=$sort" : ''))?>&group=new"><span class="b-menu__b1">Новые</span></a></li>
+		<li class="b-menu__item<?=(($group == 'approved') ? ' b-menu__item_active' : '')?>"><a class="b-menu__link" href="<?=("/siteadmin/ban-razban/?mode=$mode".($page ? "&p=$page" : '').($search ? "&search=$search" : '').($admin ? "&admin=$admin" : '').($sort ? "&sort=$sort" : ''))?>&group=approved"><span class="b-menu__b1">Принятые</span></a></li>
+		<li class="b-menu__item<?=(($group == 'refused') ? ' b-menu__item_active' : '')?>"><a class="b-menu__link" href="<?=("/siteadmin/ban-razban/?mode=$mode".($page ? "&p=$page" : '').($search ? "&search=$search" : '').($admin ? "&admin=$admin" : '').($sort ? "&sort=$sort" : ''))?>&group=refused"><span class="b-menu__b1">Отклоненные</span></a></li>
 	</ul>
 </div>
 <!--// Группы "Новые|Принятые|Отклоненные" -->

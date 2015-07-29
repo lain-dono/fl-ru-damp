@@ -1,5 +1,8 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
-if ( !(hasPermissions('advstat') && hasPermissions('adm')) ) {
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
+if (!(hasPermissions('advstat') && hasPermissions('adm'))) {
     exit;
 }
 
@@ -57,53 +60,61 @@ function checkLinkWidth() {
     <table cellpadding="5">
         <tr height="30">
             <td>Название:</td> 
-            <td><input type="text" id="name" name="name" size="24" value="<?=isset($_POST['name']) ? htmlspecialchars(stripslashes($_POST['name'])):htmlspecialchars(stripslashes($bpromo->info['name']))?>"></td>
+            <td><input type="text" id="name" name="name" size="24" value="<?=isset($_POST['name']) ? htmlspecialchars(stripslashes($_POST['name'])) : htmlspecialchars(stripslashes($bpromo->info['name']))?>"></td>
             <td>&nbsp;</td>
         </tr>
-        <?php if($error&&$error->nameError) {?>
+        <?php if ($error && $error->nameError) {
+    ?>
         <tr>
             <td colspan="2">
                 <div class="errmsg"><?php print $error->nameError ?></div>
             </td>
         </tr>
-        <?php }?>
+        <?php 
+}?>
         <tr height="30">
             <td>Период размещения:</td>
             <td>
-                <input type="text" size="9" maxlength="9" name="from_date" id="from_date" value="<?= isset($_POST['from_date']) ? htmlspecialchars(stripslashes($_POST['from_date'])): date("d-m-Y", strtotime($bpromo->info['from_date']));?>" readonly="readonly"> 
-                - <input type="text" name="to_date" id="to_date" size="9" maxlength="9" value="<?= isset($_POST['to_date']) ? htmlspecialchars(stripslashes($_POST['to_date'])): date("d-m-Y", strtotime($bpromo->info['to_date']));?>" readonly="readonly">
+                <input type="text" size="9" maxlength="9" name="from_date" id="from_date" value="<?= isset($_POST['from_date']) ? htmlspecialchars(stripslashes($_POST['from_date'])) : date('d-m-Y', strtotime($bpromo->info['from_date']));?>" readonly="readonly"> 
+                - <input type="text" name="to_date" id="to_date" size="9" maxlength="9" value="<?= isset($_POST['to_date']) ? htmlspecialchars(stripslashes($_POST['to_date'])) : date('d-m-Y', strtotime($bpromo->info['to_date']));?>" readonly="readonly">
             </td>
             <td>&nbsp;</td>
         </tr>
-        <?php if($error&&$error->dateError) {?>
+        <?php if ($error && $error->dateError) {
+    ?>
         <tr>
             <td colspan="2">
                 <div class="errmsg"><?php print $error->dateError ?></div>
             </td>
         </tr>
-        <?php }?>
+        <?php 
+}?>
         <tr height="30">
             <td>Ссылка редиректа:</td> 
-            <td colspan="2"><input type="text" name="banner_link" size="44" value="<?=isset($_POST['banner_link']) ? htmlspecialchars(stripslashes($_POST['banner_link'])):htmlspecialchars(stripslashes($bpromo->info['banner_link']))?>"></td>
+            <td colspan="2"><input type="text" name="banner_link" size="44" value="<?=isset($_POST['banner_link']) ? htmlspecialchars(stripslashes($_POST['banner_link'])) : htmlspecialchars(stripslashes($bpromo->info['banner_link']))?>"></td>
         </tr>
-        <?php if($error&&$error->linkError) {?>
+        <?php if ($error && $error->linkError) {
+    ?>
         <tr>
             <td colspan="2">
                 <div class="errmsg"><?php print $error->linkError ?></div>
             </td>
         </tr>
-        <?php }?>
+        <?php 
+}?>
         <tr height="30">
             <td>Текст ссылки:</td> 
-            <td><input type="text" id="linktext" name="text" size="24" value="<?=isset($_POST['text']) ? htmlspecialchars(stripslashes($_POST['text'])):htmlspecialchars(stripslashes($bpromo->info['linktext']))?>"></td>
+            <td><input type="text" id="linktext" name="text" size="24" value="<?=isset($_POST['text']) ? htmlspecialchars(stripslashes($_POST['text'])) : htmlspecialchars(stripslashes($bpromo->info['linktext']))?>"></td>
         </tr>
         <tr height="30">
             <td>Где показываем</td>
             <td>
                 <select name="page_target">
-                    <? foreach(banner_promo::$target_page as $id=>$name) { ?>
-                    <option value="<?= $id?>" <?= ($_POST['page_target'] == $id || $bpromo->info['page_target'] == $id ? "selected" : "")?>><?=$name?></option>
-                    <? }//foreach?>
+                    <?php foreach (banner_promo::$target_page as $id => $name) {
+    ?>
+                    <option value="<?= $id?>" <?= ($_POST['page_target'] == $id || $bpromo->info['page_target'] == $id ? 'selected' : '')?>><?=$name?></option>
+                    <?php 
+}//foreach?>
                 </select>
             </td>
         </tr>
@@ -111,22 +122,25 @@ function checkLinkWidth() {
             <td>Тип баннера</td>
             <td>
                 <select name="type_ban" onchange="change_type_ban(this.value);">
-                    <? foreach(banner_promo::$type_ban as $id=>$name) { ?>
-                    <option value="<?= $id?>" <?= isset($_POST['type_ban']) ? ($_POST['type_ban'] == $id ? "selected" : "") : ($bpromo->info['type_ban'] == $id ? "selected" : "") ;?>><?=$name?></option>
-                    <? }//foreach?>
+                    <?php foreach (banner_promo::$type_ban as $id => $name) {
+    ?>
+                    <option value="<?= $id?>" <?= isset($_POST['type_ban']) ? ($_POST['type_ban'] == $id ? 'selected' : '') : ($bpromo->info['type_ban'] == $id ? 'selected' : '');
+    ?>><?=$name?></option>
+                    <?php 
+}//foreach?>
                 </select>
             </td>
         </tr>
         <tr height="30">
             <td>Доступ (логины)</td>
             <td>
-                <input type="text" id="login_access" name="login_access" size="44" value="<?=isset($_POST['login_access']) ? htmlspecialchars(stripslashes($_POST['login_access'])):htmlspecialchars(stripslashes($bpromo->info['login_access']))?>">
+                <input type="text" id="login_access" name="login_access" size="44" value="<?=isset($_POST['login_access']) ? htmlspecialchars(stripslashes($_POST['login_access'])) : htmlspecialchars(stripslashes($bpromo->info['login_access']))?>">
             </td>
         </tr>
         <tr height="160" class="type_code ban_types">
             <td>Код баннера</td>
             <td>
-                <textarea name="code_text" cols="90" rows="10"><?= isset($_POST['code_text']) ? htmlspecialchars(stripslashes($_POST['code_text'])) : $bpromo->info['code_text'] ;?></textarea>
+                <textarea name="code_text" cols="90" rows="10"><?= isset($_POST['code_text']) ? htmlspecialchars(stripslashes($_POST['code_text'])) : $bpromo->info['code_text'];?></textarea>
             </td>
         </tr>
         <tr height="30" class="type_image ban_types">
@@ -135,42 +149,44 @@ function checkLinkWidth() {
         <tr height="30" class="type_image ban_types">
             <td>На сервере:</td> 
             <td>
-            <input type="text" name="name_img" size="24" value="<?=isset($_POST['name_img']) ? htmlspecialchars(stripslashes($_POST['name_img'])):htmlspecialchars(stripslashes($bpromo->info['name_img']))?>">
+            <input type="text" name="name_img" size="24" value="<?=isset($_POST['name_img']) ? htmlspecialchars(stripslashes($_POST['name_img'])) : htmlspecialchars(stripslashes($bpromo->info['name_img']))?>">
             </td>
             <td><?if($bpromo->info['name_img'] != "") {?> 
             <img src="<?=$bpromo->info['name_img']?>" 
-                <?=($bpromo->info['img_title']!=""?'title="'.$bpromo->info['img_title'].'"':'')?>
-                <?=($bpromo->info['img_title']!=""?'alt="'.$bpromo->info['img_title'].'"':'')?>
-                <?=($bpromo->info['img_style']!=""?'style="'.$bpromo->info['img_style'].'"':'')?>/><?}?>
+                <?=($bpromo->info['img_title'] != '' ? 'title="'.$bpromo->info['img_title'].'"' : '')?>
+                <?=($bpromo->info['img_title'] != '' ? 'alt="'.$bpromo->info['img_title'].'"' : '')?>
+                <?=($bpromo->info['img_style'] != '' ? 'style="'.$bpromo->info['img_style'].'"' : '')?>/><?}?>
             </td>
         </tr>
         <tr height="30" class="type_image ban_types">
             <td>Загрузить новый:</td> 
             <td><input type="file" name="file_main"></td>            
         </tr>
-        <?php if($error&&$error->entityError) {?>
+        <?php if ($error && $error->entityError) {
+    ?>
         <tr>
             <td colspan="2">
                 <div class="errmsg"><?php print $error->entityError ?></div>
             </td>
         </tr>
-        <?php }?>
+        <?php 
+}?>
         <tr height="30" class="type_image ban_types">
             <td>Title картинки баннера:</td> 
-            <td><input type="text" name="img_title" size="24" value="<?=isset($_POST['img_title']) ? htmlspecialchars(stripslashes($_POST['img_title'])):htmlspecialchars(stripslashes($bpromo->info['img_title']))?>"></td>
+            <td><input type="text" name="img_title" size="24" value="<?=isset($_POST['img_title']) ? htmlspecialchars(stripslashes($_POST['img_title'])) : htmlspecialchars(stripslashes($bpromo->info['img_title']))?>"></td>
             <td>&nbsp;</td>
         </tr>
         <tr height="30" class="type_image ban_types">
             <td>Стиль картинки:</td> 
-            <td colspan="2"><input type="text" name="img_style" size="44" value="<?=isset($_POST['img_style']) ? htmlspecialchars(stripslashes($_POST['img_style'])): htmlspecialchars(stripslashes($bpromo->info['img_style']))?>"></td>
+            <td colspan="2"><input type="text" name="img_style" size="44" value="<?=isset($_POST['img_style']) ? htmlspecialchars(stripslashes($_POST['img_style'])) : htmlspecialchars(stripslashes($bpromo->info['img_style']))?>"></td>
         </tr>
         <tr height="30" class="type_image ban_types">
             <td>Стиль ссылки:</td> 
-            <td colspan="2"><input type="text" name="link_style" size="44" value="<?=isset($_POST['link_style']) ? htmlspecialchars(stripslashes($_POST['link_style'])):htmlspecialchars(stripslashes($bpromo->info['link_style']))?>"></td>
+            <td colspan="2"><input type="text" name="link_style" size="44" value="<?=isset($_POST['link_style']) ? htmlspecialchars(stripslashes($_POST['link_style'])) : htmlspecialchars(stripslashes($bpromo->info['link_style']))?>"></td>
         </tr>
         <tr height="30">
             <td>Активировать:</td> 
-            <td><input type="checkbox" name="is_activity" size="24" <? print $activeChecked ?>></td>
+            <td><input type="checkbox" name="is_activity" size="24" <?php print $activeChecked ?>></td>
             <td>&nbsp;</td>
         </tr>
         <tr height="30">
@@ -206,35 +222,56 @@ function checkLinkWidth() {
 <div id="linkpreview" style="float:left">
 <?php
 
-if($bpromo->info['type_ban'] == 'code') {
-   echo "<br/>";
-   echo $bpromo->info['code_text']; 
-} elseif($bpromo->info['type_ban'] == 'image') {
-
-    $banner_promo_img  = $bpromo->info["name_img"];
-    if (strpos($banner_promo_img, "/user") === 0) $banner_promo_img  = WDCPREFIX.$banner_promo_img;
-    $banner_promo_text = $bpromo->info["linktext"];
-    $banner_promo_type = $bpromo->info["id"];
-    $banner_promo_link_style = $bpromo->info["link_style"];
-    $banner_promo_title      = $bpromo->info["img_title"];
-?>
-<?php if (trim($banner_promo_img) == '' && trim($banner_promo_text) != '') {?>
+if ($bpromo->info['type_ban'] == 'code') {
+    echo '<br/>';
+    echo $bpromo->info['code_text'];
+} elseif ($bpromo->info['type_ban'] == 'image') {
+    $banner_promo_img = $bpromo->info['name_img'];
+    if (strpos($banner_promo_img, '/user') === 0) {
+        $banner_promo_img = WDCPREFIX.$banner_promo_img;
+    }
+    $banner_promo_text = $bpromo->info['linktext'];
+    $banner_promo_type = $bpromo->info['id'];
+    $banner_promo_link_style = $bpromo->info['link_style'];
+    $banner_promo_title = $bpromo->info['img_title'];
+    ?>
+<?php if (trim($banner_promo_img) == '' && trim($banner_promo_text) != '') {
+    ?>
                 <li class="b-menu__banner">
-                    <a href="/a_promo.php?type=<?=$banner_promo_type?>" class="b-menu__link-banner" <? if (trim($banner_promo_link_style) != '') {?>style="<?php print $banner_promo_link_style?>"<? }?>><?php print $banner_promo_text?></a>
+                    <a href="/a_promo.php?type=<?=$banner_promo_type?>" class="b-menu__link-banner" <?php if (trim($banner_promo_link_style) != '') {
+    ?>style="<?php print $banner_promo_link_style?>"<?php 
+}
+    ?>><?php print $banner_promo_text?></a>
                 </li>
-            <?php } elseif (trim($banner_promo_img) != '' && trim($banner_promo_text) == '') {?>
+            <?php 
+} elseif (trim($banner_promo_img) != '' && trim($banner_promo_text) == '') {
+    ?>
                 <li class="b-menu__banner">
                 <a href="/a_promo.php?type=<?=$banner_promo_type?>" class="b-menu__link-pic">
-                    <img <?php if( trim($banner_promo_title) != '') {?>alt="<?php print $banner_promo_title?>" title="<?php print $banner_promo_title?>" <?php }?>src="<?php print $banner_promo_img ?>" class="b-menu__pic">
+                    <img <?php if (trim($banner_promo_title) != '') {
+    ?>alt="<?php print $banner_promo_title?>" title="<?php print $banner_promo_title?>" <?php 
+}
+    ?>src="<?php print $banner_promo_img ?>" class="b-menu__pic">
                 </a>
                 </li>
-            <?php } elseif (trim($banner_promo_img) != '' && trim($banner_promo_text) != '') {?>
+            <?php 
+} elseif (trim($banner_promo_img) != '' && trim($banner_promo_text) != '') {
+    ?>
                 <li class="b-menu__banner">
                 <a href="/a_promo.php?type=<?=$banner_promo_type?>" class="b-menu__link-pic">
-                    <img src="<?php print $banner_promo_img ?>" <?php print $banner_promo_image_style?> class="b-menu__pic" <?php if( trim($banner_promo_title) != '') {?> alt="<?php print $banner_promo_title?>" title="<?php print $banner_promo_title?>" <?php }?>>
+                    <img src="<?php print $banner_promo_img ?>" <?php print $banner_promo_image_style?> class="b-menu__pic" <?php if (trim($banner_promo_title) != '') {
+    ?> alt="<?php print $banner_promo_title?>" title="<?php print $banner_promo_title?>" <?php 
+}
+    ?>>
                 </a>
-                <a href="/a_promo.php?type=<?=$banner_promo_type?>" class="b-menu__link-banner" <? if (trim($banner_promo_link_style) != '') {?>style="<?php print $banner_promo_link_style?>" <?php }?>><?php print $banner_promo_text?></a>
+                <a href="/a_promo.php?type=<?=$banner_promo_type?>" class="b-menu__link-banner" <?php if (trim($banner_promo_link_style) != '') {
+    ?>style="<?php print $banner_promo_link_style?>" <?php 
+}
+    ?>><?php print $banner_promo_text?></a>
                 </li>
- <?php }?>
-<? }?>
+ <?php 
+}
+    ?>
+<?php 
+}?>
 </div>

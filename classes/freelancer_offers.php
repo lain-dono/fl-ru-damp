@@ -1,146 +1,157 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT']."/classes/account.php";
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/offers_filter.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/account.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/offers_filter.php';
 
 class freelancer_offers
 {
     /**
-  	 * Максимальный объем текста в описании предложения
-  	 *
-  	 */
-	const MAX_SIZE_DESCRIPTION = 1500;
-	
-	/**
-  	 * Максимальный объем текста в заголовке предложения
-  	 *
-  	 */
-	const MAX_SIZE_TITLE = 200;
-    
+     * Максимальный объем текста в описании предложения.
+     */
+    const MAX_SIZE_DESCRIPTION = 1500;
+
     /**
-     * Номер операции в op_codes для оплаты через FM
+     * Максимальный объем текста в заголовке предложения.
+     */
+    const MAX_SIZE_TITLE = 200;
+
+    /**
+     * Номер операции в op_codes для оплаты через FM.
      *
-     * @var integer
+     * @var int
      */
     const FM_OP_CODE = 94;
-    
+
     /**
-     * Стоимости публикации предложения
+     * Стоимости публикации предложения.
      *
-     * @var integer
+     * @var int
      */
     const SUM_FM_COST = 1;
-    
+
     /**
-     * Количество пользователей на 1 странице
+     * Количество пользователей на 1 странице.
      *
-     * @var integer
+     * @var int
      */
     const FRL_COUNT_PAGES = 40; // !!! Проверить
-    
-    
+
+
     protected $access;
-    
-    public function __construct() {
-        $this->access = "";
-        if(!hasPermissions('projects')) $this->access = "AND user_id = {$_SESSION['uid']}";
+
+    public function __construct()
+    {
+        $this->access = '';
+        if (!hasPermissions('projects')) {
+            $this->access = "AND user_id = {$_SESSION['uid']}";
+        }
     }
-    
+
     /**
-     * Создание нового предложения
+     * Создание нового предложения.
      *
-     * @param array $create    Переменная типа array(name=>value) где name - поле таблицы, value - значение для записи (@see Таблица freelance_offers) 
-     * @return boolean|string
+     * @param array $create Переменная типа array(name=>value) где name - поле таблицы, value - значение для записи (@see Таблица freelance_offers) 
+     *
+     * @return bool|string
      */
-    public function Create($create) {
+    public function Create($create)
+    {
         global $DB;
         $uid = $create['user_id'];
-        if($_SESSION['uid'] == $uid && !is_emp()) {
-            $account = new account;
+        if ($_SESSION['uid'] == $uid && !is_emp()) {
+            $account = new account();
             $transaction_id = $account->start_transaction($uid, $tr_id);
-            $error = $account->Buy($billing_id, $transaction_id, self::FM_OP_CODE, $uid, "Покупка публикации предложения фрилансера", "Покупка публикации предложения", 1, 0);
-            if ($error) return $error;
+            $error = $account->Buy($billing_id, $transaction_id, self::FM_OP_CODE, $uid, 'Покупка публикации предложения фрилансера', 'Покупка публикации предложения', 1, 0);
+            if ($error) {
+                return $error;
+            }
             $account->commit_transaction($transaction_id, $uid, $billing_id);
             $create['bill_id'] = $billing_id;
-            
-            $create['moderator_status'] = is_pro() ? NULL : 0;
-            
+
+            $create['moderator_status'] = is_pro() ? null : 0;
+
             $id_offer = $DB->insert('freelance_offers', $create, 'id');
-            if($id_offer > 0) {
-                if ( !is_pro() ) {
-                    require_once( $_SERVER['DOCUMENT_ROOT'] . '/classes/stop_words.php' );
-                    require_once( $_SERVER['DOCUMENT_ROOT'] . '/classes/user_content.php' );
-                    
-                    $stop_words    = new stop_words();
-                    $nStopWordsCnt = $stop_words->calculate( $fields['descr'], $fields['title'] );
-                    
-                    $DB->insert( 'moderation', array('rec_id' => $id_offer, 'rec_type' => user_content::MODER_SDELAU, 'stop_words_cnt' => $nStopWordsCnt) );
+            if ($id_offer > 0) {
+                if (!is_pro()) {
+                    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stop_words.php';
+                    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/user_content.php';
+
+                    $stop_words = new stop_words();
+                    $nStopWordsCnt = $stop_words->calculate($fields['descr'], $fields['title']);
+
+                    $DB->insert('moderation', array('rec_id' => $id_offer, 'rec_type' => user_content::MODER_SDELAU, 'stop_words_cnt' => $nStopWordsCnt));
                 }
-                
+
                 return $id_offer;
             }
+
             return false;
         } else {
             return false;
         }
     }
-    
+
     /**
-     * Обновление предложения
+     * Обновление предложения.
      *
-     * @param integer $fid      ИД обновляемого предложения
-     * @param array   $update   Переменная типа array(name=>value) где name - поле таблицы, value - значение для записи (@see Таблица freelance_offers) 
-     * @return boolean
+     * @param int   $fid    ИД обновляемого предложения
+     * @param array $update Переменная типа array(name=>value) где name - поле таблицы, value - значение для записи (@see Таблица freelance_offers) 
+     *
+     * @return bool
      */
-    public function Update($fid, $update) {
+    public function Update($fid, $update)
+    {
         global $DB;
-        
-        if ( !hasPermissions('projects') && !is_pro() ) {
+
+        if (!hasPermissions('projects') && !is_pro()) {
             // автор, не админ, не про
             $update['moderator_status'] = 0;
-            require_once( $_SERVER['DOCUMENT_ROOT'] . '/classes/stop_words.php' );
-            require_once( $_SERVER['DOCUMENT_ROOT'] . '/classes/user_content.php' );
-            
+            require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stop_words.php';
+            require_once $_SERVER['DOCUMENT_ROOT'].'/classes/user_content.php';
+
             $stop_words = new stop_words();
-            $nStopWordsCnt = $stop_words->calculate( $fields['descr'], $fields['title'] );
-            
-            $DB->insert( 'moderation', array('rec_id' => $fid, 'rec_type' => user_content::MODER_SDELAU, 'stop_words_cnt' => $nStopWordsCnt) );
+            $nStopWordsCnt = $stop_words->calculate($fields['descr'], $fields['title']);
+
+            $DB->insert('moderation', array('rec_id' => $fid, 'rec_type' => user_content::MODER_SDELAU, 'stop_words_cnt' => $nStopWordsCnt));
         }
-        
-        if ( isset($update['is_blocked']) && $update['is_blocked'] ) {
-            require_once( $_SERVER['DOCUMENT_ROOT'] . '/classes/user_content.php' );
-            $DB->query( 'DELETE FROM moderation WHERE rec_id = ?i AND rec_type = ?i;', $fid, user_content::MODER_SDELAU );
+
+        if (isset($update['is_blocked']) && $update['is_blocked']) {
+            require_once $_SERVER['DOCUMENT_ROOT'].'/classes/user_content.php';
+            $DB->query('DELETE FROM moderation WHERE rec_id = ?i AND rec_type = ?i;', $fid, user_content::MODER_SDELAU);
         }
-        
-        $DB->update("freelance_offers", $update, "id = ?i {$this->access}", $fid);
-        return true;    
+
+        $DB->update('freelance_offers', $update, "id = ?i {$this->access}", $fid);
+
+        return true;
     }
-    
+
     /**
-     * Данные по ленте предложений
+     * Данные по ленте предложений.
      *
-     * @param array|mixed $filter  Фильтр (@see offers_filter.php)
-     * @param bool        $only_my_offs  показывать только мои предложения
+     * @param array|mixed $filter       Фильтр (@see offers_filter.php)
+     * @param bool        $only_my_offs показывать только мои предложения
+     *
      * @return array
      */
-    public function GetFreelancerOffers($filter=false, $offset=0, $limit = 'ALL', $only_my_offs = false, $is_ban = false) {
+    public function GetFreelancerOffers($filter = false, $offset = 0, $limit = 'ALL', $only_my_offs = false, $is_ban = false)
+    {
         global $DB;
-        
-        $fSql = "";
-        if($filter) {
-            $fSql = offers_filter::createSqlFilter($filter, "AND");
+
+        $fSql = '';
+        if ($filter) {
+            $fSql = offers_filter::createSqlFilter($filter, 'AND');
         }
-        
-        $is_block = "";
-        if(!hasPermissions('projects') || $is_ban) {
-            $is_block = "AND (fo.is_blocked = 'f' OR fo.user_id = " . get_uid(0) . ") AND fo.is_closed = 'f'";     
+
+        $is_block = '';
+        if (!hasPermissions('projects') || $is_ban) {
+            $is_block = "AND (fo.is_blocked = 'f' OR fo.user_id = ".get_uid(0).") AND fo.is_closed = 'f'";
         }
-        
+
 //        $only_my = "";
 //        if ($only_my_offs) {
 //            $only_my = "AND s.uid = ".get_uid(0);
 //        }
-        
+
         $offers = $DB->rows("SELECT 
                                 fo.*, 
                                 s.is_profi,
@@ -164,25 +175,27 @@ class freelancer_offers
                             {$fSql}
                             ORDER BY fo.id DESC LIMIT {$limit} OFFSET {$offset};
                             ");
-        
-        return $offers;       
+
+        return $offers;
     }
-    
+
     /**
-     * Блокированые предложения из раздела "Сделаю"
+     * Блокированые предложения из раздела "Сделаю".
      *
-     * @param int &$total_offers  - сколько всего предложений, удовлетворяющих условиям поиска   
-     * @param int $offset
+     * @param int              &$total_offers - сколько всего предложений, удовлетворяющих условиям поиска   
+     * @param int              $offset
      * @param mixed int|string $limit
-     * @param string $search      - подстрока, которую будем искать в title, descr, login, uname, usurname
+     * @param string           $search        - подстрока, которую будем искать в title, descr, login, uname, usurname
+     *
      * @return array
      */
-    public function GetBlockedFreelancerOffers(&$total_offers, $offset=0, $limit = 'ALL', $search='') {
+    public function GetBlockedFreelancerOffers(&$total_offers, $offset = 0, $limit = 'ALL', $search = '')
+    {
         global $DB;
         $filter = '';
         if (trim($search)) {
             $search = "%$search%";
-        	$filter = "AND (
+            $filter = "AND (
     fo.title LIKE('$search')
     OR fo.descr LIKE('$search')
     OR s.uname LIKE('$search')
@@ -206,22 +219,24 @@ class freelancer_offers
                             INNER JOIN freelancer s ON s.uid = fo.user_id AND s.is_banned = '0'                            
                             WHERE fo.is_blocked = true AND fo.is_closed = false {$filter}
                             ");
-        return $offers;       
+
+        return $offers;
     }
-    
+
     /**
-     * Идентификаторы предложений из раздела "Сделаю"
+     * Идентификаторы предложений из раздела "Сделаю".
      * 
      * @return array ($id => $position)
      */
-    public function GetFreelancerOffersIdsPosition() {
-    	$filter = offers_filter::GetFilter($_SESSION["uid"]);
-        $fSql = "";
-        if($filter) {
-            $fSql = offers_filter::createSqlFilter($filter, "AND");
+    public function GetFreelancerOffersIdsPosition()
+    {
+        $filter = offers_filter::GetFilter($_SESSION['uid']);
+        $fSql = '';
+        if ($filter) {
+            $fSql = offers_filter::createSqlFilter($filter, 'AND');
         }
         global $DB;
-        $limit = 10 * freelancer_offers::FRL_COUNT_PAGES;
+        $limit = 10 * self::FRL_COUNT_PAGES;
         $ids = $DB->cache(1800)->rows("SELECT 
                                 fo.id 
                             FROM freelance_offers fo
@@ -229,165 +244,185 @@ class freelancer_offers
                             ORDER BY fo.id DESC LIMIT {$limit};
                             ");
         $mirror = array();
-        foreach($ids as $k=>$i) {
-        	$mirror[$i["id"]] = $k;
+        foreach ($ids as $k => $i) {
+            $mirror[$i['id']] = $k;
         }
+
         return $mirror;
     }
-    
+
     /**
-     * Количество блокированых предложений раздела "Сделаю"     
+     * Количество блокированых предложений раздела "Сделаю".
+     *
      * @return int
      */
-    public static function GetCountFreelancerBlockedOffers() {
+    public static function GetCountFreelancerBlockedOffers()
+    {
         global $DB;
         $total_offers = $DB->val("SELECT COUNT(fo.id) 
                             FROM freelance_offers fo 
                             INNER JOIN freelancer s ON s.uid = fo.user_id AND s.is_banned = '0'                            
                             WHERE fo.is_blocked = true AND fo.is_closed = false
                             ");
+
         return $total_offers;
     }
-    
+
     /**
-     * Удаление предложения
+     * Удаление предложения.
      *
-     * @param integer $fid ИД Предложения
+     * @param int $fid ИД Предложения
+     *
      * @return 
      */
-    public function Delete($fid) {
+    public function Delete($fid)
+    {
         global $DB;
 
-        require_once( $_SERVER['DOCUMENT_ROOT'] . '/classes/user_content.php' );
-        $DB->query( 'DELETE FROM moderation WHERE rec_id = ?i AND rec_type = ?i;', $fid, user_content::MODER_SDELAU );
+        require_once $_SERVER['DOCUMENT_ROOT'].'/classes/user_content.php';
+        $DB->query('DELETE FROM moderation WHERE rec_id = ?i AND rec_type = ?i;', $fid, user_content::MODER_SDELAU);
+
         return  $DB->query("DELETE FROM freelance_offers WHERE id = ?i {$this->access}", $fid);
     }
-    
+
     /**
-     * Возвращает предложение по его ИД
+     * Возвращает предложение по его ИД.
      * 
-     * @param  integer $fid ИД Предложения
-     * @param  boolean $access флаг проверки прав доступа
+     * @param int  $fid    ИД Предложения
+     * @param bool $access флаг проверки прав доступа
+     *
      * @return array
      */
-    public function getOfferById($fid, $access = true) {
+    public function getOfferById($fid, $access = true)
+    {
         global $DB;
-        $sql = 'SELECT * FROM freelance_offers WHERE id = ?i '. ( $access ? $this->access : '' );
-        return $DB->row( $sql, intval($fid) );
+        $sql = 'SELECT * FROM freelance_offers WHERE id = ?i '.($access ? $this->access : '');
+
+        return $DB->row($sql, intval($fid));
     }
-    
+
     /**
-     * Возвращает общее количество предложений
+     * Возвращает общее количество предложений.
      *
      * @param unknown_type $filter
+     *
      * @return unknown
      */
-    public function getCountFreelancerOffers($filter=false) {
+    public function getCountFreelancerOffers($filter = false)
+    {
         global $DB;
-        
-        $fSql = "";
-        if($filter) {
-            $fSql = offers_filter::createSqlFilter($filter, "AND");
+
+        $fSql = '';
+        if ($filter) {
+            $fSql = offers_filter::createSqlFilter($filter, 'AND');
         }
-        $is_block = $is_admin = "";
-        if(!hasPermissions('projects')) {
+        $is_block = $is_admin = '';
+        if (!hasPermissions('projects')) {
             $is_block = "AND fo.is_blocked = 'f' AND fo.is_closed = 'f' ";
             $inner_block = "INNER JOIN freelancer f ON  f.uid = fo.user_id AND f.is_banned = B'0'";
-        } 
-        
+        }
+
         return $DB->cache(300)->val("SELECT COUNT(fo.id) as all_cnt FROM freelance_offers as fo {$inner_block} WHERE 1=1 {$is_block} {$fSql};");
     }
-    
+
     /**
-     * Добавляет жалобу на предложение
+     * Добавляет жалобу на предложение.
      * 
-     * @param  int $offer_id Идентификатор предложения на которое жалуются
-     * @param  int $user_id Идентификатор пользователя который жалуется
-     * @param  int $type Тип нарушения
-     * @param  string $msg Суть жалобы
+     * @param int    $offer_id Идентификатор предложения на которое жалуются
+     * @param int    $user_id  Идентификатор пользователя который жалуется
+     * @param int    $type     Тип нарушения
+     * @param string $msg      Суть жалобы
+     *
      * @return bool true - успех, false - провал
      */
-    function AddComplain( $offer_id, $user_id, $type, $msg ) {
-        $msg   = change_q_new( stripslashes($msg), true, true );
-        $aData = compact( 'offer_id', 'user_id', 'type', 'msg' );
-        
-        $GLOBALS['DB']->insert( 'freelance_offers_complains', $aData );
-        
-        if ( !$GLOBALS['DB']->error ) {
+    public function AddComplain($offer_id, $user_id, $type, $msg)
+    {
+        $msg = change_q_new(stripslashes($msg), true, true);
+        $aData = compact('offer_id', 'user_id', 'type', 'msg');
+
+        $GLOBALS['DB']->insert('freelance_offers_complains', $aData);
+
+        if (!$GLOBALS['DB']->error) {
             $oMemBuf = new memBuff();
-            $oMemBuf->delete( 'complain_offers_count' );
+            $oMemBuf->delete('complain_offers_count');
         }
 
         return (!$GLOBALS['DB']->error);
     }
-    
+
     /**
-     * Оставлял ли юзер жалобу на предложение
+     * Оставлял ли юзер жалобу на предложение.
      *
-     * @param  int $project_id Идентификатор предложения на которое жалуются
-     * @param  int $user_id Идентификатор пользователя который жалуется
+     * @param int $project_id Идентификатор предложения на которое жалуются
+     * @param int $user_id    Идентификатор пользователя который жалуется
+     *
      * @return bool true - оставлял, false - нет
      */
-    function ComplainExists( $offer_id, $user_id ) {
-        $sQuery = "SELECT COUNT(id) FROM freelance_offers_complains WHERE offer_id=?i AND user_id=?i";
-        return (bool) $GLOBALS['DB']->val( $sQuery, $offer_id, $user_id );
+    public function ComplainExists($offer_id, $user_id)
+    {
+        $sQuery = 'SELECT COUNT(id) FROM freelance_offers_complains WHERE offer_id=?i AND user_id=?i';
+
+        return (bool) $GLOBALS['DB']->val($sQuery, $offer_id, $user_id);
     }
-    
+
     /**
-     * Возвращает количество предложений с жалобами
+     * Возвращает количество предложений с жалобами.
      * 
      * @return int
      */
-    function GetComplainOffersCount() {
+    public function GetComplainOffersCount()
+    {
         $oMemBuf = new memBuff();
-        $nCount  = $oMemBuf->get('complain_offers_count');
-        
-        if ( $nCount === false ) {
+        $nCount = $oMemBuf->get('complain_offers_count');
+
+        if ($nCount === false) {
             $sCountQuery = 'SELECT COUNT(msi.min_id) AS cnt FROM ( 
                 SELECT MIN(oca.id) AS min_id FROM freelance_offers_complains oca 
                 INNER JOIN freelance_offers foa ON foa.id = oca.offer_id 
                 WHERE foa.is_closed = false 
                 GROUP BY foa.id ) AS msi';
-            
-            $nCount = $GLOBALS['DB']->val( $sCountQuery );
-            
-            if ( !$GLOBALS['DB']->error ) {
-            	$oMemBuf->set( 'complain_offers_count', $nCount, 3600 );
+
+            $nCount = $GLOBALS['DB']->val($sCountQuery);
+
+            if (!$GLOBALS['DB']->error) {
+                $oMemBuf->set('complain_offers_count', $nCount, 3600);
             }
         }
-        
+
         return $nCount;
     }
-    
+
     /**
-     * Возвращает предложения с жалобами
+     * Возвращает предложения с жалобами.
      * 
-     * @param  int $nums возвращает кол-во предложений с жалобами
-     * @param  string $error возвращает сообщение об ошибке
-     * @param  int $page номер страницы
-     * @param  string $sort тип сортировки
-     * @param  string $search строка для поиска
-     * @param  int $admin uid модератора, заблокированные предложения которого нужно показать
-     * @param  int $nLimit количество элементов на странице
-     * @param  bool $unlimited установить в true если нужно получить все записи (без постраничного вывода)
+     * @param int    $nums      возвращает кол-во предложений с жалобами
+     * @param string $error     возвращает сообщение об ошибке
+     * @param int    $page      номер страницы
+     * @param string $sort      тип сортировки
+     * @param string $search    строка для поиска
+     * @param int    $admin     uid модератора, заблокированные предложения которого нужно показать
+     * @param int    $nLimit    количество элементов на странице
+     * @param bool   $unlimited установить в true если нужно получить все записи (без постраничного вывода)
+     *
      * @return array
      */
-    function GetComplainOffers( &$nums, &$error, $page = 1, $sort = '', $search = '', $admin = 0, $nLimit = 20, $unlimited = false ) {
-        $nLimit      = intval($nLimit);
-        $nOffset     = $nLimit * ($page - 1);
+    public function GetComplainOffers(&$nums, &$error, $page = 1, $sort = '', $search = '', $admin = 0, $nLimit = 20, $unlimited = false)
+    {
+        $nLimit = intval($nLimit);
+        $nOffset = $nLimit * ($page - 1);
         $bCountCache = false;
-        
+
         // сортировка
-        $sOrder = ( $sort == 'login' ) ? ' login ' : ( $search ? ' relevant DESC ' : ' oc.date DESC ' );
-        
+        $sOrder = ($sort == 'login') ? ' login ' : ($search ? ' relevant DESC ' : ' oc.date DESC ');
+
         // поиск
         $sSelect = '';
-        $sWhere  = '';
-        
-        if ( $search ) {
-        	$aWords = preg_split( "/\\s/", $search );
-        	
-        	foreach ( $aWords as $sWord ) {
+        $sWhere = '';
+
+        if ($search) {
+            $aWords = preg_split('/\\s/', $search);
+
+            foreach ($aWords as $sWord) {
                 $sSelect .= "(
                     CASE
                     WHEN
@@ -397,17 +432,16 @@ class freelancer_offers
                     ELSE 0
                     END
                 ) + ";
-                
+
                 $sWhere .= "(LOWER(ua.login) LIKE LOWER('%$sWord%') OR LOWER(ua.uname) LIKE LOWER('%$sWord%') OR LOWER(ua.usurname) LIKE LOWER('%$sWord%') OR LOWER(foa.title) LIKE LOWER('%$sWord%')) OR ";
             }
-            
-            $sSelect = substr( $sSelect, 0, strlen($sSelect) - 3 );
-            $sWhere  = substr( $sWhere, 0, strlen($sWhere) - 4 );
-        }
-        else {
+
+            $sSelect = substr($sSelect, 0, strlen($sSelect) - 3);
+            $sWhere = substr($sWhere, 0, strlen($sWhere) - 4);
+        } else {
             $bCountCache = true;
         }
-        
+
         $sQuery = 'SELECT fo.*, oc.type AS complain_type, oc.msg AS complain_msg, oc.date AS complain_date, 
                 ocu.uname AS complain_uname, ocu.usurname AS complain_usurname, ocu.login AS complain_login, 
                 fou.is_pro, fou.is_team, fou.uname, fou.usurname, fou.login, 
@@ -416,8 +450,8 @@ class freelancer_offers
                 SELECT MIN(oca.id) AS min_id FROM freelance_offers_complains oca 
                 INNER JOIN freelance_offers foa ON foa.id = oca.offer_id 
                 INNER JOIN freelancer ua ON ua.uid = foa.user_id 
-                WHERE foa.is_closed = false ' . ( $sWhere ? ' AND ' . $sWhere : '' ) 
-                . 'GROUP BY foa.id 
+                WHERE foa.is_closed = false '.($sWhere ? ' AND '.$sWhere : '')
+                .'GROUP BY foa.id 
             ) AS oci 
             INNER JOIN freelance_offers_complains oc ON oc.id = oci.min_id 
             INNER JOIN freelance_offers fo ON fo.id = oc.offer_id 
@@ -432,74 +466,78 @@ class freelancer_offers
                 INNER JOIN freelance_offers foc ON foc.id = occ.offer_id 
                 GROUP BY foc.id 
             ) AS c ON c.min_cnt_id = fo.id';
-                
-                
-        $sQuery = ( $sSelect ? "SELECT s.*, ($sSelect) AS relevant FROM ($sQuery) AS s" : $sQuery )
-            . ' ORDER BY ' . $sOrder 
-            . ( !$unlimited ? ' LIMIT ' . $nLimit . ' OFFSET ' . $nOffset : '' );
-            
+
+        $sQuery = ($sSelect ? "SELECT s.*, ($sSelect) AS relevant FROM ($sQuery) AS s" : $sQuery)
+            .' ORDER BY '.$sOrder
+            .(!$unlimited ? ' LIMIT '.$nLimit.' OFFSET '.$nOffset : '');
+
         $sCountQuery = 'SELECT COUNT(msi.min_id) AS cnt FROM ( 
             SELECT MIN(oca.id) AS min_id FROM freelance_offers_complains oca 
-            INNER JOIN freelance_offers foa ON foa.id = oca.offer_id ' 
-            . ( $sWhere ? ' INNER JOIN freelancer ua ON ua.uid = foa.user_id ' : '' )
-            . ' WHERE foa.is_closed = false ' . ( $sWhere ? ' AND ' . $sWhere : '' ) 
-            . 'GROUP BY foa.id ) AS msi';
-        
-        $nums = $GLOBALS['DB']->val( $sCountQuery );
-        
-        $ret = $GLOBALS['DB']->rows( $sQuery );
-        
+            INNER JOIN freelance_offers foa ON foa.id = oca.offer_id '
+            .($sWhere ? ' INNER JOIN freelancer ua ON ua.uid = foa.user_id ' : '')
+            .' WHERE foa.is_closed = false '.($sWhere ? ' AND '.$sWhere : '')
+            .'GROUP BY foa.id ) AS msi';
+
+        $nums = $GLOBALS['DB']->val($sCountQuery);
+
+        $ret = $GLOBALS['DB']->rows($sQuery);
+
         return $ret;
     }
-    
+
     /**
      * Возвращает список жалоб на предложение.
      * 
-     * @param  int $nOfferId Идентификатор предложения
+     * @param int $nOfferId Идентификатор предложения
+     *
      * @return array
      */
-    function getOfferComplaints( $nOfferId = 0 ) {
+    public function getOfferComplaints($nOfferId = 0)
+    {
         $sQuery = 'SELECT o.*, u.uname, u.usurname, u.login 
             FROM freelance_offers_complains o 
             INNER JOIN users u ON u.uid = o.user_id 
             WHERE o.offer_id = ? 
             ORDER BY o.id';
-        
-        return $GLOBALS['DB']->rows( $sQuery, $nOfferId );
+
+        return $GLOBALS['DB']->rows($sQuery, $nOfferId);
     }
-    
+
     /**
-     * Удаляет все жалобы на предложение
+     * Удаляет все жалобы на предложение.
      * 
-     * @param  int $nOfferId Идентификатор предложения
+     * @param int $nOfferId Идентификатор предложения
+     *
      * @return bool true - успех, false - провал
      */
-    function deleteOfferComplaints( $nOfferId = 0 ) {
-        $GLOBALS['DB']->query( 'DELETE FROM freelance_offers_complains WHERE offer_id = ?i', $nOfferId );
-        
-        if ( !$GLOBALS['DB']->error ) {
+    public function deleteOfferComplaints($nOfferId = 0)
+    {
+        $GLOBALS['DB']->query('DELETE FROM freelance_offers_complains WHERE offer_id = ?i', $nOfferId);
+
+        if (!$GLOBALS['DB']->error) {
             $oMemBuf = new memBuff();
-            
-            if ( ($nCount = $oMemBuf->get('complain_offers_count')) !== false ) {
+
+            if (($nCount = $oMemBuf->get('complain_offers_count')) !== false) {
                 $nCount = $nCount - 1;
-                $oMemBuf->set( 'complain_offers_count', $nCount, 3600 );
-            }
-            else {
-                $oMemBuf->delete( 'complain_offers_count' );
+                $oMemBuf->set('complain_offers_count', $nCount, 3600);
+            } else {
+                $oMemBuf->delete('complain_offers_count');
             }
         }
-        
+
         return (!$GLOBALS['DB']->error);
     }
-    
+
     /**
-     * Возвращает тип нарушения по номеру
+     * Возвращает тип нарушения по номеру.
      * 
-     * @param  int $complain_type тип нарушения
+     * @param int $complain_type тип нарушения
+     *
      * @return string
      */
-    function GetComplainType( $complain_type ) {
-        switch( $complain_type ) {
+    public function GetComplainType($complain_type)
+    {
+        switch ($complain_type) {
             case 1:
                 $sName = 'Реклама, массовая публикация';
                 break;
@@ -520,9 +558,7 @@ class freelancer_offers
                 $sName = 'Другое';
                 break;
         }
-        
+
         return $sName;
     }
 }
-
-?>

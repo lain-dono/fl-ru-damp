@@ -17,7 +17,9 @@
             </td>
             <td class="b-layout__right">
                 <h3 class="b-layout__h3 b-layout__h3_padbot_5">Ваши контакты видны всем заказчикам</h3>
-                <div class="b-layout__txt">Если вы хотите, чтобы заказчики могли<br>обращаться к вам напрямую, а также еще<br>больше бонусов и возможностей на сайте,<br>вам нужен профессиональный аккаунт.<br>Обмен контактами без PRO запрещен.<?php if(!is_pro()) {?><br><a class="b-layout__link" href="/payed/">Купить аккаунт</a> <span class="b-icon b-icon__pro b-icon__pro_f"></span><?php } ?></div>
+                <div class="b-layout__txt">Если вы хотите, чтобы заказчики могли<br>обращаться к вам напрямую, а также еще<br>больше бонусов и возможностей на сайте,<br>вам нужен профессиональный аккаунт.<br>Обмен контактами без PRO запрещен.<?php if (!is_pro()) {
+    ?><br><a class="b-layout__link" href="/payed/">Купить аккаунт</a> <span class="b-icon b-icon__pro b-icon__pro_f"></span><?php 
+} ?></div>
             </td>
             <td class="b-layout__one b-layout__one_padleft_20">
                 <img class="b-layout__pic b-layout__pic_margright_20" src="/images/promo-icons/big/11.png" alt="">

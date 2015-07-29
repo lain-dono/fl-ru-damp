@@ -1,16 +1,15 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/Form/View.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Form/View.php';
 
 class BillInvoicesPayForm extends Form_View
 {
     protected $viewScriptPrefixPath = 'classes/Form/Templates/Horizontal';
 
-    
     public function init()
     {
         //$this->setElementsBelongTo('price');
-        
+
         /*
         $this->setElementsBelongTo('foo')->setElements(array(
             'bar' => 'text',
@@ -18,7 +17,6 @@ class BillInvoicesPayForm extends Form_View
         ));
         */
 
-        
         /*
         $this->addElement(
            new Zend_Form_Element_Text('price', array(
@@ -32,7 +30,7 @@ class BillInvoicesPayForm extends Form_View
                )
         )));
         */
-        
+
         /*
         $this->addElement(
            new Zend_Form_Element_Text('2', array(
@@ -48,6 +46,4 @@ class BillInvoicesPayForm extends Form_View
         
         $this->setElementsBelongTo('price');*/
     }
-    
-
 }

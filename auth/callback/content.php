@@ -1,12 +1,12 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/wizard.common.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/wizard.common.php';
 $xajax->printJavascript('/xajax/');
 
 ?>
 <div class="b-layout g-txt_center">
     <form method="post" action="" id="form-opauth">
-        <?php if($redirectUri): ?>
+        <?php if ($redirectUri): ?>
         <input type="hidden" name="redirect" value="<?=$redirectUri?>" />
         <?php endif; ?>
         
@@ -19,7 +19,7 @@ $xajax->printJavascript('/xajax/');
             <div class="b-layout b-layout_inline-block b-layout_width_330 b-layout_width_full_iphone">
                 <table class="b-layout__table b-layout__table_width_full">
                     <tbody>
-                        <?php if(!isset($emp_redirect) || empty($emp_redirect)): ?>
+                        <?php if (!isset($emp_redirect) || empty($emp_redirect)): ?>
                         <tr class="b-layout__tr">
                             <td class="b-layout__td b-layout__td_padbot_30 b-layout__td_relative b-layout__td_width_full_ipad">
                                 
@@ -52,7 +52,7 @@ $xajax->printJavascript('/xajax/');
                         <tr class="b-layout__tr">
                             <td class="b-layout__td b-layout__td_padbot_30 b-layout__td_relative b-layout__td_width_full_ipad">
                                 <div class="b-combo b-combo_large">
-                                    <div class="b-combo__input <?= $registration->error['email']?"b-combo__input_error":""?>">
+                                    <div class="b-combo__input <?= $registration->error['email'] ? 'b-combo__input_error' : ''?>">
                                         <input data-ga-event="{ec: 'user', ea: 'registration_form_edited',el: ''}" 
                                                type="text" 
                                                value="<?= stripslashes($registrationData['email']); ?>" 
@@ -85,7 +85,7 @@ $xajax->printJavascript('/xajax/');
                         <tr class="b-layout__tr">
                             <td class="b-layout__td b-layout__td_padbot_30 b-layout__td_relative b-layout__td_width_full_ipad">
                                 <div class="b-combo b-combo_large">
-                                    <div class="b-combo__input <?= $registration->error['login']?"b-combo__input_error":""?>">
+                                    <div class="b-combo__input <?= $registration->error['login'] ? 'b-combo__input_error' : ''?>">
                                         <input data-ga-event="{ec: 'user', ea: 'registration_login_edited',el: ''}" 
                                                type="text" 
                                                maxlength="15" 

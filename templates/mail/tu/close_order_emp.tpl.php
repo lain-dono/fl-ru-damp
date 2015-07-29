@@ -8,25 +8,25 @@
 $smail->subject = "Завершение заказа «{$order['title']}»";
 
 $title = reformat(htmlspecialchars($order['title']), 30, 0, 1);
-$order_url = $GLOBALS['host'] . tservices_helper::getOrderCardUrl($order['id']);
+$order_url = $GLOBALS['host'].tservices_helper::getOrderCardUrl($order['id']);
 $frl_feedback = reformat(htmlspecialchars($order['frl_feedback']), 30);
 $frl_is_good = ($order['frl_rating'] > 0);
 //$feedback_url = $GLOBALS['host'] . "/users/{$order['freelancer']['login']}/opinions/";
 
-if(empty($frl_feedback))
-{
-    
-?>
+if (empty($frl_feedback)) {
+    ?>
 Исполнитель <?=$frl_fullname?> завершил сотрудничество и закрыл заказ &laquo;<a href="<?=$order_url?>"><?=$title?></a>&raquo;.
 <a href="<?=$order_url?>">Вы можете оставить отзыв.</a>
 <?php
 
+} else {
+    ?>
+Исполнитель <?=$frl_fullname?> завершил сотрудничество с вами по заказу &laquo;<a href="<?=$order_url?>"><?=$title?></a>&raquo; и оставил <?php if ($frl_is_good) {
+    ?>положительный<?php 
+} else {
+    ?>отрицательный<?php 
 }
-else
-{
-        
-?>
-Исполнитель <?=$frl_fullname?> завершил сотрудничество с вами по заказу &laquo;<a href="<?=$order_url?>"><?=$title?></a>&raquo; и оставил <?php if($frl_is_good){ ?>положительный<?php }else{ ?>отрицательный<?php } ?> отзыв:
+    ?> отзыв:
 
 <i><?=$frl_feedback?></i>
 

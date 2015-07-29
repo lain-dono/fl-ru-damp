@@ -1,9 +1,8 @@
 <?php
 
 /**
- * Popup окошка для отправки отзыва и/или закрытии проекта
+ * Popup окошка для отправки отзыва и/или закрытии проекта.
  */
-
 ?>
 <div id="project_feedback_popup" class="b-shadow b-shadow_center b-shadow_width_520 b-shadow_hide b-shadow__quick b-shadow_zindex_110" style="display:block;">
   <div class="b-shadow__body b-shadow__body_pad_15_20">

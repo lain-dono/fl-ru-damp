@@ -1,45 +1,43 @@
 <?php
 
 /**
- * Абтрактный класс адаптера
+ * Абтрактный класс адаптера.
  */
-abstract class AbstractStatisticAdapter 
+abstract class AbstractStatisticAdapter
 {
     protected $service;
     protected $config;
     protected $options;
 
     protected $lastRequest;
-    
-    
+
     /**
-     * Конструктор конфигурирует адаптер
+     * Конструктор конфигурирует адаптер.
      * 
-     * @param array $options
+     * @param array  $options
      * @param object $config
      */
-    public function __construct($options = array(), $config = NULL) 
+    public function __construct($options = array(), $config = null)
     {
         $default_options = array();
-        
-        if($config){
+
+        if ($config) {
             $this->setConfig($config);
             $default_options = $this->config->options();
         }
 
-        $options = (count($options))? $options + $default_options : $default_options;
-        
-        if(count($options)){
+        $options = (count($options)) ? $options + $default_options : $default_options;
+
+        if (count($options)) {
             $this->setOptions($options);
         }
-        
+
         //Вызов метода для инициализации сервиса статистики
         $this->initService();
     }
-    
-    
+
     /**
-     * Указать обьект конфигурации
+     * Указать обьект конфигурации.
      * 
      * @param object $config
      */
@@ -47,10 +45,9 @@ abstract class AbstractStatisticAdapter
     {
         $this->config = $config;
     }
-    
-    
+
     /**
-     * Указать настройки
+     * Указать настройки.
      * 
      * @param array $options
      */
@@ -59,9 +56,8 @@ abstract class AbstractStatisticAdapter
         $this->options = $options;
     }
 
-    
     /**
-     * Вернуть настройки
+     * Вернуть настройки.
      * 
      * @return array
      */
@@ -69,48 +65,40 @@ abstract class AbstractStatisticAdapter
     {
         return $this->options;
     }
-    
-    
+
     /**
      * Инициализация сервиса статистики
-     * метод должен быть описан в реализации класса
+     * метод должен быть описан в реализации класса.
      */
-    protected abstract function initService();
-    
-    
-    
+    abstract protected function initService();
+
     /**
-     * Постановка события в очередь
+     * Постановка события в очередь.
      */
     public function queue($type, Array $data)
     {
-        return $this->db()->query("SELECT pgq.insert_event('statistic', ?, ?)", 
-                $type, 
+        return $this->db()->query("SELECT pgq.insert_event('statistic', ?, ?)",
+                $type,
                 http_build_query($data));
     }
-    
-    
+
     /**
-     * Вызов метода сервиса
+     * Вызов метода сервиса.
      */
     public function call($type, Array $data)
     {
         if (method_exists($this, $type)) {
             return call_user_func_array(array($this, $type), $data);
         }
-        
+
         return false;
     }
 
-    
-    
     public function getLastRequest()
     {
         return $this->lastRequest;
     }
-    
 
-    
     /**
      * @return DB
      */
@@ -118,5 +106,4 @@ abstract class AbstractStatisticAdapter
     {
         return $GLOBALS['DB'];
     }
-    
 }

@@ -102,14 +102,14 @@ font-weight: normal;
 <pre>
 <?php 
 
-  ini_set("soap.wsdl_cache_enabled", "0"); // отключаем кэширование WSDL 
-  $client = new SoapClient("fltray.wsdl"); 
-  $lastprj =0;
+  ini_set('soap.wsdl_cache_enabled', '0'); // отключаем кэширование WSDL 
+  $client = new SoapClient('fltray.wsdl');
+  $lastprj = 0;
   //print "!!!"; mb9o1vu4i097xn84utp3t96epdwiux5g
   //print_r($client->ReadMess('mb9o1vu4i097xn84utp3t96epdwiux5g', array(1,2))); 
   //print_r($client->AuthUser('russkiy-lance','3434905','') ); 
   //echo "RESPONSE:\n" . $client->__getLastResponse() . "\n";
-  print_r($client->GetAllInfo('wog7de8dul4b5q81einq779wxk25bxy8',0,array(1,1),array(1,0,0,0,0,0,0,0,0,0,0,0,0,0))) 
+  print_r($client->GetAllInfo('wog7de8dul4b5q81einq779wxk25bxy8', 0, array(1, 1), array(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)))
   //print $client->SendMess('mb9o1vu4i097xn84utp3t96epdwiux5g', 'test222!!!', 2, 47325); 
   //print $client->CheckVersion("2.0.0.1");
 ?> 

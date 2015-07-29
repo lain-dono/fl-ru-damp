@@ -1,11 +1,14 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; } ?>
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+} ?>
 <h2>Поиск</h2>
 <div class="admin">
 <div class="lm-col">
     <div class="admin-menu">
         <h3>Поиск</h3>
 
-        <? include ($rpath . "/siteadmin/leftmenu.php") ?>
+        <?php include ($rpath.'/siteadmin/leftmenu.php') ?>
 
     </div>
 </div>
@@ -13,7 +16,7 @@
 <div class="r-col">
     <div class="ban-razban">
         <h3>Топ запросы</h3>
-        <? include_once ('tpl.navigation.php'); ?>
+        <?php include_once 'tpl.navigation.php'; ?>
         <br/>
         
         <div class="form form-nr-docs-sort ">
@@ -25,29 +28,45 @@
                         <div class="form-el" style="text-transform: uppercase; font-size: 14px;">
                             
                             &nbsp;&nbsp;&nbsp;&nbsp;
-                            <? if ($start != 'all') { ?>
+                            <?php if ($start != 'all') {
+    ?>
                             <a href="?tab=top&s=all">Все</a>
-                            <? } else { ?>
+                            <?php 
+} else {
+    ?>
                             <strong>Все</strong>
-                            <? } ?>
+                            <?php 
+} ?>
                             &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
-                            <? if ($start != 'users') { ?>
+                            <?php if ($start != 'users') {
+    ?>
                             <a href="?tab=top&s=users">По исполнителям</a>
-                            <? } else { ?>
+                            <?php 
+} else {
+    ?>
                             <strong>По исполнителям</strong>
-                            <? } ?>
+                            <?php 
+} ?>
                             &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
-                            <? if ($start != 'projects') { ?>
+                            <?php if ($start != 'projects') {
+    ?>
                             <a href="?tab=top&s=projects">По проектам</a>
-                            <? } else { ?>
+                            <?php 
+} else {
+    ?>
                             <strong>По проектам</strong>
-                            <? } ?>
+                            <?php 
+} ?>
                             &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
-                            <? if ($start != 'more') { ?>
+                            <?php if ($start != 'more') {
+    ?>
                             <a href="?tab=top&s=more">По разделам сайта</a>
-                            <? } else { ?>
+                            <?php 
+} else {
+    ?>
                             <strong>По разделам сайта</strong>
-                            <? } ?>
+                            <?php 
+} ?>
                         </div>
                     </div>
                 </div>
@@ -78,13 +97,14 @@
                 </tr>
             </thead>
             <tbody>
-            <? foreach ($data as $row) { ?>
+            <?php foreach ($data as $row) {
+    ?>
                     <tr id="query<?= $row['id'] ?>">
                         <td class="c-st" width="25px">
                             &bull;
                         </td>
                         <td>
-                            <?= change_q_x($row['query'], TRUE, FALSE)  ?>
+                            <?= change_q_x($row['query'], true, false)  ?>
                         </td>
                         <td>
                             <?= $row['cnt'] ?>
@@ -96,7 +116,8 @@
                             <strong><?= $row['weight'] ?></strong>
                         </td>
                     </tr>
-                <? } ?>
+                <?php 
+} ?>
                     <tr id="deleteFrm" style="display:none;">
                         <td colspan="7">
                             <form name="frm" method="post" action="">
@@ -114,9 +135,11 @@
                                                 <label class="form-l">Удаляет слова, которые:</label>
                                                 <div class="form-value">
                                                     <select name="filter_rule" class="sw205">
-                                                        <? foreach ($rules as $rule) { ?>
+                                                        <?php foreach ($rules as $rule) {
+    ?>
                                                         <option value="<?= $rule['id'] ?>"><?= $rule['rule_name'] ?></option>
-                                                        <? } ?>
+                                                        <?php 
+} ?>
                                                     </select>
                                                     <input type="text" name="word" class="sw205"/>
                                                 </div>
@@ -137,7 +160,7 @@
             </tbody>
         </table>
         
-        <?= new_paginator2($page, $pages, 3, "%s?" . urldecode(url($_GET, array('p' => '%d'))) . "%s") ?>
+        <?= new_paginator2($page, $pages, 3, '%s?'.urldecode(url($_GET, array('p' => '%d'))).'%s') ?>
         
     </div>
 </div>

@@ -1,10 +1,13 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
-if(!(hasPermissions('adm') && hasPermissions('permissions'))) {
-  header ("Location: /404.php");
-  exit;
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
+if (!(hasPermissions('adm') && hasPermissions('permissions'))) {
+    header('Location: /404.php');
+    exit;
 }
 
-$js = "";
+$js = '';
 
 ?>
 
@@ -19,74 +22,83 @@ var rights_orig = new Array();
 var rights_group = new Array();
 </script>
 
-<strong>Права доступа. <?=(($action=='user_add')?'Добавление':'Редактирование')?> пользователя</strong>
+<strong>Права доступа. <?=(($action == 'user_add') ? 'Добавление' : 'Редактирование')?> пользователя</strong>
 
 <br><br>
 
 <form method="POST" action="index.php">
-    <input type="hidden" name="action" value="<?=(($action=='user_add')?'user_insert':'user_update')?>">
+    <input type="hidden" name="action" value="<?=(($action == 'user_add') ? 'user_insert' : 'user_update')?>">
     <input type="hidden" name="uid" value="<?=$user->uid?>">
     Пользователь: 
-    <? if($action=='user_add') { ?>
+    <?php if ($action == 'user_add') {
+    ?>
         <input type="text" id="group_name" name="name" value="">
-    <? } else { ?>
-        <? $utype = (is_emp($user->role)?'emp':'frl'); ?>
-        <?=$session->view_online_status($user->login)?> <a href="/users/<?=$user->login?>" class="<?=$utype?>name11"><?=($user->usurname." ".$user->uname)?></a> [<a href="/users/<?=$user->login?>" class="<?=$utype?>name11"><?=$user->login?></a>] <a href="mailto:<?=$user->email?>"><?=$user->email?></a>
+    <?php 
+} else {
+    ?>
+        <?php $utype = (is_emp($user->role) ? 'emp' : 'frl');
+    ?>
+        <?=$session->view_online_status($user->login)?> <a href="/users/<?=$user->login?>" class="<?=$utype?>name11"><?=($user->usurname.' '.$user->uname)?></a> [<a href="/users/<?=$user->login?>" class="<?=$utype?>name11"><?=$user->login?></a>] <a href="mailto:<?=$user->email?>"><?=$user->email?></a>
         <br><br>
         <a href="" onClick="rights_reset(); return false;">Сбросить в исходное состояние</a>
-    <? } ?>
+    <?php 
+} ?>
     <br><br>
     Группы: 
     <br>
     <select name="groups" id="rights_group">
-        <? foreach($groups as $group) { ?>
-            <option value="<?=$group['id']?>" <?=(in_array($group['id'],$user_groups)?'selected':'')?>><?=$group['name']?></option>
-            <?
-            if(in_array($group['id'],$user_groups)) {
+        <?php foreach ($groups as $group) {
+    ?>
+            <option value="<?=$group['id']?>" <?=(in_array($group['id'], $user_groups) ? 'selected' : '')?>><?=$group['name']?></option>
+            <?php
+            if (in_array($group['id'], $user_groups)) {
                 $js .= "group_orig = {$group['id']};\n";
             }
-            $js .= "rights_group[{$group['id']}] = new Array();\n";
-            if($group['rights']) {
-                $n = 0;
-                foreach($group['rights'] as $v) {
-                    $js .= "rights_group[{$group['id']}][{$v}] = $v;\n";
-                    $n++;
-                }
-            }
-            ?>
-        <? } ?>
+    $js .= "rights_group[{$group['id']}] = new Array();\n";
+    if ($group['rights']) {
+        $n = 0;
+        foreach ($group['rights'] as $v) {
+            $js .= "rights_group[{$group['id']}][{$v}] = $v;\n";
+            ++$n;
+        }
+    }
+    ?>
+        <?php 
+} ?>
     </select>
     <br><br>
 
     <table>
-        <? foreach($rights as $right) { ?>
-            <?
+        <?php foreach ($rights as $right) {
+    ?>
+            <?php
             $checked_allow = '';
-            $red = '';
-            if(in_array($right['id'], $user_rights_allow) || in_array($right['id'], $user_groups_rights)) {
-                $checked_allow = 'checked';
-            }
-            if(in_array($right['id'], $user_rights_disallow)) {
-                $checked_allow = '';
-                $red = "red";
-            }
-            if(in_array($right['id'], $user_rights_allow)) {
-                $red = "green";
-            }
-            if($checked_allow) {
-                $js .= "rights_orig[{$right['id']}] = {$right['id']};\n";
-            }
-            ?>
+    $red = '';
+    if (in_array($right['id'], $user_rights_allow) || in_array($right['id'], $user_groups_rights)) {
+        $checked_allow = 'checked';
+    }
+    if (in_array($right['id'], $user_rights_disallow)) {
+        $checked_allow = '';
+        $red = 'red';
+    }
+    if (in_array($right['id'], $user_rights_allow)) {
+        $red = 'green';
+    }
+    if ($checked_allow) {
+        $js .= "rights_orig[{$right['id']}] = {$right['id']};\n";
+    }
+    ?>
             <tr>
                 <td valign="top">
                     <input type="checkbox" <?=$checked_allow?> id="rights_allow_<?=$right['id']?>" name="rights_allow[]" value="<?=$right['id']?>"> <span id="rights_allow_txt_<?=$right['id']?>" class="<?=$red?>"><?=$right['name']?></span>
                 </d>
             </tr>
-        <? } ?>
+        <?php 
+} ?>
     </table>
 
     <br><br>
-    <input type="submit" value=" <?=(($action=='user_add')?'Добавить':'Сохранить')?> ">
+    <input type="submit" value=" <?=(($action == 'user_add') ? 'Добавить' : 'Сохранить')?> ">
 </form>
 
 <script type="text/javascript">

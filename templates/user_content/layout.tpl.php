@@ -1,7 +1,6 @@
 <?php
 
 
-
 ?>
 <div class="b-post b-post_bordtop_dfe3e4 b-post_padtop_15 b-post_marg_20_10" id="my_div_content_<?=$content_id?>_<?=$id?>_0">
    <?=$_parseHidden?>

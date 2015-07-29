@@ -1,5 +1,5 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/professions.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/professions.php';
 $profs = professions::GetAllGroupsLite();
 ?>
 
@@ -40,12 +40,11 @@ function getspec(RXGroup) {
       <table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
         <tr valign="top">
           <td style="width:33%;padding-bottom:20px">
-            <? 
+            <?php 
               $lastgrname = NULL;
-              $j=0;
-              foreach($profs as $prof)
-              { 
-              ?>
+              $j = 0;
+              foreach ($profs as $prof) {
+                  ?>
                 <table border="0" cellspacing="0" cellpadding="1">
                   <tr>
                     <td valign="top">
@@ -56,7 +55,8 @@ function getspec(RXGroup) {
                     </td>
                   </tr>
                 </table>
-           <? } ?>
+           <?php 
+              } ?>
           </td>
         </tr>
       </table>
@@ -68,18 +68,42 @@ function getspec(RXGroup) {
 <br>
 
 <select name="prj_month" id="prj_month">
-	<option value="01" <? if (date('m') == '01') print "SELECTED"?>>январь</option>
-	<option value="02" <? if (date('m') == '02') print "SELECTED"?>>февраль</option>
-	<option value="03" <? if (date('m') == '03') print "SELECTED"?>>март</option>
-	<option value="04" <? if (date('m') == '04') print "SELECTED"?>>апрель</option>
-	<option value="05" <? if (date('m') == '05') print "SELECTED"?>>май</option>
-	<option value="06" <? if (date('m') == '06') print "SELECTED"?>>июнь</option>
-	<option value="07" <? if (date('m') == '07') print "SELECTED"?>>июль</option>
-	<option value="08" <? if (date('m') == '08') print "SELECTED"?>>август</option>
-	<option value="09" <? if (date('m') == '09') print "SELECTED"?>>сентябрь</option>
-	<option value="10" <? if (date('m') == '10') print "SELECTED"?>>октябрь</option>
-	<option value="11" <? if (date('m') == '11') print "SELECTED"?>>ноябрь</option>
-	<option value="12" <? if (date('m') == '12') print "SELECTED"?>>декабрь</option>
+	<option value="01" <?php if (date('m') == '01') {
+    print 'SELECTED';
+}?>>январь</option>
+	<option value="02" <?php if (date('m') == '02') {
+    print 'SELECTED';
+}?>>февраль</option>
+	<option value="03" <?php if (date('m') == '03') {
+    print 'SELECTED';
+}?>>март</option>
+	<option value="04" <?php if (date('m') == '04') {
+    print 'SELECTED';
+}?>>апрель</option>
+	<option value="05" <?php if (date('m') == '05') {
+    print 'SELECTED';
+}?>>май</option>
+	<option value="06" <?php if (date('m') == '06') {
+    print 'SELECTED';
+}?>>июнь</option>
+	<option value="07" <?php if (date('m') == '07') {
+    print 'SELECTED';
+}?>>июль</option>
+	<option value="08" <?php if (date('m') == '08') {
+    print 'SELECTED';
+}?>>август</option>
+	<option value="09" <?php if (date('m') == '09') {
+    print 'SELECTED';
+}?>>сентябрь</option>
+	<option value="10" <?php if (date('m') == '10') {
+    print 'SELECTED';
+}?>>октябрь</option>
+	<option value="11" <?php if (date('m') == '11') {
+    print 'SELECTED';
+}?>>ноябрь</option>
+	<option value="12" <?php if (date('m') == '12') {
+    print 'SELECTED';
+}?>>декабрь</option>
 </select>
 <input type="text" name="prj_year" id="prj_year" size="4" maxlength="4" value="<?=date('Y')?>">
 

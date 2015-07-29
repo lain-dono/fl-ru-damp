@@ -13,9 +13,8 @@
 ini_set('max_execution_time', 0);
 ini_set('memory_limit', '512M');
 
-
-require_once(__DIR__ . "/../classes/config.php");
-require_once(__DIR__ . "/../siteadmin/reserves/models/ReservesArchiveModel.php");
+require_once __DIR__.'/../classes/config.php';
+require_once __DIR__.'/../siteadmin/reserves/models/ReservesArchiveModel.php';
 
 //------------------------------------------------------------------------------
 

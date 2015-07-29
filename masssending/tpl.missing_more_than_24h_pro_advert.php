@@ -1,5 +1,5 @@
 <?php
-$adv_link = "{$pHost}/payed/?utm_source=newsletter4&utm_medium=email&utm_campaign=notif_ed_pro"; 
+$adv_link = "{$pHost}/payed/?utm_source=newsletter4&utm_medium=email&utm_campaign=notif_ed_pro";
 ?><table cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" width="100%" style="margin-top: 0; background-color: #ffffff; text-align:left; border-top:1px solid #e6e6e6">
                       <tbody>
                       <tr>

@@ -4,50 +4,55 @@
  * 
  * @author Max 'BlackHawk' Yastrembovich
  */
-if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
+if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
 ?>
 
 <h2 class="b-layout__title b-layout__title_padbot_30">Пользовательский контент / Потоки</h2>
 
-<?php if ($_SESSION['admin_streams_success']) { 
-    unset( $_SESSION['admin_streams_success'] );
-?>
+<?php if ($_SESSION['admin_streams_success']) {
+    unset($_SESSION['admin_streams_success']);
+    ?>
   <div>
     <img src="/images/ico_ok.gif" alt="" border="0" height="18" width="19"/>&nbsp;&nbsp;Изменения внесены.
   </div>
   <br/><br/>
-<?php } if ($error) print(view_error($error).'<br/>'); ?>
+<?php 
+} if ($error) {
+    print(view_error($error).'<br/>');
+} ?>
 
 <?php
 
-if ( $nShifts ) {
-    
-?>
+if ($nShifts) {
+    ?>
 <form method="post" name="form_streams" id="form_streams">
     <input type="hidden" name="cmd" value="go">
 <div style="overflow:auto; width:760px;">
-<table class="b-layout__table b-layout__table_width_full" border="0" cellpadding="0" cellspacing="0" style="width:<?=(120+100*$nShifts)?>px;"><!-- ширину вычислять так: 120 + 100 x число столбцов -->
+<table class="b-layout__table b-layout__table_width_full" border="0" cellpadding="0" cellspacing="0" style="width:<?=(120 + 100 * $nShifts)?>px;"><!-- ширину вычислять так: 120 + 100 x число столбцов -->
     <tr class="b-layout__tr">
         <td class="b-layout__left b-layout__left_valign_bottom b-layout__left_width_120 b-layout__left_padbot_30">
             <div class="b-layout__txt b-layout__txt_fontsize_11">Смены</div>
         </td>
 <?php
         $nCnt = 1;
-        foreach ( $aShifts as $aOne ) {
-?>
+    foreach ($aShifts as $aOne) {
+        ?>
         <td class="b-layout__one b-layout__one_width_100 b-layout__one_padbot_30">
-            <div class="b-layout__txt b-layout__txt_fontsize_11"><span class="b-layout__txt b-layout__txt_fontsize_13 b-layout__txt_bold"><?=$nCnt?>,</span> <?=  substr( $aOne['time_from'], 0, 5 ) . ' &mdash; ' . substr( $aOne['time_to'], 0, 5 )?></div>
+            <div class="b-layout__txt b-layout__txt_fontsize_11"><span class="b-layout__txt b-layout__txt_fontsize_13 b-layout__txt_bold"><?=$nCnt?>,</span> <?=  substr($aOne['time_from'], 0, 5).' &mdash; '.substr($aOne['time_to'], 0, 5)?></div>
         </td>
 <?php
-            $nCnt++;
-        }
-?>
+            ++$nCnt;
+    }
+    ?>
     </tr>
 <?php
-        foreach ( $aContents as $aOne ) {
-?>
+        foreach ($aContents as $aOne) {
+            ?>
     <tr class="b-layout__tr">
-        <td class="b-layout__left" colspan="<?=($nShifts+1)?>">
+        <td class="b-layout__left" colspan="<?=($nShifts + 1)?>">
             <div class="b-layout__h3"><?=$aOne['name']?></div>
         </td>
     </tr>
@@ -56,8 +61,8 @@ if ( $nShifts ) {
             <div class="b-layout__txt">Кол-во потоков</div>
         </td>
 <?php
-            foreach ( $aStreams[$aOne['id']] as $nShiftId => $nStreams ) {
-?>
+            foreach ($aStreams[$aOne['id']] as $nShiftId => $nStreams) {
+                ?>
         <td class="b-layout__one b-layout__one_width_100 b-layout__one_padbot_30 i-button">
             <a onclick="user_content.downShiftsContents(this);" href="javascript:void(0);" class="b-button b-button_padright_3 b-button_poll_minus"></a>&#160;&#160;<div class="b-combo b-combo_inline-block b-combo_margtop_-5">
                 <div class="b-combo__input b-combo__input_width_35">
@@ -66,12 +71,14 @@ if ( $nShifts ) {
             </div>&#160;&#160;<a onclick="user_content.upShiftsContents(this);" href="javascript:void(0);" class="b-button b-button_padright_3 b-button_poll_plus"></a>
         </td>
 <?php
+
             }
-?>
+            ?>
     </tr>
 <?php
+
         }
-?>
+    ?>
 </table>
 </div>
 
@@ -84,10 +91,8 @@ if ( $nShifts ) {
 </form>
 <?php
 
-}
-else {
-    
-?>
+} else {
+    ?>
 Перед настройкой потоков необходимо настроить <a href="/siteadmin/user_content/?site=shifts">смены</a>.
 <?php
 

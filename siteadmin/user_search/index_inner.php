@@ -1,12 +1,15 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; } 
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/xajax/admin_log.common.php' );
-$xajax->printJavascript( '/xajax/' );
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/admin_log.common.php';
+$xajax->printJavascript('/xajax/');
 
 $sZeroClipboard = '';
 
 // права админа
-$bHasAll      = hasPermissions( 'all' );
-$bHasPayments = hasPermissions( 'payments' );
+$bHasAll = hasPermissions('all');
+$bHasPayments = hasPermissions('payments');
 ?>
 <script type="text/javascript">
 banned.addContext( 'admin_user_search', -1, '', '' );
@@ -81,10 +84,10 @@ banned.zero = true;
                     <label class="form-l">Телефон:</label>
                     <div class="form-value fvs">
                         <input value="<?=$search_phone?>" name="search_phone" id="search_phone" type="text" class="i-txt fvsi" /><br/>
-						<div class="b-check">
-							<input id="search_phone_exact" class="b-check__input" name="search_phone_exact" type="checkbox" value="1" <?=($search_phone_exact ? ' checked="checked"' : '')?> />
-							<label for="search_phone_exact" class="b-check__label b-check__label_fontsize_13">точное совпадение</label>
-						</div>
+                        <div class="b-check">
+                            <input id="search_phone_exact" class="b-check__input" name="search_phone_exact" type="checkbox" value="1" <?=($search_phone_exact ? ' checked="checked"' : '')?> />
+                            <label for="search_phone_exact" class="b-check__label b-check__label_fontsize_13">точное совпадение</label>
+                        </div>
                     </div>
                 </div>
                 */ ?>
@@ -131,7 +134,7 @@ banned.zero = true;
 								</div>
                 </div>
                 <button onclick="getMassBanUser('admin_user_search')" type="button">Блокировка/Разблок.</button>
-                <button onclick="getMassWarnUser()" type="button" <?=($status == '1' ? 'style="display:none;"' : '' )?>>Сделать предупреждение</button>
+                <button onclick="getMassWarnUser()" type="button" <?=($status == '1' ? 'style="display:none;"' : '')?>>Сделать предупреждение</button>
                 <?php /*if ( $bHasPayments ) { ?>
                 <button onclick="adminLogMassMoneyBlock('block');" type="button">Заблокировать деньги</button>
                 <?php }*/ ?>
@@ -145,44 +148,52 @@ banned.zero = true;
 <style type="text/css">.search-item img{ float:none;}</style>
 <div class="search-lenta">
 
-<?php if ( $users ) { 
-    foreach ( $users as $aOne ) {  
-        $sObjName = $aOne['uname'] .' '. $aOne['usurname'] .' ['. $aOne['login'].']';
+<?php if ($users) {
+    foreach ($users as $aOne) {
+        $sObjName = $aOne['uname'].' '.$aOne['usurname'].' ['.$aOne['login'].']';
         $sObjLink = "/users/{$aOne['login']}";
-?>
+        ?>
     <div class="search-item c">
         <div class="form-check">
-            <input name="chk_users[]" id="chk_users<?=$aOne['uid']?>" value="<?=$aOne['uid']?>" type="checkbox" <? if ((hasGroupPermissions('administrator', $aOne['uid']) || hasGroupPermissions('moderator', $aOne['uid']))) { ?>disabled<? } ?>/>
+            <input name="chk_users[]" id="chk_users<?=$aOne['uid']?>" value="<?=$aOne['uid']?>" type="checkbox" <?php if ((hasGroupPermissions('administrator', $aOne['uid']) || hasGroupPermissions('moderator', $aOne['uid']))) {
+    ?>disabled<?php 
+}
+        ?>/>
         </div>
         <div class="div-user">
         	<a target="_blank" href="<?=$sObjLink?>"><?=view_avatar($aOne['login'], $aOne['photo'], 1)?></a><br>
         	</div>
         <div class="search-item-info">
         	<div class="search-right" id="search_right_<?=$aOne['uid']?>"> 
-                <?php if ( $bHasAll || $bHasPayments ) { ?>
+                <?php if ($bHasAll || $bHasPayments) {
+    ?>
             	<span><a target="_blank" href="/siteadmin/bill/?login=<?=$aOne['login']?>" class="color-45a300">Счет пользователя</a></span>
-            	<?php } ?>
-            	<?php $sOnclick = ' onclick="xajax_getUserWarns(' . $aOne['uid'] . ',\'admin_user_search\',\'user_search\');" href="javascript:void(0);"'; ?>
-            	<?php if ( $aOne['warn'] > 0 ): ?>
+            	<?php 
+}
+        ?>
+            	<?php $sOnclick = ' onclick="xajax_getUserWarns('.$aOne['uid'].',\'admin_user_search\',\'user_search\');" href="javascript:void(0);"';
+        ?>
+            	<?php if ($aOne['warn'] > 0): ?>
             	<span class="color-e37101"><a <?=$sOnclick?>>Предупреждений: <div id="warn_<?=$aOne['uid']?>" class="warncount-<?=$aOne['uid']?>"><?=$aOne['warn']?></div></a></span>
             	<?php else: ?>
             	<span><a <?=$sOnclick?> class="lnk-dot-666">Нет предупреждений</a></span>
-            	<?php endif; ?>
+            	<?php endif;
+        ?>
             </div>
             <h4 id="user<?=$aOne['uid']?>"><a target="_blank" href="<?=$sObjLink?>" class="<?=(is_emp($aOne['role']) ? 'employer' : 'freelancer')?>-name user-name"><?=$sObjName?></a> <?=view_mark_user(array(
-                                    "login"      => $aOne['login'],
-                                    "is_pro"  => $aOne['is_pro'],
-									"is_pro_test" => $aOne['is_pro_test'],
-									"is_team"     => $aOne['is_team'],
-									"role"        => $aOne['role']), '', true, '');
-            ?></h4>
+                                    'login' => $aOne['login'],
+                                    'is_pro' => $aOne['is_pro'],
+                                    'is_pro_test' => $aOne['is_pro_test'],
+                                    'is_team' => $aOne['is_team'],
+                                    'role' => $aOne['role'], ), '', true, '');
+        ?></h4>
             
             <?php
             // редактирование отношения пользователей старт
-            if ( !$aOne['role'][0] ) { // только для фрилансеров
+            if (!$aOne['role'][0]) { // только для фрилансеров
                 $sClass = $aOne['pop'] < 0  ? 'b-voting__link_dot_red' : 'b-voting__link_dot_green';
-                $sPop   = $aOne['pop'] != 0 ? $aOne['pop'] : '0';
-            ?>
+                $sPop = $aOne['pop'] != 0 ? $aOne['pop'] : '0';
+                ?>
             <div id="pop_show<?=$aOne['uid']?>" class="b-voting b-voting_float_right">
                 <a onclick="upPopValue(<?=$aOne['uid']?>);" href="javascript:void(0);" class="b-button b-button_poll_plus b-voiting__right"></a>
                 <a onclick="downPopValue(<?=$aOne['uid']?>);" href="javascript:void(0);" class="b-button b-button_poll_minus b-voiting__left "></a>
@@ -194,25 +205,32 @@ banned.zero = true;
                 <a href="javascript:void(0);" onclick="unsetPopForm(<?=$aOne['uid']?>)" class="lnk-dot-999">Нет</a>
             </div>
             <?php
+
             }
             // редактирование отношения пользователей стоп
             ?>
             
-            <? if (!(hasGroupPermissions('administrator', $aOne['uid']) || hasGroupPermissions('moderator', $aOne['uid']))) { ?>
+            <?php if (!(hasGroupPermissions('administrator', $aOne['uid']) || hasGroupPermissions('moderator', $aOne['uid']))) {
+    ?>
             <div class="form">
                   <b class="b1"></b>
                   <b class="b2"></b>
                   <div class="form-in">
                       <ul class="c">
-                          <?php $sBanTitle = (!$aOne['is_banned'] && !$aOne['ban_where']) ? 'Заблокировать' : 'Разблокировать'; ?>
+                          <?php $sBanTitle = (!$aOne['is_banned'] && !$aOne['ban_where']) ? 'Заблокировать' : 'Разблокировать';
+    ?>
                           <li class="color-a30000 comm-ban-<?=$aOne['uid']?>"><a href="javascript:void(0);" onclick="banned.userBan(<?=$aOne['uid']?>, 'admin_user_search',0)"><?=$sBanTitle?></a></li>
                           
-                          <li class="color-a30000 warnbutton-<?= $aOne['uid'] ?>" id="warn-<?=$aOne['uid']?>" <?php if ( $aOne['is_banned'] ) { ?>style="display: none;"<?php } ?>>
-                          <?php if ( $aOne['warn'] < 3 ): ?>
+                          <li class="color-a30000 warnbutton-<?= $aOne['uid'] ?>" id="warn-<?=$aOne['uid']?>" <?php if ($aOne['is_banned']) {
+    ?>style="display: none;"<?php 
+}
+    ?>>
+                          <?php if ($aOne['warn'] < 3): ?>
                           <a onclick="banned.warnUser(<?=$aOne['uid']?>, 0, 'user_search', 'admin_user_search', 0); return false;" href="javascript:void(0);">Сделать предупреждение</a>
                           <?php else: ?>
                           <a onclick="adminLogWarnMax()" href="javascript:void(0);">Сделать предупреждение</a>
-                          <?php endif; ?>
+                          <?php endif;
+    ?>
                           </li>
                           
                           <?php /*if ( $bHasPayments ) { ?>
@@ -222,15 +240,20 @@ banned.zero = true;
                           ?>
                           <li id="money_<?=$aOne['uid']?>" class="color-a30000"><a onclick="if (confirm('Вы уверены что хотите <?=mb_strtolower($sTitle)?>?')) xajax_updateMoneyBlock(JSON.encode([<?=$aOne['uid']?>]),'<?=$sAction?>')" href="javascript:void(0);"><?=$sTitle?></a></li>
                           <?php }*/ ?>
-                          <?php if ( $aOne['active'] == 'f' ) { ?>
+                          <?php if ($aOne['active'] == 'f') {
+    ?>
                           <li id="activate_<?=$aOne['uid']?>" class="color-a30000"><a onclick="if (confirm('Вы уверены, что хотите активировать пользователя?')) xajax_activateUser(JSON.encode([<?=$aOne['uid']?>]),<?=($status == '2' ? 1 : 0)?>)" href="javascript:void(0);">Активировать</a></li>
-                          <?php } ?>
+                          <?php 
+}
+    ?>
                       </ul>
                   </div>
                   <b class="b2"></b>
                   <b class="b1"></b>
              </div>
-             <? } ?>
+             <?php 
+}
+        ?>
              
              <div id="warnreason-<?=$aOne['uid']?>" style="margin-bottom: 15px; display: none">&nbsp;</div>
              
@@ -245,49 +268,55 @@ banned.zero = true;
             </div>
             
             <?php 
-            if ( $aOne['phone'] || $aOne['phone_1'] || $aOne['phone_2'] || $aOne['phone_3'] ) { 
+            if ($aOne['phone'] || $aOne['phone_1'] || $aOne['phone_2'] || $aOne['phone_3']) {
                 $aPhone = array();
-                
-                if ( $aOne['phone'] ) {
+
+                if ($aOne['phone']) {
                     $aPhone[] = $aOne['phone'];
                 }
-                
-                for ( $i=1; $i<=3; $i++ ) {
-                    if ( $aOne['phone_'.$i] ) {
+
+                for ($i = 1; $i <= 3; ++$i) {
+                    if ($aOne['phone_'.$i]) {
                         $aPhone[] = $aOne['phone_'.$i];
                     }
-            	}
-            ?>
+                }
+                ?>
             <div class="safety">
             <b>Телефон:</b> <?=implode(', ', $aPhone)?>
             </div>
-            <?php } ?>
+            <?php 
+            }
+        ?>
             
-            <?php if ( $aOne['safety_phone'] ): ?>
+            <?php if ($aOne['safety_phone']): ?>
             <input type="hidden" name="safety_phone_hidden<?=$aOne['uid']?>" id="safety_phone_hidden<?=$aOne['uid']?>" value="<?=$aOne['safety_phone']?>">
             <div id="safety_phone_show<?=$aOne['uid']?>" class="safety">
-            <b>Привязка к телефону:</b> <span id="safety_phone_value<?=$aOne['uid']?>" class="safetyvalue"><?=$aOne['safety_phone']?></span><span id="safety_only_phone_show<?=$aOne['uid']?>" style="display: <?=( $aOne['safety_only_phone'] == 't' ? 'inline' : 'none' )?>">&nbsp;Только по SMS</span> <span id="is_safety_mob_show<?=$aOne['uid']?>" style="display: <?=( $aOne['is_safety_mob'] == 't' ? 'inline' : 'none' )?>">&nbsp;Вход в финансы</span> <a href="javascript:void(0);" onclick="setSafetyPhoneForm(<?=$aOne['uid']?>)" class="lnk-dot-999">Изменить</a>
+            <b>Привязка к телефону:</b> <span id="safety_phone_value<?=$aOne['uid']?>" class="safetyvalue"><?=$aOne['safety_phone']?></span><span id="safety_only_phone_show<?=$aOne['uid']?>" style="display: <?=($aOne['safety_only_phone'] == 't' ? 'inline' : 'none')?>">&nbsp;Только по SMS</span> <span id="is_safety_mob_show<?=$aOne['uid']?>" style="display: <?=($aOne['is_safety_mob'] == 't' ? 'inline' : 'none')?>">&nbsp;Вход в финансы</span> <a href="javascript:void(0);" onclick="setSafetyPhoneForm(<?=$aOne['uid']?>)" class="lnk-dot-999">Изменить</a>
             </div>
             <div  id="safety_phone_edit<?=$aOne['uid']?>" class="safety" style="display: none;">
             <b>Привязка к телефону:</b> 
             <input type="text" name="safety_phone<?=$aOne['uid']?>" id="safety_phone<?=$aOne['uid']?>" value="<?=$aOne['safety_phone']?>" disabled="disabled">  
-            <input type="checkbox" name="safety_only_phone<?=$aOne['uid']?>" id="safety_only_phone<?=$aOne['uid']?>" value="1" <?=( $aOne['safety_only_phone'] == 't' ? ' checked' : '' )?>><span>Только по SMS</span>
-            <input type="checkbox" name="safety_mob_phone<?=$aOne['uid']?>" id="safety_mob_phone<?=$aOne['uid']?>" value="1" <?=( $aOne['is_safety_mob'] == 't' ? ' checked' : '' )?>><span>Вход в финансы</span>
+            <input type="checkbox" name="safety_only_phone<?=$aOne['uid']?>" id="safety_only_phone<?=$aOne['uid']?>" value="1" <?=($aOne['safety_only_phone'] == 't' ? ' checked' : '')?>><span>Только по SMS</span>
+            <input type="checkbox" name="safety_mob_phone<?=$aOne['uid']?>" id="safety_mob_phone<?=$aOne['uid']?>" value="1" <?=($aOne['is_safety_mob'] == 't' ? ' checked' : '')?>><span>Вход в финансы</span>
             &nbsp;
             <a href="javascript:void(0);" onclick="updateSafetyPhone(<?=$aOne['uid']?>)" class="lnk-dot-999">Да</a>&nbsp;
             <a href="javascript:void(0);" onclick="unsetSafetyPhoneForm(<?=$aOne['uid']?>)" class="lnk-dot-999">Нет</a>
             </div>
-            <?php endif; ?>
+            <?php endif;
+        ?>
             
             <p><a href="javascript:void(0);" onclick="user_search.setIpFilter('reg_ip_<?=$aOne['uid']?>');" class="lnk-dot-666" title="Добавить IP в фильтр"><b>IP при регистрации:</b></a>  <span id="reg_ip_<?=$aOne['uid']?>" style="display: inline; padding-bottom:15px;"><?=$aOne['reg_ip']?></span> &#160;&#160;&#160;   <a href="javascript:void(0);" onclick="user_search.setIpFilter('last_ip_<?=$aOne['uid']?>');" class="lnk-dot-666" title="Добавить IP в фильтр"><b>Последний IP:</b></a> <span id="last_ip_<?=$aOne['uid']?>" style="display: inline; padding-bottom:15px;"><?=$aOne['last_ip']?></span> &#160;&#160;&#160; <a onclick="xajax_getLastIps(<?=$aOne['uid']?>);" href="javascript:void(0);" class="lnk-dot-999">Последние 10 IP</a></p>
             
             <p><a href="javascript:void(0);" onclick="user_search.stopNotifications(<?=$aOne['uid']?>, '<?=(is_emp($aOne['role']) ? 'emp' : 'flr')?>');" class="lnk-dot-666" title="Отключить все уведомления"><b>Отключить все уведомления</b></a></p>
             <p id="verify<?=$aOne['uid']?>">
-                <?php if($aOne['is_verify'] == 't') { ?>
+                <?php if ($aOne['is_verify'] == 't') {
+    ?>
                     <a href="javascript:void(0);" onclick="user_search.setVerification(<?=$aOne['uid']?>, false);" class="lnk-dot-666" title="Снять верификацию"><b>Снять верификацию</b></a>
-                <?php } else {//if ?>
+                <?php 
+} else {//if ?>
                     <a href="javascript:void(0);" onclick="user_search.setVerification(<?=$aOne['uid']?>, true);" class="lnk-dot-666" title="Дать верификацию"><b>Дать верификацию</b></a>
-                <?php }//else?>
+                <?php 
+}//else?>
             </p>
             
             <?php $sZeroClipboard .=  "clip_last_{$aOne['uid']} = new ZeroClipboard.Client();
@@ -302,7 +331,8 @@ banned.zero = true;
                 clip_reg_{$aOne['uid']}.addEventListener('mouseOver', function (client) {
                     clip_reg_{$aOne['uid']}.setText( $('reg_ip_{$aOne['uid']}').get('html') );
                 });
-                clip_reg_{$aOne['uid']}.glue('reg_ip_{$aOne['uid']}');"; ?>
+                clip_reg_{$aOne['uid']}.glue('reg_ip_{$aOne['uid']}');";
+        ?>
             
             <ul class="admin-links">
                 <li style="padding: 0 0 10px;">
@@ -355,17 +385,18 @@ banned.zero = true;
     
 
 <?php
+
     }
-      
-    if ( $pages > 1 ) {
-        $sHref = e_url( 'page', null );
-        $sHref = e_url( 'page', '', $sHref );
-        echo get_pager2( $pages, $page, $sHref );
+
+    if ($pages > 1) {
+        $sHref = e_url('page', null);
+        $sHref = e_url('page', '', $sHref);
+        echo get_pager2($pages, $page, $sHref);
     }
-    
-    echo printPerPageSelect( $log_pp );
-    
-?>
+
+    echo printPerPageSelect($log_pp);
+
+    ?>
     <!-- массовые предупреждения старт -->
     <div id="ov-notice6" class="overlay ov-out" style="display: none;">
         <b class="c1"></b>
@@ -381,14 +412,16 @@ banned.zero = true;
                         <div class="form-value reason">
                             <select name="reason_id" id="bfrm_sel_0" onchange="banned.setReason(0);">
                                 <option value="">Указать вручную</option>
-                                <?php if ( $aReasons ) {
-                                	foreach ( $aReasons as $aOne ) { 
-                                        $sBold = $aOne['is_bold'] == 't' ? ' style="background-color: #cdcdcd;"' : ' style="color: #777;"';
-                                ?>
+                                <?php if ($aReasons) {
+    foreach ($aReasons as $aOne) {
+        $sBold = $aOne['is_bold'] == 't' ? ' style="background-color: #cdcdcd;"' : ' style="color: #777;"';
+        ?>
                                 	<option value="<?=$aOne['id']?>" <?=$sBold?>><?=$aOne['reason_name']?></option>
                                 	<?php
-                                	}
-                            	} ?>
+
+    }
+}
+    ?>
     						</select>
                             <textarea name="admin_comment" id="bfrm_0" cols="" rows=""></textarea>
                         </div>
@@ -408,34 +441,34 @@ banned.zero = true;
     
     <!-- редактирование предупреждения старт -->
     <?php
-    include_once( $_SERVER['DOCUMENT_ROOT'] . '/user/warn_overlay.php' );
+    include_once $_SERVER['DOCUMENT_ROOT'].'/user/warn_overlay.php';
     ?>
     <!-- редактирование предупреждения стоп -->
     
     <!-- редактирование бана старт -->
     <?php
-    include_once( $_SERVER['DOCUMENT_ROOT'] . '/user/ban_overlay.php' );
+    include_once $_SERVER['DOCUMENT_ROOT'].'/user/ban_overlay.php';
     ?>
     <!-- редактирование бана стоп -->
     
     <!-- список предупреждений пользователя старт -->
     <?php
-    include_once( $_SERVER['DOCUMENT_ROOT'] . '/siteadmin/admin_log/warn_overlay.php' );
+    include_once $_SERVER['DOCUMENT_ROOT'].'/siteadmin/admin_log/warn_overlay.php';
     ?>
     <!-- список предупреждений пользователя стоп -->
     
     <!-- список последних 10 IP/email пользователя старт -->
     <?php
-    include_once( $_SERVER['DOCUMENT_ROOT'] . '/siteadmin/admin_log/last10_overlay.php' );
+    include_once $_SERVER['DOCUMENT_ROOT'].'/siteadmin/admin_log/last10_overlay.php';
     ?>
     <!-- список последних 10 IP/email пользователя стоп -->
 <?php
-    
-}
-elseif ( $cmd == 'filter' ) {
-?>
+
+} elseif ($cmd == 'filter') {
+    ?>
     Нет пользователей, удовлетворяющих условиям выборки
 <?php
+
 }
 
 ?>
@@ -444,8 +477,8 @@ elseif ( $cmd == 'filter' ) {
 
 <script type="text/javascript">
 window.addEvent('domready', function() {
-    <?
-    if ( $sZeroClipboard ) {
+    <?php
+    if ($sZeroClipboard) {
         echo 'ZeroClipboard.setMoviePath("'.$GLOBALS['host'].'/scripts/zeroclipboard/ZeroClipboard.swf");';
         echo $sZeroClipboard;
     }

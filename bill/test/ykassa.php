@@ -3,32 +3,28 @@
 
 define('NO_CSRF', 1);
 
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/yandex_kassa.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/payment_keys.php';
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/yandex_kassa.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/payment_keys.php");
-
-
-if(is_release()) exit;
-
+if (is_release()) {
+    exit;
+}
 
 $uid = get_uid(false);
-$key = 'post_payment_' . $uid;
+$key = 'post_payment_'.$uid;
 $memBuff = new memBuff();
 
-
-
 if (isset($_GET['paymentAviso'])) {
-
-    $host    = $GLOBALS['host'];
+    $host = $GLOBALS['host'];
     $payment = $memBuff->get($key);
     $paypost = $payment;
     $_SERVER['HTTP_X_REAL_IP'] = '77.75.157.166';
-    
+
     //Что нам говорит яндекс
     $post = array(
         'requestDatetime' => date('c'),
-        'action' =>	'paymentAviso',
+        'action' => 'paymentAviso',
         'shopId' => $payment['ShopID'],//yandex_kassa::SHOPID_DEPOSIT, //Нужно выяснить, что платеж через БС - и тогда ставить SHOPID_DEPOSIT
         'invoiceId' => $payment['invoceId'],
         'customerNumber' => $payment['customerNumber'],
@@ -40,13 +36,13 @@ if (isset($_GET['paymentAviso'])) {
         'shopSumCurrencyPaycash' => 643,
         'shopSumBankPaycash' => 1001,
         'paymentPayerCode' => 42007148320,
-        'paymentType' => $payment['paymentType']
+        'paymentType' => $payment['paymentType'],
     );
-    
-    if(isset($payment['orderId'])) {
+
+    if (isset($payment['orderId'])) {
         $post['orderId'] = $payment['orderId'];
-    }      
-    
+    }
+
     $post['md5'] = strtoupper(md5(implode(';', array(
         $post['action'],
         $post['orderSumAmount'],
@@ -55,11 +51,11 @@ if (isset($_GET['paymentAviso'])) {
         $post['shopId'],
         $post['invoiceId'],
         $post['customerNumber'],
-        YK_KEY
+        YK_KEY,
     ))));
 
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $host . "/income/ykassa.php");
+    curl_setopt($ch, CURLOPT_URL, $host.'/income/ykassa.php');
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_USERPWD, BASIC_AUTH);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
@@ -67,22 +63,20 @@ if (isset($_GET['paymentAviso'])) {
     $res = curl_exec($ch);
     $complete = ob_get_clean();
 
-    echo "<p>Результат <strong>paymentAviso</strong>:</p>";
+    echo '<p>Результат <strong>paymentAviso</strong>:</p>';
     echo '<pre>';
     print_r(htmlspecialchars($complete));
-    echo '</pre>';  
-
+    echo '</pre>';
 } elseif (isset($_GET['checkOrder'])) {
-    
-    $host    = $GLOBALS['host'];
+    $host = $GLOBALS['host'];
     $payment = $memBuff->get($key);
     $paypost = $payment;
     $_SERVER['HTTP_X_REAL_IP'] = '77.75.157.166';
-    
+
     //Что нам говорит яндекс
     $post = array(
         'requestDatetime' => date('c'),
-        'action' =>	'checkOrder',
+        'action' => 'checkOrder',
         'shopId' => $payment['ShopID'],//yandex_kassa::SHOPID_DEPOSIT, //Нужно выяснить, что платеж через БС - и тогда ставить SHOPID_DEPOSIT
         'invoiceId' => $payment['invoceId'],
         'customerNumber' => $payment['customerNumber'],
@@ -94,13 +88,13 @@ if (isset($_GET['paymentAviso'])) {
         'shopSumCurrencyPaycash' => 643,
         'shopSumBankPaycash' => 1001,
         'paymentPayerCode' => 42007148320,
-        'paymentType' => $payment['paymentType']
+        'paymentType' => $payment['paymentType'],
     );
-    
-    if(isset($payment['orderId'])) {
+
+    if (isset($payment['orderId'])) {
         $post['orderId'] = $payment['orderId'];
-    }    
-    
+    }
+
     $post['md5'] = strtoupper(md5(implode(';', array(
         $post['action'],
         $post['orderSumAmount'],
@@ -109,39 +103,37 @@ if (isset($_GET['paymentAviso'])) {
         $post['shopId'],
         $post['invoiceId'],
         $post['customerNumber'],
-        YK_KEY
-    ))));    
-    
+        YK_KEY,
+    ))));
+
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $host . "/income/ykassa.php");
+    curl_setopt($ch, CURLOPT_URL, $host.'/income/ykassa.php');
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_USERPWD, BASIC_AUTH);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
     ob_start();
     $res = curl_exec($ch);
     $complete = ob_get_clean();
-    
-    echo "<p>Результат <strong>checkOrder</strong>:</p>";
+
+    echo '<p>Результат <strong>checkOrder</strong>:</p>';
     echo '<pre>';
     print_r(htmlspecialchars($complete));
     echo '</pre>';
-    
-} elseif(isset($_GET['cancel'])) { //Отказ от платежа
-    header("Location: /bill/fail");
+} elseif (isset($_GET['cancel'])) { //Отказ от платежа
+    header('Location: /bill/fail');
     exit;
-} elseif(isset($_GET['success'])) {
-    $host    = $GLOBALS['host'];
+} elseif (isset($_GET['success'])) {
+    $host = $GLOBALS['host'];
     $payment = $memBuff->get($key);
-    
+
     $_SERVER['HTTP_X_REAL_IP'] = '77.75.157.166';
-    
-    
-    $invoceId    = rand(1, 50000);
-    
+
+    $invoceId = rand(1, 50000);
+
     //Что нам говорит яндекс
     $post = array(
         'requestDatetime' => date('c'),
-        'action' =>	'checkOrder',
+        'action' => 'checkOrder',
         'shopId' => $payment['ShopID'],//yandex_kassa::SHOPID_DEPOSIT, //Нужно выяснить, что платеж через БС - и тогда ставить SHOPID_DEPOSIT
         'invoiceId' => $invoceId,
         'customerNumber' => $payment['customerNumber'],
@@ -153,13 +145,13 @@ if (isset($_GET['paymentAviso'])) {
         'shopSumCurrencyPaycash' => 643,
         'shopSumBankPaycash' => 1001,
         'paymentPayerCode' => 42007148320,
-        'paymentType' => $payment['paymentType']
+        'paymentType' => $payment['paymentType'],
     );
-    
-    if(isset($payment['orderId'])) {
+
+    if (isset($payment['orderId'])) {
         $post['orderId'] = $payment['orderId'];
     }
-    
+
     $post['md5'] = strtoupper(md5(implode(';', array(
         $post['action'],
         $post['orderSumAmount'],
@@ -168,30 +160,28 @@ if (isset($_GET['paymentAviso'])) {
         $post['shopId'],
         $post['invoiceId'],
         $post['customerNumber'],
-        YK_KEY
+        YK_KEY,
     ))));
 
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $host . "/income/ykassa.php");
+    curl_setopt($ch, CURLOPT_URL, $host.'/income/ykassa.php');
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_USERPWD, BASIC_AUTH);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
     ob_start();
     $res = curl_exec($ch);
     $complete = ob_get_clean();
-    
-    echo "<p>Результат <strong>checkOrder</strong>:</p>";
+
+    echo '<p>Результат <strong>checkOrder</strong>:</p>';
     echo '<pre>';
     print_r(htmlspecialchars($complete));
     echo '</pre>';
-    
-    
+
     $xmlObj = @simplexml_load_string($complete);
-    
+
     //делаем уведомление подтверждения 
     //если запрос небыл отвергнут сайтом
-    if($xmlObj && (int)$xmlObj->attributes()->code === 0)
-    {
+    if ($xmlObj && (int) $xmlObj->attributes()->code === 0) {
         sleep(2);
 
         $post['action'] = 'paymentAviso';
@@ -203,44 +193,44 @@ if (isset($_GET['paymentAviso'])) {
             $post['shopId'],
             $post['invoiceId'],
             $post['customerNumber'],
-            YK_KEY
+            YK_KEY,
         ))));
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $host . "/income/ykassa.php");
+        curl_setopt($ch, CURLOPT_URL, $host.'/income/ykassa.php');
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_USERPWD, BASIC_AUTH);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
         ob_start();
         $res = curl_exec($ch);
         $complete = ob_get_clean();
-        
-        echo "<p>Результат <strong>paymentAviso</strong>:</p>";
+
+        echo '<p>Результат <strong>paymentAviso</strong>:</p>';
         echo '<pre>';
         print_r(htmlspecialchars($complete));
         echo '</pre>';
     }
-    
+
     echo '<p><a href="/bill/success/">Вернуться в магазин</a></p>';
     exit;
 } else {
     //Данные платежной формы
     $paypost = $_POST;
-    
+
     //Генерируем invoceId один для всей сесии
     $paypost['invoceId'] = rand(1, 50000);
-    
+
     //Сохраняем в сессию, т.к. яндекс 
     //это помнит при двух последующих запросах
     $memBuff->set($key, $paypost);
 }
 
 $payway = array(
-    yandex_kassa::PAYMENT_YD => "Яндекс.Деньги",
-    yandex_kassa::PAYMENT_AC => "Карта",
-    yandex_kassa::PAYMENT_WM => "Webmoney",
-    yandex_kassa::PAYMENT_AB => "Альфа-Клик",
-    yandex_kassa::PAYMENT_SB => "Сбербанк Онлайн"
+    yandex_kassa::PAYMENT_YD => 'Яндекс.Деньги',
+    yandex_kassa::PAYMENT_AC => 'Карта',
+    yandex_kassa::PAYMENT_WM => 'Webmoney',
+    yandex_kassa::PAYMENT_AB => 'Альфа-Клик',
+    yandex_kassa::PAYMENT_SB => 'Сбербанк Онлайн',
 );
 ?>
 

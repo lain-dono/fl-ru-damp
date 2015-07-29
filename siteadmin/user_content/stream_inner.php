@@ -9,19 +9,22 @@
 <div id="my_div_all">
     
 <?php
-if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/xajax/user_content.common.php' );
-$xajax->printJavascript( '/xajax/' );
+if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/user_content.common.php';
+$xajax->printJavascript('/xajax/');
 
-if ( $checkStream ) {
+if ($checkStream) {
     $sContentName = '';
-    
-    foreach ($user_content->contents as $aOne ) {
-        if ( $aOne['id'] == $sContentId ) {
+
+    foreach ($user_content->contents as $aOne) {
+        if ($aOne['id'] == $sContentId) {
             $sContentName = $aOne['name'];
         }
     }
-?>
+    ?>
     
 <?php /*
 <a href="javascript:void(0);" id="my_close" class="b-button b-button_rectangle_color_green b-button_float_right">
@@ -98,9 +101,8 @@ window.addEvent('domready', function() {
 </script>
 <?php
 
-}
-else {
-/*
+} else {
+    /*
 ?>
 <a href="/siteadmin/user_content/?site=choose" class="b-button b-button_rectangle_color_green b-button_float_right">
     <span class="b-button__b1">
@@ -109,7 +111,7 @@ else {
         </span>
     </span>
 </a>
-*/ 
+*/
 ?>
 <div class="b-post b-post_pad_10_15_15"><span style="color: #cc4642; font-weight: bold;">Захват потока не удался</span></div>
 <?php

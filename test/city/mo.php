@@ -1,23 +1,19 @@
 <?php
 
 /**
- * Получить города Московской области и найти возможные ID у нас
+ * Получить города Московской области и найти возможные ID у нас.
  */
-
-ini_set('display_errors',1);
+ini_set('display_errors', 1);
 error_reporting(E_ALL ^ E_NOTICE);
-
 
 ini_set('max_execution_time', 0);
 ini_set('memory_limit', '512M');
 
-if(!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT']))
-{    
-    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME) . '/../../'), '/');
+if (!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT'])) {
+    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME).'/../../'), '/');
 }
 
-
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
 
 //-------------------------------------------------------
 
@@ -33,38 +29,30 @@ $url = 'http://geo.webmoney.ru/XML/XMLGetGeoData.aspx?group=cities&id=1840';
 $data = file_get_contents($url);
 $xml = simplexml_load_string($data);
 $json = json_encode($xml);
-$decodedArray = json_decode($json,TRUE); 
+$decodedArray = json_decode($json, true);
 
 $city = array();
-if(count($decodedArray)){
-    foreach($decodedArray['row'] as $el){
-        $city[] = iconv('utf-8','cp1251',$el['@attributes']['cityName']);
+if (count($decodedArray)) {
+    foreach ($decodedArray['row'] as $el) {
+        $city[] = iconv('utf-8', 'cp1251', $el['@attributes']['cityName']);
     }
 }
 
 //print_r($city);exit;
 
-if($city) {
-    
+if ($city) {
     $col = $DB->col("
         SELECT array_to_string(array_agg(id),',') 
         FROM city 
         WHERE country_id = 1 AND city_name IN(?l)
     ", $city);
-    
+
     //print_r($DB->sql);
     print_r($col);
 }
 
-
-
-
-
 //print_r($decodedArray);
 exit;
-
-
-
 
 /*
 $is_update = isset($_GET['update']);
@@ -95,6 +83,5 @@ if (isset($decodedArray['country']) && !empty($decodedArray['country'])) {
     print_r($sql);
 }
 */
-
 
 exit;

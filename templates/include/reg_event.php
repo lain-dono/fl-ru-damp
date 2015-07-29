@@ -13,7 +13,7 @@
 <script type="text/javascript" src="//conv.indeed.com/pagead/conversion.js"></script>
 <noscript><img height=1 width=1 border=0 src="//conv.indeed.com/pagead/conv/3777544320713870/?script=0"></noscript>
 <!-- End INDEED conversion code -->
-<?php if(!is_release()): ?>
+<?php if (!is_release()): ?>
 <script type="text/javascript">
     console.log('reg_event');
 </script>

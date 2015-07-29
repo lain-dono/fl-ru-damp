@@ -1,6 +1,6 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/static_compress.php");
-$stc = new static_compress;
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/static_compress.php';
+$stc = new static_compress();
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -58,7 +58,7 @@ $stc = new static_compress;
 							</ul>
 						</div>
 			
-			<? include_once ('form.php'); ?>
+			<?php include_once 'form.php'; ?>
 			<object type="application/x-shockwave-flash" data="/images/maintenance/tetris.swf" width="500" height="375">
 				<param name="movie" value="/images/maintenance/tetris.swf" />
 				<param name="quality" value="high" />

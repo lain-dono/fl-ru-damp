@@ -1,22 +1,25 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/professions.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/professions.php';
 
-$filter_apply = ($filter['active'] == "t");
-$filter_categories = professions::GetAllGroupsLite(TRUE);
+$filter_apply = ($filter['active'] == 't');
+$filter_categories = professions::GetAllGroupsLite(true);
 
 $all_mirrored_specs = professions::GetAllMirroredProfsId();
 $mirrored_specs = array();
-for ($is=0; $is<sizeof($all_mirrored_specs); $is++) {
+for ($is = 0; $is < sizeof($all_mirrored_specs); ++$is) {
     $mirrored_specs[$all_mirrored_specs[$is]['main_prof']] = $all_mirrored_specs[$is]['mirror_prof'];
     $mirrored_specs[$all_mirrored_specs[$is]['mirror_prof']] = $all_mirrored_specs[$is]['main_prof'];
 }
 
 $_SESSION['ph_categories'] = $filter['categories'];
 
-$frm_action = "/index.php";
+$frm_action = '/index.php';
 
-if (!sizeof($profs)) {$all_specs = professions::GetAllProfessions("", 0, 1);}
-else                 {$all_specs = $profs;}
+if (!sizeof($profs)) {
+    $all_specs = professions::GetAllProfessions('', 0, 1);
+} else {
+    $all_specs = $profs;
+}
 ?>
 <script type="text/javascript">
     
@@ -25,86 +28,90 @@ else                 {$all_specs = $profs;}
 //2 = фильтр фрилансеров
 var curFBulletsBox = 1;
 
-var filter_user_specs={<?
+var filter_user_specs={<?php
 if ($filter['user_specs']) {
-  $i=0;
-  foreach($filter['user_specs'] as $ms)
-    print(($i++?',':'').$ms.':1'); 
+    $i = 0;
+    foreach ($filter['user_specs'] as $ms) {
+        print(($i++ ? ',' : '').$ms.':1');
+    }
 }
 ?>};
 
 var filter_specs = new Array();
 var filter_specs_ids = new Array();
-<?
+<?php
 $spec_now = 0;
-for ($i=0; $i<sizeof($all_specs); $i++)
-{
-  if ($all_specs[$i]['groupid'] != $spec_now) {
-    $spec_now = $all_specs[$i]['groupid'];
-    echo "filter_specs[".$all_specs[$i]['groupid']."]=[";
-  }
+for ($i = 0; $i < sizeof($all_specs); ++$i) {
+    if ($all_specs[$i]['groupid'] != $spec_now) {
+        $spec_now = $all_specs[$i]['groupid'];
+        echo 'filter_specs['.$all_specs[$i]['groupid'].']=[';
+    }
 
-  echo "[".$all_specs[$i]['id'].",'".$all_specs[$i]['profname']."']";
+    echo '['.$all_specs[$i]['id'].",'".$all_specs[$i]['profname']."']";
 
-  if ($all_specs[$i+1]['groupid'] != $spec_now) {echo "];";}
-  else {echo ",";}
+    if ($all_specs[$i + 1]['groupid'] != $spec_now) {
+        echo '];';
+    } else {
+        echo ',';
+    }
 }
 
 $spec_now = 0;
-for ($i=0; $i<sizeof($all_specs); $i++)
-{
-  if ($all_specs[$i]['groupid'] != $spec_now) {
-    $spec_now = $all_specs[$i]['groupid'];
-    echo "filter_specs_ids[".$all_specs[$i]['groupid']."]={";
-  }
+for ($i = 0; $i < sizeof($all_specs); ++$i) {
+    if ($all_specs[$i]['groupid'] != $spec_now) {
+        $spec_now = $all_specs[$i]['groupid'];
+        echo 'filter_specs_ids['.$all_specs[$i]['groupid'].']={';
+    }
 
-  
-  echo "".$all_specs[$i]['id'].":1";
+    echo ''.$all_specs[$i]['id'].':1';
 
-  if ($all_specs[$i+1]['groupid'] != $spec_now) {echo "};";}
-  else {echo ",";}
+    if ($all_specs[$i + 1]['groupid'] != $spec_now) {
+        echo '};';
+    } else {
+        echo ',';
+    }
 }
 
 ?>
 
-<?php require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/freelancers_filter.php";?>
+<?php require_once $_SERVER['DOCUMENT_ROOT'].'/classes/freelancers_filter.php';?>
 var filter_mirror_specs = <?=freelancers_filters::getMirroredSpecsJsObject($all_mirrored_specs); ?>;
 var filter_bullets = [[],[]];
-<?
+<?php
 if (sizeof($_SESSION['ph_categories'])) {
-  for ($ci=0; $ci<2; $ci++) {
-    $ph_categories[$ci] = array();
-    if (sizeof($_SESSION['ph_categories'][$ci])) {
-      foreach ($_SESSION['ph_categories'][$ci] as $fkey => $fvalue) {
-       if ($fkey) {
-        if ( !freelancers_filters::mirrorExistsInArray($fkey, $ph_categories[$ci], $mirrored_specs) )
-        {
-          if (!$fvalue)
-          {
-            $proftitle = professions::GetGroup($fkey, $error);
-            $proftitle = $proftitle['name'];
-          } else {
-            $proftitle = professions::GetProfName($fkey);
-            $prof_group = professions::GetProfField($fkey, 'prof_group');
-          }
+    for ($ci = 0; $ci < 2; ++$ci) {
+        $ph_categories[$ci] = array();
+        if (sizeof($_SESSION['ph_categories'][$ci])) {
+            foreach ($_SESSION['ph_categories'][$ci] as $fkey => $fvalue) {
+                if ($fkey) {
+                    if (!freelancers_filters::mirrorExistsInArray($fkey, $ph_categories[$ci], $mirrored_specs)) {
+                        if (!$fvalue) {
+                            $proftitle = professions::GetGroup($fkey, $error);
+                            $proftitle = $proftitle['name'];
+                        } else {
+                            $proftitle = professions::GetProfName($fkey);
+                            $prof_group = professions::GetProfField($fkey, 'prof_group');
+                        }
 
-?>
+                        ?>
 filter_bullets[<?=$fvalue?>][<?=$fkey?>] = new Array();
 filter_bullets[<?=$fvalue?>][<?=$fkey?>]['type'] = <?=$fvalue?>;
 filter_bullets[<?=$fvalue?>][<?=$fkey?>]['title'] = '<?=$proftitle?>';
-filter_bullets[<?=$fvalue?>][<?=$fkey?>]['parentid'] = '<?=(!($fvalue)?0:$prof_group)?>';
-<?
+filter_bullets[<?=$fvalue?>][<?=$fkey?>]['parentid'] = '<?=(!($fvalue) ? 0 : $prof_group)?>';
+<?php
           if ($mirrored_specs[$fkey]) {
-            ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['mirror'] = <?=$mirrored_specs[$fkey]?>;<?
+              ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['mirror'] = <?=$mirrored_specs[$fkey]?>;<?php
+
           } else {
-            ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['mirror'] = 0;<?
+              ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['mirror'] = 0;<?php
+
           }
+                    }
+                    $ph_categories[$ci][] = $fkey;
+                }
+            }
         }
-        $ph_categories[$ci][] = $fkey;
-       }
-      }
     }
-  }
 }
 ?>
 
@@ -152,30 +159,34 @@ function FilterCatalogAddCategoryType() {
     <div class="b-menu b-menu_tabs b-menu_relative b-menu_padbot_2">
         <div class="b-menu__filter">
             <span class="b-icon b-icon_top_2 b-icon__filtr b-icon_float_left<?= $filter_apply ? ' b-icon__filtr_on' : ' b-icon__filtr_off' ?> b-icon_margleft_20"></span>
-            <a class="b-menu__link  <?= $filter_apply ? 'b-menu__link_bordbot_dot_6db335' : 'b-menu__link_bordbot_dot_c10600' ?> b-menu__filter_switcher <?= $kind==8 ? "filter-offers" : ""; ?>">Фильтр</a>
+            <a class="b-menu__link  <?= $filter_apply ? 'b-menu__link_bordbot_dot_6db335' : 'b-menu__link_bordbot_dot_c10600' ?> b-menu__filter_switcher <?= $kind == 8 ? 'filter-offers' : ''; ?>">Фильтр</a>
         </div>
          <ul class="b-menu__list"></ul>
     </div>
     
     <form id="frm" action="<?=$frm_action?>?kind=8" method="post">
-        <div id="b_ext_filter" class="b-ext-filter b-ext-filter_zindex_2 <?= !$filter_show?"b-ext-filter_hide":""?>" page="<?=$filter_page?>">
+        <div id="b_ext_filter" class="b-ext-filter b-ext-filter_zindex_2 <?= !$filter_show ? 'b-ext-filter_hide' : ''?>" page="<?=$filter_page?>">
             <input type="hidden" value="post_offers_filter" name="action" />
             <input type="hidden" value="0" name="kind" />
             <div class="b-ext-filter__inner">
                 <div class="b-ext-filter__txt b-ext-filter__txt_padbot_10">
                     Фильтр предложений
-                    <? if ($filter_apply) { ?>
+                    <?php if ($filter_apply) {
+    ?>
                         <span class="b-ext-filter__switcher b-ext-filter__switcher_on">
                                 <span class="b-icon b-icon__filtr b-icon__filtr_on"></span>включен &#160;&#160;&#160;&#160;
                                 <a class="b-ext-filter__link " href="<?=$frm_action?>?kind=8&action=delete_offers_filter" onClick="_gaq.push(['_trackEvent', 'User', '<?=(is_emp() ? 'Employer' : (get_uid(false) ? 'Freelance' : 'Unauthorized'))?>', 'button_filter_delete_catalog']); ga('send', 'event', '<?=(is_emp() ? 'Employer' : (get_uid(false) ? 'Freelance' : 'Unauthorized'))?>', 'button_filter_delete_catalog'); ">Отключить</a>
                         </span>
-                    <? } else { ?>
+                    <?php 
+} else {
+    ?>
                         <span class="b-ext-filter__switcher b-ext-filter__switcher_off">
                                 <span class="b-icon b-icon__filtr b-icon__filtr_off"></span>отключен &#160;&#160;
                                 <a class="b-ext-filter__link " href="<?=$frm_action?>?kind=8&action=activate_offers_filter" onClick="_gaq.push(['_trackEvent', 'User', '<?=(is_emp() ? 'Employer' : (get_uid(false) ? 'Freelance' : 'Unauthorized'))?>', 'button_filter_include_main']); ga('send', 'event', '<?=(is_emp() ? 'Employer' : (get_uid(false) ? 'Freelance' : 'Unauthorized'))?>', 'button_filter_include_main'); ">Включить</a>
                         </span>
-                    <? } ?>
-                    <a class="b-ext-filter__slide <?= !$filter_show?"b-ext-filter__slide_hide":""?> filter-offers" href="#">Cвернуть фильтр<span class="b-ext-filter__toggler b-ext-filter__toggler_up"></span></a>
+                    <?php 
+} ?>
+                    <a class="b-ext-filter__slide <?= !$filter_show ? 'b-ext-filter__slide_hide' : ''?> filter-offers" href="#">Cвернуть фильтр<span class="b-ext-filter__toggler b-ext-filter__toggler_up"></span></a>
                 </div>
                 <div class="b-form b-form_padtop_15">
                     <input name="pf_category" id="pf_category" type="hidden" />
@@ -194,12 +205,17 @@ function FilterCatalogAddCategoryType() {
                             </span> 
                         </span> 
                     </a>
-                    <? if(!is_emp()) {?>
+                    <?php if (!is_emp()) {
+    ?>
                     <div class="b-check b-check_padleft_60 b-check_padtop_8">
-                        <input id="pf_only_my_offs" class="b-check__input" type="checkbox" value="1" <? if ($filter['only_my_offs']=='t') {?>checked="checked" <? } ?>name="pf_only_my_offs" />
+                        <input id="pf_only_my_offs" class="b-check__input" type="checkbox" value="1" <?php if ($filter['only_my_offs'] == 't') {
+    ?>checked="checked" <?php 
+}
+    ?>name="pf_only_my_offs" />
                         <label class="b-check__label " for="pf_only_my_offs">Смотреть только мои предложения </label>
                     </div>
-                    <? }//if?>
+                    <?php 
+}//if?>
                     <ul class="b-ext-filter__list" id="pf_specs"></ul>
                 </div>
                 <div class="b-form b-form_padtop_10 b-form_padleft_57">

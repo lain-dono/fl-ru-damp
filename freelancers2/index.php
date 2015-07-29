@@ -1,26 +1,26 @@
 <?php
 
-$g_page_id = "0|5";
-$rpath = "../";
+$g_page_id = '0|5';
+$rpath = '../';
 $grey_catalog = 1;
 $activ_tab = -1;
 $stretch_page = true;
 $showMainDiv = true;
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/freelancer.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/freelancers_filter.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/country.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/city.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/kwords.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/professions.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stat_collector.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/seo/SeoTags.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/freelancer_binds.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/quick_payment/quickPaymentPopupFrlbind.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/quick_payment/quickPaymentPopupFrlbindup.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/FreelancerCatalog.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/firstpage.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/freelancer.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/freelancers_filter.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/country.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/city.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/kwords.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/professions.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stat_collector.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/seo/SeoTags.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/freelancer_binds.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/quick_payment/quickPaymentPopupFrlbind.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/quick_payment/quickPaymentPopupFrlbindup.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/FreelancerCatalog.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/firstpage.php';
 
 session_start();
 stat_collector::setStamp(); // stamp
@@ -32,11 +32,10 @@ $uid = get_uid();
 $word = __paramInit('string', 'word');
 if ($word) {
     $link = "/freelancers/?action=search&search_string={$word}";
-    header("HTTP/1.1 301 Moved Permanently");
+    header('HTTP/1.1 301 Moved Permanently');
     header("Location: {$link}");
     exit(0);
 }
-
 
 //------------------------------------------------------------------------------
 
@@ -44,10 +43,10 @@ $prof_id = 0;
 $prof_group_id = 0;
 $prof_group_parent_id = 0;
 if (isset($_GET['prof'])) {
-    if (preg_match("/^[0-9]+$/", $_GET['prof'])) {
+    if (preg_match('/^[0-9]+$/', $_GET['prof'])) {
         $link = professions::GetProfLink($_GET['prof']);
         if ($link) {
-            header("HTTP/1.1 301 Moved Permanently");
+            header('HTTP/1.1 301 Moved Permanently');
             header("Location: /freelancers/{$link}/");
             exit(0);
         }
@@ -66,8 +65,8 @@ if (isset($_GET['prof'])) {
         $_GET['region_filter_city'] = $_GET['region_filter_country'];
         $_GET['region_filter_country'] = $_GET['prof'];
     }
-} else if (isset($_POST['prof'])) {
-    if (preg_match("/^[0-9]+$/", $_GET['prof'])) {
+} elseif (isset($_POST['prof'])) {
+    if (preg_match('/^[0-9]+$/', $_GET['prof'])) {
         $prof_id = intvalPgSql(trim($_POST['prof']));
     } else {
         $prof_link = $_POST['prof'];
@@ -80,7 +79,6 @@ if (isset($_GET['prof'])) {
 if (isset($_GET['profession_db_id']) &&
         !(($prof_id > 0 && $prof_id == $_GET['profession_db_id']) ||
         ($prof_group_id > 0 && $prof_group_id == $_GET['profession_db_id']))) {
-
     $link = null;
     if ($_GET['profession_db_id'] > 0) {
         if ($_GET['profession_column_id'] > 0) {
@@ -93,8 +91,8 @@ if (isset($_GET['profession_db_id']) &&
     unset($_GET['profession_db_id'], $_GET['profession_columns'], $_GET['profession_column_id'], $_GET['profession'], $_GET['prof']);
 
     $query_string = stripslashes(http_build_query($_GET));
-    header("HTTP/1.1 301 Moved Permanently");
-    header("Location: /freelancers/" . (($link) ? "{$link}/" : "") . "?{$query_string}");
+    header('HTTP/1.1 301 Moved Permanently');
+    header('Location: /freelancers/'.(($link) ? "{$link}/" : '')."?{$query_string}");
     exit(0);
 }
 
@@ -105,11 +103,11 @@ if (!$page) {
     $page = 1;
 } elseif ($page == 1) {
     $sLocation = e_url('page');
-    header("HTTP/1.1 301 Moved Permanently");
+    header('HTTP/1.1 301 Moved Permanently');
     header("Location: $sLocation");
     exit(0);
 } elseif ($page < 1) {
-    include( ABS_PATH . '/404.php' );
+    include ABS_PATH.'/404.php';
     exit;
 }
 
@@ -117,7 +115,6 @@ if (!$page) {
 
 
 $freelancer = new freelancer();
-
 
 if (!$prof_id && !$prof_group_id) {
     $prof_type = false;
@@ -138,7 +135,7 @@ if (!$prof_id && !$prof_group_id) {
     $prof_title = ($prof_name_arr['title']) ? $prof_name_arr['title'] : $prof_name;
     $prof_type = professions::GetProfType($prof_id);
     $anchor = professions::GetProfessionOrigin($prof_id);
-    $g_page_id = "1|" . $prof_id;
+    $g_page_id = '1|'.$prof_id;
 }
 
 //Мета-теги
@@ -162,7 +159,6 @@ $action = __paramInit('string', 'action', 'action', '');
 
 //Выборка при поиске (не менялась)
 if (in_array($action, array('search', 'search_advanced'))) {
-
     $search_string = __paramInit('htmltext', 'search_string', 'search_string');
     $search_string = html_entity_decode(stripslashes(trim($search_string)), ENT_QUOTES);
 
@@ -177,11 +173,12 @@ if (in_array($action, array('search', 'search_advanced'))) {
     unset($build['prof']);
     $query_string_cat = stripslashes(http_build_query($build));
 
-
 //------------------------------------------------------------------------------
 
     $exp = __paramInit('array_int', 'exp', 'exp');
-    if (count($exp) != 2) $exp = array(0, 0);
+    if (count($exp) != 2) {
+        $exp = array(0, 0);
+    }
 
     if ($exp[0] > $exp[1] && $exp[1] != 0) {
         $a = $exp[0];
@@ -190,7 +187,9 @@ if (in_array($action, array('search', 'search_advanced'))) {
     }
 
     $age = __paramInit('array_int', 'age', 'age');
-    if (count($age) != 2) $age = array(0, 0);
+    if (count($age) != 2) {
+        $age = array(0, 0);
+    }
     if ($age[0] > $age[1] && $age[1] != 0) {
         $a = $_POST['age'][0];
         $age[0] = $age[1];
@@ -205,7 +204,6 @@ if (in_array($action, array('search', 'search_advanced'))) {
         $to_cost = $a;
     }
 
-
     $filter_prof = array();
     if ($prof_id > 0) {
         $filter_prof = array(1 => array($prof_id => 1));
@@ -218,48 +216,46 @@ if (in_array($action, array('search', 'search_advanced'))) {
     }
 
     $filter = array(
-        "is_pro" => $is_pro,
-        'prof' => $filter_prof
+        'is_pro' => $is_pro,
+        'prof' => $filter_prof,
     );
 
     $string_professions = '';
 
-
-    if ($action == "search_advanced") {
+    if ($action == 'search_advanced') {
         $filter = array(
-            "active" => "t",
-            "prof" => $filter_prof,
-            "cost_type" => intval(@$_POST['cost_type_db_id']),
-            "from_cost" => $from_cost,
-            "to_cost" => $to_cost,
-            "curr_type" => intval(@$_POST['curr_type_db_id']),
-            "exp" => is_array($_POST['exp']) ? array_map("intval", $_POST['exp']) : @$_POST['exp'],
-            "exp_from" => $exp[0],
-            "exp_to" => $exp[1],
-            "age" => is_array($_POST['age']) ? array_map("intval", $_POST['age']) : @$_POST['age'],
-            "age_from" => $age[0],
-            "age_to" => $age[1],
-            "country" => (int) @$_POST['location_columns'][0],
-            "city" => (int) @$_POST['location_columns'][1],
-            "in_office" => (bool) @$_POST['in_office'],
-            "in_fav" => (bool) @$_POST['in_fav'],
-            "only_free" => (bool) @$_POST['only_free'],
-            "is_pro" => $is_pro,
-            "is_verify" => (bool) @$_POST['is_verify'],
-            "is_preview" => (bool) @$_POST['is_preview'],
-            "sbr_is_positive" => (bool) @$_POST['sbr_is_positive'],
-            "sbr_not_negative" => (bool) @$_POST['sbr_not_negative'],
-            "opi_is_positive" => (bool) @$_POST['sbr_is_positive'],
-            "opi_not_negative" => (bool) @$_POST['sbr_not_negative']
+            'active' => 't',
+            'prof' => $filter_prof,
+            'cost_type' => intval(@$_POST['cost_type_db_id']),
+            'from_cost' => $from_cost,
+            'to_cost' => $to_cost,
+            'curr_type' => intval(@$_POST['curr_type_db_id']),
+            'exp' => is_array($_POST['exp']) ? array_map('intval', $_POST['exp']) : @$_POST['exp'],
+            'exp_from' => $exp[0],
+            'exp_to' => $exp[1],
+            'age' => is_array($_POST['age']) ? array_map('intval', $_POST['age']) : @$_POST['age'],
+            'age_from' => $age[0],
+            'age_to' => $age[1],
+            'country' => (int) @$_POST['location_columns'][0],
+            'city' => (int) @$_POST['location_columns'][1],
+            'in_office' => (bool) @$_POST['in_office'],
+            'in_fav' => (bool) @$_POST['in_fav'],
+            'only_free' => (bool) @$_POST['only_free'],
+            'is_pro' => $is_pro,
+            'is_verify' => (bool) @$_POST['is_verify'],
+            'is_preview' => (bool) @$_POST['is_preview'],
+            'sbr_is_positive' => (bool) @$_POST['sbr_is_positive'],
+            'sbr_not_negative' => (bool) @$_POST['sbr_not_negative'],
+            'opi_is_positive' => (bool) @$_POST['sbr_is_positive'],
+            'opi_not_negative' => (bool) @$_POST['sbr_not_negative'],
         );
-
 
         if ($filter['cost_type']) {
             $filter['cost'][] = array(
                 'cost_type' => $filter['curr_type'],
                 'cost_from' => $filter['from_cost'],
                 'cost_to' => $filter['to_cost'],
-                'type_date' => $filter['cost_type']
+                'type_date' => $filter['cost_type'],
             );
         }
 
@@ -268,25 +264,24 @@ if (in_array($action, array('search', 'search_advanced'))) {
         $countryCityName = @$countryCityName['name'];
     }
 
-
-    if (!empty($filter["prof"]) && is_array($filter["prof"][1])) {
-        $raw_professions = professions::GetProfessionsTitles(array_keys($filter["prof"][1]));
+    if (!empty($filter['prof']) && is_array($filter['prof'][1])) {
+        $raw_professions = professions::GetProfessionsTitles(array_keys($filter['prof'][1]));
         $a_professions = array();
         foreach ($raw_professions as $profession_item) {
-            $a_professions[$profession_item["name"]] = '(@name_prof "' . $profession_item["name"] . '" | @additional_specs "' . $profession_item["name"] . '")';
+            $a_professions[$profession_item['name']] = '(@name_prof "'.$profession_item['name'].'" | @additional_specs "'.$profession_item['name'].'")';
         }
 
-        $string_professions = '(' . join(" | ", $a_professions) . ')';
+        $string_professions = '('.implode(' | ', $a_professions).')';
     }
 
     $string_query = $search_string;
 
     // @todo Кажется, это никогда не используется?
-    $string_query .=!empty($string_professions) ? ' ' . $string_professions : '';
+    $string_query .= !empty($string_professions) ? ' '.$string_professions : '';
 
     $type = 'users_ext';
-    
-    require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/search/search_ext.php");
+
+    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/search/search_ext.php';
     $search = new searchExt($uid);
     $search->setUserLimit(FRL_PP);
     $search->addElement($type, true, FRL_PP);
@@ -294,12 +289,11 @@ if (in_array($action, array('search', 'search_advanced'))) {
     $elements = $search->getElements();
     $element = $elements[$type];
 
-
     $frls = $element->results;
     $size = $element->total;
     $works = $element->works;
 
-    $content = "search/content.php";
+    $content = 'search/content.php';
 }
 //Обычная выборка при навигации
 else {
@@ -314,22 +308,22 @@ else {
         $pages = $catalog->getPages();
     }
 
-    $cur_page_url = $GLOBALS['host'] . strtok($_SERVER["REQUEST_URI"], '?') . "?" .
-            (($order && $order != 'gnr') ? "order=$order&" : "") .
-            (($direction) ? "dir=$direction&" : "");
+    $cur_page_url = $GLOBALS['host'].strtok($_SERVER['REQUEST_URI'], '?').'?'.
+            (($order && $order != 'gnr') ? "order=$order&" : '').
+            (($direction) ? "dir=$direction&" : '');
 
     //Cсылка для new_paginator()
-    $sHref = "%s" . $cur_page_url . "page=%d%s";
+    $sHref = '%s'.$cur_page_url.'page=%d%s';
 
     if ($page > 1) {
-        $additional_header .= '<link rel="prev" href="' . $cur_page_url . 'page=' . ($page - 1) . '">';
+        $additional_header .= '<link rel="prev" href="'.$cur_page_url.'page='.($page - 1).'">';
     }
 
     if ($page < $pages) {
-        $additional_header .= '<link rel="next" href="' . $cur_page_url . 'page=' . ($page + 1) . '">';
+        $additional_header .= '<link rel="next" href="'.$cur_page_url.'page='.($page + 1).'">';
     }
 
-    $content = "content.php";
+    $content = 'content.php';
 }
 
 //------------------------------------------------------------------------------
@@ -353,7 +347,7 @@ if ($allow_frl_bind || $binded_to) {
         'ammount' => $freelancer_binds->getPrice($prof_use, $is_spec, (bool) $binded_to, $uid),
         'date_stop' => $binded_to,
         'autoshow' => $popup == 'bind_prolong',
-        'addprof' => $is_spec && $freelancer_binds->needAddProf($uid, $prof_use)
+        'addprof' => $is_spec && $freelancer_binds->needAddProf($uid, $prof_use),
     ));
 }
 
@@ -364,7 +358,7 @@ if ($binded_to && !$is_bind_first) {
         'prof_id' => $prof_use,
         'is_spec' => $is_spec,
         'ammount' => $freelancer_binds->getPriceUp($prof_use, $is_spec, $uid),
-        'autoshow' => $popup == 'bind_up'
+        'autoshow' => $popup == 'bind_up',
     ));
 }
 
@@ -372,19 +366,19 @@ $is_binded_hide = $binded_to && !$freelancer_binds->isAllowBind($uid, $prof_use,
 
 //------------------------------------------------------------------------------
 
-unset($_SESSION['payed_frl_' . md5($_SERVER['REQUEST_URI'])]);
+unset($_SESSION['payed_frl_'.md5($_SERVER['REQUEST_URI'])]);
 
 $first_pages = array();
 if ($prof_group_id) {
     $first_pages = firstpage::GetAll($prof_group_id, array(), true);
 } else {
     $first_pages = firstpage::GetAll(
-        $prof_id? : -1, array()
+        $prof_id ?: -1, array()
     );
 }
 
-$_SESSION['payed_frl_' . md5($_SERVER['REQUEST_URI'])] = $first_pages ? : array();
-$_SESSION['payed_frl_prof_id'] = $prof_group_id ? 0 : ($prof_id? : -1);
+$_SESSION['payed_frl_'.md5($_SERVER['REQUEST_URI'])] = $first_pages ?: array();
+$_SESSION['payed_frl_prof_id'] = $prof_group_id ? 0 : ($prof_id ?: -1);
 $_SESSION['payed_frl_prof_group_id'] = $prof_group_id;
 
 if ($popup == 'firstpage_prolong') {
@@ -395,12 +389,12 @@ if ($popup == 'firstpage_prolong') {
     $_SESSION['firstpage_popup'] = '';
 }
 
-$header = "../header.php";
-$footer = "../footer.html";
+$header = '../header.php';
+$footer = '../footer.html';
 $js_file[] = '/css/block/b-text/b-text.js';
 $js_file[] = '/css/block/b-popup/b-popup.js';
 $css_file = array('/css/block/b-icon/__cat/b-icon__cat.css', 'main.css', 'search.css', '/css/nav.css');
 $js_file[] = 'search.js';
 $js_file[] = 'freelancers/freelancers.js'; //@todo: Сюда переносить все inline-скрипты!
 $freelancers_catalog = true;
-include ("../template2.php");
+include '../template2.php';

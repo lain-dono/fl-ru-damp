@@ -1,7 +1,9 @@
-<?php namespace UniversalAnalytics\Track;
+<?php
 
-class CommerceTransactionHit extends Entity {
+namespace UniversalAnalytics\Track;
 
+class CommerceTransactionHit extends Entity
+{
     protected $shortName = 'commercetrans';
 
     protected $attributes = array(
@@ -27,5 +29,4 @@ class CommerceTransactionHit extends Entity {
     protected $required = array(
         'ti',
     );
-
 }

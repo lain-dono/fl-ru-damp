@@ -1,8 +1,8 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/Verification.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Verification.php';
 
-switch($quick_verification_type) {
+switch ($quick_verification_type) {
   case 'promo':
     $qver_title = 'Верификация';
     $qver_btn = 'Закрыть';
@@ -15,7 +15,7 @@ switch($quick_verification_type) {
 $quser = new users();
 $quser->GetUserByUID(get_uid(false));
 
-$_yd_uri_auth = Verification::getYDUriAuth($quick_verification_type=='project'?$project['id']:null);
+$_yd_uri_auth = Verification::getYDUriAuth($quick_verification_type == 'project' ? $project['id'] : null);
 
 ?>
 <script type="text/javascript">
@@ -137,14 +137,14 @@ $_yd_uri_auth = Verification::getYDUriAuth($quick_verification_type=='project'?$
                 <?php if (!is_emp()): ?>
                 Теперь вы можете отвечать на все проекты, помеченные как «Только для верифицированных».
                 <?php endif; ?>
-                <?php if($_GET['vuse'] == 'card'): ?>
+                <?php if ($_GET['vuse'] == 'card'): ?>
                 <br/>
                 Обратите внимание: для верификации с вашей карты было списано 10 рублей. 
                 Эта сумма будет возвращена вам на карту в течение суток.
                 <?php endif; ?>
               </div>
              <div class="b-buttons b-buttons_padtop_10">
-             <a id="quick_ver_window_ok_btn" href="#new_offer" <?= $_GET['vok'] ? "onclick=\"$('quick_ver_window_ok').addClass('b-shadow_hide'); ".($quick_verification_type=="project" ? "window.location.hash = '#new_offer';" : '')."return false;\"" : ""?> class="b-button b-button_flat b-button_flat_green underline"><?=$qver_btn?></a>
+             <a id="quick_ver_window_ok_btn" href="#new_offer" <?= $_GET['vok'] ? "onclick=\"$('quick_ver_window_ok').addClass('b-shadow_hide'); ".($quick_verification_type == 'project' ? "window.location.hash = '#new_offer';" : '').'return false;"' : ''?> class="b-button b-button_flat b-button_flat_green underline"><?=$qver_btn?></a>
              </div>
          </td>
       </tr>

@@ -6,16 +6,18 @@
         question_max_char: <?= commune::POLL_QUESTION_CHARS_MAX ?>,
     };
 </script>
-<?
-if ($len = count($tree))
-    list($nidx, $nlevel) = split(":", $tree[0]);
+<?php
+if ($len = count($tree)) {
+    list($nidx, $nlevel) = split(':', $tree[0]);
+}
 
 if ($len) {
-?>
+    ?>
     <script>var __commCCnt=<?= $len ?></script>
 
 
-<? } ?>
+<?php 
+} ?>
 
 
 <?= $comments_html ?>

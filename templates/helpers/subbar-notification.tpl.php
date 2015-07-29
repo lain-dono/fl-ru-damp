@@ -1,9 +1,8 @@
 <?php
 
 /**
- * Шаблон уведомлений под меню сайта
+ * Шаблон уведомлений под меню сайта.
  */
-
 ?>
 <div class="b-page__desktop">
 	<div class="l-outer w-outer">
@@ -21,9 +20,9 @@
                         <a class="b-general-notification-link b-general-notification-employer-link" href="/users/<?=$login?>/setup/pwd/">
                             Поменять пароль
                         </a>
-<?php                        
+<?php 
             break;
-        
+
         case SubBarNotificationHelper::TYPE_GUEST_NEW_PROJECT:
 ?>        
                         Поздравляем с успешной регистрацией на сайте и публикацией первого проекта!
@@ -32,9 +31,9 @@
                         <a class="b-general-notification-link b-general-notification-employer-link" href="/users/<?=$login?>/setup/pwd/">
                             Поменять пароль
                         </a>
-<?php        
+<?php 
             break;
-        
+
         case SubBarNotificationHelper::TYPE_GUEST_NEW_VACANCY:
 ?>        
                         Поздравляем с успешной регистрацией на сайте и публикацией первой вакансии!
@@ -43,28 +42,27 @@
                         <a class="b-general-notification-link b-general-notification-employer-link" href="/users/<?=$login?>/setup/pwd/">
                             Поменять пароль
                         </a>
-<?php        
+<?php 
             break;
-        
+
         case SubBarNotificationHelper::TYPE_RESERVE_PROMO:
 ?>        
                         Выбран способ оплаты - <b>Прямая оплата</b>. Рекомендуем изменить на 
                         <a class="b-general-notification-link b-general-notification-employee-link" href="<?=$url?>">
                             Безопасную сделку
                         </a>
-<?php        
+<?php 
             break;
-        
+
         case SubBarNotificationHelper::TYPE_USER_ACTIVATED:
 ?>
                         Ваш аккаунт успешно активирован
-<?php                        
+<?php 
             break;
 
-        
         default:
             echo $text;
-            
+
     endswitch;
 ?>
 					</div>

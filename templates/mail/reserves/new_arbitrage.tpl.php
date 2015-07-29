@@ -1,16 +1,16 @@
 <?php
 /**
- * Шаблон письма уведомление об обращении второй стороны в арбитраж (П-14, П-15)
+ * Шаблон письма уведомление об обращении второй стороны в арбитраж (П-14, П-15).
  */
 
 /**
- * Тема письма
+ * Тема письма.
  */
 $smail->subject = "Заказ «{$order['title']}» передан в Арбитраж";
 
 $role = $is_emp ? 'заказчик' : 'исполнитель';
 $title = reformat(htmlspecialchars($order['title']), 30, 0, 1);
-$order_url = $GLOBALS['host'] . tservices_helper::getOrderCardUrl($order['id']);
+$order_url = $GLOBALS['host'].tservices_helper::getOrderCardUrl($order['id']);
 ?>
 Здравствуйте.
 <br/>

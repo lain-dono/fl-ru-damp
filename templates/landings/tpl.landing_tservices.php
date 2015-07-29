@@ -6,7 +6,7 @@
 <div class="b-layout b-layout_margbot_30 b-layout__landing_bg_gray">
     <h2 class="b-page__title b-page__title_center b-page__title_relative">
         <div class="b-menu__banner_landing">
-            <?php require_once($_SERVER['DOCUMENT_ROOT'] . "/banner_promo.php"); ?>
+            <?php require_once $_SERVER['DOCUMENT_ROOT'].'/banner_promo.php'; ?>
         </div>
         <a href="/freelancers/" class="b-page__title_decor_none b-page__title_color_32">Каталог фрилансеров</a>
     </h2>
@@ -16,7 +16,7 @@
                 <div class="b-layout__txt b-layout__txt_inline-block b-layout__txt_padbot_10"><a class="b-layout__link b-layout__link_no-decorat b-layout__link_fontsize_13" href="/freelancers/<?=$prof['grouplink']?>"><?=$prof['groupname']?></a></div><br>
         <?php endif; ?>
     <?php endforeach; ?>
-                <div class="b-layout__txt b-layout__txt_inline-block"><span class="b-layout__txt b-layout__txt_float_left b-layout__txt_padtop_3"><?php require_once($_SERVER['DOCUMENT_ROOT'] . "/banner_promo.php"); ?></span></div>
+                <div class="b-layout__txt b-layout__txt_inline-block"><span class="b-layout__txt b-layout__txt_float_left b-layout__txt_padtop_3"><?php require_once $_SERVER['DOCUMENT_ROOT'].'/banner_promo.php'; ?></span></div>
     </div>
 </div>
 <?php endif; ?>
@@ -42,53 +42,52 @@
 
             //$hasVideo = !empty($tservice['videos']) && count($tservice['videos']);
                     $hasVideo = false; //Теперь вместо видео-кадра - превью
-            if ($hasVideo)
-            {
+            if ($hasVideo) {
                 $video = current($tservice['videos']);
                 $video_thumbnail_url = tservices_helper::setProtocol($video['image']);
                 $thumbnail200x150 = '<img width="200" height="150" class="b-pic" src="'.$video_thumbnail_url.'">';
-            } elseif(!empty($tservice['file']))
-            {
+            } elseif (!empty($tservice['file'])) {
                 $hasVideo = false;
-                $image_url = tservices_helper::image_src($tservice['file'],$user['login']);
+                $image_url = tservices_helper::image_src($tservice['file'], $user['login']);
                 $thumbnail200x150 = '<img width="200" height="150" class="b-pic" src="'.$image_url.'">';
-            } else
-            {
+            } else {
                 $thumbnail200x150 = '<div class="b-pic b-pic_no_img b-pic_w200_h150 b-pic_bg_f2"></div>';
             }
 
             $hasVideo = !empty($tservice['videos']) && count($tservice['videos']);
 
             $sold_count = isset($tservice['count_sold']) ? $tservice['count_sold'] : $tservice['total_feedbacks']; // Пока сфинск не считает все покупки, будем брать отзывы. #0026584
-            
-            $hide_block = isset($tserviceBindTeaser) && ($k+1) == count($tservices);
+
+            $hide_block = isset($tserviceBindTeaser) && ($k + 1) == count($tservices);
             ?>  
         
             <?php if (isset($tservice['is_binded']) && $tservice['is_binded']): ?>
-            <div class="b-layout__tu-cols b-layout__tu-cols_height_330 <?php if($hide_block): ?><?=' b-layout_hide'?><?php endif;?>">
-                <div class="b-pay-tu b-pay-tu_payed<?=($tservice['user_id']==$uid) ? '-my' : ''?>">
+            <div class="b-layout__tu-cols b-layout__tu-cols_height_330 <?php if ($hide_block): ?><?=' b-layout_hide'?><?php endif;?>">
+                <div class="b-pay-tu b-pay-tu_payed<?=($tservice['user_id'] == $uid) ? '-my' : ''?>">
                     <span class="b-pay-tu__mpin"></span>
                     <div class="b-pay-tu__inner">
                         <figure class="i-pic i-pic_port i-pic_port_z-index_inherit i-pic_pad_10 i-pic_height_265 ">
             <?php else: ?>
-                 <div class="b-layout__tu-cols b-layout__tu-cols_height_330 <?php if($hide_block): ?><?=' b-layout_hide'?><?php endif;?>">
+                 <div class="b-layout__tu-cols b-layout__tu-cols_height_330 <?php if ($hide_block): ?><?=' b-layout_hide'?><?php endif;?>">
                     <figure class="i-pic i-pic_port i-pic_port_z-index_inherit i-pic_pad_10 i-pic_height_265 i-pic_bord_green_hover">           
             <?php endif; ?>
             
                         <div class="b-layout b-layout_relative">
                             <a class="b-pic__lnk b-pic__lnk_relative" href="<?=$tservice_url?>">
-                                <?php if ($hasVideo) { ?><div class="b-icon b-icon__play b-icon_absolute b-icon_bot_4 b-icon_left_4"></div><?php } ?>
+                                <?php if ($hasVideo) {
+    ?><div class="b-icon b-icon__play b-icon_absolute b-icon_bot_4 b-icon_left_4"></div><?php 
+} ?>
                                 <?=$thumbnail200x150?>
                             </a>
                             <a onclick="TServices_Catalog.orderNow(this);" data-url="<?=$tservice_url?>" href="javascript:void(0);" class="b-pic__price-box b-pic__price-box_pay b-pic__price-box b-pic__price-box_noline">
-                                <?=tservices_helper::cost_format($tservice['price'],true)?>
+                                <?=tservices_helper::cost_format($tservice['price'], true)?>
                                 <?php if ($sold_count != 0): ?>        
                                     <span title="Количество продаж услуги"><span class="b-icon b-icon__tu2 b-icon_top_2"></span><?=number_format($sold_count, 0, '', ' ')?></span>
                                 <?php endif; ?>
                             </a>
                         </div>
                         <figcaption class="b-layout__txt b-layout__txt_padtop_10 b-layout_overflow_hidden">
-                            <a class="b-layout__link b-layout__link_no-decorat b-layout__link_color_000 b-layout__link_inline-block" href="<?=$tservice_url?>"><?=LenghtFormatEx(reformat($tservice['title'], 20, 0, 1),80)?></a>
+                            <a class="b-layout__link b-layout__link_no-decorat b-layout__link_color_000 b-layout__link_inline-block" href="<?=$tservice_url?>"><?=LenghtFormatEx(reformat($tservice['title'], 20, 0, 1), 80)?></a>
                         </figcaption>
                         <div class="b-user b-user_padtop_10">
                             <?php $fullname = view_fullname($user, true); ?>
@@ -102,7 +101,7 @@
                     
             <?php if (isset($tservice['is_binded']) && $tservice['is_binded']): ?>
                         </figure>
-                        <?php if ($tservice['user_id']==$uid): ?> 
+                        <?php if ($tservice['user_id'] == $uid): ?> 
                      <?php //@todo Заменить div ниже на $tserviceBindLinks->run(); ?>
                         <div class="b-pay-tu__hider b-layout_padleft_20">
                             <div class="b-layout__txt b-layout__txt_bold b-layout__txt_padbot_10 b-layout__txt_fontsize_15">
@@ -117,7 +116,7 @@
                             </a>
                             <?php if ($k > 0):?>
                                 <div class="b-layout__txt b-layout__txt_bold b-layout__txt_color_6db335 b-layout__txt_padbot_5 b-layout__txt_fontsize_15 b-layout__txt_padtop_20">
-                                    Поднимите услугу на<br>1 место за <?=view_cost_format($bindUpPrice,false)?> рублей
+                                    Поднимите услугу на<br>1 место за <?=view_cost_format($bindUpPrice, false)?> рублей
                                 </div>
                                 <a class="b-button b-button_flat b-button_flat_green" href="#"
                                    data-popup="<?=quickPaymentPopupTservicebindup::getInstance()->getPopupId($tservice['id']) ?>">
@@ -153,12 +152,13 @@
 <?php endif; ?>
 
 <?php
-    
-    include ($_SERVER['DOCUMENT_ROOT'] . "/templates/landings/tpl.landing_profi.php");
+
+    include $_SERVER['DOCUMENT_ROOT'].'/templates/landings/tpl.landing_profi.php';
 
 ?>    
     
-<?php if(!get_uid(false)){ ?>
+<?php if (!get_uid(false)) {
+    ?>
 <div class="b-layout b-layout_clear_both b-layout_bordtop_b2 b-layout_padtop_20 b-layout_top_100">
     <h2 class="b-page__title b-page__title_center">Fl.ru &mdash; крупнейшая русскоязычная биржа удаленной работы </h2>
     <table class="b-layout__table b-layout__table_width_full b-layout__table_margbot_20">
@@ -206,4 +206,5 @@
             </td>
     </table>
 </div>
-<?php } ?>
+<?php 
+} ?>

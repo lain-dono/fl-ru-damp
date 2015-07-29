@@ -1,25 +1,26 @@
-<?
-header ("Location: /404.php"); exit; // пользуемся /siteadmin/admin/
+<?php
+
+header ('Location: /404.php'); exit; // пользуемся /siteadmin/admin/
 $no_banner = 1;
-	$rpath = "../../";
-	require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/messages.php");
-	require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/smail.php");
-	
+	$rpath = '../../';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/messages.php';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/smail.php';
+
 	session_start();
 	get_uid();
-	
-	if (!is_admin_sm())
-		{header ("Location: /404.php"); exit;}
-	
-	
-$content = "../content.php";
 
+	if (!is_admin_sm()) {
+	    header ('Location: /404.php');
+	    exit;
+	}
 
-$inner_page = "inner_index.php";
+$content = '../content.php';
 
-$header = $rpath."header.php";
-$footer = $rpath."footer.html";
+$inner_page = 'inner_index.php';
 
-include ($rpath."template.php");
+$header = $rpath.'header.php';
+$footer = $rpath.'footer.html';
+
+include $rpath.'template.php';
 
 ?>

@@ -1,10 +1,11 @@
 <?php
 /**
- * Редатирование пользовательского контента модератором
+ * Редатирование пользовательского контента модератором.
+ *
  * @author Max 'BlackHawk' Yastrembovich
  */
-if ( !defined('IN_STDF') ) { 
-    header("HTTP/1.0 404 Not Found"); // ибо нефиг
+if (!defined('IN_STDF')) {
+    header('HTTP/1.0 404 Not Found'); // ибо нефиг
     exit();
 }
 ?>

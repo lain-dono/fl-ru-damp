@@ -8,13 +8,13 @@
                     <div class="b-layout__txt b-layout__txt_fontsize_11">— Оплата услуг производится в течение 2-3 минут.</div> 
                     <div class="b-layout__txt b-layout__txt_fontsize_11">— После нажатия на кнопку Оплатить вы будете перенаправлены на сайт Яндекс.Деньги.</div> 
                 </div>
-                <form id="<?= $type_payment ?>" name="<?= $type_payment ?>"  method="post" action="<?= is_release() ? "https://money.yandex.ru/eshop.xml" : "/bill/test/ydpay.php" ?>">
+                <form id="<?= $type_payment ?>" name="<?= $type_payment ?>"  method="post" action="<?= is_release() ? 'https://money.yandex.ru/eshop.xml' : '/bill/test/ydpay.php' ?>">
                     <input class="wide" name="scid" value="2200" type="hidden" />
                     <input type="hidden" name="ShopID" value="4551" />
                     <input type="hidden" name="Sum" value="<?= $payment_sum; ?>" />
                     <input type="hidden" name="CustomerNumber" value="<?= $bill->acc['id'] ?>" />
                 </form>
-                <? include ( $_SERVER['DOCUMENT_ROOT'] . "/bill/payment/paysystems/tpl.button_buy.php");?>                 
+                <?php include $_SERVER['DOCUMENT_ROOT'].'/bill/payment/paysystems/tpl.button_buy.php';?>                 
             </td>
             <td class="b-layout__td b-layout__td_padleft_30 b-layout__td_width_270">
             </td>

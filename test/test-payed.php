@@ -1,13 +1,13 @@
-<?
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/payed.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/firstpage.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/bar_notify.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/users.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/professions.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/billing.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/pmail.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/smail.php");
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/payed.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/firstpage.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/bar_notify.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/users.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/professions.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/billing.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/pmail.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/smail.php';
 /*
 ?>
 <p>
@@ -42,7 +42,7 @@ login   - Логин пользователя которому необходи�
 attempt - Попытка автопродления (1 или 2)
 </pre>
 
-</p><?
+</p><?php
 if ($_GET['login']) {
     payed::checkAutoProTest($_GET['login'], intval($_GET['attempt']));
 }
@@ -66,39 +66,47 @@ P.S: не может быть одновременно days = 1 и auto = 1
     Пользователь <input type="text" value="<?= htmlspecialchars($_GET['user'])?>" name="user"/><br/>
     За <input type="text" value="<?= isset($_GET['days']) ? htmlspecialchars($_GET['days']) : 3?>" name="days"/> дня(день)<br/>
 
-    Включено автопродление <input type="checkbox" name="auto" value="1" <?= isset($_GET['auto']) ? "checked" : ""?>/> <br/>
+    Включено автопродление <input type="checkbox" name="auto" value="1" <?= isset($_GET['auto']) ? 'checked' : ''?>/> <br/>
     <input type="submit" value="запрос">
 </form>
 </p>
 <hr>
-<?
-if($_GET['user']) {
-    if(!isset($_GET['service'])) $_GET['service'] = 'pro';
-    if(!isset($_GET['days'])) $_GET['days'] = 3;
-    if(!isset($_GET['auto'])) $_GET['auto'] = 0;
+<?php
+if ($_GET['user']) {
+    if (!isset($_GET['service'])) {
+        $_GET['service'] = 'pro';
+    }
+    if (!isset($_GET['days'])) {
+        $_GET['days'] = 3;
+    }
+    if (!isset($_GET['auto'])) {
+        $_GET['auto'] = 0;
+    }
 
-    if($_GET['days'] != 1 && $_GET['days'] != 3) {
+    if ($_GET['days'] != 1 && $_GET['days'] != 3) {
         echo "<strong style='color:red'>День может принимать значение 1 или 3</strong>";
+
         return;
     }
-    if($_GET['days'] == 1 && $_GET['auto'] == 1) {
+    if ($_GET['days'] == 1 && $_GET['auto'] == 1) {
         echo "<strong style='color:red'>Не может быть одновременно days = 1 и auto = 1</strong>";
+
         return;
     }
 
     $mail = new smail();
-    if($_GET['service'] == 'pro') {
-        $sql  = "SELECT u.*, a.id as acc_id FROM users u INNER JOIN account a ON a.uid = u.uid WHERE u.login = ?";
+    if ($_GET['service'] == 'pro') {
+        $sql = 'SELECT u.*, a.id as acc_id FROM users u INNER JOIN account a ON a.uid = u.uid WHERE u.login = ?';
         $user = $DB->row($sql, $_GET['user']);
 
-        if($_GET['auto'] == 1) {
-            $role = is_emp($user['role']) ? "employer" : "freelancer";
+        if ($_GET['auto'] == 1) {
+            $role = is_emp($user['role']) ? 'employer' : 'freelancer';
             $mail->remindAutoprolongPRO(array($user), $role, $_GET['days']);
         } else {
             $mail->remindTimeleftPRO(array($user), $_GET['days']);
         }
     } else {
-        if($_GET['auto'] == 1) {
+        if ($_GET['auto'] == 1) {
             $mail->remindAutoprolongFirstpage($_GET['days'], $_GET['user']);
         } else {
             $mail->reminderFPNotAutopayed($_GET['days'], $_GET['user']);
@@ -117,9 +125,9 @@ attempt - Попытка автопродления (1 или 2)
 </pre>
 </p>
 <hr>
-<?
+<?php
 if ($_GET['fflogin']) {
-    if(intval($_GET['attempt']) == 1) {
+    if (intval($_GET['attempt']) == 1) {
         firstpage::autoPayedReminder(1, 'days', $_GET['fflogin']);
     } else {
         firstpage::autoPayedReminder(1, 'hour', $_GET['fflogin']);
@@ -154,6 +162,6 @@ foreach($allProfs as $prof) {
     $allProfsID[$prof['id']] = $prof['profname'];
 }
 ?><p>Айдишники профессий [в квадратных скобках]</p>
-<pre><?= var_dump ($allProfsID); ?></pre>
+<pre><?= var_dump($allProfsID); ?></pre>
 
 

@@ -1,4 +1,4 @@
-<div id="<?= $isFeedback ? 'feedback_' : '' ?>ed_comm_form_<?= $op_id; ?>" comment="<?= (int)(bool)$comment ?>" class="b-layout b-layout_padtop_10">
+<div id="<?= $isFeedback ? 'feedback_' : '' ?>ed_comm_form_<?= $op_id; ?>" comment="<?= (int) (bool) $comment ?>" class="b-layout b-layout_padtop_10">
 		<table class="b-layout__table b-layout__table_width_full">
 			<tr class="b-layout__tr">
 				<td class="b-layout__left b-testimonials-collection-comment-field">

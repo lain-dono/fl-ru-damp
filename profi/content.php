@@ -1,11 +1,10 @@
 <?php
-    
-    /**
-     * PROFI шаблон
-     */
 
+/**
+ * PROFI шаблон.
+ */
 if (isset($account)):
-    require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/quickpro.common.php");
+    require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/quickpro.common.php';
     $xajax->printJavascript('/xajax/');
 ?>
 <script type="text/javascript">
@@ -51,12 +50,12 @@ if (isset($account)):
                </table>
 <?php
                    $pay = current(payed::getPayedPROFIList());
-                   if($pay):
+                   if ($pay):
 ?>
                <a class="b-button b-button_flat b-button_flat_green b-button_flat_big __ga__pro__frl_buy" 
                   href="javascript:void(0)" 
                   onclick="<?="quickPRO_show(); $('quick_pro_f_item_".$pay['opcode']."').set('checked', 'true'); quickPRO_select($('quick_pro_f_item_".$pay['opcode']."'));"?>">
-                   <?php if(isProfi()): ?>
+                   <?php if (isProfi()): ?>
                         Продлить PROFI за 5990 руб.
                    <?php else: ?>
                         Стать PROFI за 5990 руб.
@@ -150,12 +149,12 @@ endif;
                      </td>
                   </tr>
                   <?php
-                        for($i=0; $i<$cntFirstCLBlock; $i++):
-                            
+                        for ($i = 0; $i < $cntFirstCLBlock; ++$i):
+
                             if (!isset($catalogList[$i])) {
                                 break;
                             }
-                            
+
                             $frl = $catalogList[$i];
                   ?>                
                   <tr class="b-layout__tr">
@@ -167,15 +166,15 @@ endif;
                            <tr class="b-layout__tr">
                               <td class="b-layout__td b-layout__td_width_100 b-layout__td_padright_15 b-layout__td_ipad">
                                  <a class="b-layout__link" href="/users/<?=$frl['login']?>/">
-                                     <?=view_avatar($frl['login'], $frl['photo'], 0, 0, "b-pic b-pic_border_radius_50 b-pic_bord_ffa800")?>
+                                     <?=view_avatar($frl['login'], $frl['photo'], 0, 0, 'b-pic b-pic_border_radius_50 b-pic_bord_ffa800')?>
                                  </a>
                               </td>
                               <td class="b-layout__td b-layout__td_valign_mid b-layout__td_ipad b-layout__td_width_full_ipad">
                                  <div class="b-layout__txt b-layout__txt_color_64 b-layout__txt_fontsize_15 b-layout__txt_lineheight_1 b-layout__txt_padbot_5">
-                                     <a class="b-layout__link b-layout__link_color_64 b-layout__link_bold b-layout_hover_link_decorated" href="/users/<?=$frl['login']?>/"><?=$frl['uname'] . ' ' . $frl['usurname']?></a> 
+                                     <a class="b-layout__link b-layout__link_color_64 b-layout__link_bold b-layout_hover_link_decorated" href="/users/<?=$frl['login']?>/"><?=$frl['uname'].' '.$frl['usurname']?></a> 
                                      [<a class="b-layout__link b-layout_h b-layout__link_color_64 b-layout__link_no-decorat" href="/users/<?=$frl['login']?>/"><?=$frl['login']?></a>]
                                  </div>
-                                 <?php if($frl['profname']): ?>
+                                 <?php if ($frl['profname']): ?>
                                  <div class="b-layout__txt b-layout__txt_color_ff7f27 b-layout__txt_bold b-layout__txt_padbot_10 b-layout__txt_fontsize_11">
                                     <?=$frl['profname']?>
                                  </div>
@@ -198,13 +197,13 @@ endif;
                            <div class="b-layout_float_left b-layout__txt_nowrap b-layuot_width_33ps b-layout__txt_center">
                                <?=rating::round($frl['t_rating'])?>
                            </div>
-                           <?php if($frl['completed_cnt'] > 0): ?>
+                           <?php if ($frl['completed_cnt'] > 0): ?>
                                <div class="b-layout_inline-block b-layout__txt_nowrap"><?=$frl['completed_cnt']?></div>
                             <?php endif; ?>
                          </div>
                      </td>
                      <td class="b-layout__td b-layout__td_padtb_15 b-layout__td_valign_mid b-page__desktop">
-                        <?php if($frl['completed_cnt'] > 0): ?>
+                        <?php if ($frl['completed_cnt'] > 0): ?>
                         <div class="b-layout__txt b-layout__txt_color_64 b-layout__txt_fontsize_15 b-layout__txt_bold b-layout__txt_center">
                             <?=$frl['completed_cnt']?>
                         </div>
@@ -218,11 +217,11 @@ endif;
                      </td>
                      <td class="b-layout__td b-layout__td_padleft_20 b-layout__td_padright_20 b-layout__td_padtb_15 b-layout__td_valign_mid">
                         <div class="b-layout__txt b-layout__txt_color_64 b-layout__txt_fontsize_11">
-                            <?= br2br(LenghtFormatEx(reformat($frl['status_text'], 40, 0, 1, 25),150)) ?>
+                            <?= br2br(LenghtFormatEx(reformat($frl['status_text'], 40, 0, 1, 25), 150)) ?>
                         </div>
                      </td>
                   </tr>
-                  <?php if($i < $cntFirstCLBlock-1): ?>
+                  <?php if ($i < $cntFirstCLBlock - 1): ?>
                   <tr class="b-layout__tr">
                      <td class="b-layout__td b-layout__td_padtop_5 b-layout__td_bordbot_e6" colspan="5"></td>
                   </tr>
@@ -231,7 +230,7 @@ endif;
                         endfor;
                   ?>
                   <?php
-                  
+
                         if ($isMoreCatalogList):
                   ?>
                   <tr class="b-layout__tr">
@@ -269,12 +268,12 @@ endif;
                      <td class="b-layout__td b-layout__td_padtop_5 b-layout__td_bordbot_e6" colspan="5"></td>
                   </tr>                  
 <?php
-                    for($i=$cntFirstCLBlock; $i<$cntCatalogList; $i++):
-                        
+                    for ($i = $cntFirstCLBlock; $i < $cntCatalogList; ++$i):
+
                             if (!isset($catalogList[$i])) {
                                 break;
                             }
-                            
+
                             $frl = $catalogList[$i];
 ?>
                   <tr class="b-layout__tr">
@@ -286,15 +285,15 @@ endif;
                            <tr class="b-layout__tr">
                               <td class="b-layout__td b-layout__td_width_100 b-layout__td_padright_15 b-layout__td_ipad">
                                  <a class="b-layout__link" href="/users/<?=$frl['login']?>/">
-                                     <?=view_avatar($frl['login'], $frl['photo'], 0, 0, "b-pic b-pic_border_radius_50 b-pic_bord_ffa800")?>
+                                     <?=view_avatar($frl['login'], $frl['photo'], 0, 0, 'b-pic b-pic_border_radius_50 b-pic_bord_ffa800')?>
                                  </a>
                               </td>
                               <td class="b-layout__td b-layout__td_valign_mid b-layout__td_ipad b-layout__td_width_full_ipad">
                                  <div class="b-layout__txt b-layout__txt_color_64 b-layout__txt_fontsize_15 b-layout__txt_lineheight_1 b-layout__txt_padbot_5">
-                                     <a class="b-layout__link b-layout__link_color_64 b-layout__link_bold b-layout_hover_link_decorated" href="/users/<?=$frl['login']?>/"><?=$frl['uname'] . ' ' . $frl['usurname']?></a> 
+                                     <a class="b-layout__link b-layout__link_color_64 b-layout__link_bold b-layout_hover_link_decorated" href="/users/<?=$frl['login']?>/"><?=$frl['uname'].' '.$frl['usurname']?></a> 
                                      [<a class="b-layout__link b-layout_h b-layout__link_color_64 b-layout__link_no-decorat" href="/users/<?=$frl['login']?>/"><?=$frl['login']?></a>]
                                  </div>
-                                 <?php if($frl['profname']): ?>
+                                 <?php if ($frl['profname']): ?>
                                  <div class="b-layout__txt b-layout__txt_color_64 b-layout__txt_padbot_10">
                                     <?=$frl['profname']?>
                                  </div>
@@ -317,13 +316,13 @@ endif;
                            <div class="b-layout_float_left b-layout__txt_nowrap b-layuot_width_33ps b-layout__txt_center">
                                <?=rating::round($frl['t_rating'])?>
                            </div>
-                           <?php if($frl['completed_cnt'] > 0): ?>
+                           <?php if ($frl['completed_cnt'] > 0): ?>
                                <div class="b-layout_inline-block b-layout__txt_nowrap"><?=$frl['completed_cnt']?></div>
                             <?php endif; ?>
                          </div>
                      </td>
                      <td class="b-layout__td b-layout__td_padtb_15 b-layout__td_valign_mid b-page__desktop">
-                        <?php if($frl['completed_cnt'] > 0): ?>
+                        <?php if ($frl['completed_cnt'] > 0): ?>
                         <div class="b-layout__txt b-layout__txt_color_64 b-layout__txt_fontsize_15 b-layout__txt_bold b-layout__txt_center">
                             <?=$frl['completed_cnt']?>
                         </div>
@@ -337,11 +336,11 @@ endif;
                      </td>
                      <td class="b-layout__td b-layout__td_padleft_20 b-layout__td_padright_20 b-layout__td_padtb_15 b-layout__td_valign_mid">
                         <div class="b-layout__txt b-layout__txt_color_64 b-layout__txt_fontsize_11">
-                            <?= br2br(LenghtFormatEx(reformat($frl['status_text'], 40, 0, 1, 25),150)) ?>
+                            <?= br2br(LenghtFormatEx(reformat($frl['status_text'], 40, 0, 1, 25), 150)) ?>
                         </div>
                      </td>
                   </tr>
-                  <?php if($i < $cntCatalogList-1): ?>
+                  <?php if ($i < $cntCatalogList - 1): ?>
                   <tr class="b-layout__tr">
                      <td class="b-layout__td b-layout__td_padtop_5 b-layout__td_bordbot_e6" colspan="5"></td>
                   </tr>
@@ -361,5 +360,5 @@ endif;
 
 if (isset($account)):
     $quickPRO_type = 'profi';
-    require_once($_SERVER['DOCUMENT_ROOT'] . "/templates/quick_buy_pro.php"); 
+    require_once $_SERVER['DOCUMENT_ROOT'].'/templates/quick_buy_pro.php';
 endif;

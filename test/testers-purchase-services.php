@@ -2,411 +2,456 @@
 /*
  * Скрипт, позволяющий тестерам "покупать" любые услуги для произвольного пользователя*/
 $session_fail = 0;
-if (count($_POST) > 0) $session_fail = 1;
-require_once $_SERVER["DOCUMENT_ROOT"]."/classes/stdf.php";
-if (!((count($_POST) == 0)&&($session_fail))) $session_fail = 0;
-require_once $_SERVER["DOCUMENT_ROOT"]."/classes/memBuff2.php";
-require_once $_SERVER["DOCUMENT_ROOT"]."/classes/search/sphinxapi.php";
-require_once($_SERVER['DOCUMENT_ROOT'] ."/classes/account.php");
-require_once($_SERVER['DOCUMENT_ROOT'] ."/classes/payed.php");
+if (count($_POST) > 0) {
+    $session_fail = 1;
+}
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+if (!((count($_POST) == 0) && ($session_fail))) {
+    $session_fail = 0;
+}
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/memBuff2.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/search/sphinxapi.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/account.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/payed.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/classes/projects_offers_answers.php';
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/firstpage.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/pay_place.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/firstpagepos.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/freelancer_offers.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/firstpage.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/pay_place.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/firstpagepos.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/freelancer_offers.php';
 $purchaseController = new CPurchaseServiceController($session_fail);
-class CPurchaseServiceController {
+class CPurchaseServiceController
+{
     private $session_fail = 0;
-    public function __construct($session_fail){
+    public function __construct($session_fail)
+    {
         $this->session_fail = $session_fail;
         $this->processRequest();
     }
-    
-    public function processRequest() {        
-        $action = __paramInit("string", "", "action");        
+
+    public function processRequest()
+    {
+        $action = __paramInit('string', '', 'action');
         switch ($action) {
-            case "setpro":
+            case 'setpro':
                 $this->setProMonth();
                 break;
-            case "setproWeek":
+            case 'setproWeek':
                 $this->setProWeek();
                 break;
-            case "setAnswers":
+            case 'setAnswers':
                 $this->setAnswers();
                 break;
-            case "setfp":
+            case 'setfp':
                 $this->setCatalogOrFpPlace();
                 break;
-            case "setrb":
+            case 'setrb':
                 $this->setCatalogOrMainPageRoundabout();
                 break;
-            case "set_upfp":
+            case 'set_upfp':
                 $this->setUpActionInCatalogOrFpPlace();
                 break;
-            case "setim":
+            case 'setim':
                 $this->setIMakeValues();
-                break;               
+                break;
             default:
-                if ($this->session_fail) $this->jsonError("Вероятно, вы перелогинились на сайте в другой вкладке этого браузера.\nОбновите страницу");    
+                if ($this->session_fail) {
+                    $this->jsonError("Вероятно, вы перелогинились на сайте в другой вкладке этого браузера.\nОбновите страницу");
+                }
         }
     }
-    
-    private function setIMakeValues() {        
+
+    private function setIMakeValues()
+    {
         global $DB;
-        $uid     = (int)$_POST["uid"];
-        $rawIds  = $_POST["ids"];        
-        $role  = $DB->val("SELECT role FROM users WHERE uid = $uid");
+        $uid = (int) $_POST['uid'];
+        $rawIds = $_POST['ids'];
+        $role = $DB->val("SELECT role FROM users WHERE uid = $uid");
         $role = $role[0];
         if ($role === '0') {
-            $aIds = explode(",", $rawIds);
+            $aIds = explode(',', $rawIds);
             foreach ($aIds as $i) {
-                $pair  = explode(":", $i);
+                $pair = explode(':', $i);
                 $group = $pair[0];
-                $spec  = $pair[1];
-                if (($spec === '0')||(intval($spec) != 0)){
-                	if (($group === '0')||(intval($group) != 0)) {
-                		//----------------------------------------
-                	    $frl_offers = new freelancer_offers();
-                        $create = array("user_id" => $uid,
-                            "title"          => iconv("UTF-8", "WINDOWS-1251//IGNORE", $_POST['title']),
-                            "descr"          => iconv("UTF-8", "WINDOWS-1251//IGNORE", $_POST['text']),
-                            "category_id"    => intval($group),
-                            "subcategory_id" => intval($spec)
-                            );            
-                        $account = new account;
+                $spec = $pair[1];
+                if (($spec === '0') || (intval($spec) != 0)) {
+                    if (($group === '0') || (intval($group) != 0)) {
+                        //----------------------------------------
+                        $frl_offers = new freelancer_offers();
+                        $create = array('user_id' => $uid,
+                            'title' => iconv('UTF-8', 'WINDOWS-1251//IGNORE', $_POST['title']),
+                            'descr' => iconv('UTF-8', 'WINDOWS-1251//IGNORE', $_POST['text']),
+                            'category_id' => intval($group),
+                            'subcategory_id' => intval($spec),
+                            );
+                        $account = new account();
                         $transaction_id = $account->start_transaction($uid, $tr_id);
-                        $error = $account->Buy($billing_id, $transaction_id, freelancer_offers::FM_OP_CODE, $uid, "Покупка публикации предложения фрилансера", "Покупка публикации предложения", 1, 0);
-                        if ($error) $this->jsonError($error);
+                        $error = $account->Buy($billing_id, $transaction_id, freelancer_offers::FM_OP_CODE, $uid, 'Покупка публикации предложения фрилансера', 'Покупка публикации предложения', 1, 0);
+                        if ($error) {
+                            $this->jsonError($error);
+                        }
                         $account->commit_transaction($transaction_id, $uid, $billing_id);
                         $create['bill_id'] = $billing_id;
-                        $id_offer = $DB->insert('freelance_offers', $create, 'id');            
-                        if($id_offer > 0) {
-                           $this->jsonOk();
+                        $id_offer = $DB->insert('freelance_offers', $create, 'id');
+                        if ($id_offer > 0) {
+                            $this->jsonOk();
                         }
                     }
                 }
             }
-        }
-        else {
-            $this->jsonError("Пользователь не найден или является работодателем");
+        } else {
+            $this->jsonError('Пользователь не найден или является работодателем');
         }
     }
-    
-    private function setAnswers() {
+
+    private function setAnswers()
+    {
         global $DB;
-        $uid     = (int)$_POST["uid"];
-        $amount  = (int)$_POST["amount"];
-        if (($amount != 1)&&($amount != 5)&&($amount != 10)) {
-            $this->jsonError("Некорректное значение количества FM");
+        $uid = (int) $_POST['uid'];
+        $amount = (int) $_POST['amount'];
+        if (($amount != 1) && ($amount != 5) && ($amount != 10)) {
+            $this->jsonError('Некорректное значение количества FM');
         }
-        $role  = $DB->val("SELECT role FROM users WHERE uid = $uid");
+        $role = $DB->val("SELECT role FROM users WHERE uid = $uid");
         $role = $role[0];
-        if ($role === '0'){
-            $answers = new projects_offers_answers;
+        if ($role === '0') {
+            $answers = new projects_offers_answers();
             $error = $answers->BuyByFM($uid, $amount);
             if ($error === 0) {
-                $this->jsonOk();          
-            }else {
-                $this->jsonError($error?$error:"Произошла неизвестная ошибка");
+                $this->jsonOk();
+            } else {
+                $this->jsonError($error ? $error : 'Произошла неизвестная ошибка');
             }
-        }
-        else {
-            $this->jsonError("Пользователь не найден или является работодателем");
+        } else {
+            $this->jsonError('Пользователь не найден или является работодателем');
         }
     }
     /**
-     * Установка ПРО для произвольного пользователя на несколько недель     
+     * Установка ПРО для произвольного пользователя на несколько недель.
      * */
-    private function setProWeek() {
+    private function setProWeek()
+    {
         global $DB;
-        $week = (int)$_POST["weeks"];
-        if (($week > 0)&&($week < 11)) {
-            $this->setProMonth($week);            
-        }else{
-            $this->jsonError("Недопустимое количество недель");
+        $week = (int) $_POST['weeks'];
+        if (($week > 0) && ($week < 11)) {
+            $this->setProMonth($week);
+        } else {
+            $this->jsonError('Недопустимое количество недель');
         }
     }
     /**
-     * Установка ПРО для произвольного пользователя
+     * Установка ПРО для произвольного пользователя.
+     *
      * @param $count - если равен 1, значит покупаем ПРО на несколько месяцев в зависимости от значения $_REQUEST['type']
      *                 если больше 1, значит аккаунт покупается на несколько ($count) недель     
      * */
-    private function setProMonth($count = 1) {
+    private function setProMonth($count = 1)
+    {
         global $DB;
-        $uid  = (int)$_POST["uid"];
-        $uid  = $DB->val("SELECT uid FROM users WHERE uid = $uid");
-        $date = $_POST["date"];        
+        $uid = (int) $_POST['uid'];
+        $uid = $DB->val("SELECT uid FROM users WHERE uid = $uid");
+        $date = $_POST['date'];
         $f = preg_match("#[0-9]{4}\-[0-9]{2}\-[0-9]{2}#", $date, $m);
-        if (!$f) $date = false;
+        if (!$f) {
+            $date = false;
+        }
         if ($uid) {
-           $account = new account();
-           $transaction_id = $account -> start_transaction($uid, $tr_id);
-             $oppro = intval(trim($_POST['type']));
-             $prof = new payed();
-           if($oppro <= 0)           $oppro = is_emp()?15:48;
-           if ($oppro == 47) { //позволить пользователю купить тестовый про
+            $account = new account();
+            $transaction_id = $account->start_transaction($uid, $tr_id);
+            $oppro = intval(trim($_POST['type']));
+            $prof = new payed();
+            if ($oppro <= 0) {
+                $oppro = is_emp() ? 15 : 48;
+            }
+            if ($oppro == 47) { //позволить пользователю купить тестовый про
                $sql = "DELETE FROM orders WHERE id IN (SELECT id FROM orders WHERE from_id = '$uid' AND ordered = '1' AND payed = 't' AND tarif IN (1,2,3,4,5,6,15,16,28,35,42,47,48,49,50,51,52,76))";
-               $DB->query($sql);
-           }
-           $rewriteFromDate = false; //переписывать ли дату начала действия PRO у добавленной записи
-           if (($date !== false)&&($date != date("Y-m-d") ) ) { //если заказана дата покупки PRO ранее чем текущая дата удаляем историю покупок PRO которые были куплены после заказаной даты
+                $DB->query($sql);
+            }
+            $rewriteFromDate = false; //переписывать ли дату начала действия PRO у добавленной записи
+           if (($date !== false) && ($date != date('Y-m-d'))) { //если заказана дата покупки PRO ранее чем текущая дата удаляем историю покупок PRO которые были куплены после заказаной даты
                $sql = "DELETE FROM orders WHERE id 
                        IN (SELECT id FROM orders 
                            WHERE from_id = '$uid' AND ordered = '1' AND payed = 't' 
                            AND tarif IN (1,2,3,4,5,6,15,16,28,35,42,47,48,49,50,51,52,76)
                             AND from_date > '$date'
-                           )";               
+                           )";
                $res = $DB->query($sql);
                $num = pg_affected_rows($res);
-               if ($num) $rewriteFromDate = true;
+               if ($num) {
+                   $rewriteFromDate = true;
+               }
            }
            //используем ранее написаный в системе код для покупки про 
-           $ok = $prof->SetOrderedTarif($uid, $transaction_id, $count, "Аккаунт PRO", $oppro, $error);
-           if ($ok) {
-               if (!$rewriteFromDate) {
-                   require_once($_SERVER['DOCUMENT_ROOT'] ."/classes/session_Memcached.php");
-                   $session = new session();
-                   $login = $DB->val("SELECT login FROM users WHERE uid = $uid");
-                   $session->UpdateProEndingDate($login);
-               }       
-           }else {
-                   $this->json("status", "error", "msg", ($error?$error:"Неизвестная ошибка"));
-           }
-           if ($rewriteFromDate) { //если заказана дата покупки PRO ранее чем текущая дата устанавливаем дату последней покупки в заказанную дату
+           $ok = $prof->SetOrderedTarif($uid, $transaction_id, $count, 'Аккаунт PRO', $oppro, $error);
+            if ($ok) {
+                if (!$rewriteFromDate) {
+                    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/session_Memcached.php';
+                    $session = new session();
+                    $login = $DB->val("SELECT login FROM users WHERE uid = $uid");
+                    $session->UpdateProEndingDate($login);
+                }
+            } else {
+                $this->json('status', 'error', 'msg', ($error ? $error : 'Неизвестная ошибка'));
+            }
+            if ($rewriteFromDate) { //если заказана дата покупки PRO ранее чем текущая дата устанавливаем дату последней покупки в заказанную дату
                   $sql = "SELECT id FROM orders WHERE posted = (SELECT MAX(posted) FROM orders WHERE from_id = $uid)";
-                  $id = $DB->val($sql);
-                  if ($id) {
-                         $date .= " ".date("H:i:s").".".date("u");
-                         $sql = "UPDATE orders SET from_date = '$date' WHERE id = $id";                         
-                         $DB->query($sql);                         
-                         require_once($_SERVER['DOCUMENT_ROOT'] ."/classes/session_Memcached.php");
-                   $session = new session();
-                   $login = $DB->val("SELECT login FROM users WHERE uid = $uid");
-                   $session->UpdateProEndingDate($login);
-                  }else $this->json("status", "error", "msg", "Ошибка при установке даты покупки ПРО '$date'");                  
-           }/**/ 
-           $this->json("status", "ok");
-        }else {            
-            $this->json("status", "error", "msg", "Пользователь не найден");    
+                $id = $DB->val($sql);
+                if ($id) {
+                    $date .= ' '.date('H:i:s').'.'.date('u');
+                    $sql = "UPDATE orders SET from_date = '$date' WHERE id = $id";
+                    $DB->query($sql);
+                    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/session_Memcached.php';
+                    $session = new session();
+                    $login = $DB->val("SELECT login FROM users WHERE uid = $uid");
+                    $session->UpdateProEndingDate($login);
+                } else {
+                    $this->json('status', 'error', 'msg', "Ошибка при установке даты покупки ПРО '$date'");
+                }
+            }/**/
+           $this->json('status', 'ok');
+        } else {
+            $this->json('status', 'error', 'msg', 'Пользователь не найден');
         }
     }
-    
+
     /**
-     * Покупка места в карусели на главной и странице каталога
+     * Покупка места в карусели на главной и странице каталога.
      * */
-    private function setCatalogOrMainPageRoundabout() {        
+    private function setCatalogOrMainPageRoundabout()
+    {
         global $DB;
-        $uid  = (int)$_POST["uid"];
-        $row  = $DB->row("SELECT role, uname, usurname, login, sum  FROM users LEFT JOIN account ON account.uid = users.uid 
+        $uid = (int) $_POST['uid'];
+        $row = $DB->row("SELECT role, uname, usurname, login, sum  FROM users LEFT JOIN account ON account.uid = users.uid 
                           WHERE users.uid = $uid");
-        $role = $row["role"][0];
-        $user = $row['uname']." ".$row['usurname']." [".$row['login']."]";
-        $sum  = $row['sum'];
+        $role = $row['role'][0];
+        $user = $row['uname'].' '.$row['usurname'].' ['.$row['login'].']';
+        $sum = $row['sum'];
         if ($role !== '0') {
-            $this->jsonError("Пользователь не найден или является работодателем");
+            $this->jsonError('Пользователь не найден или является работодателем');
         }
-        $date = $_POST["date"];        
+        $date = $_POST['date'];
         $f = preg_match("#[0-9]{4}\-[0-9]{2}\-[0-9]{2}#", $date, $m);
-        if (!$f) $date = false;
+        if (!$f) {
+            $date = false;
+        }
         if ($uid) {
-            $catalog = ($_POST['type'] == "catalog");
-            if($_POST['type'] == "catalog") {
+            $catalog = ($_POST['type'] == 'catalog');
+            if ($_POST['type'] == 'catalog') {
                 $tarif = 73;
-            } else if ($_POST['type'] == "main") {
+            } elseif ($_POST['type'] == 'main') {
                 $tarif = 65;
             }
-            $payPlace = new pay_place($catalog?1:0);
+            $payPlace = new pay_place($catalog ? 1 : 0);
             $account = new account();
             $transaction_id = $account->start_transaction($uid, $tr_id);
-    
-            if(($buy = $account->Buy($id, $transaction_id, $tarif, $uid, 'Оплата новых платных мест за FM', 'Оплачено', 1)) === 0) {
+
+            if (($buy = $account->Buy($id, $transaction_id, $tarif, $uid, 'Оплата новых платных мест за FM', 'Оплачено', 1)) === 0) {
                 $payPlace->addUser($uid);
                 $t = intval($payPlace->getTimeShow());
-                $msg = 
+                $msg =
                   "$user будет размещен ".($catalog ? 'в <a href="/freelancers/">каталоге</a> ' : 'на <a href="/">главной странице</a> ')
-                  . ($t==0 ? 'сейчас' : "через {$t} минут".($t==1 ? 'у' : ($t>1&&$t<5 ? 'ы' : ''))).'.';
-                $this->jsonOk("msg", $msg);
-            } else {                
+                  .($t == 0 ? 'сейчас' : "через {$t} минут".($t == 1 ? 'у' : ($t > 1 && $t < 5 ? 'ы' : ''))).'.';
+                $this->jsonOk('msg', $msg);
+            } else {
                 $msg = "В данный момент на счету у $user $sum FM. <a href=\"/bill\" target=\"_blank\">Пополнить счет</a><br/><br/>";
                 $this->jsonError($msg);
-           }
-        }         
+            }
+        }
     }
     /**
-     * Покупка места на главной или в каталоге для для произвольного пользователя
+     * Покупка места на главной или в каталоге для для произвольного пользователя.
      * */
-    private function setCatalogOrFpPlace() {
+    private function setCatalogOrFpPlace()
+    {
         global $DB;
-        $uid  = (int)$_POST["uid"];
-        $role  = $DB->val("SELECT role FROM users WHERE uid = $uid");
+        $uid = (int) $_POST['uid'];
+        $role = $DB->val("SELECT role FROM users WHERE uid = $uid");
         $role = $role[0];
-        if ($role !== '0'){
-            $this->jsonError("Пользователь не найден или является работодателем");
+        if ($role !== '0') {
+            $this->jsonError('Пользователь не найден или является работодателем');
         }
-        $date = $_POST["date"];        
+        $date = $_POST['date'];
         $f = preg_match("#[0-9]{4}\-[0-9]{2}\-[0-9]{2}#", $date, $m);
-        if (!$f) $date = false;
-        $count = (int)$_POST["weeks"];
-        if (!$count) $this->jsonError("Некорректное значение недель");
+        if (!$f) {
+            $date = false;
+        }
+        $count = (int) $_POST['weeks'];
+        if (!$count) {
+            $this->jsonError('Некорректное значение недель');
+        }
         if ($uid) {
             $sIds = $_POST['ids'];
-            $aIds = explode(",", $sIds);
+            $aIds = explode(',', $sIds);
             $fp_request = array();
             $valid = false;
-            for ($i = 0; $i < count($aIds); $i++) {
-                $id = str_replace("-", "", $aIds[$i]);
-                if (!preg_match("#[\D]#", $id, $m)&&(!( ($aIds[$i][0] == '0')&&(strlen($aIds[$i]) > 1) ) ) ) {
+            for ($i = 0; $i < count($aIds); ++$i) {
+                $id = str_replace('-', '', $aIds[$i]);
+                if (!preg_match("#[\D]#", $id, $m) && (!(($aIds[$i][0] == '0') && (strlen($aIds[$i]) > 1)))) {
                     $valid = true;
                 }
-                $fp_request[$aIds[$i]] = $count; 
+                $fp_request[$aIds[$i]] = $count;
             }
-            if (!$valid) $this->jsonError("Некорректное значение специальности в списке");
+            if (!$valid) {
+                $this->jsonError('Некорректное значение специальности в списке');
+            }
             $sProlong = $_POST['a'];
-            $aProlong = explode(",", $sProlong);
+            $aProlong = explode(',', $sProlong);
             $valid = true;
             if (strlen($sProlong) > 0) {
-                for ($i = 0; $i < count($aProlong); $i++) {
-                        $id = str_replace("-", "", $aProlong[$i]);
-                        if (preg_match("#[\D]#", $id, $m)||( ($aProlong[$i][0] == '0')&&(strlen($aProlong[$i]) > 1) ) )  {
-                            $valid = false;
-                        }
+                for ($i = 0; $i < count($aProlong); ++$i) {
+                    $id = str_replace('-', '', $aProlong[$i]);
+                    if (preg_match("#[\D]#", $id, $m) || (($aProlong[$i][0] == '0') && (strlen($aProlong[$i]) > 1))) {
+                        $valid = false;
+                    }
                 }
-                if (!$valid) $this->jsonError("Некорректное значение специальности в списке автопродлеваемых");
-            }else $valid = false;
-            
+                if (!$valid) {
+                    $this->jsonError('Некорректное значение специальности в списке автопродлеваемых');
+                }
+            } else {
+                $valid = false;
+            }
+
             $account = new account();
-            $transaction_id = $account -> start_transaction($uid, $tr_id);
+            $transaction_id = $account->start_transaction($uid, $tr_id);
             $prof = new firstpage();
-            foreach($aIds as $prof_id) {
+            foreach ($aIds as $prof_id) {
                 $prof->delAutoPayed($uid, $prof_id);
             }
             $rewriteFromDate = false;
-            if ( $date&&($date != date('Y-m-d')) ) {
-                $date .= " ".date('H:i:s');//.".".date("u");
+            if ($date && ($date != date('Y-m-d'))) {
+                $date .= ' '.date('H:i:s');//.".".date("u");
                 $query = "DELETE FROM users_first_page 
                           WHERE user_id = $uid 
                           AND from_date > '$date'
                           AND profession IN ($sIds)
                           ";
-               $res = $DB->query($query);
-               $num = pg_affected_rows($res);               
-               if ($num) $rewriteFromDate = true;                
+                $res = $DB->query($query);
+                $num = pg_affected_rows($res);
+                if ($num) {
+                    $rewriteFromDate = true;
+                }
             }
             $st = $prof->SetOrdered($uid, $transaction_id, $fp_request, $null, $err);
             if ($st == 0) {
-            	$this->jsonError($err);
+                $this->jsonError($err);
             }
             if ($rewriteFromDate) {
                 $recs = array();
                 foreach ($aIds as $id) {
                     $query = "SELECT id FROM users_first_page WHERE user_id = $uid AND first_post = 
-                               (SELECT max(first_post) FROM users_first_page WHERE user_id = $uid AND profession = $id)";                    
+                               (SELECT max(first_post) FROM users_first_page WHERE user_id = $uid AND profession = $id)";
                     $recId = $DB->val($query);
                     if ($recId) {
                         $recs[] = $recId;
                     }
                 }
                 if (count($recs)) {
-                    $r = join(",", $recs);
-                    $query = "UPDATE users_first_page SET from_date = '$date' WHERE id IN ($r)";                    
+                    $r = implode(',', $recs);
+                    $query = "UPDATE users_first_page SET from_date = '$date' WHERE id IN ($r)";
                     $DB->query($query);
-                }                                 
+                }
             }
-            if ($valid) foreach ($aProlong as $prof_id) {
-                $prof->setAutoPayed($uid, $prof_id);
+            if ($valid) {
+                foreach ($aProlong as $prof_id) {
+                    $prof->setAutoPayed($uid, $prof_id);
+                }
             }
             $this->jsonOk();
         }
     }
-    
+
     /**
-     * Продление места в каталоге или на главной
+     * Продление места в каталоге или на главной.
      * */
-    private function setUpActionInCatalogOrFpPlace() {
-    	global $DB;
-        $uid  = (int)$_POST["uid"];
-        $role  = $DB->val("SELECT role FROM users WHERE uid = $uid");
+    private function setUpActionInCatalogOrFpPlace()
+    {
+        global $DB;
+        $uid = (int) $_POST['uid'];
+        $role = $DB->val("SELECT role FROM users WHERE uid = $uid");
         $role = $role[0];
-        if ($role !== '0'){
-            $this->jsonError("Пользователь не найден или является работодателем");
+        if ($role !== '0') {
+            $this->jsonError('Пользователь не найден или является работодателем');
         }
         if ($uid) {
-  	        $prof = new firstpagepos();
-			$ids = $_POST['ids'];
-			$aIds = array();
-			$sIds = explode(",", $ids);
-			$sum = 5;//!!
-			foreach ($sIds as $id) {
-			    if ($id === '0') {
-			        $aIds[$id] = $sum;
-			    }
-			    elseif (intval($id) != 0) {
-			        $aIds[intval($id)] = $sum;
-			    }
-			}
-			$account = new account();
-			$transaction_id = $account->start_transaction($uid, $tr_id);
-			$orderId = $prof->BidPlaces($uid, $transaction_id, $aIds, $error);
-			if ($orderId == 0) $this->jsonError($error);
-			$this->jsonOk();
-	   }
+            $prof = new firstpagepos();
+            $ids = $_POST['ids'];
+            $aIds = array();
+            $sIds = explode(',', $ids);
+            $sum = 5;//!!
+            foreach ($sIds as $id) {
+                if ($id === '0') {
+                    $aIds[$id] = $sum;
+                } elseif (intval($id) != 0) {
+                    $aIds[intval($id)] = $sum;
+                }
+            }
+            $account = new account();
+            $transaction_id = $account->start_transaction($uid, $tr_id);
+            $orderId = $prof->BidPlaces($uid, $transaction_id, $aIds, $error);
+            if ($orderId == 0) {
+                $this->jsonError($error);
+            }
+            $this->jsonOk();
+        }
     }
-    
-    private function json() {
-        $sz = func_num_args();        
-        if (($sz == 0) || ($sz % 2 != 0)){
-            echo json_encode(array("status"=>"error", "msg"=>"Invalid number arguments in CPurchaseServiceController::json"));
+
+    private function json()
+    {
+        $sz = func_num_args();
+        if (($sz == 0) || ($sz % 2 != 0)) {
+            echo json_encode(array('status' => 'error', 'msg' => 'Invalid number arguments in CPurchaseServiceController::json'));
             exit;
         }
         $data = array();
-        for ($i = 0;  $i < $sz; $i += 2){
+        for ($i = 0;  $i < $sz; $i += 2) {
             $v = func_get_arg($i + 1);
             $k = func_get_arg($i);
-            $data[$k] =  iconv("WINDOWS-1251", "UTF-8//IGNORE", $v);
+            $data[$k] = iconv('WINDOWS-1251', 'UTF-8//IGNORE', $v);
         }
         echo json_encode($data);
         exit;
     }
-    
-    private function jsonOk() {
-        $sz = func_num_args();        
-        if (($sz % 2 != 0)){
-            echo json_encode(array("status"=>"error", "msg"=>"Invalid number arguments in CPurchaseServiceController::jsonOk"));
+
+    private function jsonOk()
+    {
+        $sz = func_num_args();
+        if (($sz % 2 != 0)) {
+            echo json_encode(array('status' => 'error', 'msg' => 'Invalid number arguments in CPurchaseServiceController::jsonOk'));
             exit;
         }
-        $data = array("status"=>"ok");        
-        for ($i = 0;  $i < $sz; $i += 2){
+        $data = array('status' => 'ok');
+        for ($i = 0;  $i < $sz; $i += 2) {
             $v = func_get_arg($i + 1);
             $k = func_get_arg($i);
-            $data[$k] =  iconv("WINDOWS-1251", "UTF-8//IGNORE", $v);
+            $data[$k] = iconv('WINDOWS-1251', 'UTF-8//IGNORE', $v);
         }
         echo json_encode($data);
         exit;
     }
-    
-    private function jsonError($msg) {
-        $sz = func_num_args();        
-        if (($sz == 0) || ($sz % 2 == 0)){
-            echo json_encode(array("status"=>"error", "msg"=>"Invalid number arguments in CPurchaseServiceController::jsonError"));
+
+    private function jsonError($msg)
+    {
+        $sz = func_num_args();
+        if (($sz == 0) || ($sz % 2 == 0)) {
+            echo json_encode(array('status' => 'error', 'msg' => 'Invalid number arguments in CPurchaseServiceController::jsonError'));
             exit;
         }
-        $data = array("status"=>"error");
-        $data["msg"] = iconv("WINDOWS-1251", "UTF-8//IGNORE", $msg);
-        for ($i = 1;  $i < $sz; $i += 2){
+        $data = array('status' => 'error');
+        $data['msg'] = iconv('WINDOWS-1251', 'UTF-8//IGNORE', $msg);
+        for ($i = 1;  $i < $sz; $i += 2) {
             $v = func_get_arg($i + 1);
             $k = func_get_arg($i);
-            $data[$k] =  iconv("WINDOWS-1251", "UTF-8//IGNORE", $v);
+            $data[$k] = iconv('WINDOWS-1251', 'UTF-8//IGNORE', $v);
         }
         echo json_encode($data);
         exit;
     }
-    
-    private function log($s) {
-        $h = fopen("/home/andrey/flclog/log.txt", "a");
+
+    private function log($s)
+    {
+        $h = fopen('/home/andrey/flclog/log.txt', 'a');
         fwrite($h, "============\r\n$s\r\n====================\r\n");
         fclose($h);
     }
-    
 }?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>

@@ -1,8 +1,13 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
-  if(!(hasPermissions('adm') && hasPermissions('users'))) { exit; }
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
+  if (!(hasPermissions('adm') && hasPermissions('users'))) {
+      exit;
+  }
 ?>
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/users.common.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/users.common.php';
 $xajax->printJavascript('/xajax/');
 ?>
 <style>
@@ -18,12 +23,16 @@ $xajax->printJavascript('/xajax/');
 </script>
 <strong>Рейтинг</strong>
 <br/><br/><br/>
-<? if ($_GET['result']=='success') { ?>
+<?php if ($_GET['result'] == 'success') {
+    ?>
   <div>
     <img src="/images/ico_ok.gif" alt="" border="0" height="18" width="19"/>&nbsp;&nbsp;Изменения внесены.
   </div>
   <br/><br/>
-<? } if ($error) print(view_error($error).'<br/>');?>
+<?php 
+} if ($error) {
+    print(view_error($error).'<br/>');
+}?>
 <form action="/siteadmin/rating/" method="post" onSubmit="this.btn.value='Подождите'; this.btn.disabled=true;">
     Логин&nbsp;&nbsp;<input type="text" name="login" value="<?=$login?>"/><br/><br/>
     <fieldset style="width:30%;text-align:right;padding:10px">
@@ -48,7 +57,9 @@ $xajax->printJavascript('/xajax/');
 <br />
 <br />
 <br />
-<?php if ($sError) { print(view_error($sError).'<br/>'); } ?>
+<?php if ($sError) {
+    print(view_error($sError).'<br/>');
+} ?>
 Продление сервисов:
 <form action="/siteadmin/rating/" method="post" onSubmit="this.btn.value='Подождите'; this.btn.disabled=true;">
     Логин&nbsp;&nbsp;<input type="text" name="login" value="<?=$login?>"/><br/>
@@ -59,9 +70,11 @@ $xajax->printJavascript('/xajax/');
       <input type="radio" name="type" value="2" id="type_where"> <label for="type_where">Размещение в</label> &nbsp;&nbsp;<select name="where">
       	<option value="-1">Главная</option>
       	<option value="0">Каталог</option>
-      	<?php foreach ($profs as $prof) { ?>
+      	<?php foreach ($profs as $prof) {
+    ?>
       	<option value="<?=$prof['id']?>"><?=$prof['groupname']?>: <?=$prof['profname']?></option>
-      	<?php } ?>
+      	<?php 
+} ?>
       </select>
       <br/>
     </fieldset><br/><br/><br/>

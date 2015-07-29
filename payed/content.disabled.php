@@ -9,7 +9,7 @@
     
 <?php
     $disabled_pay_button = true;
-    include_once('plans.php');
+    include_once 'plans.php';
 ?>
     
 </div>

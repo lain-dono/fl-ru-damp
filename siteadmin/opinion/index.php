@@ -1,25 +1,34 @@
-<?
-define( 'IS_SITE_ADMIN', 1 );
+<?php
+
+define('IS_SITE_ADMIN', 1);
 $no_banner = 1;
-$rpath = "../../";
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/opinions.php");
+$rpath = '../../';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/opinions.php';
 session_start();
 get_uid();
-  
-if(!hasPermissions('adm') || !hasPermissions('users')) {
-  header ("Location: /404.php");
-  exit;
+
+if (!hasPermissions('adm') || !hasPermissions('users')) {
+    header ('Location: /404.php');
+    exit;
 }
 
 $op = new opinions();
 
-if ($_GET['ds']) $ds = strtotime($_GET['ds']);
-if ($_GET['de']) $de = strtotime($_GET['de']);
-if (!$ds) $ds = mktime(0, 0, 1, date('m'), date('d'), date('Y'));
-if (!$de) $de = mktime(23, 59, 59, date('m'), date('d'), date('Y'));
+if ($_GET['ds']) {
+    $ds = strtotime($_GET['ds']);
+}
+if ($_GET['de']) {
+    $de = strtotime($_GET['de']);
+}
+if (!$ds) {
+    $ds = mktime(0, 0, 1, date('m'), date('d'), date('Y'));
+}
+if (!$de) {
+    $de = mktime(23, 59, 59, date('m'), date('d'), date('Y'));
+}
 
 switch ($_GET['filter']) {
-    case 'pos': $rating =  1; break;
+    case 'pos': $rating = 1; break;
     case 'neg': $rating = -1; break;
     case 'zero': $rating = 0; break;
     default: $rating = NULL;
@@ -28,15 +37,17 @@ switch ($_GET['filter']) {
 $login = __paramInit('string', 'login');
 
 list($data, $buser) = $op->getOpinionsData($ds, $de, $rating, $login);
-if (!$data) $data = array();
+if (!$data) {
+    $data = array();
+}
 
-$content = "../content.php";
+$content = '../content.php';
 
-$inner_page = "inner_index.php";
+$inner_page = 'inner_index.php';
 
-$header = $rpath."header.php";
-$footer = $rpath."footer.html";
+$header = $rpath.'header.php';
+$footer = $rpath.'footer.html';
 
-include ($rpath."template.php");
+include $rpath.'template.php';
 
 ?>

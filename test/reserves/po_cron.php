@@ -1,49 +1,37 @@
 <?php
 
 
-ini_set('display_errors',1);
+ini_set('display_errors', 1);
 error_reporting(E_ALL ^ E_NOTICE);
-
 
 ini_set('max_execution_time', 0);
 ini_set('memory_limit', '512M');
 
-if(!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT']))
-{    
-    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME) . '/../../'), '/');
-} 
+if (!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT'])) {
+    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME).'/../../'), '/');
+}
 
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/config.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . '/tu/models/TServiceOrderModel.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/tservices/tservices_order_history.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/reserves/ReservesModelFactory.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/log.php');
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/tu/models/TServiceOrderModel.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/tservices/tservices_order_history.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/reserves/ReservesModelFactory.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/log.php';
 
 //require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/reserves/ReservesPayout.php');
 
-require_once('ReservesPayoutTest.php');
-
+require_once 'ReservesPayoutTest.php';
 
 //------------------------------------------------------------------------------
 
 
 $results = array();
 
-
 //------------------------------------------------------------------------------
-
 
 
 $reservesPayout = new ReservesPayoutTest();
 $results['cron'] = $reservesPayout->cron(3);
-
-
-
-
-
-
-
 
 //$reservesPayout = new ReservesPayoutTest();
 //$reservesPayout->errorLog(777, 'Некорректная сумма выплаты');
@@ -102,7 +90,7 @@ if ($res) {
 //------------------------------------------------------------------------------
 
 
-array_walk($results, function(&$value, $key){
+array_walk($results, function (&$value, $key) {
     $value = sprintf('%s = %s'.PHP_EOL, $key, $value);
 });
 

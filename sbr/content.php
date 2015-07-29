@@ -1,11 +1,12 @@
-<?
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/sbr.common.php");
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/sbr.common.php';
 $xajax->printJavascript('/xajax/');
 ?>
 
 <script type="text/javascript">
 window.addEvent('domready', function() { 
-    <? if($sbr_id && $site == '') { ?>
+    <?php if ($sbr_id && $site == '') {
+    ?>
         var anchor_sbr = <?= intval($sbr_id)?>;
         
         if($('sbrList'+anchor_sbr)) {
@@ -15,10 +16,11 @@ window.addEvent('domready', function() {
         } else {
             xajax_loadSbr(anchor_sbr);
         } 
-    <? }//else?>
+    <?php 
+}//else?>
 });
 </script>
-<? if(!file_exists($_SERVER['DOCUMENT_ROOT'] . "/sbr/".$inner)) {
-    header_location_exit("/404.php", 1);
+<?php if (!file_exists($_SERVER['DOCUMENT_ROOT'].'/sbr/'.$inner)) {
+    header_location_exit('/404.php', 1);
 } //?>
-<? include ($_SERVER['DOCUMENT_ROOT'] . "/sbr/".$inner); ?>
+<?php include $_SERVER['DOCUMENT_ROOT'].'/sbr/'.$inner; ?>

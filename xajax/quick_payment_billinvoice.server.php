@@ -10,58 +10,57 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/quick_payment/quickPaymentPop
 require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/reserves/ReservesHelper.php');
 */
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/quick_payment/forms/BillInvoiceForm.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/DocGen/DocGenBill.php');
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/quick_payment/forms/BillInvoiceForm.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/DocGen/DocGenBill.php';
 
 //------------------------------------------------------------------------------
 
 
 /**
- * Выставяем счет оплаты по безналу
+ * Выставяем счет оплаты по безналу.
  * 
  * @param string $type - тип платежа (тут всегда bank)
- * @param array $data
+ * @param array  $data
+ *
  * @return \xajaxResponse
  */
 function quickPaymentBillinvoiceBank($type, $data)
 {
     $objResponse = &new xajaxResponse();
-    
+
     $uid = get_uid(false);
     if ($uid <= 0) {
         return $objResponse;
     }
-    
+
     $form = new BillInvoiceForm();
-    
+
     if (!$form->isValid($data)) {
         $params = addslashes(urldecode(http_build_query($form->getAllMessages('<br/>'))));
         $objResponse->script("
             var qp = window.quick_ext_payment_factory.getQuickPayment('billinvoice');
             if(qp) qp.showElementsError('{$params}');
         ");
+
         return $objResponse;
     }
 
     $sum = $form->getValue('sum');
-    
+
     try {
-        
         $doc = new DocGenBill();
         $file = $doc->generateBankInvoice($uid, @$_SESSION['login'], $sum);
-        
     } catch (Exception $e) {
-         $objResponse->script("
+        $objResponse->script("
             var qp = quick_ext_payment_factory.getQuickPayment('billinvoice');
             if(qp) qp.show_error('{$e->getMessage()} Попробуйте еще раз.');
         ");
-            
+
         return $objResponse;
     }
-    
-    
-    $link = WDCPREFIX . '/' . $file->path . $file->name;
-    
+
+    $link = WDCPREFIX.'/'.$file->path.$file->name;
+
     $objResponse->script(" 
         
         var template = $('bill_invoice_template').get('html');
@@ -76,6 +75,6 @@ function quickPaymentBillinvoiceBank($type, $data)
         var qp = quick_ext_payment_factory.getQuickPayment('billinvoice');
         if(qp) qp.close_popup();
     ");
-    
+
     return $objResponse;
 }

@@ -1,22 +1,22 @@
-<?
-define( 'IS_SITE_ADMIN', 1 );
+<?php
+
+define('IS_SITE_ADMIN', 1);
 $no_banner = 1;
-$rpath = "../../";
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/sbr_meta.php");
-    
+$rpath = '../../';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/sbr_meta.php';
+
 session_start();
 get_uid();
-	
-if ( !(hasPermissions('sbr') || hasPermissions('sbr_finance') || hasPermissions('tmppayments')) ) {
-    header_location_exit("/404.php");
+
+if (!(hasPermissions('sbr') || hasPermissions('sbr_finance') || hasPermissions('tmppayments'))) {
+    header_location_exit('/404.php');
 }
 $css_file = array('moderation.css','/css/block/b-menu/_tabs/b-menu_tabs.css','nav.css');
 $js_file = array('highcharts/mootools-adapter.js', 'highcharts/highcharts.js');
 
 $show_results = __paramInit('bool', 'show_results', null, false);
 $tab = __paramInit('string', 'tab', null, 'graph');
-
 
 if ($show_results) {
     $period_param = __paramInit('string', 'period', null, 'today');
@@ -27,57 +27,54 @@ if ($show_results) {
 
     $period = array();
     if ($period_param === 'today') {
-        $period[0] = date("Y-m-d 00:00:00", time());
-        $period[1] = date("Y-m-d 23:59:59", time());
+        $period[0] = date('Y-m-d 00:00:00', time());
+        $period[1] = date('Y-m-d 23:59:59', time());
         $groupBy = 'day';
-        $periodText = "за сегодня";
+        $periodText = 'за сегодня';
     } elseif ($period_param === 'week') {
-        $period[0] = date("Y-m-d 00:00:00", time() - (3600 * 24 * 7));
-        $period[1] = date("Y-m-d 23:59:59", time());
+        $period[0] = date('Y-m-d 00:00:00', time() - (3600 * 24 * 7));
+        $period[1] = date('Y-m-d 23:59:59', time());
         $groupBy = 'day';
-        $periodText = "за прошедшую неделю";
+        $periodText = 'за прошедшую неделю';
     } elseif ($period_param === 'month') {
-        $period[0] = date("Y-m-d 00:00:00", time() - (3600 * 24 * 30));
-        $period[1] = date("Y-m-d 23:59:59", time());
+        $period[0] = date('Y-m-d 00:00:00', time() - (3600 * 24 * 30));
+        $period[1] = date('Y-m-d 23:59:59', time());
         $groupBy = 'day';
-        $periodText = "за прошедший месяц";
+        $periodText = 'за прошедший месяц';
     } elseif ($period_param === 'year') {
-        $period[0] = date("Y-m-d 00:00:00", time() - (3600 * 24 * 365));
-        $period[1] = date("Y-m-d 23:59:59", time());
+        $period[0] = date('Y-m-d 00:00:00', time() - (3600 * 24 * 365));
+        $period[1] = date('Y-m-d 23:59:59', time());
         $groupBy = 'month';
-        $periodText = "за прошедший год (статистика по месяцам)";
+        $periodText = 'за прошедший год (статистика по месяцам)';
     } elseif ($period_param === 'alltime') {
         $groupBy = 'year';
-        $periodText = "за все время (статистика по годам)";
+        $periodText = 'за все время (статистика по годам)';
     } elseif ($period_param === 'custom') {
         $from = explode('.', $custom_period_from);
         $to = explode('.', $custom_period_to);
         $fromTime = mktime(0, 0, 0, $from[1], $from[0], $from[2]);
         $toTime = mktime(0, 0, 0, $to[1], $to[0], $to[2]);
-        
+
         // дата начала периода не должна быть позже конца периода
         if ($fromTime > $toTime) {
-            
             $tmpTime = $fromTime;
             $fromTime = $toTime;
             $toTime = $tmpTime;
-            
+
             $custom_period_tmp = $custom_period_from;
             $custom_period_from = $custom_period_to;
             $custom_period_to = $custom_period_tmp;
-            
         }
-            
-        $period[0] = date("Y-m-d 00:00:00", $fromTime);
-        $period[1] = date("Y-m-d 23:59:59", $toTime);
+
+        $period[0] = date('Y-m-d 00:00:00', $fromTime);
+        $period[1] = date('Y-m-d 23:59:59', $toTime);
         $groupBy = 'day';
         $periodText = "с $custom_period_from по $custom_period_to";
     }
-    
-    
+
     $sbr_meta = new sbr_meta();
     $sbr_data = $sbr_meta->getSbrStats($period, $groupBy, $akkr_param, $pdrd_param);
-    
+
     // подготавливаем для таблицы, так как для некоторых графиков могут быть пропущены даты
     // заодно и дату приведем к нормальному формату
     $dates = array();
@@ -85,9 +82,9 @@ if ($show_results) {
         foreach ($data as $date => $values) {
             if (!$dates[$date]) {
                 if ($groupBy === 'day') {
-                    $dates[$date] = substr($date, 6, 2) . '.' . substr($date, 4, 2);
+                    $dates[$date] = substr($date, 6, 2).'.'.substr($date, 4, 2);
                 } elseif ($groupBy === 'month') {
-                    $dates[$date] = substr($date, 4, 2) . '.' . substr($date, 0, 4);
+                    $dates[$date] = substr($date, 4, 2).'.'.substr($date, 0, 4);
                 } elseif ($groupBy === 'year') {
                     $dates[$date] = substr($date, 0, 4);
                 }
@@ -95,7 +92,7 @@ if ($show_results) {
         }
     }
     ksort($dates);
-    
+
     // перечень графиков
     // ключ 'name'  - название графика
     // ключ 'index' - ключ из массива полученного из функции sbr_meta::getStatsDaysLC
@@ -115,13 +112,13 @@ if ($show_results) {
         array('name' => 'Сумма покрытых для каждой ПС',                         'index' => 2, 'value' => 'sum', 'unit' => 'руб', 'descr' => 'Сумма',        'color' => '#4572A7', 'type' => 'ps'),
         array('name' => 'Средний бюджет покрытых сделок',                       'index' => 2, 'value' => 'avg', 'unit' => 'руб', 'descr' => 'Сумма',        'color' => '#4572A7', 'type' => 'normal'),
         array('name' => 'Сумма открытия, общая (исполнителю переведено)',       'index' => 3, 'value' => 'sum', 'unit' => 'руб', 'descr' => 'Сумма',        'color' => '#4572A7', 'type' => 'normal'),
-        array('name' => 'Сумма открытия для каждой ПС (исполнителю переведено)','index' => 3, 'value' => 'sum', 'unit' => 'руб', 'descr' => 'Сумма',        'color' => '#4572A7', 'type' => 'ps'),
+        array('name' => 'Сумма открытия для каждой ПС (исполнителю переведено)', 'index' => 3, 'value' => 'sum', 'unit' => 'руб', 'descr' => 'Сумма',        'color' => '#4572A7', 'type' => 'ps'),
         array('name' => 'Сумма возвратов (вернули работодателю)',               'index' => 4, 'value' => 'sum', 'unit' => 'руб', 'descr' => 'Сумма',        'color' => '#4572A7', 'type' => 'normal'),
         array('name' => 'Процент от Работодателей',                             'index' => 5, 'value' => 'sum', 'unit' => 'руб', 'descr' => 'Сумма',        'color' => '#4572A7', 'type' => 'normal'),
         array('name' => 'Процент от Исполнителей',                              'index' => 6, 'value' => 'sum', 'unit' => 'руб', 'descr' => 'Сумма',        'color' => '#4572A7', 'type' => 'normal'),
         array('name' => 'Средний процент',                                      'index' => 5, 'value' => 'avg', 'unit' => 'руб', 'descr' => 'Cумма',        'color' => '#4572A7', 'type' => 'avg_perc'),
     );
-    
+
     // перечень строк в таблице
     $sbr_table_types = array (
         array('type' => 1, 'value' => 'cnt',        'name' => 'Кол-во заведенных'),
@@ -158,19 +155,17 @@ if ($show_results) {
         array('type' => 5, 'value' => 'sum',        'name' => 'Процент от раб-лей'),
         array('type' => 6, 'value' => 'sum',        'name' => 'Процент от исп-лей'),
     );
-    
 }
 
-$content = "../content.php";
+$content = '../content.php';
 
+$inner_page = 'inner_index.php';
 
-$inner_page = "inner_index.php";
-
-$header = $rpath."header.php";
-$footer = $rpath."footer.html";
+$header = $rpath.'header.php';
+$footer = $rpath.'footer.html';
 
 $stretch_page = true;
 
-include ($rpath."template.php");
+include $rpath.'template.php';
 
 ?>

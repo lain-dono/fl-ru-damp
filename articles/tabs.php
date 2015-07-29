@@ -4,11 +4,13 @@
         <li class="b-menu__item <?php $tab != 'unpublished' ? print 'b-menu__item_active' : ''?>">
 			<a class="b-menu__link" href="/articles/" title="Статьи"><span class="b-menu__b1">Статьи</span></a>
 		</li>
-        <? if($articles_unpub) { ?>
+        <?php if ($articles_unpub) {
+    ?>
         <li class="b-menu__item <?php $tab == 'unpublished' ? print 'b-menu__item_active' : ''?>">
 			<a class="b-menu__link" href="/articles/?page=unpublished" title="На модерации"><span class="b-menu__b1">На модерации</span></a>
 		</li>
-        <? } ?>
+        <?php 
+} ?>
         <li class="b-menu__item b-menu__item_last"><a class="b-menu__link" href="/interview/" title="Интервью"><span class="b-menu__b1">Интервью</span></a></li>
     </ul>
 </div>

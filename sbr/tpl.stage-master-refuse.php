@@ -1,23 +1,23 @@
 <?php
-$crumbs = 
+$crumbs =
 array(
     0 => array(
-        'href' => '/' . sbr::NEW_TEMPLATE_SBR . '/', 
-        'name' => '«Мои Сделки»'
+        'href' => '/'.sbr::NEW_TEMPLATE_SBR.'/',
+        'name' => '«Мои Сделки»',
     ),
     1 => array(
         'href' => '',
-        'name' => $sbr->data['name'] . ' ' . $sbr->getContractNum()
-    )
+        'name' => $sbr->data['name'].' '.$sbr->getContractNum(),
+    ),
 );
 // Хлебные крошки
-include("tpl.sbr-crumbs.php"); 
+include 'tpl.sbr-crumbs.php';
 
 // Заказчик или исполнитель
-include($_SERVER['DOCUMENT_ROOT'] . "/sbr/tpl.stage-user.php");
+include $_SERVER['DOCUMENT_ROOT'].'/sbr/tpl.stage-user.php';
 
 // Оыкно помощи
-include ($_SERVER['DOCUMENT_ROOT'] . "/sbr/tpl.help.php");
+include $_SERVER['DOCUMENT_ROOT'].'/sbr/tpl.help.php';
 
 ?>
 

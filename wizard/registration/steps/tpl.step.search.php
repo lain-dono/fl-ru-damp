@@ -2,12 +2,16 @@
 var domain4cookie = '<?=$GLOBALS['domain4cookie']?>';
 window.addEvent('domready', 
     function() {
-        <?php if($category > 0) { ?>
+        <?php if ($category > 0) {
+    ?>
         ComboboxManager.getInput("category").breadCrumbs[0] = '<?=$category?>';
-        <?php }//if?>
-        <?php if($subcategory > 0) { ?>
+        <?php 
+}//if?>
+        <?php if ($subcategory > 0) {
+    ?>
         ComboboxManager.getInput("category").breadCrumbs[1] = '<?=$subcategory?>';
-        <?php }//if?>
+        <?php 
+}//if?>
     }
 ); 
 </script>
@@ -32,8 +36,8 @@ window.addEvent('domready',
                     <tr class="b-layout__tr">
                         <td class="b-layout__left b-layout__left_padright_10 b-layout__left_width_140">
                             <div class="b-combo b-combo_inline-block">
-                                <div class="b-combo__input b-combo__input_width_125 b-combo__input_multi_dropdown b-combo__input_resize b-combo__input_arrow_yes b-combo__input_init_professionsList drop_down_default_<?= $subcategory ? (int)$subcategory : (int)$category?> multi_drop_down_default_column_<?= $subcategory ? "1" : "0"?>">
-                                    <input type="text" value="<?= $category_name ? $category_name : "Выберите раздел";?>" size="80" name="category" class="b-combo__input-text b-combo__input-text_fontsize_15" id="category" onchange="search_project($('search-request').get('value'));">
+                                <div class="b-combo__input b-combo__input_width_125 b-combo__input_multi_dropdown b-combo__input_resize b-combo__input_arrow_yes b-combo__input_init_professionsList drop_down_default_<?= $subcategory ? (int) $subcategory : (int) $category?> multi_drop_down_default_column_<?= $subcategory ? '1' : '0'?>">
+                                    <input type="text" value="<?= $category_name ? $category_name : 'Выберите раздел';?>" size="80" name="category" class="b-combo__input-text b-combo__input-text_fontsize_15" id="category" onchange="search_project($('search-request').get('value'));">
                                     <label for="category" class="b-combo__label b-combo__label_fontsize_15"></label>
                                     <span id="category_arrow" class="b-combo__arrow"></span>
                                 </div>
@@ -54,7 +58,7 @@ window.addEvent('domready',
     </div><!-- b-ext-filter -->
     
     <div id="project_content" class="b-layout__txt">
-    <?php include ($_SERVER['DOCUMENT_ROOT']."/wizard/registration/steps/tpl.step.search.project.php"); ?>
+    <?php include $_SERVER['DOCUMENT_ROOT'].'/wizard/registration/steps/tpl.step.search.project.php'; ?>
     </div>
     <span id="project_loader_content" style="display:none"></span>
     
@@ -67,7 +71,7 @@ window.addEvent('domready',
         </div>
         <input type="hidden" name="page" id="page-search" value="1"/>
         <div class="b-fon__body b-fon__body_pad_10 b-fon__body_center" id="load_project">
-            <a href="javascript:void(0)" onclick="loading_projects($('page-search').get('value'))" class="b-button b-button_rectangle_color_transparent <?= ($count <= 3 ? "b-button_disabled" : "")?>">
+            <a href="javascript:void(0)" onclick="loading_projects($('page-search').get('value'))" class="b-button b-button_rectangle_color_transparent <?= ($count <= 3 ? 'b-button_disabled' : '')?>">
                 <span class="b-button__b1">
                     <span class="b-button__b2">
                         <span class="b-button__txt">Загрузить еще 10 проектов</span>

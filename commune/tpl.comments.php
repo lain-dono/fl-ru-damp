@@ -1,5 +1,5 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/commune.common.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/commune.common.php';
 $xajax->printJavascript('/xajax/');
 
 global $id, $uid, $om, $comm, $top, $page, $session, $message_id, $comment_id, $request, $alert, $action, $user_mod;
@@ -11,46 +11,54 @@ $top['last_viewed_time'] = !$uid ? 0 : commune::GetMessageLVT($top['id'], $uid);
 //print($top['member_is_banned']);
 //print($user_mod & (commune::MOD_ADMIN | commune::MOD_COMM_AUTHOR | commune::MOD_COMM_MANAGER));
 // Дерево сообщений.
-if (!($thread = commune::GetAsThread($top['theme_id'])))
+if (!($thread = commune::GetAsThread($top['theme_id']))) {
     $thread = array();
-
+}
 
 $tree = transformArray2Tree($thread, 'id', 'parent_id', $top['id'], 'SIMPLE');
 $is_site_admin = hasPermissions('communes');
 ?>
 <?php if (true) {
- ?>
+    ?>
 
 <?php
-    $aGroup = commune::getGroupById( $comm['group_id'] );
+    $aGroup = commune::getGroupById($comm['group_id']);
     $sGroup = $aGroup['name'];
     $crumbs = array();
-    $crumbs[] = array("title"=>"Сообщества", "url"=>"/commune/");
-    if($comm['id'] != commune::COMMUNE_BLOGS_ID) $crumbs[] = array("title"=>$sGroup, "url"=>"/commune/?gr={$comm['group_id']}");
-    $crumbs[] = array("title"=>$comm['name'], "url"=>getFriendlyURL('commune_commune', $comm['id']));
-    $crumbs[] = array("title"=>$top['category_name'], "url"=>getFriendlyURL('commune_commune', $comm['id'])."?om=".(__paramInit("int", "om")?__paramInit("int", "om"):'0').'&cat='.$top['category_id']);
-?>
+    $crumbs[] = array('title' => 'Сообщества', 'url' => '/commune/');
+    if ($comm['id'] != commune::COMMUNE_BLOGS_ID) {
+        $crumbs[] = array('title' => $sGroup, 'url' => "/commune/?gr={$comm['group_id']}");
+    }
+    $crumbs[] = array('title' => $comm['name'], 'url' => getFriendlyURL('commune_commune', $comm['id']));
+    $crumbs[] = array('title' => $top['category_name'], 'url' => getFriendlyURL('commune_commune', $comm['id']).'?om='.(__paramInit('int', 'om') ? __paramInit('int', 'om') : '0').'&cat='.$top['category_id']);
+    ?>
 
 <div class="b-community-discussion">
-<?=getCrumbs($crumbs, "commune")?>
-<?php $sTitle   = /*$top['moderator_status'] === '0' ? $stop_words->replace($top['title']) :*/ $top['title']; ?>
+<?=getCrumbs($crumbs, 'commune')?>
+<?php $sTitle = /*$top['moderator_status'] === '0' ? $stop_words->replace($top['title']) :*/ $top['title'];
+    ?>
 <h1 class="b-page__title"><?= $sTitle ?>
-                <? if ($_SESSION['login']) {
-                    if(!isset($favs)) $favs = commune::GetFavorites(get_uid(false), NULL);
+                <?php if ($_SESSION['login']) {
+    if (!isset($favs)) {
+        $favs = commune::GetFavorites(get_uid(false), NULL);
+    }
                     //$onclick = ($site == 'Lenta') ? "ShowFavFloatLenta($msg_id, $user_id, 'CM')" : "ShowFavFloat($msg_id, $user_id, $om)";
                     //$ids = ($site == 'Lenta' ? 'CM' : '') . $msg_id;
                     //$pr = ($favs[$msg_id] || ($site == 'Lenta' && $favs['CM' . $msg_id])) ? ($site == 'Lenta' ? $favs['CM' . $msg_id]['priority'] : $favs[$msg_id]['priority']) : '0_empty';
                     //$alt_text = $favs[$msg_id] || ($site == 'Lenta' && $favs['CM' . $msg_id]) ? 'Редактировать приоритет' : 'Добавить в закладки';
                     // с помощью id передаем параметры в js код
                 ?>
-                    <span id="fav_star_<?= $msg_id ?>_<?= $user_id ?>_<?= $om ?>_<?= $favs[$msg_id]['priority'] ? $favs[$msg_id]['priority'] : 0 ?>" class="b-post__star b-post__star_<?= $favs[$msg_id] ? "yellow" : "white" ?>"></span>
-                <? } ?>
+                    <span id="fav_star_<?= $msg_id ?>_<?= $user_id ?>_<?= $om ?>_<?= $favs[$msg_id]['priority'] ? $favs[$msg_id]['priority'] : 0 ?>" class="b-post__star b-post__star_<?= $favs[$msg_id] ? 'yellow' : 'white' ?>"></span>
+                <?php 
+}
+    ?>
 </h1>
 
 <div id="idTop_<?= $top['id'] ?>">
-<?= __commPrntTopic($top, $uid, $user_mod, $om, NULL, 'Topic', ($favs == NULL ? 0 : 1)) ?>
+<?= __commPrntTopic($top, $uid, $user_mod, $om, null, 'Topic', ($favs == null ? 0 : 1)) ?>
 </div>
-<?php include_once(dirname(__FILE__) . '/comments_tree.php'); ?>
+<?php include_once dirname(__FILE__).'/comments_tree.php';
+    ?>
     
 
 
@@ -64,7 +72,8 @@ $is_site_admin = hasPermissions('communes');
 
 
 
-<?php } else { /* не используется ?>
+<?php 
+} else { /* не используется ?>
     <table border="0" width="100%" cellpadding="0" cellspacing="0">
         <tr valign="middle">
             <td align="left">
@@ -213,7 +222,8 @@ $is_site_admin = hasPermissions('communes');
             </td>
         </tr>
     </table>
-<?php*/ } ?>
+<?php*/
+} ?>
 
 
 
@@ -224,23 +234,24 @@ $is_site_admin = hasPermissions('communes');
 
 
 
-<?
+<?php
                 // Ставим запись, что топик просмотрен.
-                if ($uid)
-                    commune::SetMessageLVT($top['id'], $uid, -1, ($top['a_count']-1)); // в a_count содержится на 1 комментарий больше, не знаю почему
+                if ($uid) {
+                    commune::SetMessageLVT($top['id'], $uid, -1, ($top['a_count'] - 1));
+                } // в a_count содержится на 1 комментарий больше, не знаю почему
 ?> 
 
 <?php 
-if ( $user_mod & (
+if ($user_mod & (
         commune::MOD_COMM_ADMIN
         | commune::MOD_ADMIN
         | commune::MOD_MODER
         | commune::MOD_COMM_MODERATOR
         | commune::MOD_COMM_AUTHOR
-    ) 
+    )
 ) {
-	include_once( $_SERVER['DOCUMENT_ROOT'] . '/user/ban_overlay.php' );
-	include_once( $_SERVER['DOCUMENT_ROOT'] . '/user/warn_overlay.php' );
+    include_once $_SERVER['DOCUMENT_ROOT'].'/user/ban_overlay.php';
+    include_once $_SERVER['DOCUMENT_ROOT'].'/user/warn_overlay.php';
 }
 ?>
 

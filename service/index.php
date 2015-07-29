@@ -1,8 +1,9 @@
 <?php
+
 $grey_service = 1;
-$g_page_id = "0|9";
+$g_page_id = '0|9';
 $stretch_page = true;
-$showMainDiv  = true;
+$showMainDiv = true;
 require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
 
 session_start();
@@ -23,11 +24,11 @@ if (!get_uid(0)) {
     $forEmp = false;
 }
 
-$page_title = "Услуги - фриланс, удаленная работа на FL.ru";
+$page_title = 'Услуги - фриланс, удаленная работа на FL.ru';
 
-$header   = '../header.php';
-$footer   = '../footer.php';
+$header = '../header.php';
+$footer = '../footer.php';
 $css_file = '/css/block/b-promo/__servis/b-promo__servis.css';
-$content  = 'content_new.php';
+$content = 'content_new.php';
 
 include '../template2.php';

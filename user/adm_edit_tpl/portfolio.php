@@ -1,17 +1,18 @@
 <?php
 /**
- * Шаблон попап формы быстрого редактирования работы в портфолио
+ * Шаблон попап формы быстрого редактирования работы в портфолио.
+ *
  * @author Max 'BlackHawk' Yastrembovich
  */
-if ( !defined('IN_STDF') ) { 
-    header("HTTP/1.0 404 Not Found"); // ибо нефиг
+if (!defined('IN_STDF')) {
+    header('HTTP/1.0 404 Not Found'); // ибо нефиг
     exit();
 }
 ?>
 
 <input type="hidden" name="prof" value="<?=$portf['prof_id']?>" />
 <input type="hidden" name="user_id" value="<?=$portf['user_id']?>" />
-<input type="hidden" name="is_video" id="is_video" value="<?=( $portf['is_video'] == 't' ? '1' : '0' )?>" />
+<input type="hidden" name="is_video" id="is_video" value="<?=($portf['is_video'] == 't' ? '1' : '0')?>" />
 
 <?=_parseHiddenParams($aParams)?>
 
@@ -28,14 +29,14 @@ if ( !defined('IN_STDF') ) {
         <label class="b-form__name b-form__name_relative b-form__name_bold b-form__name_width_80 b-form__name_padtop_3">Раздел</label>
         <div class="b-input_inline-block b-input_width_545">
             <select id="adm_edit_new_prof" name="new_prof" onchange="adm_edit_content.hideError('prof');" class="b-select__select b-select__select_width_full" tabindex="300">
-            <?php foreach ( $profs as $aOne ) {
-                if ( $user->is_pro != 't' && ($aOne['prof_id'] == professions::BEST_PROF_ID || $aOne['prof_id'] == professions::CLIENTS_PROF_ID) ) {
-                    continue;
-                }
-                
-                $sSelected = $portf['prof_id'] == $aOne['prof_id'] ? ' selected="selected"' : '';
-                echo '<option value="'. $aOne['prof_id'] .'" '. $sSelected .'>'. $aOne['name'] .'</option>';
-            }
+            <?php foreach ($profs as $aOne) {
+    if ($user->is_pro != 't' && ($aOne['prof_id'] == professions::BEST_PROF_ID || $aOne['prof_id'] == professions::CLIENTS_PROF_ID)) {
+        continue;
+    }
+
+    $sSelected = $portf['prof_id'] == $aOne['prof_id'] ? ' selected="selected"' : '';
+    echo '<option value="'.$aOne['prof_id'].'" '.$sSelected.'>'.$aOne['name'].'</option>';
+}
             ?>
             </select>
         </div>
@@ -114,10 +115,18 @@ if ( !defined('IN_STDF') ) {
         </div>
         <div class="b-input_inline-block b-input_width_100">
             <select name="ptimeei" id="adm_edit_ptimeei" class="b-select__select b-select__select_width_full">
-                <option value='0'<? if ($portf['prj_time_type']==0) { ?> selected="selected"<? } ?>>в часах</option>
-                <option value='1'<? if ($portf['prj_time_type']==1) { ?> selected="selected"<? } ?>>в днях</option>
-                <option value='2'<? if ($portf['prj_time_type']==2) { ?> selected="selected"<? } ?>>в месяцах</option>
-                <option value='3'<? if ($portf['prj_time_type']==3) { ?> selected="selected"<? } ?>>в минутах</option>
+                <option value='0'<?php if ($portf['prj_time_type'] == 0) {
+    ?> selected="selected"<?php 
+} ?>>в часах</option>
+                <option value='1'<?php if ($portf['prj_time_type'] == 1) {
+    ?> selected="selected"<?php 
+} ?>>в днях</option>
+                <option value='2'<?php if ($portf['prj_time_type'] == 2) {
+    ?> selected="selected"<?php 
+} ?>>в месяцах</option>
+                <option value='3'<?php if ($portf['prj_time_type'] == 3) {
+    ?> selected="selected"<?php 
+} ?>>в минутах</option>
             </select>
         </div>
         
@@ -142,7 +151,8 @@ if ( !defined('IN_STDF') ) {
         </div>
     </div>
     
-    <?php if ( $portf['is_video'] == 't' ) { ?>
+    <?php if ($portf['is_video'] == 't') {
+    ?>
     <div class="b-form">
         <label class="b-form__name b-form__name_relative b-form__name_bold b-form__name_width_80 b-form__name_padtop_3">Ссылка</label>
         <label class="b-check__label">Вставьте в поле ниже ссылку, которую вы получили на видео хостинге YouTube, RuTube или Vimeo:</label>
@@ -164,7 +174,9 @@ if ( !defined('IN_STDF') ) {
             <b class="b-fon__b1"></b>
         </div>
     </div>
-    <?php } else { ?>
+    <?php 
+} else {
+    ?>
     <div class="b-form">
         <label class="b-form__name b-form__name_relative b-form__name_bold b-form__name_width_80 b-form__name_padtop_3" for="adm_edit_link">Ссылка</label>
         <div class="b-input b-input_inline-block b-input_width_545">
@@ -181,7 +193,8 @@ if ( !defined('IN_STDF') ) {
             <b class="b-fon__b1"></b>
         </div>
     </div>
-    <?php } ?>
+    <?php 
+} ?>
     
     <div class="b-form">
         <label class="b-form__name b-form__name_bold b-form__name_width_80 b-form__name_padtop_3" for="adm_edit_msg">Описание</label>
@@ -204,7 +217,8 @@ if ( !defined('IN_STDF') ) {
 </div>
 
 <div id="adm_edit_tab_div2" style="display: none;">
-    <?php if ( $portf['is_video'] != 't' ) { ?>
+    <?php if ($portf['is_video'] != 't') {
+    ?>
     <div class="b-form">
         <label class="b-form__name b-form__name_relative b-form__name_bold b-form__name_width_80 b-form__name_padtop_3">&nbsp;</label>
         <div class="b-input_inline-block b-input_width_550">
@@ -222,32 +236,37 @@ if ( !defined('IN_STDF') ) {
         <span id="span_pict" style="visibility:hidden;"><a href="<?=WDCPREFIX?>/users/<?=$user->login?>/upload/<?=$portf['pict']?>" class="blue" target="_blank">Посмотреть загруженный файл</a><?php/*&nbsp;&nbsp;<a href="javascript:delpict('pict')" title="Удалить">[x]</a>*/?></span>
         <div class="b-layout__txt b-layout__txt_fontsize_11">Можно загрузить:  файл размером до 10 Мб, флеш-файлы и картинки более 1 Мб открываются в новом окне.  <br />Запрещены к загрузке: <?=implode(', ', $GLOBALS['disallowed_array'])?></div>
     </div>
-    <?php } ?>
+    <?php 
+} ?>
     
     <div class="b-form">
         <label class="b-form__name b-form__name_bold b-form__name_width_80 b-form__name_padtop_3">Превью</label>
         <iframe style="width:550px;height:45px;" scrolling="no" id="fupload" name="fupload" src="/upload.php?type=work_prev&uid=<?=$portf['user_id']?>" frameborder="0"></iframe>
         <input type="hidden" id="prev_pict" name="prev_pict" value="" />
-        <span id="span_prev_pict" style="visibility:<?=( $portf['prev_pict'] ? 'visible' : 'hidden' )?>"><a href="<?=WDCPREFIX?>/users/<?=$user->login?>/upload/<?=$portf['prev_pict']?>" class="blue" target="_blank">Посмотреть загруженный файл</a>&nbsp;&nbsp;<input type="checkbox" class="b-check__input" id="adm_edit_del_prev" name="del_prev" value="1" /><label class="b-check__label" for="adm_edit_del_prev">Удалить файл</label></span>
-        <div class="b-layout__txt b-layout__txt_fontsize_11">Можно загрузить превью для закачиваемого файла.  <? if($user->is_pro != 't') { ?><br /><strong>Превью отображается только у пользователей с аккаунтом <a href='/payed/' class='ac-pro'><img src='/images/icons/f-pro.png' width='26' height='11' alt='PRO' style='vertical-align:bottom;' /></a></strong><br /><? } ?> Формат: <?=implode(', ', array_diff($GLOBALS['graf_array'], array('swf')) )?>. Максимальный размер файла: 100 Кб.</div>
+        <span id="span_prev_pict" style="visibility:<?=($portf['prev_pict'] ? 'visible' : 'hidden')?>"><a href="<?=WDCPREFIX?>/users/<?=$user->login?>/upload/<?=$portf['prev_pict']?>" class="blue" target="_blank">Посмотреть загруженный файл</a>&nbsp;&nbsp;<input type="checkbox" class="b-check__input" id="adm_edit_del_prev" name="del_prev" value="1" /><label class="b-check__label" for="adm_edit_del_prev">Удалить файл</label></span>
+        <div class="b-layout__txt b-layout__txt_fontsize_11">Можно загрузить превью для закачиваемого файла.  <?php if ($user->is_pro != 't') {
+    ?><br /><strong>Превью отображается только у пользователей с аккаунтом <a href='/payed/' class='ac-pro'><img src='/images/icons/f-pro.png' width='26' height='11' alt='PRO' style='vertical-align:bottom;' /></a></strong><br /><?php 
+} ?> Формат: <?=implode(', ', array_diff($GLOBALS['graf_array'], array('swf')))?>. Максимальный размер файла: 100 Кб.</div>
     </div>
     
-    <?php if ( $portf['is_video'] != 't' ) { ?>
+    <?php if ($portf['is_video'] != 't') {
+    ?>
     <div class="b-form">
         <label class="b-form__name b-form__name_bold b-form__name_width_80 b-form__name_padtop_3">&nbsp;</label>
         <div class="b-input_inline-block b-input_width_545">
             <div class="b-radio  b-radio_layout_horizontal">
                 <div class="b-radio__item">
-                    <input id="adm_edit_prev_type1" class="b-radio__input" type="radio" name="prev_type" value="0" <?=( !$portf['prj_prev_type'] ? ' checked="checked"' : '' )?> />
+                    <input id="adm_edit_prev_type1" class="b-radio__input" type="radio" name="prev_type" value="0" <?=(!$portf['prj_prev_type'] ? ' checked="checked"' : '')?> />
                     <label class="b-radio__label" for="adm_edit_prev_type1">Графическое превью</label>
                 </div>
                 <div class="b-radio__item">
-                    <input id="adm_edit_prev_type2" class="b-radio__input" type="radio" name="prev_type" value="1"  <?=( $portf['prj_prev_type'] ? ' checked="checked"' : '' )?> />
+                    <input id="adm_edit_prev_type2" class="b-radio__input" type="radio" name="prev_type" value="1"  <?=($portf['prj_prev_type'] ? ' checked="checked"' : '')?> />
                     <label class="b-radio__label" for="adm_edit_prev_type2">Текстовое превью</label>
                 </div>
             </div>
         </div>
     </div>
-    <?php } ?>
+    <?php 
+} ?>
 </div>
 

@@ -1,6 +1,6 @@
-<?
+<?php
 // кнопка "Закрыть" нужна не на каждом сплэше
-$closeButton = !strpos($tpl_splash, "splash-messages.tpl.php");
+$closeButton = !strpos($tpl_splash, 'splash-messages.tpl.php');
 ?>
 <div id="i-shad_wrap" class="i-shadow i-shadow_zindex_110 ">
     <div class="b-shadow b-shadow_width_950 b-shadow_vertical-center b-shadow_main_content" >
@@ -9,7 +9,7 @@ $closeButton = !strpos($tpl_splash, "splash-messages.tpl.php");
                 <div class="b-shadow__top">
                     <div class="b-shadow__bottom">
                         <div class="b-shadow__body b-shadow__body_bg_fff b-shadow__body_pad_20 b-layout">
-                            <? include ($tpl_splash);?>
+                            <?php include $tpl_splash;?>
                         </div>
                     </div>
                 </div>
@@ -19,9 +19,11 @@ $closeButton = !strpos($tpl_splash, "splash-messages.tpl.php");
         <div class="b-shadow__tr"></div>
         <div class="b-shadow__bl"></div>
         <div class="b-shadow__br"></div>
-        <? if ($closeButton) { ?>
+        <?php if ($closeButton) {
+    ?>
             <a href="javascript:void(0);" onclick="$('b-shadow__overlay').dispose();$('i-shad_wrap').dispose(); return false;"><span class="b-shadow__icon b-shadow__icon_close"></span></a>
-        <? } ?>
+        <?php 
+} ?>
     </div>
 </div>
 

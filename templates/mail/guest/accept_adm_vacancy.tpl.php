@@ -6,12 +6,12 @@
  */
 
 /**
- * Тема письма
+ * Тема письма.
  */
-$smail->subject = "Подтверждение публикации вакансии на сайте FL.ru";
+$smail->subject = 'Подтверждение публикации вакансии на сайте FL.ru';
 
-$activate_url = sprintf("%s/guest/activate/%s/", $GLOBALS['host'], $code);
-$unsubscribe_uri = $GLOBALS['host'] . $unsubscribe_uri;
+$activate_url = sprintf('%s/guest/activate/%s/', $GLOBALS['host'], $code);
+$unsubscribe_uri = $GLOBALS['host'].$unsubscribe_uri;
 
 ?>
 Вы разместили вакансию – <a href="<?=$link?>"><?=$link?></a>

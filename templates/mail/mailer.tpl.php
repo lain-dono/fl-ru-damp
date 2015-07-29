@@ -4,7 +4,7 @@
  * Шаблон письма рассылки mailer
  */
 
-$unsubscribe_url = $GLOBALS['host']."/unsubscribe/?type=mailer&ukey=%UNSUBSCRIBE_KEY%" . $utm;
+$unsubscribe_url = $GLOBALS['host'].'/unsubscribe/?type=mailer&ukey=%UNSUBSCRIBE_KEY%'.$utm;
 ?>
 <html>
     <head>

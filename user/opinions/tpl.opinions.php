@@ -1,7 +1,7 @@
 <div class="b-layout b-layout_padtop_20 b-fon overlay-cls">
 <?php 
         //https://beta.free-lance.ru/mantis/view.php?id=29146#c88101
-        if(false): 
+        if (false):
 ?>
     <div class="b-post b-post_padtop_10 b-post_padright_15 b-post_float_right b-post__txt b-post__txt_fontsize_11 b-post__txt_hide" id="manager_feedback">
         <span class="b-post__qwest"></span> &#160;
@@ -10,7 +10,7 @@
         </a>
     </div>
     <h2 class="b-layout__title b-layout__title_pad_0_15_15">
-        <?= $count?>&#160;<?= ending($count, "мнение", "мнения", "мнений")?> 
+        <?= $count?>&#160;<?= ending($count, 'мнение', 'мнения', 'мнений')?> 
         &#160;&#160;&#160;
         <div class="b-filter">
             <div class="b-filter__body"><a class="b-filter__link b-filter__link_ie7_top_3 b-filter__link_dot_0f71c8 b-layout__link_fontsize_13" href="#"><?=$filter_type_user?></a></div>
@@ -21,9 +21,9 @@
                             <div class="b-shadow__bottom">
                                 <div class="b-shadow__body b-shadow__body_pad_15 b-shadow__body_bg_fff">
                                     <ul class="b-filter__list">
-                                        <li class="b-filter__item b-filter__item_padbot_10 b-filter__item_lineheight_1 b-filter__item_msie_lineheight_15"><a class="b-filter__link <?= ($ops_type == 'users' ?"b-filter__link_no" : "")?>" onclick="window.location = '/users/<?=$user->login?>/opinions/?from=users&sort=<?= $sort?>&period=<?= $period?>#op_head'">всех пользователей</a><span class="b-filter__marker b-filter__marker_top_4  b-filter__marker_galka <?= ($ops_type == 'users' ?"" : "b-filter__marker_hide")?>"></span></li>
-                                        <li class="b-filter__item b-filter__item_padbot_10 b-filter__item_lineheight_1 b-filter__item_msie_lineheight_15"><a class="b-filter__link <?= ($ops_type == 'emp' ?"b-filter__link_no" : "")?>" onclick="window.location = '/users/<?=$user->login?>/opinions/?from=emp&sort=<?= $sort?>&period=<?= $period?>#op_head'">работодателей</a><span class="b-filter__marker b-filter__marker_top_4  b-filter__marker_galka <?= ($ops_type == 'emp' ?"" : "b-filter__marker_hide")?>"></span></li>
-                                        <li class="b-filter__item b-filter__item_padbot_10 b-filter__item_lineheight_1 b-filter__item_msie_lineheight_15"><a class="b-filter__link <?= ($ops_type == 'frl' ?"b-filter__link_no" : "")?>" onclick="window.location = '/users/<?=$user->login?>/opinions/?from=frl&sort=<?= $sort?>&period=<?= $period?>#op_head'">фри-лансеров</a><span class="b-filter__marker b-filter__marker_top_4  b-filter__marker_galka <?= ($ops_type == 'frl' ?"" : "b-filter__marker_hide")?>"></span></li>
+                                        <li class="b-filter__item b-filter__item_padbot_10 b-filter__item_lineheight_1 b-filter__item_msie_lineheight_15"><a class="b-filter__link <?= ($ops_type == 'users' ? 'b-filter__link_no' : '')?>" onclick="window.location = '/users/<?=$user->login?>/opinions/?from=users&sort=<?= $sort?>&period=<?= $period?>#op_head'">всех пользователей</a><span class="b-filter__marker b-filter__marker_top_4  b-filter__marker_galka <?= ($ops_type == 'users' ? '' : 'b-filter__marker_hide')?>"></span></li>
+                                        <li class="b-filter__item b-filter__item_padbot_10 b-filter__item_lineheight_1 b-filter__item_msie_lineheight_15"><a class="b-filter__link <?= ($ops_type == 'emp' ? 'b-filter__link_no' : '')?>" onclick="window.location = '/users/<?=$user->login?>/opinions/?from=emp&sort=<?= $sort?>&period=<?= $period?>#op_head'">работодателей</a><span class="b-filter__marker b-filter__marker_top_4  b-filter__marker_galka <?= ($ops_type == 'emp' ? '' : 'b-filter__marker_hide')?>"></span></li>
+                                        <li class="b-filter__item b-filter__item_padbot_10 b-filter__item_lineheight_1 b-filter__item_msie_lineheight_15"><a class="b-filter__link <?= ($ops_type == 'frl' ? 'b-filter__link_no' : '')?>" onclick="window.location = '/users/<?=$user->login?>/opinions/?from=frl&sort=<?= $sort?>&period=<?= $period?>#op_head'">фри-лансеров</a><span class="b-filter__marker b-filter__marker_top_4  b-filter__marker_galka <?= ($ops_type == 'frl' ? '' : 'b-filter__marker_hide')?>"></span></li>
                                     </ul>
                                 </div>
                             </div>
@@ -46,10 +46,10 @@
                             <div class="b-shadow__bottom">
                                 <div class="b-shadow__body b-shadow__body_pad_15 b-shadow__body_bg_fff">
                                     <ul class="b-filter__list">
-                                        <li class="b-filter__item b-filter__item_padbot_10 b-filter__item_lineheight_1 b-filter__item_msie_lineheight_15"><a class="b-filter__link <?= ($period == 0 ?"b-filter__link_no" : "")?>" onclick="window.location = '/users/<?=$user->login?>/opinions/<?=$html_for_filter . "&period=0#op_head"; ?>'" >за всё время</a><span class="b-filter__marker b-filter__marker_top_4  b-filter__marker_galka <?= ($period == 0 ?"" : "b-filter__marker_hide")?>"></span></li>
-                                        <li class="b-filter__item b-filter__item_padbot_10 b-filter__item_lineheight_1 b-filter__item_msie_lineheight_15"><a class="b-filter__link <?= ($period == 1 ?"b-filter__link_no" : "")?>" onclick="window.location = '/users/<?=$user->login?>/opinions/<?=$html_for_filter . "&period=1#op_head"; ?>'" >за последний год</a><span class="b-filter__marker b-filter__marker_top_4  b-filter__marker_galka <?= ($period == 1 ?"" : "b-filter__marker_hide")?>"></span></li>
-                                        <li class="b-filter__item b-filter__item_padbot_10 b-filter__item_lineheight_1 b-filter__item_msie_lineheight_15"><a class="b-filter__link <?= ($period == 2 ?"b-filter__link_no" : "")?>" onclick="window.location = '/users/<?=$user->login?>/opinions/<?=$html_for_filter . "&period=2#op_head"; ?>'" >за последние полгода</a><span class="b-filter__marker b-filter__marker_top_4  b-filter__marker_galka <?= ($period == 2 ?"" : "b-filter__marker_hide")?>"></span></li>
-                                        <li class="b-filter__item b-filter__item_padbot_3 b-filter__item_lineheight_1 b-filter__item_msie_lineheight_15"><a class="b-filter__link <?= ($period == 3 ?"b-filter__link_no" : "")?>"  onclick="window.location = '/users/<?=$user->login?>/opinions/<?=$html_for_filter . "&period=3#op_head"; ?>'" >за последний месяц</a><span class="b-filter__marker b-filter__marker_top_4  b-filter__marker_galka <?= ($period == 3 ?"" : "b-filter__marker_hide")?>"></span></li>
+                                        <li class="b-filter__item b-filter__item_padbot_10 b-filter__item_lineheight_1 b-filter__item_msie_lineheight_15"><a class="b-filter__link <?= ($period == 0 ? 'b-filter__link_no' : '')?>" onclick="window.location = '/users/<?=$user->login?>/opinions/<?=$html_for_filter.'&period=0#op_head'; ?>'" >за всё время</a><span class="b-filter__marker b-filter__marker_top_4  b-filter__marker_galka <?= ($period == 0 ? '' : 'b-filter__marker_hide')?>"></span></li>
+                                        <li class="b-filter__item b-filter__item_padbot_10 b-filter__item_lineheight_1 b-filter__item_msie_lineheight_15"><a class="b-filter__link <?= ($period == 1 ? 'b-filter__link_no' : '')?>" onclick="window.location = '/users/<?=$user->login?>/opinions/<?=$html_for_filter.'&period=1#op_head'; ?>'" >за последний год</a><span class="b-filter__marker b-filter__marker_top_4  b-filter__marker_galka <?= ($period == 1 ? '' : 'b-filter__marker_hide')?>"></span></li>
+                                        <li class="b-filter__item b-filter__item_padbot_10 b-filter__item_lineheight_1 b-filter__item_msie_lineheight_15"><a class="b-filter__link <?= ($period == 2 ? 'b-filter__link_no' : '')?>" onclick="window.location = '/users/<?=$user->login?>/opinions/<?=$html_for_filter.'&period=2#op_head'; ?>'" >за последние полгода</a><span class="b-filter__marker b-filter__marker_top_4  b-filter__marker_galka <?= ($period == 2 ? '' : 'b-filter__marker_hide')?>"></span></li>
+                                        <li class="b-filter__item b-filter__item_padbot_3 b-filter__item_lineheight_1 b-filter__item_msie_lineheight_15"><a class="b-filter__link <?= ($period == 3 ? 'b-filter__link_no' : '')?>"  onclick="window.location = '/users/<?=$user->login?>/opinions/<?=$html_for_filter.'&period=3#op_head'; ?>'" >за последний месяц</a><span class="b-filter__marker b-filter__marker_top_4  b-filter__marker_galka <?= ($period == 3 ? '' : 'b-filter__marker_hide')?>"></span></li>
                                     </ul>
                                 </div>
                             </div>
@@ -66,11 +66,13 @@
 <?php
     endif;
 ?>
-    <?php if (is_array($msgs) && count($msgs)) { $aUser = get_object_vars($user); ?>
-        <?php foreach($msgs as $opinion) {
-            $opcomm = opinions::getCommentOpinionById(array($opinion['id']));
-            $cls_rating = ( $opinion['rating'] == 1 ? "b-button_poll_plus" : ($opinion['rating'] == 0 ? " b-button_poll_multi" : "b-button_poll_minus") );
-        ?>
+    <?php if (is_array($msgs) && count($msgs)) {
+    $aUser = get_object_vars($user);
+    ?>
+        <?php foreach ($msgs as $opinion) {
+    $opcomm = opinions::getCommentOpinionById(array($opinion['id']));
+    $cls_rating = ($opinion['rating'] == 1 ? 'b-button_poll_plus' : ($opinion['rating'] == 0 ? ' b-button_poll_multi' : 'b-button_poll_minus'));
+    ?>
         <div class="b-post" id="opinion_<?= $opinion['id']?>">
             <a name="o_<?=$opinion['id']?>"></a>
             <div class="b-post__body b-post__body_pad_10_15_20" >
@@ -89,40 +91,48 @@
                         <?= reformat($opinion['msgtext'], 40)?>
                     </div>
                         <?php 
-                              $showPostFootBlock =(($opinion['rating'] == 1 && is_emp($opinion['role']) != is_emp($user->role) && $opinion['is_converted'] != 't') || (empty($opcomm[$opinion['id']])));
-                        ?>
-                        <?php if($opinion['touser_id'] == $_SESSION['uid'] && $showPostFootBlock) {?>
-																									<div class="b-post__foot b-post__foot_padtop_10 " id="opinion_buttons_<?= $opinion['id']?>" <?= empty($opcomm[$opinion['id']]) ? "" : "style='display:none'"?>>
+                              $showPostFootBlock = (($opinion['rating'] == 1 && is_emp($opinion['role']) != is_emp($user->role) && $opinion['is_converted'] != 't') || (empty($opcomm[$opinion['id']])));
+    ?>
+                        <?php if ($opinion['touser_id'] == $_SESSION['uid'] && $showPostFootBlock) {
+    ?>
+																									<div class="b-post__foot b-post__foot_padtop_10 " id="opinion_buttons_<?= $opinion['id']?>" <?= empty($opcomm[$opinion['id']]) ? '' : "style='display:none'"?>>
                             <a class="b-post__link b-post__link_dot_0f71c8" 
                                 
                                 id="opinion_btn_add_comment_<?= $opinion['id']?>" href="#" 
                                 onclick="if(!this.disabled) { $(this).getParent('.b-post__foot').hide(); this.disabled = true; xajax_AddOpComentForm('<?= $opinion['id']?>', '<?=$ops_type?>'); return false; }">
                                 Добавить комментарий</a>  &#160;&#160; 
                             <?php 
-                            /**
-                             * @deprecated #0019740  
-                             */
+/**
+ * @deprecated #0019740  
+ */
                             /*if($opinion['rating'] == 1 && is_emp($opinion['role']) != is_emp($user->role) && $opinion['is_converted'] != 't') {?>
                             <a class="b-post__link" href="/users/<?=$aUser['login']?>/opinions/?from=norisk&opinion=<?= $opinion['id'];?>">Перевести мнение в рекомендацию</a> &#160;&#160;
                             <a target="_blank" href="/help/?q=1002#convert" class="b-post__link b-post__link_color_4e"><span class="b-post__qwest"></span></a> &#160;<a target="_blank" href="/help/?q=1002#convert" class="b-post__link b-post__link_color_4e">Что это такое?</a>
                             <?php }//*/?>
 																									</div>
                             <div class="b-post" id="comment_<?= $opinion['id']?>"></div>
-                        <?php } //if?>
+                        <?php 
+} //if?>
                 </div>
             </div>
         </div>
-        <?php if(!empty($opcomm[$opinion['id']])) { $comment = $opcomm[$opinion['id']];?>
+        <?php if (!empty($opcomm[$opinion['id']])) {
+    $comment = $opcomm[$opinion['id']];
+    ?>
             <div class="b-post" id="comment_cont_<?= $opinion['id']?>">
                 <a name="c_<?= $opinion['id']?>"></a>
-                <? include ($_SERVER['DOCUMENT_ROOT']."/user/opinions/comment.tpl.php");?>
+                <?php include $_SERVER['DOCUMENT_ROOT'].'/user/opinions/comment.tpl.php';
+    ?>
             </div>
-        <?php } elseif($opinion['touser_id'] == $_SESSION['uid']) {//if?>
+        <?php 
+} elseif ($opinion['touser_id'] == $_SESSION['uid']) {//if?>
             <div class="b-post" id="comment_cont_<?= $opinion['id']?>">
                 <a name="c_<?= $opinion['id']?>"></a>
             </div>
-        <?php }//elseif?>
-        <?php }//foreach?>
+        <?php 
+}//elseif?>
+        <?php 
+}//foreach?>
     <?/*
     <div class="b-post" >
         <div class="b-post__body b-post__body_pad_10_15_20" >
@@ -185,7 +195,8 @@
             </div>
         </div>
     </div>
-    <?php } else {//if?>
+    <?php 
+} else {//if?>
     <div id="no_messages" style="font-size:12px">
         <br /><br />
         <table width="100%" cellspacing="0" cellpadding="0" >
@@ -198,5 +209,6 @@
             </tbody>
         </table>
     </div>*/?>
-    <?php }//else?>
+    <?php 
+}//else?>
 </div> 

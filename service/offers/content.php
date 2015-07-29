@@ -4,11 +4,13 @@ $op_codes = $answers->GetOpCodes();
 
 <script type="text/javascript">
 
-var ac_sum = <?= round($_SESSION['ac_sum'],2);?>;
+var ac_sum = <?= round($_SESSION['ac_sum'], 2);?>;
 var op = [];
-<? foreach ($op_codes as $ammount=>$sum) { ?>
-op[<?=$ammount?>] = <?=round($sum,2)?>;
-<? } //foreach?>
+<?php foreach ($op_codes as $ammount => $sum) {
+    ?>
+op[<?=$ammount?>] = <?=round($sum, 2)?>;
+<?php 
+} //foreach?>
 </script>
 
 <div class="b-layout__right b-layout__right_relative b-layout__right_width_72ps b-layout__right_float_right">
@@ -26,7 +28,7 @@ op[<?=$ammount?>] = <?=round($sum,2)?>;
     			<table class="b-layout__table b-layout__table_width_full">
                 	<tr class="b-layout__tr">
                     	<td class="b-layout__left">
-                <div class="b-pay-answer <?=(is_pro()?"b-pay-answer_hide":"")?> b-pay-answer_inline-block b-pay-answer_padtop_33 b-pay-answer_padleft_20" <?=(is_pro()?'style="overflow:hidden;width:0px;"':"")?>>	
+                <div class="b-pay-answer <?=(is_pro() ? 'b-pay-answer_hide' : '')?> b-pay-answer_inline-block b-pay-answer_padtop_33 b-pay-answer_padleft_20" <?=(is_pro() ? 'style="overflow:hidden;width:0px;"' : '')?>>	
 		<form id="buy_form" action="/service/offers/?action=buy" method="post" style="width:310px;">
 			<fieldset class="b-radio b-radio_layout_vertical">
 				<div class="b-radio__item b-radio__item_padbot_10">
@@ -70,17 +72,21 @@ op[<?=$ammount?>] = <?=round($sum,2)?>;
 		</div>
         				</td>
                         <td class="b-layout__right">
-				<div class="b-promo__note-wrap <?=(!is_pro()?" b-promo__note-wrap_inline-block":"")?> b-promo__note-wrap_padtop_15 " >	
+				<div class="b-promo__note-wrap <?=(!is_pro() ? ' b-promo__note-wrap_inline-block' : '')?> b-promo__note-wrap_padtop_15 " >	
 						<div class="b-promo__note b-promo__note_relative">
 								<div class="b-promo__note-inner" id="info_block" style="height:134px">
-								        <?php if(!is_pro()) {?>
+								        <?php if (!is_pro()) {
+    ?>
 										<h3 class="b-promo__h3 b-promo__h3_padbot_15">Получите неограниченное количество ответов <span alt="Платный аккаунт" title="Платный аккаунт" class="b-icon b-icon__pro b-icon__pro_f"></span></h3>
 										<p class="b-promo__p b-promo__p_fontsize_13">Надоело покупать «Платные ответы»? Владельцы «Аккаунта PRO» не имеют ограничений при ответах на опубликованные на сайте проекты. <a class="b-promo__link" href="/payed/">Приобретите «Аккаунт PRO»</a>, и вам больше не надо будет тратить на приобретение платных ответов.</p>
-										<?php } else {?>
+										<?php 
+} else {
+    ?>
 										<h3 class="b-promo__h3 b-promo__h3_padbot_15">У вас аккаунт <span alt="Платный аккаунт" title="Платный аккаунт" class="b-icon b-icon__pro b-icon__pro_f"></span>&#160;и покупать ответы вам больше не нужно — для вас они бесплатны.</h3>
 									    <p class="b-promo__p b-promo__p_fontsize_13">Но если вы все же захотите приобрести платные ответы, их можно будет использовать после окончания срока действия профессионального аккаунта.</p>
-										<?php } //else?>
-										<p class="b-promo__p b-promo__p_padtop_10 b-promo__p_fontsize_13" <?=(!is_pro()?'style="display:none"':"")?>><a class="b-promo__link b-promo__link_bordbot_dot_0f71c8 b-promo__link_toggler" href="#">Купить ответы</a></p>
+										<?php 
+} //else?>
+										<p class="b-promo__p b-promo__p_padtop_10 b-promo__p_fontsize_13" <?=(!is_pro() ? 'style="display:none"' : '')?>><a class="b-promo__link b-promo__link_bordbot_dot_0f71c8 b-promo__link_toggler" href="#">Купить ответы</a></p>
 								</div>
 						</div>
 				</div>

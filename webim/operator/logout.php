@@ -12,11 +12,11 @@
 ?>
 <?php
 
-require_once('../classes/functions.php');
-require_once('../classes/class.operator.php');
+require_once '../classes/functions.php';
+require_once '../classes/class.operator.php';
 
 Operator::getInstance()->Logout();
 
-header("Location: ".WEBIM_ROOT."/operator/login.php");
+header('Location: '.WEBIM_ROOT.'/operator/login.php');
 exit;
 ?>

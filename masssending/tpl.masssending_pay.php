@@ -1,6 +1,6 @@
 <?php 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/quick_payment.common.php");
-$xajax->printJavascript('/xajax/'); 
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/quick_payment.common.php';
+$xajax->printJavascript('/xajax/');
 ?>
 <table class="b-layout__table b-layout__table_width_full" cellpadding="0" cellspacing="0" border="0">
     <tr class="b-layout__tr">

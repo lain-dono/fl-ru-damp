@@ -1,5 +1,5 @@
-<?
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
 // идет в релиз из-за связей, поэтому пока 404
 header_location_exit('/404.php');
 ?>
@@ -40,7 +40,7 @@ window.addEvent('domready', function() {
             <table class="b-layout__table">
                 <tr class="b-layuot__tr">
                     <td class="b-layout__left b-layout__left_width_500">
-                        <h2 class="b-promo__h2 b-promo__h2_padbot_40">Стоимость услуги &mdash; <span class="b-promo__txt b-promo__txt_fontsize_22 b-promo__txt_color_fd6c30"><?= number_format(projects_offers_answers::COLOR_FM_COST, 0, ",", "")?> рублей</span>.</h2>
+                        <h2 class="b-promo__h2 b-promo__h2_padbot_40">Стоимость услуги &mdash; <span class="b-promo__txt b-promo__txt_fontsize_22 b-promo__txt_color_fd6c30"><?= number_format(projects_offers_answers::COLOR_FM_COST, 0, ',', '')?> рублей</span>.</h2>
 
                         <h2 class="b-promo__h2 b-promo__h2_padbot_14">Почему это выгодно</h2>
                         <ul class="b-promo__list b-promo__list_padbot_37">
@@ -67,5 +67,5 @@ window.addEvent('domready', function() {
             </table>												
     </div>
 	<span class="b-promo__profi"></span>													
-    <? include("../tpl.help.php"); ?>																												
+    <?php include '../tpl.help.php'; ?>																												
 </div>

@@ -21,9 +21,11 @@
                                     	        <div class="nr-prj-btns c">
                                     	            <input type="submit" name="cancel" value="Отменить изменения" class="i-btn" />
                                     	            <input type="submit" name="resend" value="Повторный запрос" class="i-btn i-bold" />
-                                                    <? if($new_dead_time_ex || $new_work_time_ex || $new_cost_ex || $new_descr_ex) { ?>
+                                                    <?php if ($new_dead_time_ex || $new_work_time_ex || $new_cost_ex || $new_descr_ex) {
+    ?>
                                                         <input type="button" value="Редактировать условия" class="i-btn i-bold" onclick="document.location.href='?site=editstage&id=<?=$stage->data['id']?>&v=1'"/>
-                                                    <? } ?>
+                                                    <?php 
+} ?>
                                     	        </div>
                                     	    </div>
                                     	</div>

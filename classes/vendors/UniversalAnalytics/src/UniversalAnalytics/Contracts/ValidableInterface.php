@@ -1,12 +1,13 @@
-<?php namespace UniversalAnalytics\Contracts;
+<?php
 
-interface ValidableInterface {
+namespace UniversalAnalytics\Contracts;
 
+interface ValidableInterface
+{
     /**
-     * Validate required fields
+     * Validate required fields.
      *
      * @return bool
      */
     public function valid();
-
 }

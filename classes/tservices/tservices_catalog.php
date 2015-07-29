@@ -1,247 +1,237 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/tservices/atservices_model.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/tservices/functions.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/search/sphinxapi.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/tservices/atservices_model.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/tservices/functions.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/search/sphinxapi.php';
 
 /**
- * Модель каталога типовых услуг
+ * Модель каталога типовых услуг.
  */
 class tservices_catalog extends atservices_model
 {
-	private $TABLE                  = 'tservices';
-	private $TABLE_BLOCKED		= 'tservices_blocked';
-	private $TABLE_CATEGORIES	= 'tservices_categories';
-	private $TABLE_USERS		= 'users';
-	private $TABLE_FREELANCER       = 'freelancer';
-	private $TABLE_COUNTERS		= 'tservices_counters';
-	private $TABLE_FILES		= 'file_tservices';
-	private $TABLE_CITY		= 'city';
-    private $TABLE_BINDS        = 'tservices_binds';
+    private $TABLE = 'tservices';
+    private $TABLE_BLOCKED = 'tservices_blocked';
+    private $TABLE_CATEGORIES = 'tservices_categories';
+    private $TABLE_USERS = 'users';
+    private $TABLE_FREELANCER = 'freelancer';
+    private $TABLE_COUNTERS = 'tservices_counters';
+    private $TABLE_FILES = 'file_tservices';
+    private $TABLE_CITY = 'city';
+    private $TABLE_BINDS = 'tservices_binds';
 
-	public $category_id;
-	public $keywords = array();
-	public $price_ranges = array();
-	public $country_id;
-	public $city_id;
+    public $category_id;
+    public $keywords = array();
+    public $price_ranges = array();
+    public $country_id;
+    public $city_id;
     public $price_max;
     public $order;
-	public $limit;
-	public $page;
-	public $offset;
+    public $limit;
+    public $page;
+    public $offset;
     public $user_id;
 
     private $_ttl;
 
-	/**
-	 * ID диапазона, охватывающего все цены
-	 */
-	const ANY_PRICE_RANGE = 1;
+    /**
+     * ID диапазона, охватывающего все цены.
+     */
+    const ANY_PRICE_RANGE = 1;
 
-	public static function getPriceRanges() {
-		return array(
-			self::ANY_PRICE_RANGE => array(
-				'title' => 'любая',
-				'max' => null,
-				'min' => null,
-			),
-			2 => array(
-				'title' => 'дешевле 1 000 р.',
-				'max' => 1000,
-				'min' => null,
-			),
-			3 => array(
-				'title' => '1 000 — 3 000 р.',
-				'max' => 3000,
-				'min' => 1000,
-			),
-			4 => array(
-				'title' => '3 000 — 4 500 р.',
-				'max' => 4500,
-				'min' => 3000,
-			),
-			5 => array(
-				'title' => '4 500 — 6 000 р.',
-				'max' => 6000,
-				'min' => 4500,
-			),
-			6 => array(
-				'value' => 6,
-				'title' => 'дороже 6 000 р.',
-				'max' => null,
-				'min' => 6000,
-			),
-		);
-	}
+    public static function getPriceRanges()
+    {
+        return array(
+            self::ANY_PRICE_RANGE => array(
+                'title' => 'любая',
+                'max' => null,
+                'min' => null,
+            ),
+            2 => array(
+                'title' => 'дешевле 1 000 р.',
+                'max' => 1000,
+                'min' => null,
+            ),
+            3 => array(
+                'title' => '1 000 — 3 000 р.',
+                'max' => 3000,
+                'min' => 1000,
+            ),
+            4 => array(
+                'title' => '3 000 — 4 500 р.',
+                'max' => 4500,
+                'min' => 3000,
+            ),
+            5 => array(
+                'title' => '4 500 — 6 000 р.',
+                'max' => 6000,
+                'min' => 4500,
+            ),
+            6 => array(
+                'value' => 6,
+                'title' => 'дороже 6 000 р.',
+                'max' => null,
+                'min' => 6000,
+            ),
+        );
+    }
 
-	/**
-	 * Установить параметры пагинации
-	 *
-	 * @param int $limit
-	 * @param int $page
-	 * @return \Tservices_Module
-	 */
-	public function setPage($limit, $page = 1, $count_bind = 0, $count_bind_cur_page = 0)
-	{
-		$page = ($page > 0) ? $page : 1;
-		$this->page = +$page - floor($count_bind / $limit);
-		$this->limit = +$limit;
-        
+    /**
+     * Установить параметры пагинации.
+     *
+     * @param int $limit
+     * @param int $page
+     *
+     * @return \Tservices_Module
+     */
+    public function setPage($limit, $page = 1, $count_bind = 0, $count_bind_cur_page = 0)
+    {
+        $page = ($page > 0) ? $page : 1;
+        $this->page = +$page - floor($count_bind / $limit);
+        $this->limit = +$limit;
+
         //Если тизер открыт, то последнюю услугу с первой страницы дублируем на следующей
         //соответственно, будет сдвиг всего каталога
-        $repeat_hidden = get_uid(false) && !is_emp() && !isset($_COOKIE['hide_tservices_teaser']) && $page > 1 
-                ? 1 
+        $repeat_hidden = get_uid(false) && !is_emp() && !isset($_COOKIE['hide_tservices_teaser']) && $page > 1
+                ? 1
                 : 0;
-        
-		$this->offset = ($page - 1) * $limit - ($count_bind - $count_bind_cur_page) - $repeat_hidden;
-        
-		return $this;
-	}
 
-	public function cache($ttl)
-	{
-		$this->_ttl = $ttl;
-		return $this;
-	}
+        $this->offset = ($page - 1) * $limit - ($count_bind - $count_bind_cur_page) - $repeat_hidden;
 
-	/**
-	 * Возвращает список публичных типовых услуг по заданным условиям и пагинацией
-	 * 
-	 * @return array
-	 */
-	public function getList($excluded_ids = array())
-	{
-		$criteria = array(
-			$this->category_id,
-			$this->city_id,
-			$this->country_id,
-			$this->keywords,
-			$this->limit,
-			$this->offset,
-			$this->price_ranges,
+        return $this;
+    }
+
+    public function cache($ttl)
+    {
+        $this->_ttl = $ttl;
+
+        return $this;
+    }
+
+    /**
+     * Возвращает список публичных типовых услуг по заданным условиям и пагинацией.
+     * 
+     * @return array
+     */
+    public function getList($excluded_ids = array())
+    {
+        $criteria = array(
+            $this->category_id,
+            $this->city_id,
+            $this->country_id,
+            $this->keywords,
+            $this->limit,
+            $this->offset,
+            $this->price_ranges,
             $this->price_max,
             $this->order,
             $excluded_ids,
-            $this->user_id
-		);
+            $this->user_id,
+        );
 
-		$membuf = new memBuff();
-		$memkey = __METHOD__.'#' . md5(serialize($criteria));
+        $membuf = new memBuff();
+        $memkey = __METHOD__.'#'.md5(serialize($criteria));
 
-		if (false!==($result = $membuf->get($memkey)) && is_release())
-		{
-			return $result;
-		}
-                
+        if (false !== ($result = $membuf->get($memkey)) && is_release()) {
+            return $result;
+        }
+
         $sort = $this->getSort();
 
-		# @see http://sphinxsearch.com/forum/view.html?id=11538 about city = x or country = y
-		$sphinxClient = new SphinxClient;
-                $sphinxClient->SetServer(SEARCHHOST, SEARCHPORT);
-                $sphinxClient->SetLimits($this->offset, $this->limit, 20000);
-                $sphinxClient->SetSortMode(SPH_SORT_EXTENDED, $sort);
-                $sphinxClient->SetFieldWeights(array('title' => 2, 'extra_title' => 1));
+        # @see http://sphinxsearch.com/forum/view.html?id=11538 about city = x or country = y
+        $sphinxClient = new SphinxClient();
+        $sphinxClient->SetServer(SEARCHHOST, SEARCHPORT);
+        $sphinxClient->SetLimits($this->offset, $this->limit, 20000);
+        $sphinxClient->SetSortMode(SPH_SORT_EXTENDED, $sort);
+        $sphinxClient->SetFieldWeights(array('title' => 2, 'extra_title' => 1));
                 //$sphinxClient->SetRankingMode(SPH_RANK_PROXIMITY_BM25);
-                
-		$selectExpression = '*'; // все колонки
-                
-        
+
+        $selectExpression = '*'; // все колонки
+
+
         if ($this->user_id) {
-			$selectExpression .= ", IF(user_id = {$this->user_id}, 1, 0) as match_user";
-			$sphinxClient->setFilter('match_user', array(1));            
+            $selectExpression .= ", IF(user_id = {$this->user_id}, 1, 0) as match_user";
+            $sphinxClient->setFilter('match_user', array(1));
         }
-        
-        
-		if ($this->category_id)
-		{
-			$selectExpression .= ", IF(category_id = {$this->category_id} or category_parent_id = {$this->category_id}, 1, 0) as match_category";
-			$sphinxClient->setFilter('match_category', array(1));
-		}
-                
-		if ($this->country_id)
-		{
-			$selectExpression .= ", IF(user_country_id = {$this->country_id} or country_id = {$this->country_id}, 1, 0) as match_country";
-			$sphinxClient->setFilter('match_country', array(1));
-		}
-                
-		if ($this->city_id)
-		{
-			$selectExpression .= ", IF(user_city_id = {$this->city_id} or city_id = {$this->city_id}, 1, 0) as match_city";
-			$sphinxClient->setFilter('match_city', array(1));
-		}
-                
-		if (count($this->price_ranges)) {
-			$match_price_exprs = array();
-			foreach($this->getPriceRanges() as $i => $price_range) {
-				if (!isset($this->price_ranges[$i]))
-				{
-					continue;
-				}
-				$match_price_exprs[] = "price_{$i} = 1";
-			}
-			$match_price_exprs = implode(' or ', $match_price_exprs);
-			$selectExpression .= ", IF({$match_price_exprs}, 1, 0) as match_price";
-			$sphinxClient->setFilter('match_price', array(1));
-		}
-                
-                if($this->price_max > 0)
-                {
-			$selectExpression .= ", IF(price <= {$this->price_max}, 1, 0) as match_price_max";
-			$sphinxClient->setFilter('match_price_max', array(1));                    
+
+        if ($this->category_id) {
+            $selectExpression .= ", IF(category_id = {$this->category_id} or category_parent_id = {$this->category_id}, 1, 0) as match_category";
+            $sphinxClient->setFilter('match_category', array(1));
+        }
+
+        if ($this->country_id) {
+            $selectExpression .= ", IF(user_country_id = {$this->country_id} or country_id = {$this->country_id}, 1, 0) as match_country";
+            $sphinxClient->setFilter('match_country', array(1));
+        }
+
+        if ($this->city_id) {
+            $selectExpression .= ", IF(user_city_id = {$this->city_id} or city_id = {$this->city_id}, 1, 0) as match_city";
+            $sphinxClient->setFilter('match_city', array(1));
+        }
+
+        if (count($this->price_ranges)) {
+            $match_price_exprs = array();
+            foreach ($this->getPriceRanges() as $i => $price_range) {
+                if (!isset($this->price_ranges[$i])) {
+                    continue;
                 }
-                
-		$searchString = '';
-		if (!empty($this->keywords))
-		{
-			$keywords = implode(' ', array_filter(preg_split('/\s*,\s*/', $this->keywords)));
-			$searchString = trim($keywords);
+                $match_price_exprs[] = "price_{$i} = 1";
+            }
+            $match_price_exprs = implode(' or ', $match_price_exprs);
+            $selectExpression .= ", IF({$match_price_exprs}, 1, 0) as match_price";
+            $sphinxClient->setFilter('match_price', array(1));
+        }
+
+        if ($this->price_max > 0) {
+            $selectExpression .= ", IF(price <= {$this->price_max}, 1, 0) as match_price_max";
+            $sphinxClient->setFilter('match_price_max', array(1));
+        }
+
+        $searchString = '';
+        if (!empty($this->keywords)) {
+            $keywords = implode(' ', array_filter(preg_split('/\s*,\s*/', $this->keywords)));
+            $searchString = trim($keywords);
                         //$searchString = $this->GetSphinxKeyword($searchString);
-			$sphinxClient->SetMatchMode(SPH_MATCH_ANY); //SPH_MATCH_EXTENDED2);
-		}
+            $sphinxClient->SetMatchMode(SPH_MATCH_ANY); //SPH_MATCH_EXTENDED2);
+        }
 
         if (count($excluded_ids)) {
-			$sphinxClient->setFilter('tservice_id', $excluded_ids, true);
+            $sphinxClient->setFilter('tservice_id', $excluded_ids, true);
         }
-        
-		$sphinxClient->SetSelect($selectExpression);
-		$queryResult = $sphinxClient->query($searchString, "tservices;delta_tservices");
 
-		//echo '<pre>error: ', $sphinxClient->GetLastError(), '</pre>';
-		//echo '<pre>warn : ', $sphinxClient->GetLastWarning(), '</pre>';
+        $sphinxClient->SetSelect($selectExpression);
+        $queryResult = $sphinxClient->query($searchString, 'tservices;delta_tservices');
 
-		$list = array();
-                $total = 0;
-                
-		if (isset($queryResult['matches']))
-		{
-			foreach($queryResult['matches'] as $id => $row)
-			{
-				$row['attrs']['id'] = $id;
-				$list[] = $row['attrs'];
-			}
-                        
-                        $total = ($queryResult['total_found'] < $queryResult['total'])?$queryResult['total_found']:$queryResult['total'];
-		}
-                
-		$result = array(
-			'list' => $list,
-			'total' => $total
-		);
+        //echo '<pre>error: ', $sphinxClient->GetLastError(), '</pre>';
+        //echo '<pre>warn : ', $sphinxClient->GetLastWarning(), '</pre>';
 
-		if ($this->_ttl)
-		{
-			$membuf->set($memkey, $result, $this->_ttl);
-		}
+        $list = array();
+        $total = 0;
 
-		return $result;
-	}
-     
-    
-    
-    private function getSort() 
+        if (isset($queryResult['matches'])) {
+            foreach ($queryResult['matches'] as $id => $row) {
+                $row['attrs']['id'] = $id;
+                $list[] = $row['attrs'];
+            }
+
+            $total = ($queryResult['total_found'] < $queryResult['total']) ? $queryResult['total_found'] : $queryResult['total'];
+        }
+
+        $result = array(
+            'list' => $list,
+            'total' => $total,
+        );
+
+        if ($this->_ttl) {
+            $membuf->set($memkey, $result, $this->_ttl);
+        }
+
+        return $result;
+    }
+
+    private function getSort()
     {
-        require_once(ABS_PATH . '/tu/widgets/TServiceFilter.php');
-        
+        require_once ABS_PATH.'/tu/widgets/TServiceFilter.php';
+
         $sort = '';
         switch ($this->order) {
             case TServiceFilter::ORDER_PRICE_ASC:
@@ -269,16 +259,18 @@ class tservices_catalog extends atservices_model
                 $sort = '@weight DESC, tax_payed_last DESC, payed_tax DESC, total_feedbacks DESC, created_timestamp DESC';
                 break;
         }
+
         return $sort;
     }
-        
-        private function GetSphinxKeyword($sQuery) 
-        {
-            $cnt = count(preg_split('/[\s,-]+/', $sQuery, 5));
+
+    private function GetSphinxKeyword($sQuery)
+    {
+        $cnt = count(preg_split('/[\s,-]+/', $sQuery, 5));
             //Хотябы минимум 2 совпадения слов
-            $sQuery = ($cnt > 1)?"\"{$sQuery}\"/2":$sQuery;
-            return $sQuery;
-            
+            $sQuery = ($cnt > 1) ? "\"{$sQuery}\"/2" : $sQuery;
+
+        return $sQuery;
+
             /*
             $aKeyword = array();
             $sSphinxKeyword = $sQuery;
@@ -301,10 +293,11 @@ class tservices_catalog extends atservices_model
             
             return $sSphinxKeyword;
              */
-        }
-        
+    }
+
     /**
-     * Возвращает список закрепленных услуг
+     * Возвращает список закрепленных услуг.
+     *
      * @return type
      */
     public function getBindedList($kind)
@@ -331,18 +324,20 @@ class tservices_catalog extends atservices_model
         LEFT JOIN {$this->TABLE_FILES} AS f ON f.src_id = s.id AND f.small = 4
         LEFT JOIN {$this->TABLE_COUNTERS} sc ON sc.service_id = s.id
         WHERE s.deleted = FALSE AND s.active = TRUE AND sb.src_id IS NULL AND tb.kind = ?i "
-        .($this->category_id ? ' AND tb.prof_id = ?i' : '')."
+        .($this->category_id ? ' AND tb.prof_id = ?i' : '').'
         AND tb.date_stop > now()
         ORDER BY tb.date_start DESC, s.id DESC, f.preview DESC, f.id 
-        ", (int)$kind, $this->category_id);        
+        ', (int) $kind, $this->category_id);
 
         $sql = $this->_limit($sql);
         $rows = $this->db()->rows($sql);
+
         return $rows;
     }
-    
+
     /**
-     * Возвращает список ИД закрепленных услуг без учета постраничности
+     * Возвращает список ИД закрепленных услуг без учета постраничности.
+     *
      * @return type
      */
     public function getBindedIds($kind)
@@ -354,24 +349,24 @@ class tservices_catalog extends atservices_model
         INNER JOIN {$this->TABLE_BINDS} AS tb ON tb.tservice_id = s.id 
         LEFT JOIN {$this->TABLE_BLOCKED} AS sb ON sb.src_id = s.id 
         WHERE s.deleted = FALSE AND s.active = TRUE AND sb.src_id IS NULL AND tb.kind = ?i "
-        .($this->category_id ? ' AND tb.prof_id = ?i' : '')."
+        .($this->category_id ? ' AND tb.prof_id = ?i' : '').'
         AND tb.date_stop > now()
-        ", (int)$kind, $this->category_id);        
+        ', (int) $kind, $this->category_id);
 
         $rows = $this->db()->col($sql);
+
         return $rows;
     }
-    
+
     /**
-     * 
      * @param type $kind
      */
     public function getBindedCount($kind)
     {
-        /**
+        /*
          * @todo Добавить кеширование и сброс кеша при продлении
          */
-        
+
         $sql = $this->db()->parse("
         SELECT 
             COUNT(s.id)
@@ -381,9 +376,8 @@ class tservices_catalog extends atservices_model
         WHERE s.deleted = FALSE AND s.active = TRUE AND sb.src_id IS NULL 
         AND tb.kind = ?i AND tb.prof_id = ?i
         AND tb.date_stop > now()
-        ", (int)$kind, (int)$this->category_id);        
+        ", (int) $kind, (int) $this->category_id);
 
-        return (int)($this->db()->val($sql));
+        return (int) ($this->db()->val($sql));
     }
-
 }

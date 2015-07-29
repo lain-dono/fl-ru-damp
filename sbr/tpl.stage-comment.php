@@ -1,7 +1,7 @@
 <form action="?Sending...#c_<?=$form_key?>" method="post" id="msg_form<?= $sbr->id?>" >
 <table class="b-layout__table b-layout__table_width_full" cellpadding="0" cellspacing="0" border="0" id="form-comment">
     <tr class="b-layout__tr">
-        <td class="b-layout__left b-layout__left_padleft_65 <?= $stage->orders == 'DESC' ? 'b-layout__one_padbot_40': ' b-layout__left_padtop_15'?>">
+        <td class="b-layout__left b-layout__left_padleft_65 <?= $stage->orders == 'DESC' ? 'b-layout__one_padbot_40' : ' b-layout__left_padtop_15'?>">
             <h3 class="b-layout__h3">Ваш комментарий</h3>
             <textarea class="ckeditor" id="ckeditor_comments"  rows="5" cols="10" name="msgtext"></textarea>
             
@@ -21,8 +21,8 @@
 </table>
 </form>
 <?= attachedfiles::getFormTemplate('attachedfiles_comment', 'sbr', array(
-    'maxfiles' =>    sbr::MAX_FILES,
-    'maxsize'  =>    sbr::MAX_FILE_SIZE
+    'maxfiles' => sbr::MAX_FILES,
+    'maxsize' => sbr::MAX_FILE_SIZE,
 )) ?>
 
 <script type="text/javascript">

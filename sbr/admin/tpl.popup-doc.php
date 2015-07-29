@@ -5,17 +5,23 @@
                 <div class="b-shadow__bottom">
                     <div class="b-shadow__body b-shadow__body_pad_15 b-shadow__body_bg_fff">
                         <h3 class="b-shadow__title b-shadow__title_padbot_15">Новый файл</h3>
-                        <? if($doc['id']) { ?>
+                        <?php if ($doc['id']) {
+    ?>
                         <table class="b-layout__table" cellpadding="0" cellspacing="0" border="0">
                             <tr class="b-layout__tr">
                                 <td class="b-layout__middle b-layout__middle_padbot_5">
                                     <div class="b-layout__txt">
-                                        <i class="b-icon b-icon_attach_<?= getICOFile(CFile::getext($doc['file_name'])); ?>"></i> <a class="b-layout__link" href="<?=  ( WDCPREFIX . '/' . $doc['file_path'] . $doc['file_name']); ?>"><?= $doc['name'];?> </a>, <?= ConvertBtoMB($doc['file_size']); ?>
+                                        <i class="b-icon b-icon_attach_<?= getICOFile(CFile::getext($doc['file_name']));
+    ?>"></i> <a class="b-layout__link" href="<?=  (WDCPREFIX.'/'.$doc['file_path'].$doc['file_name']);
+    ?>"><?= $doc['name'];
+    ?> </a>, <?= ConvertBtoMB($doc['file_size']);
+    ?>
                                     </div>
                                 </td>
                             </tr>
                         </table>
-                        <? } //else?>
+                        <?php 
+} //else?>
                         
                         <div class="b-file b-file_padbot_15">
                             <div class="b-fon b-fon_width_full attachedfiles_admin_sbr<?= $doc['id'] ? $doc['id'] : ''?>"></div>
@@ -35,12 +41,15 @@
                                     <div class="b-form__txt b-check_padbot_15">
                                         <span class="nra-doc-sel">
                                             <select name="type" id="doc_type<?=$doc['id']?>">
-                                                <?
-                                                  foreach(sbr::$docs_types as $type=>$val) {
-                                                      if(!$sbr->isAdmin() && !($val[1] & (sbr::DOCS_ACCESS_EMP*$sbr->isEmp() | sbr::DOCS_ACCESS_FRL*$sbr->isFrl()))) continue;
-                                                ?>
-                                                <option value="<?=$type?>"<?=($type==$doc['type'] ? ' selected="true"' : '')?>><?=$val[0]?></option>
-                                                <? } ?>
+                                                <?php
+                                                  foreach (sbr::$docs_types as $type => $val) {
+                                                      if (!$sbr->isAdmin() && !($val[1] & (sbr::DOCS_ACCESS_EMP * $sbr->isEmp() | sbr::DOCS_ACCESS_FRL * $sbr->isFrl()))) {
+                                                          continue;
+                                                      }
+                                                      ?>
+                                                <option value="<?=$type?>"<?=($type == $doc['type'] ? ' selected="true"' : '')?>><?=$val[0]?></option>
+                                                <?php 
+                                                  } ?>
                                             </select>
                                         </span>
                                     </div>
@@ -50,11 +59,11 @@
                                 <td class="b-layout__one b-layout__one_padright_10"><div class="b-layout__txt">Файл видит:</div></td>
                                 <td class="b-layout__one">
                                     <div class="b-check b-check_padbot_15 b-check_padtop_3">
-                                        <input id="doc_access_frl<?= $doc['id'];?>" value="<?= sbr::DOCS_ACCESS_FRL?>" name="doc_access_frl" class="b-check__input" type="checkbox" <?= ( in_array($doc['access_role'], array(sbr::DOCS_ACCESS_ALL, sbr::DOCS_ACCESS_FRL))  ? "checked" : ""); ?> />
+                                        <input id="doc_access_frl<?= $doc['id'];?>" value="<?= sbr::DOCS_ACCESS_FRL?>" name="doc_access_frl" class="b-check__input" type="checkbox" <?= (in_array($doc['access_role'], array(sbr::DOCS_ACCESS_ALL, sbr::DOCS_ACCESS_FRL))  ? 'checked' : ''); ?> />
                                         <label class="b-check__label" for="doc_access_frl<?= $doc['id'];?>">Исполнитель</label>
                                     </div>
                                     <div class="b-check b-check_padbot_15">
-                                        <input id="doc_access_emp<?= $doc['id'];?>" value="<?= sbr::DOCS_ACCESS_EMP?>" name="doc_access_emp" class="b-check__input" type="checkbox" <?= ( in_array($doc['access_role'], array(sbr::DOCS_ACCESS_ALL, sbr::DOCS_ACCESS_EMP)) ? "checked" : ""); ?> />
+                                        <input id="doc_access_emp<?= $doc['id'];?>" value="<?= sbr::DOCS_ACCESS_EMP?>" name="doc_access_emp" class="b-check__input" type="checkbox" <?= (in_array($doc['access_role'], array(sbr::DOCS_ACCESS_ALL, sbr::DOCS_ACCESS_EMP)) ? 'checked' : ''); ?> />
                                         <label class="b-check__label" for="doc_access_emp<?= $doc['id'];?>">Заказчик</label>
                                     </div>
                                 </td>

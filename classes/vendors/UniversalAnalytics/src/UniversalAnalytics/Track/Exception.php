@@ -1,7 +1,9 @@
-<?php namespace UniversalAnalytics\Track;
+<?php
 
-class Exception extends Entity {
+namespace UniversalAnalytics\Track;
 
+class Exception extends Entity
+{
     protected $shortName = 'exception';
 
     protected $attributes = array(
@@ -17,5 +19,4 @@ class Exception extends Entity {
     );
 
     protected $required = array();
-
 }

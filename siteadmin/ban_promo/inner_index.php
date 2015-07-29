@@ -1,5 +1,8 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
-if ( !(hasPermissions('advstat') && hasPermissions('adm')) ) {
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
+if (!(hasPermissions('advstat') && hasPermissions('adm'))) {
     exit;
 }
 
@@ -15,7 +18,8 @@ $stats = $bpromo->getStat();
 <br/>
 <strong>Всего кликов:</strong> <?=intval($count['clicks'])?>
 
-<? if($stats) { ?>
+<?php if ($stats) {
+    ?>
     <br><br>
     <table border="1">
         <tr>
@@ -23,14 +27,18 @@ $stats = $bpromo->getStat();
             <td width="50">&nbsp;<strong>Показы</strong></td>
             <td width="50">&nbsp;<strong>Клики</strong></td>
         </tr>
-        <? foreach($stats as $stat ) { ?>
+        <?php foreach ($stats as $stat) {
+    ?>
             <tr>
                 <td>&nbsp;<?=$stat['c_date']?></td>
                 <td>&nbsp;<?=$stat['views']?></td>
                 <td>&nbsp;<?=$stat['clicks']?></td>
             </tr>
-        <? } ?>
+        <?php 
+}
+    ?>
     </table>
-<? } ?>
+<?php 
+} ?>
 
 

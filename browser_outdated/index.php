@@ -1,5 +1,6 @@
-<?
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
+<?php
+
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
 session_start();
 get_uid(false);
 
@@ -44,7 +45,7 @@ $browsers = array(
         17 => array(2012, 2012),
         18 => array(2012, 2012),
         19 => array(2012, 2012),
-        20 => array(2012)
+        20 => array(2012),
     ),
     'safari' => array (
         'fullname' => 'Safari',
@@ -83,14 +84,14 @@ $browsers = array(
         13 => array(2012),
     ),
     'mozilla' => array (
-        'fullname' => 'Mozilla'
-    )
+        'fullname' => 'Mozilla',
+    ),
 );
 
 $browser_outdated = browserCompat($name, $version);
 
 $browser = $browsers[$name];
-$page_content['name_version'] = $browser['fullname'] . ' ' . $version[1];
+$page_content['name_version'] = $browser['fullname'].' '.$version[1];
 // годы жизни
 $vers = floor($version[1]);
 $page_content['born'] = $browser[$vers][0];
@@ -102,7 +103,7 @@ if ($browser_outdated) {
     $content = 'tpl.browser_outdated.php';
 }
 
-$rpath = "../";
+$rpath = '../';
 $browser_outdated_page = true;
-include("../template2.php");
+include '../template2.php';
 ?>

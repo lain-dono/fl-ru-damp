@@ -1,28 +1,29 @@
 <?php
 
 /**
- * Class СModel
+ * Class СModel.
  * 
  * Базовый класс модели данных
  */
-abstract class CModel 
+abstract class CModel
 {
     /**
-     * Параметры пагинации
+     * Параметры пагинации.
+     *
      * @var int
      */
     protected $limit = 0;
     protected $offset;
-    
-    
+
     /**
-     * Установить параметры пагинации
+     * Установить параметры пагинации.
      * 
      * @param int $limit
      * @param int $page
+     *
      * @return $this
      */
-    public function setPage($limit, $page = 1) 
+    public function setPage($limit, $page = 1)
     {
         $page = ($page > 0) ? $page : 1;
         $this->limit = $limit;
@@ -30,42 +31,40 @@ abstract class CModel
 
         return $this;
     }
-    
-    
+
     /**
-     * Достроить SQL запрос ограничением на кол-во и смещение
+     * Достроить SQL запрос ограничением на кол-во и смещение.
      * 
      * @param string $sql
+     *
      * @return string
      */
     protected function _limit($sql)
     {
-        if ( $this->limit ) 
-        {
-            $sql .= ' LIMIT ' . $this->limit . ($this->offset? ' OFFSET ' . $this->offset: '');
-        }        
-        
+        if ($this->limit) {
+            $sql .= ' LIMIT '.$this->limit.($this->offset ? ' OFFSET '.$this->offset : '');
+        }
+
         return $sql;
-    } 
-    
-    
+    }
+
     /**
      * @return DB
      */
     public function db()
     {
         return $GLOBALS['DB'];
-    }    
-    
-    
-    
+    }
+
     /**
-     * Создаем сами себя
+     * Создаем сами себя.
+     *
      * @return СModel
      */
-    public static function model(array $options = array()) 
+    public static function model(array $options = array())
     {
         $class = get_called_class();
+
         return new $class($options);
     }
 }

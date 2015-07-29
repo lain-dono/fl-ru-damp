@@ -4,7 +4,10 @@
  * 
  * @author Max 'BlackHawk' Yastrembovich
  */
-if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
+if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
 ?>
 
 <h2 class="b-layout__title b-layout__title_padbot_20">Пользовательский контент / Стоп-слова</h2>
@@ -24,21 +27,24 @@ echo $site == 'regex' ? '</a>' : '';
 
 <?php 
 // блоки сообщение об успехе или ошибках при сохранении
-if ($_SESSION['admin_stop_words_success']) { 
-    unset( $_SESSION['admin_stop_words_success'] );
-?>
+if ($_SESSION['admin_stop_words_success']) {
+    unset($_SESSION['admin_stop_words_success']);
+    ?>
   <div>
     <img src="/images/ico_ok.gif" alt="" border="0" height="18" width="19"/>&nbsp;&nbsp;Изменения внесены.
   </div>
   <br/><br/>
-<?php } if ($error) print(view_error($error).'<br/>'); ?>
+<?php 
+} if ($error) {
+    print(view_error($error).'<br/>');
+} ?>
 
   
 <form id="form_stop_words" method="post">
     <input type="hidden" name="site" value="<?=$site?>">
     <input type="hidden" name="cmd" value="go">
 <?php
-if ( $site == 'regex' ) {
+if ($site == 'regex') {
     /*
     // Запрещенные выражения
     
@@ -99,11 +105,10 @@ if ( $site == 'regex' ) {
     
 <?php
 */
-}
-else {
-    
+} else {
+
     // Подозрительные слова
-    
+
 ?>
     <div class="b-textarea">
         <textarea class="b-textarea__textarea" name="words" id="words" cols="80" rows="5"><?=  $sStopWords?></textarea>

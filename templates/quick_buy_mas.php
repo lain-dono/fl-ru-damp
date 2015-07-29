@@ -1,5 +1,5 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/PromoCodes.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/PromoCodes.php';
 $promoCodes = new PromoCodes();
 ?>
 <div id="quick_mas_win_main" class="b-shadow b-shadow_center b-shadow_width_520 b-shadow_pad_15_20 b-shadow_zindex_11 b-shadow_hide" style="display:block;">
@@ -24,7 +24,7 @@ $promoCodes = new PromoCodes();
 
 
 
-        <input type="hidden" id="quick_mas_f_account_sum" value="<?= round($_SESSION['ac_sum'], 2)<0 ? 0 : round($_SESSION['ac_sum'], 2) ?>"/>
+        <input type="hidden" id="quick_mas_f_account_sum" value="<?= round($_SESSION['ac_sum'], 2) < 0 ? 0 : round($_SESSION['ac_sum'], 2) ?>"/>
         <input type="hidden" id="quick_mas_promo_code" value=""/>
 
         <div class="b-layout__txt b-layout__txt_padtb_10 b-layout__txt_fontsize_15">Сумма и способ оплаты</div>
@@ -47,12 +47,17 @@ $promoCodes = new PromoCodes();
             <span id="quick_mas_sum_span_4">
             <span id="quick_mas_sum_span_2">Часть суммы (<span id="quick_mas_sum_span_7"></span> руб.)</span><span id="quick_mas_sum_span_3">Она</span> будет списана с личного счета, на нем 
             <span id="quick_mas_sum_account1" class="b-layout__bold">
-                <?php setlocale(LC_NUMERIC,'en_US');?>
-                <? if (round($_SESSION['bn_sum'] + $_SESSION['ac_sum'], 2) > 0) { ?>
-                    <?= number_format(round(zin($_SESSION['ac_sum']),2), 2, ",", " "); ?>
-                <? } else { ?>
+                <?php setlocale(LC_NUMERIC, 'en_US');?>
+                <?php if (round($_SESSION['bn_sum'] + $_SESSION['ac_sum'], 2) > 0) {
+    ?>
+                    <?= number_format(round(zin($_SESSION['ac_sum']), 2), 2, ',', ' ');
+    ?>
+                <?php 
+} else {
+    ?>
                     0
-                <? } ?>
+                <?php 
+} ?>
             </span>
              руб.<br>
              <span id="quick_mas_sum_span_5">
@@ -105,7 +110,7 @@ $promoCodes = new PromoCodes();
    </div>
    <span class="b-shadow__icon b-shadow__icon_close"></span>
 </div>
-<? unset($_SESSION['quickmass_ok']); ?> 
+<?php unset($_SESSION['quickmass_ok']); ?> 
 
 <style type="text/css">
 #quick_mas_win_main{ height:auto !important; min-width:300px !important;}

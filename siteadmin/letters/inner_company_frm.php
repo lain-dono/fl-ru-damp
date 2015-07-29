@@ -1,12 +1,16 @@
 <div class="b-layout__txt"><a class="b-layout__link" href="/siteadmin/letters/?mode=company">Все стороны</a> &rarr;</div>
 
-<?php if($_GET['mode']=='edit') { ?>
+<?php if ($_GET['mode'] == 'edit') {
+    ?>
 <h2 class="b-layout__title">Редактирование стороны: <?=htmlspecialchars($company['name'])?></h2>
-<?php } else { ?>
+<?php 
+} else {
+    ?>
 <h2 class="b-layout__title">Новая сторона</h2>
-<?php } ?>
+<?php 
+} ?>
 
-<form action="/siteadmin/letters/?mode=<?=htmlspecialchars($_GET['mode'])=='edit' ? 'update' : 'insert' ?>" method="POST" id="frm_company">
+<form action="/siteadmin/letters/?mode=<?=htmlspecialchars($_GET['mode']) == 'edit' ? 'update' : 'insert' ?>" method="POST" id="frm_company">
 <input type="hidden" name="frm_company_id" value="<?=$company['id']?>">
 <table cellspacing="0" cellpadding="0" border="0" class="b-layout__table b-layout__table_width_full b-layout__table_margbot_20">
 	<tbody>
@@ -69,8 +73,8 @@
 			</td>
 			<td class="b-layout__right">
 				<div class="b-combo">
-					<div class="b-combo__input b-combo__input_multi_dropdown b-combo__input_width_150 b-combo__input_resize b-combo__input_arrow_yes b-combo__input_init_citiesList b-combo__input_on_click_request_id_getcities b-combo__input_max-width_450  exclude_value_0_0 disallow_null <?=($_GET['mode']=='edit' ? "drop_down_default_{$company['city']} multi_drop_down_default_column_1" : "")?>">
-						<input id="country" class="b-combo__input-text" id="frm_company_countrycity" name="frm_company_countrycity" type="text"  size="80" value="<?=htmlspecialchars($_GET['mode'])=='edit' ? "{$company['country_title']}: {$company['city_title']}" : "" ?>" />		
+					<div class="b-combo__input b-combo__input_multi_dropdown b-combo__input_width_150 b-combo__input_resize b-combo__input_arrow_yes b-combo__input_init_citiesList b-combo__input_on_click_request_id_getcities b-combo__input_max-width_450  exclude_value_0_0 disallow_null <?=($_GET['mode'] == 'edit' ? "drop_down_default_{$company['city']} multi_drop_down_default_column_1" : '')?>">
+						<input id="country" class="b-combo__input-text" id="frm_company_countrycity" name="frm_company_countrycity" type="text"  size="80" value="<?=htmlspecialchars($_GET['mode']) == 'edit' ? "{$company['country_title']}: {$company['city_title']}" : '' ?>" />		
 						<span class="b-combo__arrow"></span>
 					</div>
 				</div>

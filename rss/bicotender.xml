@@ -1,1 +1,1 @@
-<? include('bicotender.php'); ?>
+<?php include 'bicotender.php'; ?>

@@ -3,21 +3,21 @@
 /**
  * Автоответы. Оплата услуги.
  */
-
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/billing.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/yandex_kassa.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/platipotom.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/quick_payment/quickPaymentPopup.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/quick_payment/quickPaymentPopupFactory.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/autoresponse.php");
-
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/billing.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/yandex_kassa.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/platipotom.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/quick_payment/quickPaymentPopup.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/quick_payment/quickPaymentPopupFactory.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/autoresponse.php';
 
 //------------------------------------------------------------------------------
 
 /**
- * Оплата с личного счета
+ * Оплата с личного счета.
+ *
  * @param type $type
  * @param type $data
+ *
  * @return type
  */
 function quickPaymentAutoresponseAccount($type, $data)
@@ -69,14 +69,14 @@ function quickPaymentAutoresponseAccount($type, $data)
         ");
     }
     */
-        
+
     return $objResponse;
 }
 
 //------------------------------------------------------------------------------
 
 /**
- * Это методы для разных видов оплаты но сгруппированные в яндекс кассе
+ * Это методы для разных видов оплаты но сгруппированные в яндекс кассе.
  * 
  * @param type $type
  * @param type $data
@@ -109,10 +109,11 @@ function quickPaymentAutoresponseSberbank($type, $data)
 //------------------------------------------------------------------------------
 
 /**
- * Оплата автоответов через яндекс кассу
+ * Оплата автоответов через яндекс кассу.
  * 
  * @param type $type - тип оплаты
  * @param type $data - данные по параметрам покупаемой услуги
+ *
  * @return \xajaxResponse
  */
 function quickPaymentAutoresponseYandexKassa($type, $data)
@@ -194,20 +195,20 @@ function quickPaymentAutoresponseYandexKassa($type, $data)
             if(qpa) qpa.show_error('Возникла ошибка при добавлении автоответа!');
         ");
     }
-     */   
-    
+     */
+
     return $objResponse;
 }
-
 
 //------------------------------------------------------------------------------
 
 
 /**
- * Оплата автоответов через Плати потом
+ * Оплата автоответов через Плати потом.
  * 
  * @param type $type - тип оплаты
  * @param type $data - данные по параметрам покупаемой услуги
+ *
  * @return \xajaxResponse
  */
 function quickPaymentAutoresponsePlatipotom($type, $data)
@@ -282,6 +283,6 @@ function quickPaymentAutoresponsePlatipotom($type, $data)
         ");
     }
     */
-        
+
     return $objResponse;
 }

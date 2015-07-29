@@ -1,4 +1,4 @@
-<div class="b-fon <?= ($i > 1 ? "b-fon_padtop_40" : "")?>" id="sbrList<?= $curr_sbr->id;?>">
+<div class="b-fon <?= ($i > 1 ? 'b-fon_padtop_40' : '')?>" id="sbrList<?= $curr_sbr->id;?>">
     <div class="b-fon__body b-fon__body_pad_5_0_15_15 b-fon__body_fontsize_13 b-fon__body_bg_fff">
         <table cellspacing="0" cellpadding="0" border="0" class="b-layout__table b-layout__table_width_full">
             <tbody>
@@ -8,12 +8,12 @@
                     </td>
                     <td class="b-layout__right b-layout__right_width_575 b-layout__right_padbot_10 b-layout__right_valign_bot" >
                         <div class="b-username b-username_padbot_10">
-                            <a href="/users/<?= $curr_sbr->data[$curr_sbr->apfx . 'login'] ?>/" class="b-username__link b-username__link_color_f2922a" target="_blank"><?= ($curr_sbr->data[$curr_sbr->apfx . 'uname'] . ' ' . $curr_sbr->data[$curr_sbr->apfx . 'usurname']); ?></a> 
+                            <a href="/users/<?= $curr_sbr->data[$curr_sbr->apfx.'login'] ?>/" class="b-username__link b-username__link_color_f2922a" target="_blank"><?= ($curr_sbr->data[$curr_sbr->apfx.'uname'].' '.$curr_sbr->data[$curr_sbr->apfx.'usurname']); ?></a> 
                             <span class="b-username__login b-username__login_color_f2922a">
-                                [<a href="/users/<?= $curr_sbr->data[$curr_sbr->apfx . 'login'] ?>/" target="_blank" class="b-username__link"><?= $curr_sbr->data[$curr_sbr->apfx . 'login'] ?></a>] 
+                                [<a href="/users/<?= $curr_sbr->data[$curr_sbr->apfx.'login'] ?>/" target="_blank" class="b-username__link"><?= $curr_sbr->data[$curr_sbr->apfx.'login'] ?></a>] 
                                 <span class="b-username__marks">
                                     <?//= view_mark_user($curr_sbr->data, $curr_sbr->apfx) ?>
-                                    <? $apfx = $curr_sbr->apfx; ?><?= view_mark_user_div($curr_sbr->data[$apfx . "is_pro"] === "t", $apfx === "emp_", $curr_sbr->data[$apfx . "is_team"] === 't', "") ?><?= $curr_sbr->data[$curr_sbr->apfx . 'is_verify'] == 't' ? view_verify() : '';?>
+                                    <?php $apfx = $curr_sbr->apfx; ?><?= view_mark_user_div($curr_sbr->data[$apfx.'is_pro'] === 't', $apfx === 'emp_', $curr_sbr->data[$apfx.'is_team'] === 't', '') ?><?= $curr_sbr->data[$curr_sbr->apfx.'is_verify'] == 't' ? view_verify() : '';?>
                                 </span>
                             </span>
                         </div>
@@ -21,12 +21,16 @@
                 </tr>
             </tbody>
         </table>
-        <? 
+        <?php 
         $stpos = 0;
         $stcount = sizeof($curr_sbr->stages);
-        foreach ($curr_sbr->stages as $num => $stage) { $stage->initNotification(); $stpos++;?>
-            <? include ($_SERVER['DOCUMENT_ROOT'] . "/sbr/tpl.stage-list.php") ?>
-        <? }//foreach?>
+        foreach ($curr_sbr->stages as $num => $stage) {
+            $stage->initNotification();
+            ++$stpos;
+            ?>
+            <?php include ($_SERVER['DOCUMENT_ROOT'].'/sbr/tpl.stage-list.php') ?>
+        <?php 
+        }//foreach?>
         
         <style type="text/css">
 		.b-fon__body_pad_5_0_15_15 .b-layout__txt_padleft_35{ padding-left:20px;}

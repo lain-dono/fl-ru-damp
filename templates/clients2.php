@@ -1,12 +1,14 @@
-<?
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/clients.php");
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/clients.php';
 $cl = new clients();
 $clients = $cl->getClients('RANDOM()', 5);
-if (!count($clients)) $clients = array();
+if (!count($clients)) {
+    $clients = array();
+}
 
 $searchLinkFlag = 0;
 if (get_uid(false)) {
-    if ( $_SESSION["role"][0] != '1') {
+    if ($_SESSION['role'][0] != '1') {
         $searchLinkFlag = 1;
     }
 }
@@ -44,13 +46,15 @@ if (get_uid(false)) {
                         </td>
                     </tr>
                     <tr class="b-layout__tr">
-                        <? foreach ($clients as $client) { ?>
+                        <?php foreach ($clients as $client) {
+    ?>
                             <td class="b-layout__one">
                                 <a target="_blank" href="<?= $client['link_client'] ?>" class="b-promo__link"> 
                                     <img width="80" height="57" src="<?= WDCPREFIX ?>/clients/<?= $client['logo'] ?>" alt="<?= $client['client_name'] ?>" title="<?= $client['client_name'] ?>" class="b-promo__photo-free"> 
                                 </a>
                             </td>
-                        <? } ?>
+                        <?php 
+} ?>
                     </tr>
                 </table> 
             </td>

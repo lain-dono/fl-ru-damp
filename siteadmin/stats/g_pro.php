@@ -1,30 +1,35 @@
-<?
-$rpath = "../../";
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/country.php");
+<?php
+
+$rpath = '../../';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/country.php';
 
 $idMonth = date('m'); //дефолтный месяц
 $idYear = date('Y'); //дефотлный год
-$iBarWidth = (is_numeric(InGet('y')) && !is_numeric(InGet('m')))?30:20; //ширина ячейки
+$iBarWidth = (is_numeric(InGet('y')) && !is_numeric(InGet('m'))) ? 30 : 20; //ширина ячейки
 $iHeight = 20; //отступ снизу
 $hbl = 30;
 $sFont = ABS_PATH.'/siteadmin/account/Aricyr.ttf';
 $DB = new DB('master');
 
-function getOP($date_from='2006-10-10', $date_to='now()', $bYear=false) {
+function getOP($date_from = '2006-10-10', $date_to = 'now()', $bYear = false)
+{
     global $iMonth,$iYear, $DB;
-	if ($bYear) {
-		$sql = "SELECT COUNT(*) as cnt, to_char(from_date,'MM') FROM orders WHERE (payed=true AND orders.active=true AND ordered=true AND from_date >= '".$date_from."' AND from_date < '".$date_to."' GROUP BY to_char(from_date,'MM') ORDER BY to_char(from_date,'MM')";
+    if ($bYear) {
+        $sql = "SELECT COUNT(*) as cnt, to_char(from_date,'MM') FROM orders WHERE (payed=true AND orders.active=true AND ordered=true AND from_date >= '".$date_from."' AND from_date < '".$date_to."' GROUP BY to_char(from_date,'MM') ORDER BY to_char(from_date,'MM')";
         //from_date < now() AND from_date+to_date > now())";
-	}
-	else {
+    } else {
         $res = array();
         $n = 0;
-        $iMaxDays = $iMax = ($bYear)?12:date('t',mktime(0,0,0, $iMonth, 1, $iYear));
-        $d = preg_replace("/-\d{1,2}$/","",$date_from);
-        for($i=1; $i<=$iMaxDays; $i++) {
-            if($i<10) { $ii = '0'.$i; } else { $ii = $i; }
-		    $sql = "SELECT COUNT(*) as cnt,
+        $iMaxDays = $iMax = ($bYear) ? 12 : date('t', mktime(0, 0, 0, $iMonth, 1, $iYear));
+        $d = preg_replace("/-\d{1,2}$/", '', $date_from);
+        for ($i = 1; $i <= $iMaxDays; ++$i) {
+            if ($i < 10) {
+                $ii = '0'.$i;
+            } else {
+                $ii = $i;
+            }
+            $sql = "SELECT COUNT(*) as cnt,
                     SUM(u.role::bit(1)::integer) as cnt_emp,
                     SUM(1 - u.role::bit(1)::integer) as cnt_frl
                     FROM orders
@@ -34,16 +39,16 @@ function getOP($date_from='2006-10-10', $date_to='now()', $bYear=false) {
             //$r[0]['cnt'] = $DB->val($sql);
 //echo $sql.'<br>';
             //if(isset($r[0]['cnt'])) {
-            if($result) {
+            if ($result) {
                 $res[$n]['cnt'] = $result['cnt'];
-                $res[$n]['cnt_frl'] = (int)$result['cnt_frl'];
-                $res[$n]['cnt_emp'] = (int)$result['cnt_emp'];
+                $res[$n]['cnt_frl'] = (int) $result['cnt_frl'];
+                $res[$n]['cnt_emp'] = (int) $result['cnt_emp'];
                 $res[$n]['_day'] = $i;
-                $n++;
+                ++$n;
             }
         }
-	}
-    
+    }
+
     // Данные для тесту
     /*
     $s = 9000;
@@ -70,33 +75,30 @@ function getOP($date_from='2006-10-10', $date_to='now()', $bYear=false) {
 
 $bYear = false;
 if (is_numeric(InGet('y'))) {
-	if (is_numeric(InGet('m'))) {
-		$date_from = InGet('y').'-'.InGet('m').'-1';
-		$date_to = InGet('y').'-'.InGet('m').'-'.date('t',mktime(0,0,0, InGet('m')+1, null, InGet('y')));
+    if (is_numeric(InGet('m'))) {
+        $date_from = InGet('y').'-'.InGet('m').'-1';
+        $date_to = InGet('y').'-'.InGet('m').'-'.date('t', mktime(0, 0, 0, InGet('m') + 1, null, InGet('y')));
 
-		$iMonth = InGet('m');
-		$iYear = InGet('y');
-	}
-	else {
-		$date_from = InGet('y').'-1-1';
-		$date_to   = (InGet('y')+1).'-01-01';
-		$bYear = true;
-		$iMonth = $idMonth;
-		$iYear = InGet('y');
-	}
-}
-else {
-	//echo $idMonth.'<br>';
+        $iMonth = InGet('m');
+        $iYear = InGet('y');
+    } else {
+        $date_from = InGet('y').'-1-1';
+        $date_to = (InGet('y') + 1).'-01-01';
+        $bYear = true;
+        $iMonth = $idMonth;
+        $iYear = InGet('y');
+    }
+} else {
+    //echo $idMonth.'<br>';
 	//echo date('t',mktime(0,0,0, intval($idMonth), 1, intval($idYear)));
 	$date_from = $idYear.'-'.$idMonth.'-1';
-	$date_to = $idYear.'-'.$idMonth.'-'.date('t',mktime(0,0,0, intval($idMonth), 1, intval($idYear)));
-	$iMonth = $idMonth;
-	$iYear = $idYear;
+    $date_to = $idYear.'-'.$idMonth.'-'.date('t', mktime(0, 0, 0, intval($idMonth), 1, intval($idYear)));
+    $iMonth = $idMonth;
+    $iYear = $idYear;
 }
 
-
-$iMaxDays = $iMax = ($bYear)?12:date('t',mktime(0,0,0, $iMonth, 1, $iYear)); //Вычисление максимального количества дней\месяцев в текущем месяце\годе
-$iFMperPX = (!$bYear)?30:(30*10); //масштаб
+$iMaxDays = $iMax = ($bYear) ? 12 : date('t', mktime(0, 0, 0, $iMonth, 1, $iYear)); //Вычисление максимального количества дней\месяцев в текущем месяце\годе
+$iFMperPX = (!$bYear) ? 30 : (30 * 10); //масштаб
 
 $graphStyle[3]['text'] = 'Работодатели';
 $graphStyle[2]['text'] = 'Фрилансеры';
@@ -105,63 +107,62 @@ $graphStyle[3]['val'] = 'cnt_emp';
 $graphStyle[2]['val'] = 'cnt_frl';
 $graphStyle[1]['val'] = 'cnt';
 
-
-for ($i=1; $i<=3; $i++) {
-	for ($j=0; $j<=$iMaxDays; $j++) {
-		$graphValues[$i][$j] = 0;
-	}
+for ($i = 1; $i <= 3; ++$i) {
+    for ($j = 0; $j <= $iMaxDays; ++$j) {
+        $graphValues[$i][$j] = 0;
+    }
 }
 
-
 $imgHeight = 0;
-for ($i=1; $i<=count($graphStyle); $i++) {
-	$res = getOP($date_from, $date_to, $bYear);
-	$aTemp = $res;
+for ($i = 1; $i <= count($graphStyle); ++$i) {
+    $res = getOP($date_from, $date_to, $bYear);
+    $aTemp = $res;
 
     $value = $graphStyle[$i]['val'];
-    
-	if (isset($aTemp[0]['_day'])) {
-		$graphStyle[$i]['max'] = $aTemp[0][$graphStyle[$i]['val']]/$iFMperPX;
+
+    if (isset($aTemp[0]['_day'])) {
+        $graphStyle[$i]['max'] = $aTemp[0][$graphStyle[$i]['val']] / $iFMperPX;
 //        $graphStyle[$i]['max'] = $aTemp[0]['cnt'];
-		for ($j=0; $j<count($aTemp); $j++) {
-			$iAmount = $aTemp[$j][$value]/$iFMperPX;
-            $ii = $aTemp[$j][$value];
+		for ($j = 0; $j < count($aTemp); ++$j) {
+		    $iAmount = $aTemp[$j][$value] / $iFMperPX;
+		    $ii = $aTemp[$j][$value];
 //            $iAmount = $aTemp[$j]['cnt'];
 			if ($iAmount > $graphStyle[$i]['max']) {
-				$graphStyle[$i]['max'] = $iAmount; //Вычисляем максимальную высоту всего графика
+			    $graphStyle[$i]['max'] = $iAmount; //Вычисляем максимальную высоту всего графика
 			}
 
-			$graphValues[$i][$aTemp[$j]['_day']-1] = $iAmount;
-			$graphValuesV[$i][$aTemp[$j]['_day']-1] = $ii;
+		    $graphValues[$i][$aTemp[$j]['_day'] - 1] = $iAmount;
+		    $graphValuesV[$i][$aTemp[$j]['_day'] - 1] = $ii;
 		}
-		$imgHeight += $graphStyle[$i]['max'];
-	}
+        $imgHeight += $graphStyle[$i]['max'];
+    }
 }
 //print_r($graphValues2);
 $k = 0; $graphStyle[0]['max'] = 0;
-for ($i=0; $i<=$iMaxDays; $i++) {
-	$iSumm = 0; $iSumm2 = 0; $ii = 0;
-	for ($j=1; $j<count($graphValues); $j++) {
-		if (isset($graphValues[$j][$i])) {
-			$iSumm += $graphValues[$j][$i];
+for ($i = 0; $i <= $iMaxDays; ++$i) {
+    $iSumm = 0;
+    $iSumm2 = 0;
+    $ii = 0;
+    for ($j = 1; $j < count($graphValues); ++$j) {
+        if (isset($graphValues[$j][$i])) {
+            $iSumm += $graphValues[$j][$i];
             $ii += $graphValuesV[$j][$i];
-		}
-	}
+        }
+    }
 
-
-	$graphValues[0][$k] = $iSumm;
+    $graphValues[0][$k] = $iSumm;
     $graphValuesV[0][$k] = $ii;
-	if ($iSumm > $graphStyle[0]['max'])
-	$graphStyle[0]['max'] = $iSumm;
-	$k++;
+    if ($iSumm > $graphStyle[0]['max']) {
+        $graphStyle[0]['max'] = $iSumm;
+    }
+    ++$k;
 }
 //print_r($graphValues2);
 
-$imgHeight += count($graphValues)*$hbl; //прибавляем промежутки к максимальной высоте графика
-$imgWidth = $iMax*$iBarWidth+100;
+$imgHeight += count($graphValues) * $hbl; //прибавляем промежутки к максимальной высоте графика
+$imgWidth = $iMax * $iBarWidth + 100;
 
-
-$image=imagecreate($imgWidth, $imgHeight); //создаем график с учетом максимальной высоты и ширины.
+$image = imagecreate($imgWidth, $imgHeight); //создаем график с учетом максимальной высоты и ширины.
 imagecolorallocate($image, 255, 255, 255);
 
 $graphStyle[1]['color'] = imagecolorallocate($image, 0, 0, 0); //Всего
@@ -169,52 +170,49 @@ $graphStyle[2]['color'] = imagecolorallocate($image, 103, 135, 179); //Фрил�
 $graphStyle[3]['color'] = imagecolorallocate($image, 111, 177, 92); //Работодатели
 
 
+$colorWhite = imagecolorallocate($image, 255, 255, 255);
+$colorGrey = imagecolorallocate($image, 192, 192, 192);
+$colorDarkBlue = imagecolorallocate($image, 153, 153, 153);
 
-$colorWhite=imagecolorallocate($image, 255, 255, 255);
-$colorGrey=imagecolorallocate($image, 192, 192, 192);
-$colorDarkBlue=imagecolorallocate($image, 153, 153, 153);
-
-for ($i=1; $i<count($graphValues); $i++) {
-	//вычисляем откуда начать прорисовку графика
+for ($i = 1; $i < count($graphValues); ++$i) {
+    //вычисляем откуда начать прорисовку графика
 	if ($i > 1) {
-		$iMaxHeight = $graphValues[$i-1][0];
-		for ($k=1; $k<count($graphValues[$i-1]); $k++) {
-			$iMaxHeight = ($graphValues[$i-1][$k] > $iMaxHeight)?$graphValues[$i-1][$k]:$iMaxHeight;
-		}
-		$iHeight += $iMaxHeight+$hbl; // +15 - расстояние между строчками
+	    $iMaxHeight = $graphValues[$i - 1][0];
+	    for ($k = 1; $k < count($graphValues[$i - 1]); ++$k) {
+	        $iMaxHeight = ($graphValues[$i - 1][$k] > $iMaxHeight) ? $graphValues[$i - 1][$k] : $iMaxHeight;
+	    }
+	    $iHeight += $iMaxHeight + $hbl; // +15 - расстояние между строчками
 	}
 
-	for ($j=0; $j<count($graphValues[$i]); $j++) {
-
-		imageline($image, $j*$iBarWidth+2 + 100, $imgHeight-$iHeight, $j*$iBarWidth+$iBarWidth + 100, $imgHeight-$iHeight, $colorGrey);
+    for ($j = 0; $j < count($graphValues[$i]); ++$j) {
+        imageline($image, $j * $iBarWidth + 2 + 100, $imgHeight - $iHeight, $j * $iBarWidth + $iBarWidth + 100, $imgHeight - $iHeight, $colorGrey);
 		//if ($i==1) {
-			$iz = ($j+1 > 9)?3.7:2.5;
-			imagefttext($image, '7', 0, $j*$iBarWidth+round($iBarWidth/$iz) + 100, $imgHeight-$iHeight + 12, $colorDarkBlue, $sFont, $j+1);
+			$iz = ($j + 1 > 9) ? 3.7 : 2.5;
+        imagefttext($image, '7', 0, $j * $iBarWidth + round($iBarWidth / $iz) + 100, $imgHeight - $iHeight + 12, $colorDarkBlue, $sFont, $j + 1);
 		//}
 
 		if ($graphValues[$i][$j]) {
-			imagefilledrectangle($image, $j*$iBarWidth+2 + 100, ($imgHeight-$iHeight-round($graphValues[$i][$j])), ($j+1)*$iBarWidth + 100, $imgHeight-$iHeight, $graphStyle[$i]['color']);
+		    imagefilledrectangle($image, $j * $iBarWidth + 2 + 100, ($imgHeight - $iHeight - round($graphValues[$i][$j])), ($j + 1) * $iBarWidth + 100, $imgHeight - $iHeight, $graphStyle[$i]['color']);
 			//надпись количества FM
-			$addD = ($i == 8)?2:1; ///Если подарки, то результат делим на 2
-			$color = (!$i)?$graphStyle[$i]['color']:$colorDarkBlue;
-            if($i!=0) {
-			    imagefttext($image, '7', 0, $j*$iBarWidth + 100+2, $imgHeight-$iHeight-$graphValues[$i][$j]-2, $color, $sFont, round($graphValuesV[$i][$j]));
-            } else {
-                $iCount = 0;
-                for($k=1; $k<count($graphValues2); $k++) {
-                    $addD = ($k == 8)?2:1;
-                    $iCount += round($graphValues2[$k][$j]/$addD);
-                }
-                imagefttext($image, '7', 0, $j*$iBarWidth + 100+2, $imgHeight-$iHeight-$graphValues[$i][$j]-2, $color, $sFont, round($graphValuesV[$i][$j]));
-            }
+			$addD = ($i == 8) ? 2 : 1; ///Если подарки, то результат делим на 2
+			$color = (!$i) ? $graphStyle[$i]['color'] : $colorDarkBlue;
+		    if ($i != 0) {
+		        imagefttext($image, '7', 0, $j * $iBarWidth + 100 + 2, $imgHeight - $iHeight - $graphValues[$i][$j] - 2, $color, $sFont, round($graphValuesV[$i][$j]));
+		    } else {
+		        $iCount = 0;
+		        for ($k = 1; $k < count($graphValues2); ++$k) {
+		            $addD = ($k == 8) ? 2 : 1;
+		            $iCount += round($graphValues2[$k][$j] / $addD);
+		        }
+		        imagefttext($image, '7', 0, $j * $iBarWidth + 100 + 2, $imgHeight - $iHeight - $graphValues[$i][$j] - 2, $color, $sFont, round($graphValuesV[$i][$j]));
+		    }
 		}
-	}
-	$iFontSizeTitle = 8;
-	$aBox = imageftbbox($iFontSizeTitle, 0, $sFont,$graphStyle[$i]['text']);
-	$width = abs($aBox[0]) + abs($aBox[2]);
-	imagefttext($image, $iFontSizeTitle, 0, 90-$width, $imgHeight-$iHeight, $graphStyle[$i]['color'], $sFont, $graphStyle[$i]['text']);
+    }
+    $iFontSizeTitle = 8;
+    $aBox = imageftbbox($iFontSizeTitle, 0, $sFont, $graphStyle[$i]['text']);
+    $width = abs($aBox[0]) + abs($aBox[2]);
+    imagefttext($image, $iFontSizeTitle, 0, 90 - $width, $imgHeight - $iHeight, $graphStyle[$i]['color'], $sFont, $graphStyle[$i]['text']);
 }
-
 
 $aMonthes[1] = 'Январь';
 $aMonthes[2] = 'Февраль';
@@ -232,11 +230,11 @@ $aMonthes[12] = 'Декабрь';
 $sString = 'PRO пользователи';
 imagefttext($image, '18', 0, 100, 20, $colorGrey, $sFont, $sString);
 
-header("Pragma: no-cache");
-header("Cache-Control: no-cache, must-revalidate");
-header("Expires: Sun, 1 Jan 1995 01:00:00 GMT"); // Это какая-нибудь давно прошедшая дата
-header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT"); // это строчка говорит, что наш скрипт всегда изменен
-header("Content-type: image/png");
+header('Pragma: no-cache');
+header('Cache-Control: no-cache, must-revalidate');
+header('Expires: Sun, 1 Jan 1995 01:00:00 GMT'); // Это какая-нибудь давно прошедшая дата
+header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // это строчка говорит, что наш скрипт всегда изменен
+header('Content-type: image/png');
 imagepng($image);
 imagedestroy($image);
 

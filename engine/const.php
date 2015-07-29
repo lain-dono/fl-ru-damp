@@ -1,4 +1,4 @@
-<?
+<?php
 
-define("PAGINATOR_PAGES_COUNT", 4);
+define('PAGINATOR_PAGES_COUNT', 4);
 ?>

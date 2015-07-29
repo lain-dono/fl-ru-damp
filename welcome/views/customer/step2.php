@@ -13,18 +13,18 @@
         <div class="b-vertical-select__optgroup_wrapper">
          <?php 
             $itemblocks = array();
-            foreach ($professions as $profession): 
-                
+            foreach ($professions as $profession):
+
                 if ($profession['gid'] <= 0):
                     continue;
                 endif;
-                
+
                 $is_exist = isset($itemblocks[$profession['gid']]);
                 $itemblocks[$profession['gid']][] = $profession;
                 if (!$is_exist):
          ?>
             <a data-optgroup-link="<?=$profession['gid']?>" 
-               class="b-vertical-select__optgroup__link <?php if($default_group == $profession['gid']):?>active<?php endif; ?>" href="javascript:void(0);">
+               class="b-vertical-select__optgroup__link <?php if ($default_group == $profession['gid']):?>active<?php endif; ?>" href="javascript:void(0);">
                     <?=$profession['gname']?>
             </a>
          <?php  endif; ?>

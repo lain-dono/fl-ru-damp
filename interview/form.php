@@ -78,8 +78,8 @@
 
         CKEDITOR.WDCPREFIX = '<?=WDCPREFIX?>/';
   <?php
-        if ( hasPermissions('interviews') ) {
-        ?>CKEDITOR.config.customConfig = '/scripts/ckedit/config_admin.js';<?php 
+        if (hasPermissions('interviews')) {
+            ?>CKEDITOR.config.customConfig = '/scripts/ckedit/config_admin.js';<?php 
         }
         ?>
         CKEDITOR.replace('txt', {

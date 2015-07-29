@@ -108,7 +108,7 @@
                         </span>
                         &mdash; 
                         <span class="b-layout__txt b-layout__txt_color_808080">
-                            <?=dateFormat("d.m.Y в H:i", $response->data['payed_date'])?>
+                            <?=dateFormat('d.m.Y в H:i', $response->data['payed_date'])?>
                         </span>
                     </div>
                     <div class="b-fon b-fon_bg_fa b-fon_pad_20">
@@ -133,8 +133,8 @@
                                 <?php $currencyList = array('USD', 'евро', 'руб'); ?>
                                 <?php $pricebyList = array(1 => 'за час', 2 => 'за день', 3 => 'за месяц', 4 => 'за проект'); ?>
                                 Бюджет проектов: от <?=$response->data['filter_budget']?> 
-                                <?=isset($currencyList[$response->data['filter_budget_currency']])?$currencyList[$response->data['filter_budget_currency']]:' руб'?>
-                                <?=isset($pricebyList[$response->data['filter_budget_priceby']])?$pricebyList[$response->data['filter_budget_priceby']]:' за проект'?>
+                                <?=isset($currencyList[$response->data['filter_budget_currency']]) ? $currencyList[$response->data['filter_budget_currency']] : ' руб'?>
+                                <?=isset($pricebyList[$response->data['filter_budget_priceby']]) ? $pricebyList[$response->data['filter_budget_priceby']] : ' за проект'?>
                             <?php else: ?>
                                 Бюджет проектов: любой
                             <?php endif; ?>

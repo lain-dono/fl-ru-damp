@@ -1,13 +1,10 @@
 <?php
 
-	include('_header.php');
+    include '_header.php';
 
-	# http://wiki.webmoney.ru/wiki/show/Interfeys_X15
-	$res = $wmxi->X15a(
-		PRIMARY_WMID  # WMID
-	);
+    # http://wiki.webmoney.ru/wiki/show/Interfeys_X15
+    $res = $wmxi->X15a(
+        PRIMARY_WMID  # WMID
+    );
 
-	print_r($res->toObject());
-
-
-?>
+    print_r($res->toObject());

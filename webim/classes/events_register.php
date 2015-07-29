@@ -13,31 +13,23 @@
 <?php
 
 EventController::getInstance()->addEventListener(
-	EventController::EVENT_OPERATOR_STATUS, 
-	array(Operator::getInstance(), "UpdateOperatorStatus")
+    EventController::EVENT_OPERATOR_STATUS,
+    array(Operator::getInstance(), 'UpdateOperatorStatus')
 );
 
 EventController::getInstance()->addEventListener(
-	EventController::EVENT_OPERATOR_STATUS, 
-	array(Operator::getInstance(), "updateOperatorOnlineStats")
-);
-
-
-
-
-
-EventController::getInstance()->addEventListener(
-	EventController::EVENT_OPERATOR_PING, 
-	array(Operator::getInstance(), "updateOperatorOnlineStatsForThread")
+    EventController::EVENT_OPERATOR_STATUS,
+    array(Operator::getInstance(), 'updateOperatorOnlineStats')
 );
 
 EventController::getInstance()->addEventListener(
-	EventController::EVENT_OPERATOR_PING, 
-	array(ThreadProcessor::getInstance(), "ProcessThread") 
+    EventController::EVENT_OPERATOR_PING,
+    array(Operator::getInstance(), 'updateOperatorOnlineStatsForThread')
 );
 
-
-
-
+EventController::getInstance()->addEventListener(
+    EventController::EVENT_OPERATOR_PING,
+    array(ThreadProcessor::getInstance(), 'ProcessThread')
+);
 
 ?>

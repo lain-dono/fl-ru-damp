@@ -1,20 +1,21 @@
-<?
+<?php
+
 $no_banner = 1;
-$rpath = "../../";
-define( 'IS_SITE_ADMIN', 1 );
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/permissions.php");
+$rpath = '../../';
+define('IS_SITE_ADMIN', 1);
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/permissions.php';
 
 session_start();
 $uid = get_uid();
 
-if(!(hasPermissions('adm') && hasPermissions('permissions'))) {
-  header ("Location: /404.php");
-  exit;
+if (!(hasPermissions('adm') && hasPermissions('permissions'))) {
+    header ('Location: /404.php');
+    exit;
 }
 
 $action = __paramInit('string', 'action', 'action');
 
-switch($action) {
+switch ($action) {
     case 'group_update':
         $name = __paramInit('string', 'name', 'name');
         $id = __paramInit('int', 'id', 'id');
@@ -24,7 +25,7 @@ switch($action) {
         break;
     case 'group_edit':
         $id = __paramInit('int', 'id', 'id');
-        $inner_page = "inner_group_form.php";
+        $inner_page = 'inner_group_form.php';
         $rights = permissions::getAllRights();
         $group = permissions::getGroupInfo($id);
         break;
@@ -35,16 +36,16 @@ switch($action) {
         exit;
         break;
     case 'group_add':
-        $inner_page = "inner_group_form.php";
+        $inner_page = 'inner_group_form.php';
         $rights = permissions::getAllRights();
         break;
     case 'group_list':
         $groups = permissions::getAllGroups();
-        $inner_page = "inner_group_list.php";
+        $inner_page = 'inner_group_list.php';
         break;
     case 'group_delete':
-        if ($_SESSION["rand"] != $_POST["u_token_key"]) {
-            header ("Location: /404.php");
+        if ($_SESSION['rand'] != $_POST['u_token_key']) {
+            header ('Location: /404.php');
             exit;
         }
         $id = __paramInit('int', 'id', 'id');
@@ -57,11 +58,11 @@ switch($action) {
         $group_id = __paramInit('int', 'group_id', 'group_id', -3);
         $login = strtolower(__paramInit('string', 'login', 'login'));
         $users = permissions::getUsers($group_id, $login);
-        $inner_page = "inner_user_list.php";
+        $inner_page = 'inner_user_list.php';
         break;
     case 'user_delete':
-        if ($_SESSION["rand"] != $_POST["u_token_key"]) {
-            header ("Location: /404.php");
+        if ($_SESSION['rand'] != $_POST['u_token_key']) {
+            header ('Location: /404.php');
             exit;
         }
         $user_id = __paramInit('int', 'uid', 'uid', 0);
@@ -71,11 +72,11 @@ switch($action) {
         break;
     case 'user_edit':
         $user_id = __paramInit('int', 'uid', 'uid');
-        require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/users.php");
+        require_once $_SERVER['DOCUMENT_ROOT'].'/classes/users.php';
         $user = new users();
         $user->GetUserByUID($user_id);
         $groups = permissions::getAllGroups();
-        foreach($groups as $k=>$group) {
+        foreach ($groups as $k => $group) {
             $g_rights = permissions::getGroupInfo($group['id']);
             $groups[$k]['rights'] = $g_rights['rights'];
         }
@@ -83,12 +84,12 @@ switch($action) {
         $user_groups_data = permissions::getUserGroups($user_id);
         $user_groups = array();
         $user_groups_rights = array();
-        foreach($user_groups_data as $user_group) {
+        foreach ($user_groups_data as $user_group) {
             array_push($user_groups, $user_group['id']);
             $g_rights = permissions::getGroupInfo($user_group['id']);
-            if($g_rights['rights']) {
-                foreach($g_rights['rights'] as $g_right) {
-                    if(!in_array($g_right, $user_groups_rights)) {
+            if ($g_rights['rights']) {
+                foreach ($g_rights['rights'] as $g_right) {
+                    if (!in_array($g_right, $user_groups_rights)) {
                         array_push($user_groups_rights, $g_right);
                     }
                 }
@@ -97,14 +98,14 @@ switch($action) {
         $user_rights_data = permissions::getUserExtraRights($user_id);
         $user_rights_allow = array();
         $user_rights_disallow = array();
-        foreach($user_rights_data as $user_right) {
-            if($user_right['is_allow']=='t') {
+        foreach ($user_rights_data as $user_right) {
+            if ($user_right['is_allow'] == 't') {
                 array_push($user_rights_allow, $user_right['id']);
             } else {
                 array_push($user_rights_disallow, $user_right['id']);
             }
         }
-        $inner_page = "inner_user_form.php";
+        $inner_page = 'inner_user_form.php';
         break;
     case 'user_update':
         $user_id = __paramInit('int', 'uid', 'uid');
@@ -118,13 +119,13 @@ switch($action) {
         break;
 }
 
-$content = "../content.php";
+$content = '../content.php';
 
-$header = $rpath."header.php";
-$footer = $rpath."footer.html";
+$header = $rpath.'header.php';
+$footer = $rpath.'footer.html';
 
-$css_file   = array( 'moderation.css', 'new-admin.css', 'nav.css' );
+$css_file = array('moderation.css', 'new-admin.css', 'nav.css');
 
-include ($rpath."template.php");
+include $rpath.'template.php';
 
 ?>

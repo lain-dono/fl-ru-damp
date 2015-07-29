@@ -15,10 +15,9 @@
 ini_set('max_execution_time', 0);
 ini_set('memory_limit', '512M');
 
-if(!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT']))
-{    
-    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME) . '/../../../'), '/');
-} 
+if (!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT'])) {
+    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME).'/../../../'), '/');
+}
 
 define('ABS_PATH', $_SERVER['DOCUMENT_ROOT']);
 //$_SESSION['login'] = 'alex';
@@ -26,6 +25,6 @@ define('ABS_PATH', $_SERVER['DOCUMENT_ROOT']);
 
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/config.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/tservices/tservices_helper.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/tservices/tservices_helper.php';
 
 session_start();

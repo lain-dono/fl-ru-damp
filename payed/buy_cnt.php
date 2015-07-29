@@ -1,10 +1,13 @@
-<?
-	require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/freelancer.php");
+<?php
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/freelancer.php';
 	$user = new freelancer();
 	$user->GetUser($_SESSION['login']);
 
-	if (strtotime($_SESSION['pro_last']) > time() && $_SESSION['pro_test'] == "t")	$is_pro_test = true;
-	else										$is_pro_test = false;
+	if (strtotime($_SESSION['pro_last']) > time() && $_SESSION['pro_test'] == 't') {
+	    $is_pro_test = true;
+	} else {
+	    $is_pro_test = false;
+	}
 
 ?>
 <style>
@@ -14,7 +17,8 @@
 }
 </style>
 <h1>Услуги</h1>
-<? if ($profs) { ?>
+<?php if ($profs) {
+    ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="19">
 <tr valign="top">
 	<td height="400" valign="top" bgcolor="#FFFFFF" class="box2" style="color: #333333;">
@@ -32,7 +36,9 @@
 	</td>
 </tr>
 </table>
-<? } else { ?>
+<?php 
+} else {
+    ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="19">
 <tr valign="top">
 	<td height="400" valign="top" bgcolor="#FFFFFF" class="box2" style="color: #333333;">
@@ -45,4 +51,5 @@
 	</td>
 </tr>
 </table>
-<? } ?>
+<?php 
+} ?>

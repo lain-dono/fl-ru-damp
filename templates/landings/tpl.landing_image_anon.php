@@ -1,5 +1,5 @@
 <?php
-    $new_project_url = $uid > 0?sprintf("/public/?step=1&kind=1"):"/welcome/customer/1/";
+    $new_project_url = $uid > 0 ? sprintf('/public/?step=1&kind=1') : '/welcome/customer/1/';
     $banner_promo_inline = true;
 ?>
 <div class="b-land b-land_bg5 b-land_height_580 b-land_height_690_iphone">

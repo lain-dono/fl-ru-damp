@@ -12,26 +12,25 @@
 ?>
 <?php
 
-interface DBDriver {
+interface DBDriver
+{
+    public function __construct($link = null);
 
-  public function __construct($link = null);
+    public function getEscapedString($str);
 
-  public function getEscapedString($str);
+    public function Query($query_string, $parms = null);
 
-  public function Query($query_string, $parms = null);
+    public function execArrayOfQuerys($querys);
 
-  public function execArrayOfQuerys($querys);
+    public function nextRecord();
 
-  public function nextRecord();
+    public function getRow();
 
-  public function getRow();
+    public function getNumRows();
 
-  public function getNumRows();
+    public function getInsertId();
 
-  public function getInsertId();
-
-  public function getArrayOfRows();
-
+    public function getArrayOfRows();
 }
 
 ?>

@@ -11,10 +11,9 @@
  */
 ?>
 <?php
- 
 
 
-header("Location: /webim/operator/visitors.php");
+header('Location: /webim/operator/visitors.php');
 
 exit;
 ?>

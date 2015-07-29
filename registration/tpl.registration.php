@@ -1,6 +1,6 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/wizard.common.php");
-$xajax->printJavascript('/xajax/'); 
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/wizard.common.php';
+$xajax->printJavascript('/xajax/');
 ?>
 <div class="b-layout">
     <div class="b-layout__right b-layout__right_width_72ps b-layout__right_float_right">
@@ -17,7 +17,7 @@ $xajax->printJavascript('/xajax/');
                         <td class="b-layout__left b-layout__left_width_80"><div class="b-layout__txt b-layout__txt_padtop_5"><label for="login">Логин</label></div></td>
                         <td class="b-layout__middle b-layout__middle_padbot_20 b-layout__middle_padright_10">
                             <div class="b-combo">
-                                <div class="b-combo__input b-combo__input_width_280 <?= $registration->error['login']?"b-combo__input_error":""?>">
+                                <div class="b-combo__input b-combo__input_width_280 <?= $registration->error['login'] ? 'b-combo__input_error' : ''?>">
                                     <input type="text" autocomplete="off" class="b-combo__input-text" name="login" id="reg_login" size="80" value="<?= $registration->login;?>" onblur="registration_value_check('login')" onfocus="$$('#error_login').addClass('b-shadow_hide');" maxlength="15"/>
                                 </div>
                             </div>
@@ -47,7 +47,7 @@ $xajax->printJavascript('/xajax/');
                         <td class="b-layout__left b-layout__left_width_80"><div class="b-layout__txt b-layout__txt_padtop_5"><label for="email">E-mail</label></div></td>
                         <td class="b-layout__middle b-layout__middle_padbot_20 b-layout__middle_padright_10">
                             <div class="b-combo">
-                                <div class="b-combo__input b-combo__input_width_280 <?= $registration->error['email']?"b-combo__input_error":""?>">
+                                <div class="b-combo__input b-combo__input_width_280 <?= $registration->error['email'] ? 'b-combo__input_error' : ''?>">
                                     <input type="text" class="b-combo__input-text" name="email" id="reg_email" size="80" value="<?= stripslashes($registration->email);?>" onkeyup="registration_value_check('email', $('reg_email').value, 0)" onblur="registration_value_check('email')"/>
                                 </div>
                             </div>
@@ -77,7 +77,7 @@ $xajax->printJavascript('/xajax/');
                         <td class="b-layout__left b-layout__left_width_80"><div class="b-layout__txt b-layout__txt_padtop_5"><label for="parol">Пароль</label></div></td>
                         <td class="b-layout__middle b-layout__middle_padbot_20 b-layout__middle_padright_10">
                             <div class="b-combo">
-                                <div class="b-combo__input b-combo__input_width_280 b-combo__input_width_280 b-eye <?= $registration->error['password']?"b-combo__input_error":""?>">
+                                <div class="b-combo__input b-combo__input_width_280 b-combo__input_width_280 b-eye <?= $registration->error['password'] ? 'b-combo__input_error' : ''?>">
                                     <a tabindex="10000" class="b-eye__link b-eye__link_right_null" href="javascript:void(0)" onclick="show_password()"><span class="b-eye__icon b-eye__icon_close"></span></a>
                                     <input type="password" autocomplete="off" class="b-combo__input-text" name="password" id="reg_password" size="80" value="" onfocus="$$('#error_password').addClass('b-shadow_hide');" onblur="registration_value_check('password')" />
                                 </div>
@@ -123,9 +123,9 @@ $xajax->printJavascript('/xajax/');
                                 <img width="132" height="62" class="b-captcha__img b-captcha__img_bord_ebe8e8" id="rndnumimage" src="/image.php?num=<?=$registration->captchanum?>" alt="" onClick="$('rndnumimage').set('src','/image.php?num='+$('captchanum').get('value')+'&r='+Math.random());"/><div
                                  class="b-captcha__txt b-captcha__txt_inline-block b-captcha__txt_padtop_20">&#160;&rarr;&#160;</div><div
                                  class="b-combo b-combo_inline-block">
-                                    <div id="error_captchanum" class="b-combo__input b-combo__input_width_122 b-combo__input_height_60 <?= $registration->error['captcha']?"b-combo__input_error":""?>">
+                                    <div id="error_captchanum" class="b-combo__input b-combo__input_width_122 b-combo__input_height_60 <?= $registration->error['captcha'] ? 'b-combo__input_error' : ''?>">
                                         <input id="captchanum" name="captchanum" type="hidden" value="<?=$registration->captchanum?>" />
-                                        <input <?= ($registration->error['captcha']?'title="'. $registration->error['captcha'] .'"':"")?> class="b-combo__input-text b-combo__input-text_center" id="reg_rndnum" name="rndnum" type="text" size="80" autocomplete="off" onfocus="clear_error('reg_rndnum');$$('#captcha_error').addClass('b-shadow_hide');" onKeyPress="clear_error('reg_rndnum'); if(event.keyCode==13) { $('frm').submit(); }" maxlength="5"/>
+                                        <input <?= ($registration->error['captcha'] ? 'title="'.$registration->error['captcha'].'"' : '')?> class="b-combo__input-text b-combo__input-text_center" id="reg_rndnum" name="rndnum" type="text" size="80" autocomplete="off" onfocus="clear_error('reg_rndnum');$$('#captcha_error').addClass('b-shadow_hide');" onKeyPress="clear_error('reg_rndnum'); if(event.keyCode==13) { $('frm').submit(); }" maxlength="5"/>
                                     </div>
                                 </div>
 

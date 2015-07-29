@@ -1,13 +1,12 @@
-<?
+<?php
+
 /**
- * Класс для работы со странами
- *
+ * Класс для работы со странами.
  */
 class country
 {
-    
     const ISO_RUSSIA = 643;
-    
+
     //Основные страны и их ISO коды 
     //для быстрого доступа
     protected $iso_country_list = array(
@@ -30,185 +29,194 @@ class country
         'Аргентина' => 32,
         'Армения' => 51,
         'Беларусь' => 112,
-        'Израиль' => 376
+        'Израиль' => 376,
     );
-    
-    
-    static protected $_dataId_cache = array();
 
-
-
+    protected static $_dataId_cache = array();
 
     /**
-     * Берем ID страны по имени в транслит
+     * Берем ID страны по имени в транслит.
      *
-     * @param    string    $translit    Название страны в транслит
-     * @return   array                  ID страны
+     * @param string $translit Название страны в транслит
+     *
+     * @return array ID страны
      */
-    function getCountryIDByTranslit( $translit ) {
+    public function getCountryIDByTranslit($translit)
+    {
         global $DB;
-        $id = $DB->val( 'SELECT id FROM country WHERE translit_country_name = ?', strtolower($translit) );
+        $id = $DB->val('SELECT id FROM country WHERE translit_country_name = ?', strtolower($translit));
 
         return $id;
     }
 
     /**
-     * Берем название страны по ИД
+     * Берем название страны по ИД.
      * 
-     * @param  integer $id ИД страны
+     * @param integer $id ИД страны
+     *
      * @return string название страны
      */
-    function GetCountryName( $id ) {
+    public function GetCountryName($id)
+    {
         global $DB;
+
         return $DB->cache(300)->val('SELECT country_name FROM country WHERE id = ?i', $id);
     }
-    
+
     /**
      * Берем ИД страны по названию.
      * 
-     * @param  string $name название страны
+     * @param string $name название страны
+     *
      * @return int ИД страны
      */
-    function getCountryId($name) 
+    public function getCountryId($name)
     {
         global $DB;
-        
+
         if (isset(self::$_dataId_cache[$name])) {
             return self::$_dataId_cache[$name];
-        }        
-        
+        }
+
         $ret = $DB->val('SELECT id FROM country WHERE country_name = ?', $name);
-        
+
         if ($ret) {
             self::$_dataId_cache[$name] = $ret;
         }
-        
+
         return $ret;
     }
-    
+
     /**
-     * Страну по имени
+     * Страну по имени.
      * 
      * @param type $name
+     *
      * @return type
      */
-    function getCountryByName($name)
+    public function getCountryByName($name)
     {
         return $GLOBALS['DB']->cache(300)->row('SELECT * FROM country WHERE country_name = ?', $name);
     }
 
-    
     /**
-     * По имени страны вернуть ее ISO код
+     * По имени страны вернуть ее ISO код.
      * 
      * @param type $name
+     *
      * @return type
      */
-    function getCountryISO($name)
+    public function getCountryISO($name)
     {
         if (isset($this->iso_country_list[$name])) {
             return $this->iso_country_list[$name];
         }
-        
+
         return $GLOBALS['DB']->cache(300)->val('SELECT iso FROM country WHERE country_name = ?', $name);
     }
 
-
-    
     /**
-     * Берем Ид страны по ИД города
+     * Берем Ид страны по ИД города.
      * 
-     * @param integer $id  ИД города
-     * @return integer 
+     * @param integer $id ИД города
+     *
+     * @return integer
      */
-    public function getCountryByCityId($id) {
-        return $GLOBALS['DB']->val( 'SELECT country_id FROM city WHERE id = ?i', $id );
+    public function getCountryByCityId($id)
+    {
+        return $GLOBALS['DB']->val('SELECT country_id FROM city WHERE id = ?i', $id);
     }
-    
+
     /**
-     * Взять все страны из таблицы
+     * Взять все страны из таблицы.
      * 
-     * @param  boolean $full Берем из таблицы только названия страны или все поля (false - только название, true - все поля)
+     * @param boolean $full Берем из таблицы только названия страны или все поля (false - только название, true - все поля)
+     *
      * @return array Информация выборки
      */
-    function GetCountries( $full = false ) {
+    public function GetCountries($full = false)
+    {
         global $DB;
-        $ret = $DB->rows( "SELECT * FROM country WHERE id <> '0' ORDER BY pos" );
+        $ret = $DB->rows("SELECT * FROM country WHERE id <> '0' ORDER BY pos");
         $out = array();
-        
-        if( !$full ) {
-            foreach ( $ret as $value ) {
+
+        if (!$full) {
+            foreach ($ret as $value) {
                 $out[$value['id']] = $value['country_name'];
             }
-        }
-        else { 
-            foreach ( $ret as $value ) {
+        } else {
+            foreach ($ret as $value) {
                 $out[$value['id']] = $value;
             }
         }
-        
+
         return ($out);
     }
-    
+
     /**
-     * Количество юзеров по странам
+     * Количество юзеров по странам.
      * 
-     * @param  string $limit ЛИМИТ выдачи
+     * @param string $limit ЛИМИТ выдачи
+     *
      * @return array Данные выборки
      */
-    function CountAll( $limit = '' ) {
-        $sql_limit = ( $limit ) ? ' LIMIT ' . (int)$limit : '';
-        
+    public function CountAll($limit = '')
+    {
+        $sql_limit = ($limit) ? ' LIMIT '.(int) $limit : '';
+
         global $DB;
         $sql = 'SELECT country_name, COUNT(*) as cnt, country as country_id 
                 FROM users LEFT JOIN country ON users.country = country.id GROUP BY country_name, country 
-                ORDER BY cnt DESC' . $sql_limit;
-        $ret = $DB->cache(1200)->rows( $sql );
-        
+                ORDER BY cnt DESC'.$sql_limit;
+        $ret = $DB->cache(1200)->rows($sql);
+
         return ($ret);
     }
-    
+
     /**
-     * Возвращает страны упорядоченные по количеству зарегистрированных пользователей из этих стран 
+     * Возвращает страны упорядоченные по количеству зарегистрированных пользователей из этих стран.
      * */
-    function GetCountriesByCountUser() {
-    	$cmd = "SELECT c.id AS id , count(uid) as nn, c.country_name AS name
+    public function GetCountriesByCountUser()
+    {
+        $cmd = 'SELECT c.id AS id , count(uid) as nn, c.country_name AS name
 							FROM country AS c
 							LEFT JOIN users as u
 							 ON c.id = u.country 							
 							GROUP BY c.id, c.country_name  
-							ORDER BY nn desc";
+							ORDER BY nn desc';
         $DB = new DB('master');
         $rows = $DB->cache(1200)->rows($cmd);
+
         return $rows;
     }
-    
-    function GetCountryIsoCode($country_id = 0) {
-        return $GLOBALS['DB']->val( 'SELECT iso_code3 FROM country WHERE id = ?', $country_id);
+
+    public function GetCountryIsoCode($country_id = 0)
+    {
+        return $GLOBALS['DB']->val('SELECT iso_code3 FROM country WHERE id = ?', $country_id);
     }
-    
-    
+
     /**
-     * Получить название страны и города
+     * Получить название страны и города.
      * 
      * @global type $DB
+     *
      * @param type $country_id
      * @param type $city_id
+     *
      * @return type
      */
     public function getCountryAndCityNames($country_id, $city_id = null)
     {
         global $DB;
+
         return $DB->row("
             SELECT
                 co.country_name,
                 ci.city_name,
                 co.country_name || (CASE WHEN ci.city_name IS NOT NULL THEN ': ' || ci.city_name ELSE ': Все города' END) AS name
             FROM country AS co
-            LEFT JOIN city AS ci ON ci.country_id = co.id ".(($city_id > 0)?"AND ci.id = {$city_id}":"AND ci.id IS NULL")."
+            LEFT JOIN city AS ci ON ci.country_id = co.id ".(($city_id > 0) ? "AND ci.id = {$city_id}" : 'AND ci.id IS NULL').'
             WHERE co.id > 0 AND co.id = ?i 
-        ", $country_id);
+        ', $country_id);
     }
-    
-    
 }

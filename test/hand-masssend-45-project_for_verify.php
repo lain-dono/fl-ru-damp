@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Уведомление работодателям
+ * Уведомление работодателям.
  * */
 ini_set('max_execution_time', '0');
 ini_set('memory_limit', '512M');
@@ -10,7 +11,7 @@ require_once '../classes/memBuff.php';
 require_once '../classes/smtp.php';
 require_once '../classes/users.php';
 
-/**
+/*
  * Логин пользователя от кого осуществляется рассылка
  * 
  */
@@ -25,15 +26,15 @@ ORDER BY u.uid"; //все незабаненые подписаные с уче�
 
 //$sql = "SELECT u.uid, email, login, uname, usurname, usk.key AS ukey FROM users AS u LEFT JOIN users_subscribe_keys AS usk ON usk.uid = u.uid WHERE login IN('land_f', 'land_e2')"; // !! 
 
-if ( defined('HTTP_PREFIX') ) {
-    $pHttp = str_replace("://", "", HTTP_PREFIX); // Введено с учетом того планируется включение HTTPS на серверах (для писем в ЛС)
+if (defined('HTTP_PREFIX')) {
+    $pHttp = str_replace('://', '', HTTP_PREFIX); // Введено с учетом того планируется включение HTTPS на серверах (для писем в ЛС)
 } else {
     $pHttp = 'http';
 }
-$pHost = str_replace("$pHttp://", "", $GLOBALS['host']);
+$pHost = str_replace("$pHttp://", '', $GLOBALS['host']);
 $eHost = $GLOBALS['host'];
 
-$eSubject = "Открываем проекты для верифицированных пользователей";
+$eSubject = 'Открываем проекты для верифицированных пользователей';
 //<a href=\"{$eHost}/promo/verification?utm_source=newsletter4&utm_medium=email&utm_campaign=verification\" target=\"_blank\">Начать верификацию</a>
 $eMessage = "<p>Здравствуйте!</p>
 <p>В апреле мы запустили верификацию – процедуру подтверждения паспортных данных, которая доступна для фрилансеров и работодателей. Также появилась возможность публиковать проекты для верифицированных пользователей. 
@@ -53,25 +54,27 @@ $proxy = new DB('plproxy');
 $DB = new DB('master');
 $cnt = 0;
 
-$mail = new smtp;
+$mail = new smtp();
 $mail->subject = $eSubject;  // заголовок письма
 $mail->message = $eMessage; // текст письма
 $mail->recipient = ''; // свойство 'получатель' оставляем пустым
 $spamid = $mail->send('text/html');
-if (!$spamid) die('Failed!');
+if (!$spamid) {
+    die('Failed!');
+}
 // с этого момента рассылка создана, но еще никому не отправлена!
 // допустим нам нужно получить список получателей с какого-либо запроса
 $i = 0;
 $mail->recipient = array();
 $res = $DB->query($sql);
 while ($row = pg_fetch_assoc($res)) {
-    if ( strlen($row['ukey']) == 0 ) {
-        $row['ukey'] = users::writeUnsubscribeKey($row["uid"]);
+    if (strlen($row['ukey']) == 0) {
+        $row['ukey'] = users::writeUnsubscribeKey($row['uid']);
     }
-    if ( is_email($row['email']) ) {
+    if (is_email($row['email'])) {
         $mail->recipient[] = array(
             'email' => $row['email'],
-            'extra' => array('first_name' => $row['uname'], 'last_name' => $row['usurname'], 'UNSUBSCRIBE_KEY' => $row['ukey'])
+            'extra' => array('first_name' => $row['uname'], 'last_name' => $row['usurname'], 'UNSUBSCRIBE_KEY' => $row['ukey']),
         );
         if (++$i >= 30000) {
             $mail->bind($spamid);
@@ -79,7 +82,7 @@ while ($row = pg_fetch_assoc($res)) {
             $i = 0;
         }
     }
-    $cnt++;
+    ++$cnt;
 }
 if ($i) {
     $mail->bind($spamid);

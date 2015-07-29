@@ -9,20 +9,29 @@ window.addEvent('domready',
             delete_field_info(this);
         });
         
-        <?php if($country>0) { ?>
+        <?php if ($country > 0) {
+    ?>
             loadCities(1);
-        <?php } ?>
+        <?php 
+} ?>
             
-        <?php if($info) foreach($info as $name=>$inf) {?>
-            <?php foreach($inf as $i=>$value) { ?>
+        <?php if ($info) {
+    foreach ($info as $name => $inf) {
+        ?>
+            <?php foreach ($inf as $i => $value) {
+    ?>
             add_option_field($('option_<?=$name?>').getElement('a.b-button_poll_plus'), 
                              '<?=$name?>', 
-                             { value: '<?= html_entity_decode($value, ENT_QUOTES);?>', 
-                               info_for_reg: '<?= $info_for_reg[$name . "_{$i}"]?>',
-                               error: '<?= !$i ? $error[$name] : $error[$name . "_{$i}"]?>'});    
-            <?php }//foreach?>
+                             { value: '<?= html_entity_decode($value, ENT_QUOTES);
+    ?>', 
+                               info_for_reg: '<?= $info_for_reg[$name."_{$i}"]?>',
+                               error: '<?= !$i ? $error[$name] : $error[$name."_{$i}"]?>'});    
+            <?php 
+}//foreach?>
             clear_empty_field('<?= $name?>');
-        <?php }//foreach?>
+        <?php 
+    }
+}//foreach?>
     }
 );
 function tplStepInfoPhp_leapYear(year) {
@@ -70,27 +79,34 @@ function tplStepInfoPhp_onChangeMonth(evt, callFromYear) {
 <div class="b-layout__right b-layout__right_width_72ps b-layout__right_float_right">
     <form method="POST" id="frm" enctype="multipart/form-data">
         <input type="hidden" name="action" value="upd_info">
-        <? if (!$_COOKIE['master_auth']) { ?>
+        <?php if (!$_COOKIE['master_auth']) {
+    ?>
         <div class="b-fon b-fon_inline-block b-fon_padbot_20" id="wizard_reg_succ">
             <div class="b-fon__body b-fon__body_pad_15  b-fon__body_padleft_30 b-fon__body_padright_40 b-fon__body_fontsize_13 b-fon__body_bg_f0ffdf b-fon__body_nowrap">
                 <span class="b-fon__ok"></span>Вы успешно зарегистрированы. Теперь вы — часть Free-lance.ru :) 
             </div>
             <span class="b-fon__close b-fon__close_top_20" id="wizard_reg_succ_close"></span>
         </div>
-        <? } ?>
+        <?php 
+} ?>
         
-        <?php if($type_role == step_wizard_registration::TYPE_WIZARD_EMP) { ?>
+        <?php if ($type_role == step_wizard_registration::TYPE_WIZARD_EMP) {
+    ?>
         <div class="b-layout__txt b-layout__txt_padbot_40">Free-lance.ru – это не только поиск исполнителей, но и большое сообщество пользователей, работодателей и фрилансеров, готовых поделиться опытом, дать совет в трудной ситуации или ответить на все ваши вопросы. Для того чтобы общение на сайте было более продуктивным, пожалуйста, заполните информацию о себе.</div>		
-        <?php } else { //if?>
+        <?php 
+} else { //if?>
         <div class="b-layout__txt b-layout__txt_padbot_40">Free-lance.ru – это не только поиск работы, но и большое сообщество пользователей, работодателей и фрилансеров, готовых поделиться опытом, дать совет в трудной ситуации или ответить на все ваши вопросы. Для того чтобы общение на сайте было более продуктивным, пожалуйста, заполните информацию о себе.</div>
-        <?php }//else?>
+        <?php 
+}//else?>
         
         <h2 class="b-layout__title b-layout__title_padbot_20">Личная информация</h2>
-        <? if ( $error['save'] ) { ?>
+        <?php if ($error['save']) {
+    ?>
         <div class="b-layout__txt b-layout__txt_color_c4271f b-layout__txt_padbot_10">
             <span class="b-form__error"></span> <?= $error['save']?>
         </div>
-        <? } ?>
+        <?php 
+} ?>
         
         <div class="b-layout b-layout_margleft_-110">
             <table class="b-layout__table b-layout__table_width_full" border="0" cellpadding="0" cellspacing="0">
@@ -110,7 +126,8 @@ function tplStepInfoPhp_onChangeMonth(evt, callFromYear) {
                         </div>
                     </td>
                 </tr>
-                <? if ( $error['uname'] ) { ?>
+                <?php if ($error['uname']) {
+    ?>
                 <tr class="b-layout__tr">
                     <td class="b-layout__left b-layout__left_width_55"></td>
                     <td colspan="3" class="">
@@ -119,7 +136,8 @@ function tplStepInfoPhp_onChangeMonth(evt, callFromYear) {
                         </div>
                     </td>
                 </tr>
-                <? } ?>
+                <?php 
+} ?>
                 <tr class="b-layout__tr">
                     <td class="b-layout__left b-layout__left_padbot_20 b-layout__left_width_110"><div class="b-layout__txt b-layout__txt_padtop_4">Фамилия</div></td>
                     <td class="b-layout__middle b-layout__middle_padbot_20 b-layout__middle_width_270">
@@ -136,7 +154,8 @@ function tplStepInfoPhp_onChangeMonth(evt, callFromYear) {
                         </div>
                     </td>
                 </tr>
-                <? if ( $error['usurname'] ) { ?>
+                <?php if ($error['usurname']) {
+    ?>
                 <tr class="b-layout__tr">
                     <td class="b-layout__left b-layout__left_width_55"></td>
                     <td colspan="3" class="">
@@ -145,7 +164,8 @@ function tplStepInfoPhp_onChangeMonth(evt, callFromYear) {
                         </div>
                     </td>
                 </tr>
-                <? } ?>
+                <?php 
+} ?>
                 <tr class="b-layout__tr">
                     <td class="b-layout__left b-layout__left_padbot_20 b-layout__left_width_110"><div class="b-layout__txt b-layout__txt_padtop_4">День рождения</div></td>
                     <td class="b-layout__middle b-layout__middle_padbot_20 b-layout__middle_width_270">
@@ -176,14 +196,15 @@ function tplStepInfoPhp_onChangeMonth(evt, callFromYear) {
                     </td>
                     <td class="b-layout__right b-layout__right_padbot_20">
                         <div class="b-eye b-eye_inline-block">
-                            <a href="javascript:void(0)" class="b-eye__link <?= $info_for_reg['birthday'] == 1 ? "b-eye__link_bordbot_dot_808080"  : "b-eye__link_bordbot_dot_0f71c8"?> b-eye-enable">
-                                <span class="b-eye__icon <?= $info_for_reg['birthday'] == 1 ? "b-eye__icon_close"  : "b-eye__icon_open"?> b-eye__icon_margright_5"></span><span class="b-eye__txt"><?= $info_for_reg['birthday'] == 1 ? "Видят только зарегистрированные" : "Видят все"?></span>
+                            <a href="javascript:void(0)" class="b-eye__link <?= $info_for_reg['birthday'] == 1 ? 'b-eye__link_bordbot_dot_808080'  : 'b-eye__link_bordbot_dot_0f71c8'?> b-eye-enable">
+                                <span class="b-eye__icon <?= $info_for_reg['birthday'] == 1 ? 'b-eye__icon_close'  : 'b-eye__icon_open'?> b-eye__icon_margright_5"></span><span class="b-eye__txt"><?= $info_for_reg['birthday'] == 1 ? 'Видят только зарегистрированные' : 'Видят все'?></span>
                             </a>
                             <input type="hidden" name="info_for_reg[birthday]" value="<?= $info_for_reg['birthday'] == 1 ? $info_for_reg['birthday'] : 0?>">
                         </div>
                     </td>
                 </tr>
-                <? if ( $error['birthday'] ) { ?>
+                <?php if ($error['birthday']) {
+    ?>
                 <tr class="b-layout__tr">
                     <td class="b-layout__left b-layout__left_width_55"></td>
                     <td colspan="3" class="">
@@ -192,17 +213,18 @@ function tplStepInfoPhp_onChangeMonth(evt, callFromYear) {
                         </div>
                     </td>
                 </tr>
-                <? } ?>
+                <?php 
+} ?>
                 <tr class="b-layout__tr">
                     <td class="b-layout__left b-layout__left_padbot_20 b-layout__left_width_110"><div class="b-layout__txt">Пол</div></td>
                     <td class="b-layout__middle b-layout__middle_padbot_20 b-layout__middle_width_270">
                         <div class="b-radio b-radio_layout_horizontal">
                             <div class="b-radio__item b-radio__item_width_100">
-                                <input type="radio" value="1" <?= $sex === 1?'checked="checked"':""?> name="sex"  class="b-radio__input" id="b-radio__input4" onfocus="clearErrorBlock(this)">
+                                <input type="radio" value="1" <?= $sex === 1 ? 'checked="checked"' : ''?> name="sex"  class="b-radio__input" id="b-radio__input4" onfocus="clearErrorBlock(this)">
                                 <label for="b-radio__input4" class="b-radio__label b-radio__label_fontsize_13">Мужской</label>
                             </div>
                             <div class="b-radio__item b-radio__item_width_100">
-                                <input type="radio" value="0" <?= $sex === 0?'checked="checked"':""?> name="sex" class="b-radio__input" id="b-radio__input5" onfocus="clearErrorBlock(this)">
+                                <input type="radio" value="0" <?= $sex === 0 ? 'checked="checked"' : ''?> name="sex" class="b-radio__input" id="b-radio__input5" onfocus="clearErrorBlock(this)">
                                 <label for="b-radio__input5" class="b-radio__label b-radio__label_fontsize_13">Женский</label>
                             </div>
                         </div>
@@ -210,8 +232,8 @@ function tplStepInfoPhp_onChangeMonth(evt, callFromYear) {
                     <td class="b-layout__one b-layout__one_padbot_20 b-layout__one_width_30 b-layout__one_center">&#160;</td>
                     <td class="b-layout__right b-layout__right_padbot_20">
                         <div class="b-eye b-eye_inline-block">
-                            <a href="javascript:void(0)" class="b-eye__link <?= $info_for_reg['sex']== 1 ? "b-eye__link_bordbot_dot_808080"  : "b-eye__link_bordbot_dot_0f71c8"?> b-eye-enable">
-                                <span class="b-eye__icon <?= $info_for_reg['sex']== 1 ? "b-eye__icon_close"  : "b-eye__icon_open"?> b-eye__icon_margright_5"></span><span class="b-eye__txt"><?= $info_for_reg['sex'] == 1 ? "Видят только зарегистрированные" : "Видят все"?></span>
+                            <a href="javascript:void(0)" class="b-eye__link <?= $info_for_reg['sex'] == 1 ? 'b-eye__link_bordbot_dot_808080'  : 'b-eye__link_bordbot_dot_0f71c8'?> b-eye-enable">
+                                <span class="b-eye__icon <?= $info_for_reg['sex'] == 1 ? 'b-eye__icon_close'  : 'b-eye__icon_open'?> b-eye__icon_margright_5"></span><span class="b-eye__txt"><?= $info_for_reg['sex'] == 1 ? 'Видят только зарегистрированные' : 'Видят все'?></span>
                             </a>
                             <input type="hidden" name="info_for_reg[sex]" value="<?= $info_for_reg['sex'] == 1 ? $info_for_reg['sex'] : 0?>">
                         </div>
@@ -221,7 +243,7 @@ function tplStepInfoPhp_onChangeMonth(evt, callFromYear) {
                     <td class="b-layout__left b-layout__left_padbot_20 b-layout__left_width_110"><div class="b-layout__txt b-layout__txt_padtop_4">Страна</div></td>
                     <td class="b-layout__middle b-layout__middle_padbot_20 b-layout__middle_width_270">
                         <div class="b-combo b-combo_inline-block">
-                            <div class="b-combo__input b-combo__input_multi_dropdown b-combo__input_width_245 b-combo__input_resize b-combo__input_arrow_yes  b-combo__input_on_load_request_id_getrelevantcountries  b-combo__input_max-width_450 all_value_id_0_0_Все+страны exclude_value_1_0 drop_down_default_<?= $country ? $country : 0?> multi_drop_down_default_column_0<?= $error['country'] ? " b-combo__input_error" : "" ?>">
+                            <div class="b-combo__input b-combo__input_multi_dropdown b-combo__input_width_245 b-combo__input_resize b-combo__input_arrow_yes  b-combo__input_on_load_request_id_getrelevantcountries  b-combo__input_max-width_450 all_value_id_0_0_Все+страны exclude_value_1_0 drop_down_default_<?= $country ? $country : 0?> multi_drop_down_default_column_0<?= $error['country'] ? ' b-combo__input_error' : '' ?>">
                                 <input type="text" id="country" class="b-combo__input-text b-combo__input-text_fontsize_15" name="country" size="80" value="<?= stripslashes($country_value)?>" onchange="loadCities()">
                                 <label class="b-combo__label" for="country"></label>
                                 <span class="b-combo__arrow"></span>
@@ -233,8 +255,8 @@ function tplStepInfoPhp_onChangeMonth(evt, callFromYear) {
                     </td>
                     <td class="b-layout__right b-layout__right_padbot_20">
                         <div class="b-eye b-eye_inline-block">
-                            <a href="javascript:void(0)" class="b-eye__link <?= $info_for_reg['country']== 1 ? "b-eye__link_bordbot_dot_808080"  : "b-eye__link_bordbot_dot_0f71c8"?> b-eye-enable">
-                                <span class="b-eye__icon <?= $info_for_reg['country']== 1 ? "b-eye__icon_close"  : "b-eye__icon_open"?> b-eye__icon_margright_5"></span><span class="b-eye__txt"><?= $info_for_reg['country'] == 1 ? "Видят только зарегистрированные" : "Видят все"?></span>
+                            <a href="javascript:void(0)" class="b-eye__link <?= $info_for_reg['country'] == 1 ? 'b-eye__link_bordbot_dot_808080'  : 'b-eye__link_bordbot_dot_0f71c8'?> b-eye-enable">
+                                <span class="b-eye__icon <?= $info_for_reg['country'] == 1 ? 'b-eye__icon_close'  : 'b-eye__icon_open'?> b-eye__icon_margright_5"></span><span class="b-eye__txt"><?= $info_for_reg['country'] == 1 ? 'Видят только зарегистрированные' : 'Видят все'?></span>
                             </a>
                             <input type="hidden" name="info_for_reg[country]" value="<?= $info_for_reg['country'] == 1 ? $info_for_reg['country'] : 0?>">
                         </div>
@@ -245,7 +267,7 @@ function tplStepInfoPhp_onChangeMonth(evt, callFromYear) {
                     <td class="b-layout__left b-layout__left_padbot_20 b-layout__left_width_110"><div class="b-layout__txt b-layout__txt_padtop_4">Город</div></td>
                     <td class="b-layout__middle b-layout__middle_padbot_20 b-layout__middle_width_270" id="city_content">
                         <div class="b-combo b-combo_inline-block">
-                            <div class="b-combo__input b-combo__input_multi_dropdown b-combo__input_width_245 b-combo__input_resize b-combo__input_arrow_yes  b-combo__input_max-width_450 override_value_id_0_0_Все+города drop_down_default_<?= $city ? $city : 0?> multi_drop_down_default_column_0<?= $error['city'] ? " b-combo__input_error" : "" ?>">
+                            <div class="b-combo__input b-combo__input_multi_dropdown b-combo__input_width_245 b-combo__input_resize b-combo__input_arrow_yes  b-combo__input_max-width_450 override_value_id_0_0_Все+города drop_down_default_<?= $city ? $city : 0?> multi_drop_down_default_column_0<?= $error['city'] ? ' b-combo__input_error' : '' ?>">
                                 <input type="text" id="city" class="b-combo__input-text b-combo__input-text_fontsize_15" name="city" size="80" value="<?= stripslashes($city_value)?>">
                                 <label class="b-combo__label" for="city"></label>
                                 <span class="b-combo__arrow" id="city_arrow"></span>
@@ -257,14 +279,15 @@ function tplStepInfoPhp_onChangeMonth(evt, callFromYear) {
                     </td>
                     <td class="b-layout__right b-layout__right_padbot_20">
                         <div class="b-eye b-eye_inline-block">
-                            <a href="javascript:void(0)" class="b-eye__link <?= $info_for_reg['city'] == 1 ? "b-eye__link_bordbot_dot_808080"  : "b-eye__link_bordbot_dot_0f71c8"?> b-eye-enable">
-                                <span class="b-eye__icon <?= $info_for_reg['city'] == 1 ? "b-eye__icon_close"  : "b-eye__icon_open"?> b-eye__icon_margright_5"></span><span class="b-eye__txt"><?= $info_for_reg['city'] == 1 ? "Видят только зарегистрированные" : "Видят все"?></span>
+                            <a href="javascript:void(0)" class="b-eye__link <?= $info_for_reg['city'] == 1 ? 'b-eye__link_bordbot_dot_808080'  : 'b-eye__link_bordbot_dot_0f71c8'?> b-eye-enable">
+                                <span class="b-eye__icon <?= $info_for_reg['city'] == 1 ? 'b-eye__icon_close'  : 'b-eye__icon_open'?> b-eye__icon_margright_5"></span><span class="b-eye__txt"><?= $info_for_reg['city'] == 1 ? 'Видят только зарегистрированные' : 'Видят все'?></span>
                             </a>
                             <input type="hidden" name="info_for_reg[city]" value="<?= $info_for_reg['city'] == 1 ? $info_for_reg['city'] : 0?>">
                         </div>
                     </td>
                 </tr>
-                <?php if($type_role == step_wizard_registration::TYPE_WIZARD_EMP) { ?>
+                <?php if ($type_role == step_wizard_registration::TYPE_WIZARD_EMP) {
+    ?>
                 <tr class="b-layout__tr">
                     <td class="b-layout__left b-layout__left_padbot_20 b-layout__left_width_110"><div class="b-layout__txt b-layout__txt_padtop_4">Компания</div></td>
                     <td class="b-layout__middle b-layout__middle_padbot_20 b-layout__middle_width_270">
@@ -278,17 +301,19 @@ function tplStepInfoPhp_onChangeMonth(evt, callFromYear) {
                     <td class="b-layout__one b-layout__one_padbot_20 b-layout__one_width_30">&#160;</td>
                     <td class="b-layout__right b-layout__right_padbot_20">
                         <div class="b-eye b-eye_inline-block">
-                            <a href="javascript:void(0)" class="b-eye__link <?= $info_for_reg['company'] == 1 ? "b-eye__link_bordbot_dot_808080"  : "b-eye__link_bordbot_dot_0f71c8"?> b-eye-enable">
-                                <span class="b-eye__icon <?= $info_for_reg['company'] == 1 ? "b-eye__icon_close"  : "b-eye__icon_open"?> b-eye__icon_margright_5"></span><span class="b-eye__txt"><?= $info_for_reg['company']== 1 ? "Видят только зарегистрированные" : "Видят все"?></span>
+                            <a href="javascript:void(0)" class="b-eye__link <?= $info_for_reg['company'] == 1 ? 'b-eye__link_bordbot_dot_808080'  : 'b-eye__link_bordbot_dot_0f71c8'?> b-eye-enable">
+                                <span class="b-eye__icon <?= $info_for_reg['company'] == 1 ? 'b-eye__icon_close'  : 'b-eye__icon_open'?> b-eye__icon_margright_5"></span><span class="b-eye__txt"><?= $info_for_reg['company'] == 1 ? 'Видят только зарегистрированные' : 'Видят все'?></span>
                             </a>
                             <input type="hidden" name="info_for_reg[company]" value="<?= $info_for_reg['company'] == 1 ? $info_for_reg['company'] : 0?>">
                         </div>
                     </td>
                 </tr>
-                <?php } //if?>
+                <?php 
+} //if?>
             </table>
             
-            <?php if($type_role == step_wizard_registration::TYPE_WIZARD_EMP) { ?>
+            <?php if ($type_role == step_wizard_registration::TYPE_WIZARD_EMP) {
+    ?>
             <table class="b-layout__table b-layout__table_width_full" border="0" cellpadding="0" cellspacing="0">
                 <tr class="b-layout__tr">
                     <td class="b-layout__left b-layout__left_padbot_20 b-layout__left_width_110"><div class="b-layout__txt b-layout__txt_padtop_10">Логотип <span class="b-icon b-icon__pro b-icon__pro_e"></span></div></td>
@@ -296,9 +321,12 @@ function tplStepInfoPhp_onChangeMonth(evt, callFromYear) {
                         <table class="b-layout__table" border="0" cellpadding="0" cellspacing="0">
                             <tr class="b-layout__tr">
                                 <td class="b-layout__left">
-                                    <input type="hidden" name="logo_company" id="logo_company" value="<?= $logo_id;?>">
-                                    <input type="hidden" name="logo_name" id="logo_name" value="<?= $logo_name;?>">
-                                    <div class="b-file__wrap  b-file__wrap_margleft_-3 logo-add-element" <?= $logo_name != '' ? 'style="display:none"' : ''; ?>>
+                                    <input type="hidden" name="logo_company" id="logo_company" value="<?= $logo_id;
+    ?>">
+                                    <input type="hidden" name="logo_name" id="logo_name" value="<?= $logo_name;
+    ?>">
+                                    <div class="b-file__wrap  b-file__wrap_margleft_-3 logo-add-element" <?= $logo_name != '' ? 'style="display:none"' : '';
+    ?>>
                                         <input type="file" class="b-file__input" name="logo_attach" onchange="uploadLogoFile('logo_company');">
                                         <a class="b-button b-button_rectangle_color_transparent" href="#">
                                             <span class="b-button__b1">
@@ -309,14 +337,19 @@ function tplStepInfoPhp_onChangeMonth(evt, callFromYear) {
                                         </a>
                                     </div>
                                     <span id="logo_block">
-                                        <?php if($logo_name != '') { ?>
+                                        <?php if ($logo_name != '') {
+    ?>
                                         <div class="b-layout__txt b-layout__txt_relative b-layout__txt_inline-block">
-                                            <a href="javascript:void(0)" onclick="deleteLogo(<?= $logo_id; ?>); return false;" class="b-button b-button_bgcolor_fff b-button_bord_solid_3_fff b-button_admin_del b-button_right_-4 b-button_top_-6"></a>
-                                            <a href="<?= $logo_path; ?>" class="b-layout__link">
-                                                <img alt="" id="img_logo" src="<?= $logo_path; ?>" class="b-layout__pic b-layout__pic_bord_ece9e9">
+                                            <a href="javascript:void(0)" onclick="deleteLogo(<?= $logo_id;
+    ?>); return false;" class="b-button b-button_bgcolor_fff b-button_bord_solid_3_fff b-button_admin_del b-button_right_-4 b-button_top_-6"></a>
+                                            <a href="<?= $logo_path;
+    ?>" class="b-layout__link">
+                                                <img alt="" id="img_logo" src="<?= $logo_path;
+    ?>" class="b-layout__pic b-layout__pic_bord_ece9e9">
                                             </a>
                                         </div>
-                                        <?php }//if?>
+                                        <?php 
+}//if?>
                                     </span>
                                     <iframe style="width:1px;height:1px;visibility: hidden;" scrolling="no" id="fupload" name="fupload" src="about:blank" frameborder="0"></iframe>
                                 </td>
@@ -331,11 +364,13 @@ function tplStepInfoPhp_onChangeMonth(evt, callFromYear) {
                     <td class="b-layout__left b-layout__left_padbot_20 b-layout__left_width_110"><div class="b-layout__txt b-layout__txt_padtop_1">О компании</div></td>
                     <td class="b-layout__middle b-layout__middle_padbot_20">
                         <div class="b-textarea">
-                            <textarea class="b-textarea__textarea b-textarea__textarea_height_70 tawl" rel="350" name="about_company" cols="" rows="" onfocus="clearErrorBlock(this)"><?= stripslashes($about_company);?></textarea>
+                            <textarea class="b-textarea__textarea b-textarea__textarea_height_70 tawl" rel="350" name="about_company" cols="" rows="" onfocus="clearErrorBlock(this)"><?= stripslashes($about_company);
+    ?></textarea>
                         </div>
                     </td>
                 </tr>
-                <? if ( $error['company'] ) { ?>
+                <?php if ($error['company']) {
+    ?>
                 <tr class="b-layout__tr">
                     <td class="b-layout__left b-layout__left_width_55"></td>
                     <td colspan="2" class="">
@@ -344,9 +379,12 @@ function tplStepInfoPhp_onChangeMonth(evt, callFromYear) {
                         </div>
                     </td>
                 </tr>
-                <? } ?>
+                <?php 
+}
+    ?>
             </table>
-            <?php }//if?>
+            <?php 
+}//if?>
             <?/*
             <table class="b-layout__table b-layout__table_width_full" border="0" cellpadding="0" cellspacing="0" id="option_table">
                 <tr class="b-layout__tr" id="option_site">
@@ -429,11 +467,16 @@ function tplStepInfoPhp_onChangeMonth(evt, callFromYear) {
             </table>
              */ ?>
         </div>
-        <?php if($type_role == step_wizard_registration::TYPE_WIZARD_EMP) { ?>
-            <?php include ($_SERVER['DOCUMENT_ROOT']."/wizard/registration/steps/tpl.service.emp.php"); ?>
-        <?php } else {//?>
-            <?php include ($_SERVER['DOCUMENT_ROOT']."/wizard/registration/steps/tpl.service.frl.php"); ?>
-        <?php } //if?>
+        <?php if ($type_role == step_wizard_registration::TYPE_WIZARD_EMP) {
+    ?>
+            <?php include $_SERVER['DOCUMENT_ROOT'].'/wizard/registration/steps/tpl.service.emp.php';
+    ?>
+        <?php 
+} else {//?>
+            <?php include $_SERVER['DOCUMENT_ROOT'].'/wizard/registration/steps/tpl.service.frl.php';
+    ?>
+        <?php 
+} //if?>
         
 
         <div class="b-buttons">

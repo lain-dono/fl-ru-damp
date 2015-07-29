@@ -1,7 +1,7 @@
 <?php
 /**
  * Шаблон по-умолчанию popup-окна нецелевого пополнения счета.
- * Не путать с погашение задолженности
+ * Не путать с погашение задолженности.
  */
 ?>
 <div id="<?= @$popup_id ?>" data-quick-payment="<?= $unic_name ?>" class="b-shadow b-shadow_block b-shadow_vertical-center b-shadow_width_520 <?= (!@$is_show) ? 'b-shadow_hide' : '' ?> b-shadow__quick">
@@ -54,8 +54,8 @@
                             <?php if (isset($payment['title'])): ?>
                                 <a class="b-button b-button_margbot_5 b-button__pm <?= @$payment['class'] ?>" 
                                    href="javascript:void(0);" 
-                                   <?=(isset($payment['data-maxprice']))?'data-maxprice="'.$payment['data-maxprice'].'"':''?> 
-                                   <?= (isset($payment['wait'])) ? 'data-quick-payment-wait="' . $payment['wait'] . '"' : '' ?> 
+                                   <?=(isset($payment['data-maxprice'])) ? 'data-maxprice="'.$payment['data-maxprice'].'"' : ''?> 
+                                   <?= (isset($payment['wait'])) ? 'data-quick-payment-wait="'.$payment['wait'].'"' : '' ?> 
                                    data-quick-payment-type="<?= $key ?>"><span class="b-button__txt"><?= @$payment['title'] ?></span></a> 
                                <?php endif; ?>
                            <?php endforeach; ?>

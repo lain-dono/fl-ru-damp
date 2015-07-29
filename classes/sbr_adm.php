@@ -1,7 +1,7 @@
-<?php 
+<?php
+
 
 require_once $_SERVER['DOCUMENT_ROOT'].'/classes/sbr.php';
-
 
 /**
  * Класс для работы с СБР со стороны админа.
@@ -16,152 +16,155 @@ class sbr_adm extends sbr
 
     /**
      * Параметры колонок таблиц админки.
+     *
      * @var array
      */
-    public $form_cols = array (
-        'refunds' => array (
+    public $form_cols = array(
+        'refunds' => array(
             array('№ дог.', 's.id'),
-            array('Заказчик', array('ASC'=>'login', 'DESC'=>'login DESC')),
+            array('Заказчик', array('ASC' => 'login', 'DESC' => 'login DESC')),
             array('Проект', array('ASC' => 's.name', 'DESC' => 's.name DESC')),
             array('Бюджет', array('ASC' => 's.cost', 'DESC' => 's.cost DESC')),
-            array('Действие/выполнен', array('ASC'=>"COALESCE(pp.is_refund, 'epoch')", 'DESC'=>"COALESCE(pp.is_refund, 'epoch') DESC"))
+            array('Действие/выполнен', array('ASC' => "COALESCE(pp.is_refund, 'epoch')", 'DESC' => "COALESCE(pp.is_refund, 'epoch') DESC")),
         ),
-        'all' => array (
+        'all' => array(
             array('Начало', "COALESCE(ss.start_time, 'epoch')"),
             array('№ дог.', 's.id'),
             array('Проект', 'ss.id'),
             array('Бюджет', 'ss.cost', 2),
             array('Срок',   "COALESCE(ss.start_time, 'epoch') + ss.work_time"),
-            array('Статус', 'ss.status')
+            array('Статус', 'ss.status'),
         ),
-        'payouts' => array (
-            array('Дата заявки', array('ASC'=>"(sp.completed IS NOT NULL), sp.requested", 'DESC'=>'(sp.completed IS NOT NULL), sp.requested DESC')),
-            array('№ дог.', array('ASC'=>"sp.sbr_id", 'DESC'=>"sp.sbr_id DESC")),
-            array('Проект',     array('ASC'=>"sp.stage_id, sp.requested", 'DESC'=>'sp.stage_id DESC, sp.requested')),
-            array('Получатель', array('ASC'=>'login', 'DESC'=>'login DESC')),
-            array('Сумма',      array('ASC'=>'sp.credit_sum', 'DESC'=>'sp.credit_sum DESC'), 2),
-            array('№ кошелька/счета',   array('ASC'=>"account_num", 'DESC'=>"account_num DESC")),
-            array('Действие/выполнен', array('ASC'=>"COALESCE(sp.completed, 'epoch'), sp.requested", 'DESC'=>"COALESCE(sp.completed, 'epoch') DESC, sp.requested"))
+        'payouts' => array(
+            array('Дата заявки', array('ASC' => '(sp.completed IS NOT NULL), sp.requested', 'DESC' => '(sp.completed IS NOT NULL), sp.requested DESC')),
+            array('№ дог.', array('ASC' => 'sp.sbr_id', 'DESC' => 'sp.sbr_id DESC')),
+            array('Проект',     array('ASC' => 'sp.stage_id, sp.requested', 'DESC' => 'sp.stage_id DESC, sp.requested')),
+            array('Получатель', array('ASC' => 'login', 'DESC' => 'login DESC')),
+            array('Сумма',      array('ASC' => 'sp.credit_sum', 'DESC' => 'sp.credit_sum DESC'), 2),
+            array('№ кошелька/счета',   array('ASC' => 'account_num', 'DESC' => 'account_num DESC')),
+            array('Действие/выполнен', array('ASC' => "COALESCE(sp.completed, 'epoch'), sp.requested", 'DESC' => "COALESCE(sp.completed, 'epoch') DESC, sp.requested")),
         ),
-        'docsflow' => array (
-            array('Дате формирования акта', array('ASC'=>"act_upload_time", 'DESC'=>'act_upload_time DESC')),
-            array('Дате завершения', array('ASC'=>"ss.arch_closed_time", 'DESC'=>'ss.arch_closed_time DESC')),
-            array('Номеру «Безопасной Сделки»', array('ASC'=>"ss.sbr_id", 'DESC'=>"ss.sbr_id DESC"))
-        )
+        'docsflow' => array(
+            array('Дате формирования акта', array('ASC' => 'act_upload_time', 'DESC' => 'act_upload_time DESC')),
+            array('Дате завершения', array('ASC' => 'ss.arch_closed_time', 'DESC' => 'ss.arch_closed_time DESC')),
+            array('Номеру «Безопасной Сделки»', array('ASC' => 'ss.sbr_id', 'DESC' => 'ss.sbr_id DESC')),
+        ),
     );
 
     /**
      * Параметры графиков.
+     *
      * @var array
      */
-    static $stat_graphs = array (
+    public static $stat_graphs = array(
       0 => 'Резерв заключенных',
       1 => 'Выплачено всего по завершению',
       2 => 'Выплачено с Арбитража в пользу фрилансеров',
       3 => 'Выплачено с Арбитража в пользу работодателей',
       4 => 'Комиссия с фрилансеров',
-      5 => 'Комиссия с работодателей'
+      5 => 'Комиссия с работодателей',
     );
 
     /**
      * Параметры отчетов по приходам СБР.
+     *
      * @var array
      */
-    static $reports_ss = array
-    (
-        exrates::BANK => array (
-            'name'=>'Приход денежных средств на р/счет по «Безопасной Сделке»',
-            'note'=>NULL,
-            'columns'=>array(
-                'contract_num'=>array('№ договора', array(15,'left')), // array(название колонки, array(ширина колонки, горизонтальное выравнивание))
-                'emp_name'=>array('Наименование работодателя', array(65,'left')),
-                'sum_deal'=>array('Сумма сделки, руб.коп', array(15,'right')),
+    public static $reports_ss = array(
+        exrates::BANK => array(
+            'name' => 'Приход денежных средств на р/счет по «Безопасной Сделке»',
+            'note' => null,
+            'columns' => array(
+                'contract_num' => array('№ договора', array(15,'left')), // array(название колонки, array(ширина колонки, горизонтальное выравнивание))
+                'emp_name' => array('Наименование работодателя', array(65,'left')),
+                'sum_deal' => array('Сумма сделки, руб.коп', array(15,'right')),
                 'sum_commision' => array('Вознаграждение, руб.коп', array(15,'right')),
-                'sum'=>array('Сумма, руб.', array(15,'right')),
-                'date'=>array('Дата', array(15,'center')),
-                'frl_name'=>array('Справочно: исполнитель', array(60,'left'))
-            )
+                'sum' => array('Сумма, руб.', array(15,'right')),
+                'date' => array('Дата', array(15,'center')),
+                'frl_name' => array('Справочно: исполнитель', array(60,'left')),
+            ),
         ),
 
-        exrates::YM => array (
-            'name'=>'Приложение к отчету ООО "ПС Яндекс.Деньги" Договору № Эк.11111.01 от 03/05/2007',
-            'note'=>NULL,
-            'columns'=>array(
-                'contract_num'=>array('№ договора', array(15,'left')),
-                'ydorder_id'=>array('Номер транзакции, ID', array(24,'left')),
-                'emp_name'=>array('Наименование работодателя', array(40,'left')),
-                'sum_deal'=>array('Сумма сделки, руб.коп', array(15,'right')),
+        exrates::YM => array(
+            'name' => 'Приложение к отчету ООО "ПС Яндекс.Деньги" Договору № Эк.11111.01 от 03/05/2007',
+            'note' => null,
+            'columns' => array(
+                'contract_num' => array('№ договора', array(15,'left')),
+                'ydorder_id' => array('Номер транзакции, ID', array(24,'left')),
+                'emp_name' => array('Наименование работодателя', array(40,'left')),
+                'sum_deal' => array('Сумма сделки, руб.коп', array(15,'right')),
                 'sum_commision' => array('Вознаграждение, руб.коп', array(15,'right')),
                 'sum' => array('Сумма всего, руб.коп', array(15,'right')),
-                'date'=>array('Дата', array(15,'center')),
-                'ympurse'=>array('Номер кошелька', array(25,'center')),
-                'frl_name'=>array('Справочно: исполнитель', array(40,'left'))
+                'date' => array('Дата', array(15,'center')),
+                'ympurse' => array('Номер кошелька', array(25,'center')),
+                'frl_name' => array('Справочно: исполнитель', array(40,'left')),
 
-            )
+            ),
         ),
-        exrates::WMR => array (
-            'name'=>'Приложение к отчету ОАО "Консервативный Коммерческий Банк" Договору № ДМ-295 от 04.10.11',
-            'note'=>NULL,
-            'columns'=>array(
-                'contract_num'=>array('№ договора', array(15,'left')),
-                'emp_name'=>array('Наименование работодателя', array(40,'left')),
-                'wmorder_id'=>array('Order ID', array(12,'left')),
-                'wmpaymaster_id'=>array('Номер платежа(Paymaster)', array(15,'left')),
-                'wmpayment_id'=>array('Номер платежа', array(15,'left')),
-                'wmid'=>array('WMID', array(17,'left')),
-                'sum_deal'=>array('Сумма сделки, руб.коп', array(15,'right')),
+        exrates::WMR => array(
+            'name' => 'Приложение к отчету ОАО "Консервативный Коммерческий Банк" Договору № ДМ-295 от 04.10.11',
+            'note' => null,
+            'columns' => array(
+                'contract_num' => array('№ договора', array(15,'left')),
+                'emp_name' => array('Наименование работодателя', array(40,'left')),
+                'wmorder_id' => array('Order ID', array(12,'left')),
+                'wmpaymaster_id' => array('Номер платежа(Paymaster)', array(15,'left')),
+                'wmpayment_id' => array('Номер платежа', array(15,'left')),
+                'wmid' => array('WMID', array(17,'left')),
+                'sum_deal' => array('Сумма сделки, руб.коп', array(15,'right')),
                 'sum_commision' => array('Вознаграждение, руб.коп', array(15,'right')),
-                'sum'=>array('Сумма всего, руб.', array(15,'right')),
-                'date'=>array('Дата', array(15,'center')),
-                'wmpurse'=>array('Номер кошелька', array(20,'center')),
-                'frl_name'=>array('Справочно: исполнитель', array(40,'left'))
-            )
+                'sum' => array('Сумма всего, руб.', array(15,'right')),
+                'date' => array('Дата', array(15,'center')),
+                'wmpurse' => array('Номер кошелька', array(20,'center')),
+                'frl_name' => array('Справочно: исполнитель', array(40,'left')),
+            ),
         ),
-        'NDFL' => array (
-            'name'=>'Наименование организации: Общество с ограниченной отвественностью "Ваан" (ООО "Ваан")',
-            'columns'=>array(
-                'num'=>array('№', array(5,'center')),
-                'fio'=>array('ФИО', array(40,'left')),
-                'profit'=>array('Доход', array(12,'right')),
-                'ndfl'=>array('НДФЛ', array(12,'right')),
-                'payout_sum'=>array('Сумма выплаты', array(15,'right')),
-                'date'=>array('Дата', array(14,'center')),
-                'contract_num'=>array('№ договора «Безопасной Сделки»', array(17,'center')),
-                'payout_sys'=>array('Оплата', array(11,'center')),
-                'inn'=>array('ИНН', array(17,'center')),
-                'address'=>array('Адрес', array(24,'left')),
-                'idcard'=>array('Паспортные данные', array(24,'left')),
-                'birthday'=>array('Дата рождения', array(14,'center')),
-                'pss'=>array('Номер ПФ', array(22,'left')),
-            )
+        'NDFL' => array(
+            'name' => 'Наименование организации: Общество с ограниченной отвественностью "Ваан" (ООО "Ваан")',
+            'columns' => array(
+                'num' => array('№', array(5,'center')),
+                'fio' => array('ФИО', array(40,'left')),
+                'profit' => array('Доход', array(12,'right')),
+                'ndfl' => array('НДФЛ', array(12,'right')),
+                'payout_sum' => array('Сумма выплаты', array(15,'right')),
+                'date' => array('Дата', array(14,'center')),
+                'contract_num' => array('№ договора «Безопасной Сделки»', array(17,'center')),
+                'payout_sys' => array('Оплата', array(11,'center')),
+                'inn' => array('ИНН', array(17,'center')),
+                'address' => array('Адрес', array(24,'left')),
+                'idcard' => array('Паспортные данные', array(24,'left')),
+                'birthday' => array('Дата рождения', array(14,'center')),
+                'pss' => array('Номер ПФ', array(22,'left')),
+            ),
         ),
         'REV' => array(
             'name' => 'ООО "Ваан"',
             'columns' => array(
-                'num'           => array('№ п/п', array(5,'center')),
-                'contract_num'  => array('Номер «Безопасной Сделки»', array(7, 'center')),
-                'fio'           => array('ФИО (название) работодателя', array(40,'left')),
-                'sum_deal'      => array('Сумма сделки, руб.коп', array(15,'right')),
+                'num' => array('№ п/п', array(5,'center')),
+                'contract_num' => array('Номер «Безопасной Сделки»', array(7, 'center')),
+                'fio' => array('ФИО (название) работодателя', array(40,'left')),
+                'sum_deal' => array('Сумма сделки, руб.коп', array(15,'right')),
                 'sum_commision' => array('Вознаграждение ООО "Ваан", руб.коп', array(15,'right')),
-                'sum_dept'      => array('Остаток кредиторской  задолженности всего, руб.коп', array(15,'right'))
-            )   
+                'sum_dept' => array('Остаток кредиторской  задолженности всего, руб.коп', array(15,'right')),
+            ),
         ),
         'YD_REPORT' => array(
             'name' => 'Выплаты ЯД',
             'columns' => array(
-                'num'           => array('№ п/п', array(7,'center')),
-                'pdate'         => array('Дата', array(20,'left')),
-                'summ'          => array('Расход', array(15,'right')),
-                'recp'          => array('Корреспондент', array(25,'left')),
-                'descr'         => array('Назначение', array(55,'left')),
-                'type'          => array('Ч/Б', array(10,'center')),
-            )
-        )
+                'num' => array('№ п/п', array(7,'center')),
+                'pdate' => array('Дата', array(20,'left')),
+                'summ' => array('Расход', array(15,'right')),
+                'recp' => array('Корреспондент', array(25,'left')),
+                'descr' => array('Назначение', array(55,'left')),
+                'type' => array('Ч/Б', array(10,'center')),
+            ),
+        ),
     );
-    
+
     /**
-     * Статусы формируемых закрывающих документов
-     * @var array 
+     * Статусы формируемых закрывающих документов.
+     *
+     * @var array
      */
     public static $invoice_state = array(
         0 => 'В очереди',
@@ -173,39 +176,46 @@ class sbr_adm extends sbr
     /**
      * Редактировать документ по данным пользовательского запроса.
      * 
-     * @param array $request   данные запроса (гет, пост).
+     * @param array $request данные запроса (гет, пост).
      * @param array $files   массив $_FILES
-
-     * @return boolean   успешно?
+     
+     * @return bool успешно?
      */
-    function editDocR($request, $files) {
-        if(!($old_doc = $this->getDocs((int)$request['id']))) return false;
+    public function editDocR($request, $files)
+    {
+        if (!($old_doc = $this->getDocs((int) $request['id']))) {
+            return false;
+        }
         $old_doc = current($old_doc);
         $this->_docInitFromRequest($request, $files);
-        if(!$this->error)
+        if (!$this->error) {
             $ok = $this->editDoc($this->post_doc, $old_doc);
-        if(!$ok) {
+        }
+        if (!$ok) {
             $this->post_doc['file_id'] = $old_doc['file_id'];
             $this->post_doc['file_name'] = $old_doc['file_name'];
             $this->post_doc['file_path'] = $old_doc['file_path'];
             $this->post_doc['file_size'] = $old_doc['file_size'];
         }
+
         return $ok;
     }
 
     /**
-     * Редактировать документ
+     * Редактировать документ.
      * 
-     * @param array $doc   новые данные по документу.
-     * @param array $old_doc   старые данные по документу.
-     * @return boolean   успешно?
+     * @param array $doc     новые данные по документу.
+     * @param array $old_doc старые данные по документу.
+     *
+     * @return bool успешно?
      */
-    function editDoc($doc, $old_doc) {
+    public function editDoc($doc, $old_doc)
+    {
         $sql_data = $doc;
         $sql_data['name'] = pg_escape_string(change_q_x($sql_data['name']));
         $act_time = self::$docs_ss[$sql_data['status']][1];
         $file_set = $doc['file_id'] ? ", file_id = {$doc['file_id']}" : '';
-        $sql_data['stage_id'] = $sql_data['stage_id'] ? (int)$sql_data['stage_id'] : 'NULL';
+        $sql_data['stage_id'] = $sql_data['stage_id'] ? (int) $sql_data['stage_id'] : 'NULL';
         $sql = "
           UPDATE sbr_docs
              SET name = '{$sql_data['name']}',
@@ -218,261 +228,305 @@ class sbr_adm extends sbr
            WHERE id = {$sql_data['id']}
         ";
         $ok = $this->_eventQuery($sql);
-        if($ok && $file_set) {
+        if ($ok && $file_set) {
             $cfile = new CFile();
             $cfile->Delete(0, $old_doc['file_path'], $old_doc['file_name']);
         }
+
         return $ok;
     }
 
     /**
      * Удаляет документы.
      * 
-     * @param array|integer $ids   один или несколько ид. документов.
-     * @return boolean   успешно?
+     * @param array|int $ids один или несколько ид. документов.
+     *
+     * @return bool успешно?
      */
-    function delDocs($ids) {
+    public function delDocs($ids)
+    {
         $ids = implode(',', intarrPgSql($ids));
         $sql = "UPDATE sbr_docs SET is_deleted = true WHERE id IN ({$ids})";
+
         return $this->_eventQuery($sql);
     }
-    
+
     /**
-     * Восстанавливает удаленный документ
+     * Восстанавливает удаленный документ.
      * 
      * @param type $ids
+     *
      * @return type
      */
-    function recoveryDocs($ids) {
+    public function recoveryDocs($ids)
+    {
         $ids = implode(',', intarrPgSql($ids));
         $sql = "UPDATE sbr_docs SET is_deleted = false WHERE id IN ({$ids})";
+
         return $this->_eventQuery($sql);
     }
 
     /**
      * Уснаваливает доступ просмотра документа.
      * 
-     * @param array|integer $ids   один или несколько ид. документов.
-     * @param integer $mode   флаг доступа (0:скрыт, 1:фрилансер, 2:работодатель, 3:всем)
-     * @return boolean   успешно?
+     * @param array|int $ids  один или несколько ид. документов.
+     * @param int       $mode флаг доступа (0:скрыт, 1:фрилансер, 2:работодатель, 3:всем)
+     *
+     * @return bool успешно?
      */
-    function setDocAccess($ids, $mode) {
+    public function setDocAccess($ids, $mode)
+    {
         $ids = implode(',', intarrPgSql($ids));
         $sql = "UPDATE sbr_docs SET access_role = {$mode} WHERE id IN ({$ids})";
+
         return $this->_eventQuery($sql);
     }
 
     /**
      * Уснаваливает статус документа.
-
+     
      * 
-     * @param array|integer $ids   один или несколько ид. документов.
-     * @param integer $mode   статус (1:отправлен, 2:получен, 3:подписан, 4:опубликовано)
-     * @return boolean   успешно?
+     * @param array|int $ids  один или несколько ид. документов.
+     * @param int       $mode статус (1:отправлен, 2:получен, 3:подписан, 4:опубликовано)
+     *
+     * @return bool успешно?
      */
-    function setDocStatus($ids, $mode) {
+    public function setDocStatus($ids, $mode)
+    {
         $ids = implode(',', intarrPgSql($ids));
         $act_time = self::$docs_ss[$mode][1];
         $sql = "UPDATE sbr_docs SET status = {$mode}, {$act_time} = COALESCE({$act_time}, now()) WHERE id IN ({$ids})";
+
         return $this->_eventQuery($sql);
     }
 
     /**
      * Устанавливает статус "Документы пришли" на юзеров в определенных этапах.
      *
-     * @param array $suids   массив ключей этап_юзер.
-     * @param boolean  $mode   если NULL, то развернуть противоположно, иначе жестко установить в заданное значение.
-     * @return array   данные по первой записи sbr_stages_users с флагом docs_ready -- документы на месте, можно отправлять в "Выплаты".
+     * @param array $suids массив ключей этап_юзер.
+     * @param bool  $mode  если NULL, то развернуть противоположно, иначе жестко установить в заданное значение.
+     *
+     * @return array данные по первой записи sbr_stages_users с флагом docs_ready -- документы на месте, можно отправлять в "Выплаты".
      */
-    function setDocsReceived($suids, $mode = NULL) {
-        if(!is_array($suids)) $suids = array($suids);
+    public function setDocsReceived($suids, $mode = null)
+    {
+        if (!is_array($suids)) {
+            $suids = array($suids);
+        }
         $suids = array_map('pg_escape_string', $suids);
-        $mode = $mode===NULL ? 'NOT(docs_received)' : ($mode ? 'true' : 'false');
-        $sql = "UPDATE sbr_stages_users SET docs_received = ?b WHERE stage_id||'_'||user_id IN (?l) RETURNING *, (uploaded_docs & " . sbr::DOCS_REQUIRED . ") = " . sbr::DOCS_REQUIRED . " as docs_ready";
+        $mode = $mode === null ? 'NOT(docs_received)' : ($mode ? 'true' : 'false');
+        $sql = "UPDATE sbr_stages_users SET docs_received = ?b WHERE stage_id||'_'||user_id IN (?l) RETURNING *, (uploaded_docs & ".sbr::DOCS_REQUIRED.') = '.sbr::DOCS_REQUIRED.' as docs_ready';
         $sql = $this->db()->parse($sql, $mode, $suids);
-        if(($res=pg_query(self::connect(), $sql)) && pg_num_rows($res)) {
-            require_once($_SERVER['DOCUMENT_ROOT'].'/classes/smail.php');
+        if (($res = pg_query(self::connect(), $sql)) && pg_num_rows($res)) {
+            require_once $_SERVER['DOCUMENT_ROOT'].'/classes/smail.php';
             $smail = new smail();
             $smail->docsReceivedSBR($suids);
+
             return pg_fetch_assoc($res);
         }
-        return NULL;
-    }
 
+        return;
+    }
 
     /**
      * Печатает блок документа в админке (либо форму с загрузкой, либо ссылку на готовый док).
      *
-     * @param array $doc   документ. Если задан, то остальные параметры не нужны, выдаем ссылку.
-     * @param string $anc   якорь на блок сделки (чтоб вернуть туда после загрузки).
-     * @param integer  $stage_id   ид. этапа СБР, к которому принадлежит док.
-     * @param integer  $doc_type   тип документа.
-     * @param integer  $doc_access   доступ к документу.
-     * @param boolean  $action_access полный доступ к функциям или нет / если нет только просмотр
+     * @param array  $doc           документ. Если задан, то остальные параметры не нужны, выдаем ссылку.
+     * @param string $anc           якорь на блок сделки (чтоб вернуть туда после загрузки).
+     * @param int    $stage_id      ид. этапа СБР, к которому принадлежит док.
+     * @param int    $doc_type      тип документа.
+     * @param int    $doc_access    доступ к документу.
+     * @param bool   $action_access полный доступ к функциям или нет / если нет только просмотр
      * 
      * @return string
      */
-    static function view_doc_field($doc, $anc = NULL, $stage_id = NULL, $doc_type = NULL, $doc_access = NULL, $action_access = true) {
+    public static function view_doc_field($doc, $anc = null, $stage_id = null, $doc_type = null, $doc_access = null, $action_access = true)
+    {
         $doc_tp = $doc ? $doc['type'] : $doc_type;
 
         $doc_nm = sbr::$docs_types[$doc_tp][2] ? sbr::$docs_types[$doc_tp][2] : sbr::$docs_types[$doc_tp][0];
-        if(!$doc) {
-            $word = $doc_type==sbr::DOCS_TYPE_ACT || $doc_type==sbr::DOCS_TYPE_FACTURA ? ' Word' : ($doc_type==sbr::DOCS_TYPE_COPY_ACT || $doc_type==sbr::DOCS_TYPE_COPY_FACTURA ? ' скан' : '');
-            return '<span>' . $doc_nm
-                 . ($action_access ? ', <a href="javascript:;" class="lnk-dot-666" ' . 'onclick="SBR.openDocLoader(this, ' . $stage_id . ', \'' . $anc . '\', ' . $doc_type . ', ' . sbr::DOCS_STATUS_PUBL . ', ' . $doc_access . ')">':'')
-                 . ($action_access ? "загрузить {$word}</a>&nbsp;":"")
-                 . ($action_access ? '</span>':'');
+        if (!$doc) {
+            $word = $doc_type == sbr::DOCS_TYPE_ACT || $doc_type == sbr::DOCS_TYPE_FACTURA ? ' Word' : ($doc_type == sbr::DOCS_TYPE_COPY_ACT || $doc_type == sbr::DOCS_TYPE_COPY_FACTURA ? ' скан' : '');
+
+            return '<span>'.$doc_nm
+                 .($action_access ? ', <a href="javascript:;" class="lnk-dot-666" '.'onclick="SBR.openDocLoader(this, '.$stage_id.', \''.$anc.'\', '.$doc_type.', '.sbr::DOCS_STATUS_PUBL.', '.$doc_access.')">' : '')
+                 .($action_access ? "загрузить {$word}</a>&nbsp;" : '')
+                 .($action_access ? '</span>' : '');
         }
-        return '<a href="'.WDCPREFIX.'/'.$doc['file_path'].$doc['file_name'].'" target="_blank">'.$doc_nm.'</a> <a href="javascript:;" onclick="SBR.delDoc(this, '.$doc['sbr_id'].','.$doc['id']. ',\'' . $anc . '\');">'
-               . ($action_access ? '<img src="/images/btn-remove2.png" alt="Удалить" />':'')
-               . '</a>';
+
+        return '<a href="'.WDCPREFIX.'/'.$doc['file_path'].$doc['file_name'].'" target="_blank">'.$doc_nm.'</a> <a href="javascript:;" onclick="SBR.delDoc(this, '.$doc['sbr_id'].','.$doc['id'].',\''.$anc.'\');">'
+               .($action_access ? '<img src="/images/btn-remove2.png" alt="Удалить" />' : '')
+               .'</a>';
     }
 
     /**
-
      * Формирует SQL-условие по фильтру, заданному в на вкладках "Все" и "В Арбитраже" в админке СБР.
+     *
      * @see sbr_adm::getAll()
      *
-     * @param array $filter   фильтр по дате, этапу, бюджету и т.д.
-     * @return string   sql-текст
+     * @param array $filter фильтр по дате, этапу, бюджету и т.д.
+     *
+     * @return string sql-текст
      */
-    private function _buildAllFilter($filter) {
+    private function _buildAllFilter($filter)
+    {
         global $DB;
-        if($fv = trim($filter['start_time'])) {
+        if ($fv = trim($filter['start_time'])) {
             $fv = date('d.m.Y', strtotime($fv));
             $where[] = "ss.start_time::date = '{$fv}'::date";
         }
-        if($fv = pg_escape_string(trim($filter['stage']))) {
-            $fv_int = (int)($fv[0] == '#' ? substr($fv,1) : $fv);
+        if ($fv = pg_escape_string(trim($filter['stage']))) {
+            $fv_int = (int) ($fv[0] == '#' ? substr($fv, 1) : $fv);
             $where[] = "(ss.name ILIKE '%{$fv}%' OR ss.id = {$fv_int})";
         }
-        if($fv = round((float)$filter['cost'], 2))
+        if ($fv = round((float) $filter['cost'], 2)) {
             $where[] = "ss.cost = {$fv}";
-        if($fv = (int)$filter['cost_sys'])
+        }
+        if ($fv = (int) $filter['cost_sys']) {
             $where[] = "s.cost_sys = {$fv}";
-        if($fv = (int)$filter['sbr'])
+        }
+        if ($fv = (int) $filter['sbr']) {
             $where[] = "s.id = {$fv}";
-        if($fv = trim($filter['work_time'])) {
-            if(is_numeric($fv)) {
+        }
+        if ($fv = trim($filter['work_time'])) {
+            if (is_numeric($fv)) {
                 $fv .= ' days';
-                $where[] = $DB->parse("ss.work_time = ?::interval AND ss.start_time IS NULL", $fv);
+                $where[] = $DB->parse('ss.work_time = ?::interval AND ss.start_time IS NULL', $fv);
             } elseif (strtotime($fv)) {
-                $where[] = $DB->parse("(ss.start_time + ss.work_time)::date = ?", $fv);
+                $where[] = $DB->parse('(ss.start_time + ss.work_time)::date = ?', $fv);
             }
         }
-        if(($fv = (int)$filter['status']) >= 0)
+        if (($fv = (int) $filter['status']) >= 0) {
             $where[] = "ss.status = {$fv}";
-        else if($fv==self::STATUS_RESERVED)
-            $where[] = "s.reserved_id IS NOT NULL";
-        if($where)
+        } elseif ($fv == self::STATUS_RESERVED) {
+            $where[] = 's.reserved_id IS NOT NULL';
+        }
+        if ($where) {
             return implode(' AND ', $where);
-        return NULL;
+        }
+
+        return;
     }
 
     /**
      * Формирует SQL-условие по фильтру, заданному в на вкладке "Выплаты" в админке СБР.
-     * @see sbr_adm::getAllPayouts()
      *
-
-     * @param array $filter   фильтр по дате заявке, этапу, сумме, юзеру и т.д.
-     * @return string   sql-текст
+     * @see sbr_adm::getAllPayouts()
+     
+     * @param array $filter фильтр по дате заявке, этапу, сумме, юзеру и т.д.
+     *
+     * @return string sql-текст
      */
-    private function _buildPayoutFilter($filter) {
-        if($fv = trim($filter['requested'])) {
+    private function _buildPayoutFilter($filter)
+    {
+        if ($fv = trim($filter['requested'])) {
             $fv = date('d.m.Y', strtotime($fv));
             $where[] = "sp.requested::date = '{$fv}'::date";
         }
-        if($fv = $filter['stage']) {
-            $fv_int = (int)($fv[0] == '#' ? substr($fv,1) : $fv);
+        if ($fv = $filter['stage']) {
+            $fv_int = (int) ($fv[0] == '#' ? substr($fv, 1) : $fv);
             $where[] = "sp.stage_id = {$fv_int}";
         }
-        if($fv = pg_escape_string(trim($filter['user'])))
+        if ($fv = pg_escape_string(trim($filter['user']))) {
             $where[] = "(u.login ILIKE '%{$fv}%' OR u.uname ILIKE '%{$fv}%' OR u.usurname ILIKE '%{$fv}%')";
-        if($fv = (float)$filter['sum'])
+        }
+        if ($fv = (float) $filter['sum']) {
             $where[] = "sp.credit_sum = {$fv}";
-        if($fv = (int)$filter['sys'])
+        }
+        if ($fv = (int) $filter['sys']) {
             $where[] = "sp.credit_sys = {$fv}";
-        if($fv = (int)$filter['completed'])
-            $where[] = "sp.completed IS" .($fv == 1 ? ' NOT' : ''). " NULL";
-        if($fv = (int)$filter['refund']) {
-            if($fv == 1 || $fv == 2) {
-                $where[] = "pp.is_refund = " .($fv == 1 ? 'TRUE' : 'FALSE' );
-            } else if($fv == 3) {
-                $where[] = "pp.is_refund IS NULL ";
+        }
+        if ($fv = (int) $filter['completed']) {
+            $where[] = 'sp.completed IS'.($fv == 1 ? ' NOT' : '').' NULL';
+        }
+        if ($fv = (int) $filter['refund']) {
+            if ($fv == 1 || $fv == 2) {
+                $where[] = 'pp.is_refund = '.($fv == 1 ? 'TRUE' : 'FALSE');
+            } elseif ($fv == 3) {
+                $where[] = 'pp.is_refund IS NULL ';
             }
         }
-        if($fv = $filter['sbr_name']) {
+        if ($fv = $filter['sbr_name']) {
             $where[] = "s.name ILIKE '%{$fv}%'";
         }
-         if($fv = (int)$filter['sbr'])
+        if ($fv = (int) $filter['sbr']) {
             $where[] = "s.id = {$fv}";
-        if($where)
+        }
+        if ($where) {
             return implode(' AND ', $where);
-        return NULL;
-    }
-    
-    /**
+        }
 
+        return;
+    }
+
+    /**
      * Формирует SQL-условие по фильтру, заданному в на вкладках "В Арбитраже" в админке СБР.
+     *
      * @see sbr_adm::getAll()
      *
      * @param array $filter
-     * @return string   sql-текст
+     *
+     * @return string sql-текст
      */
-    private function _buildArbFilter($filter) {
+    private function _buildArbFilter($filter)
+    {
         global $DB;
         // номер сделки
-        if ($fv = (int)$filter['sbr']) {
+        if ($fv = (int) $filter['sbr']) {
             $where[] = "s.id = {$fv}";
         }
         // номер этапа
         //if($fv = pg_escape_string(trim($filter['stage']))) {
-        if($fv = trim($filter['stage'])) {
-            $fv_int = (int)($fv[0] == '#' ? substr($fv,1) : $fv);
-            $fv_like = '%' . $fv . '%';
-            $where[] = $DB->parse("(ss.name ILIKE ? OR ss.id = ?i)", $fv_like, $fv_int);
+        if ($fv = trim($filter['stage'])) {
+            $fv_int = (int) ($fv[0] == '#' ? substr($fv, 1) : $fv);
+            $fv_like = '%'.$fv.'%';
+            $where[] = $DB->parse('(ss.name ILIKE ? OR ss.id = ?i)', $fv_like, $fv_int);
         }
         // время ожидания ответа/дата окончания срока арбитража
-        if($fv = trim($filter['date_to_answer'])) {
+        if ($fv = trim($filter['date_to_answer'])) {
             $fv = date('Y-m-d', strtotime($fv));
-            $where[] = "GREATEST(add_work_days(ssa.requested, " . sbr_stages::MAX_ARBITRAGE_DAYS . "), ssa.date_to_answer)::date = '$fv'::date";
+            $where[] = 'GREATEST(add_work_days(ssa.requested, '.sbr_stages::MAX_ARBITRAGE_DAYS."), ssa.date_to_answer)::date = '$fv'::date";
         }
         // имя арбитра
-        if($fv = trim($filter['arbitr_name'])) {
-            $where[] = $DB->parse("ssar.name = ?", $fv);
+        if ($fv = trim($filter['arbitr_name'])) {
+            $where[] = $DB->parse('ssar.name = ?', $fv);
         }
         // срок арбитража
-        if ($fv = (int)$filter['days_left']) {
-            $where[] = "GREATEST(ssa.date_to_answer::date - now()::date + 1, add_work_days(ssa.requested, " . sbr_stages::MAX_ARBITRAGE_DAYS . ")::date - now()::date + 1) = $fv";
+        if ($fv = (int) $filter['days_left']) {
+            $where[] = 'GREATEST(ssa.date_to_answer::date - now()::date + 1, add_work_days(ssa.requested, '.sbr_stages::MAX_ARBITRAGE_DAYS.")::date - now()::date + 1) = $fv";
         }
-        
+
         if ($where) {
             return implode(' AND ', $where);
         }
-        return NULL;
+
+        return;
     }
 
     /**
      * Выборка всех сделок в админке СБР.
      *
-     * @param string $mode   all:взять все, arbitrage:взять все с обращение в Арбитраж.
-     * @param integer $page   номер страницы.
-     * @param string $dir   сортировка ASC|DESC
-     * @param integer $dir_col   номер колонки, по которой соритруем (см. $this->form_cols['all']).
-     * @param array $filter   фильтр по дате, этапу, бюджету и т.д.
+     * @param string $mode    all:взять все, arbitrage:взять все с обращение в Арбитраж.
+     * @param int    $page    номер страницы.
+     * @param string $dir     сортировка ASC|DESC
+     * @param int    $dir_col номер колонки, по которой соритруем (см. $this->form_cols['all']).
+     * @param array  $filter  фильтр по дате, этапу, бюджету и т.д.
+     *
      * @return array
      */
-    function getAll($mode = 'all', $page = 1, $dir='DESC', $dir_col=0, $filter = NULL) {
-        $ret = array('data'=>array());
+    public function getAll($mode = 'all', $page = 1, $dir = 'DESC', $dir_col = 0, $filter = null)
+    {
+        $ret = array('data' => array());
         $limit = self::PAGE_SIZE;
-        $offset = ($page-1)*$limit;
-        switch($mode) {
+        $offset = ($page - 1) * $limit;
+        switch ($mode) {
             case 'all': $where = 's.is_draft = false'; break;
-            case 'arbitrage': $where = 'ss.status = ' . sbr_stages::STATUS_INARBITRAGE; break;
+            case 'arbitrage': $where = 'ss.status = '.sbr_stages::STATUS_INARBITRAGE; break;
         }
-        if($filter) {
-            if($fcond = $this->_buildAllFilter($filter))
-                $where .= ' AND ' . $fcond;
+        if ($filter) {
+            if ($fcond = $this->_buildAllFilter($filter)) {
+                $where .= ' AND '.$fcond;
+            }
             $ret['filter'] = $filter;
         }
 
@@ -491,56 +545,61 @@ class sbr_adm extends sbr
         ";
 
         $sql = $this->db()->parse($sql, $limit, $offset);
-           
-        if(($res=pg_query(self::connect(), $sql)) && pg_num_rows($res))
+
+        if (($res = pg_query(self::connect(), $sql)) && pg_num_rows($res)) {
             $ret['data'] = pg_fetch_all($res);
+        }
+
         return $ret;
     }
-    
+
     /**
      * Выборка всех сделок в админке СБР которые находятся в арбитраже.
      *
-     * @param integer $page   номер страницы.
-     * @param string $dir   сортировка ASC|DESC
-     * @param integer $dir_col   номер колонки, по которой соритруем
-     * @param array $filter   фильтр
+     * @param int    $page    номер страницы.
+     * @param string $dir     сортировка ASC|DESC
+     * @param int    $dir_col номер колонки, по которой соритруем
+     * @param array  $filter  фильтр
+     *
      * @return array
      */
-    function getArb($page = 1, $dir='DESC', $dir_col=0, $filter = NULL) {
+    public function getArb($page = 1, $dir = 'DESC', $dir_col = 0, $filter = null)
+    {
         global $DB;
-        
-        $ret = array('data'=>array());
+
+        $ret = array('data' => array());
         $limit = self::PAGE_SIZE;
         $offset = ($page - 1) * $limit;
-        if($filter) {
-            if($fcond = $this->_buildArbFilter($filter))
-                $where = ' AND ' . $fcond;
+        if ($filter) {
+            if ($fcond = $this->_buildArbFilter($filter)) {
+                $where = ' AND '.$fcond;
+            }
             $ret['filter'] = $filter;
         }
-        
-        $columnsOrder = array (
-            '(COALESCE(ssa.date_to_answer < now(), FALSE) OR get_work_days_count(now()::timestamp without time zone , add_work_days(ssa.requested, ' . sbr_stages::MAX_ARBITRAGE_DAYS . ')) <= 1)', // восклицательный знак (alert)
+
+        $columnsOrder = array(
+            '(COALESCE(ssa.date_to_answer < now(), FALSE) OR get_work_days_count(now()::timestamp without time zone , add_work_days(ssa.requested, '.sbr_stages::MAX_ARBITRAGE_DAYS.')) <= 1)', // восклицательный знак (alert)
             's.id', // номер договора
             'ss.id', // проект
             'ssm.post_date', // время последнего ответа
-            'GREATEST(add_work_days(ssa.requested, ' . sbr_stages::MAX_ARBITRAGE_DAYS . '), ssa.date_to_answer)', // ожидаем до
+            'GREATEST(add_work_days(ssa.requested, '.sbr_stages::MAX_ARBITRAGE_DAYS.'), ssa.date_to_answer)', // ожидаем до
             'ssar.name', // имя арбитра
-            'GREATEST(ssa.date_to_answer::date - now()::date + 1, add_work_days(ssa.requested, ' . sbr_stages::MAX_ARBITRAGE_DAYS . ')::date - now()::date + 1)', // срок арбитража
+            'GREATEST(ssa.date_to_answer::date - now()::date + 1, add_work_days(ssa.requested, '.sbr_stages::MAX_ARBITRAGE_DAYS.')::date - now()::date + 1)', // срок арбитража
         );
 
-        $sql = "
+        $sql = '
             SELECT
                 ss.*, ss.id as stage_id, s.scheme_type, s.reserved_id, s.scheme_id, s.cost_sys, s.posted, extract(day from ss.work_time) as work_days, ss.start_time + ss.work_time as dead_time,
                 ssa.last_msg_id_users, ssa.last_msg_id_arbitr, ssa.date_to_answer, -- данные по арбитражу
                 ssm.post_date as last_msg_post_date, -- дата последнего комментария арбитра
                 ssar.name as arbitr_name, -- имя арбитра
-                --add_work_days(ssa.requested::date, " . sbr_stages::MAX_ARBITRAGE_DAYS . ") as arbitrage_overdate, -- последняя дата арбитража
+                --add_work_days(ssa.requested::date, '.sbr_stages::MAX_ARBITRAGE_DAYS.') as arbitrage_overdate, -- последняя дата арбитража
                 -- наибольшее из даты до которой ждем ответ и последнего дня арбитража
-                COALESCE(ssa.date_to_answer, add_work_days(ssa.requested, " . sbr_stages::MAX_ARBITRAGE_DAYS . ")) as date_to_answer_,
+                COALESCE(ssa.date_to_answer, add_work_days(ssa.requested, '.sbr_stages::MAX_ARBITRAGE_DAYS.')) as date_to_answer_,
                 -- TRUE если истек срок ожидания ответа или остался один день до окончания срока арбитража
-                (COALESCE(ssa.date_to_answer < now(), FALSE) OR get_work_days_count(now()::timestamp without time zone , add_work_days(ssa.requested, " . sbr_stages::MAX_ARBITRAGE_DAYS . ")) <= 1) as arbitrage_alert,
+                (COALESCE(ssa.date_to_answer < now(), FALSE) OR get_work_days_count(now()::timestamp without time zone , add_work_days(ssa.requested, '.sbr_stages::MAX_ARBITRAGE_DAYS.')) <= 1) as arbitrage_alert,
                 -- сколько календарных дней осталось до конца срока арбитража или до окончания срока ожидания ответа, берется большее
-                GREATEST(ssa.date_to_answer::date - now()::date + 1, add_work_days(ssa.requested, " . sbr_stages::MAX_ARBITRAGE_DAYS . ")::date - now()::date + 1) as days_to_end
+                GREATEST(ssa.date_to_answer::date - now()::date + 1, add_work_days(ssa.requested, '.sbr_stages::MAX_ARBITRAGE_DAYS.')::date - now()::date + 1) as days_to_end
             FROM sbr s
             INNER JOIN sbr_stages ss
                 ON ss.sbr_id = s.id
@@ -550,7 +609,7 @@ class sbr_adm extends sbr
                 ON ssm.id = GREATEST(ssa.last_msg_id_arbitr, ssa.last_msg_id_users)
             LEFT JOIN sbr_stages_arbitrs ssar
                 ON ssar.id = ssa.arbitr_id
-            WHERE ss.status = " . sbr_stages::STATUS_INARBITRAGE . "
+            WHERE ss.status = '.sbr_stages::STATUS_INARBITRAGE."
                 $where
             ORDER BY {$columnsOrder[$dir_col]} {$dir}
             LIMIT {$limit} OFFSET {$offset}
@@ -559,19 +618,22 @@ class sbr_adm extends sbr
         if ($rows = $DB->rows($sql)) {
             $ret['data'] = $rows;
         }
+
         return $ret;
     }
 
     /**
      * Выборка всех отзывов сервису в админке СБР. 
      *
-     * @param integer $page   номер страницы.
+     * @param int $page номер страницы.
+     *
      * @return array
      */
-    function getAllFeedbacks($page = 1) {
+    public function getAllFeedbacks($page = 1)
+    {
         $limit = self::PAGE_SIZE;
-        $offset = ($page-1)*$limit;
-        $sql = "
+        $offset = ($page - 1) * $limit;
+        $sql = '
             SELECT sf.*, s.id as sbr_id, sf.descr as descr_srv, (sf.p_rate + sf.n_rate + sf.a_rate) / 3 as avg_rate_srv, u.login, u.uname, u.usurname, u.photo, u.role, u.is_pro, u.is_team, u.is_pro_test
               FROM (
                 SELECT id, frl_id as user_id, frl_feedback_id as feedback_id FROM sbr WHERE frl_feedback_id IS NOT NULL
@@ -586,32 +648,37 @@ class sbr_adm extends sbr
                 ON u.uid = s.user_id
           ORDER BY sf.posted_time DESC
           LIMIT ?i OFFSET ?i
-        ";
-        
+        ';
+
         $sql = $this->db()->parse($sql, $limit, $offset);
-          
-        if($res=pg_query(self::connect(), $sql))
+
+        if ($res = pg_query(self::connect(), $sql)) {
             return pg_fetch_all($res);
-        return NULL;
+        }
+
+        return;
     }
-    
+
     /**
-     * Выборка всех выплат в админке СБР для возврата
+     * Выборка всех выплат в админке СБР для возврата.
      *
-     * @param integer $page   номер страницы.
-     * @param string $dir   сортировка ASC|DESC
-     * @param integer $dir_col   номер колонки, по которой соритруем (см. $this->form_cols['all']).
-     * @param array $filter   фильтр по дате заявке, этапу, сумме, юзеру и т.д.
+     * @param int    $page    номер страницы.
+     * @param string $dir     сортировка ASC|DESC
+     * @param int    $dir_col номер колонки, по которой соритруем (см. $this->form_cols['all']).
+     * @param array  $filter  фильтр по дате заявке, этапу, сумме, юзеру и т.д.
+     *
      * @return array
      */
-    function getAllRefunds($page = 1, $dir='DESC', $dir_col=0, $filter=NULL) {
-        $ret = array('data'=>array());
-        $dir = $dir=='DESC'?'DESC':'ASC';
+    public function getAllRefunds($page = 1, $dir = 'DESC', $dir_col = 0, $filter = null)
+    {
+        $ret = array('data' => array());
+        $dir = $dir == 'DESC' ? 'DESC' : 'ASC';
         $limit = self::PAGE_SIZE;
-        $offset = ($page-1)*$limit;
-        if($filter) {
-            if($fcond = $this->_buildPayoutFilter($filter))
-                $where .= ' AND ' . $fcond;
+        $offset = ($page - 1) * $limit;
+        if ($filter) {
+            if ($fcond = $this->_buildPayoutFilter($filter)) {
+                $where .= ' AND '.$fcond;
+            }
             $ret['filter'] = $filter;
         }
         $sql = "SELECT 
@@ -627,47 +694,53 @@ class sbr_adm extends sbr
                 WHERE s.reserved_id IS NOT NULL AND ao.payment_sys = 10 {$where}
                 ORDER BY {$this->form_cols['refunds'][$dir_col][1][$dir]}
                 LIMIT {$limit} OFFSET {$offset}
-                ";       
-        if(($res=pg_query(self::connect(), $sql)) && pg_num_rows($res))
+                ";
+        if (($res = pg_query(self::connect(), $sql)) && pg_num_rows($res)) {
             $ret['data'] = pg_fetch_all($res);
+        }
+
         return $ret;
     }
 
     /**
-     * Выборка всех выплат в админке СБР
+     * Выборка всех выплат в админке СБР.
      *
-     * @param integer $page   номер страницы.
-     * @param string $dir   сортировка ASC|DESC
-     * @param integer $dir_col   номер колонки, по которой соритруем (см. $this->form_cols['all']).
-     * @param array $filter   фильтр по дате заявке, этапу, сумме, юзеру и т.д.
+     * @param int    $page    номер страницы.
+     * @param string $dir     сортировка ASC|DESC
+     * @param int    $dir_col номер колонки, по которой соритруем (см. $this->form_cols['all']).
+     * @param array  $filter  фильтр по дате заявке, этапу, сумме, юзеру и т.д.
+     *
      * @return array
      */
-    function getAllPayouts($page = 1, $dir='DESC', $dir_col=0, $filter = NULL) {
+    public function getAllPayouts($page = 1, $dir = 'DESC', $dir_col = 0, $filter = null)
+    {
         require_once $_SERVER['DOCUMENT_ROOT'].'/classes/yd_payments.php';
         require_once $_SERVER['DOCUMENT_ROOT'].'/classes/wm_payments.php';
-        $ret = array('data'=>array());
-        $dir = $dir=='DESC'?'DESC':'ASC';
+        $ret = array('data' => array());
+        $dir = $dir == 'DESC' ? 'DESC' : 'ASC';
         $limit = self::PAGE_SIZE;
-        $offset = ($page-1)*$limit;
-        $where = "WHERE su.docs_received = true";
-        if($filter) {
-            if($fcond = $this->_buildPayoutFilter($filter))
-                $where .= ' AND ' . $fcond;
-            if($fv = pg_escape_string(trim($filter['account_num'])))
+        $offset = ($page - 1) * $limit;
+        $where = 'WHERE su.docs_received = true';
+        if ($filter) {
+            if ($fcond = $this->_buildPayoutFilter($filter)) {
+                $where .= ' AND '.$fcond;
+            }
+            if ($fv = pg_escape_string(trim($filter['account_num']))) {
                 $where_account_num = "WHERE sp.account_num = '{$fv}'";
+            }
             $ret['filter'] = $filter;
         }
-        $sql = "
+        $sql = '
           SELECT *
             FROM (
               SELECT sp.*, ss.sbr_id, ss.num as stage_num, s.scheme_type, s.scheme_id,
                      u.login, u.uname, u.usurname, u.photo, u.role, u.is_pro, u.is_team, u.is_pro_test,
                      CASE credit_sys::text
-                       WHEN " . exrates::BANK . "::text THEN (CASE sr.form_type WHEN " . sbr::FT_JURI . " THEN sr._2_bank_rs ELSE sr._1_bank_rs END)::text
-                       WHEN " . exrates::YM   . "::text THEN sr._1_el_yd::text  
-                       WHEN " . exrates::WMR  . "::text THEN sr._1_el_wmr::text
-                       WHEN " . exrates::WMZ  . "::text THEN sr._1_el_wmz::text
-                       WHEN " . exrates::FM   . "::text THEN a.id::text
+                       WHEN '.exrates::BANK.'::text THEN (CASE sr.form_type WHEN '.sbr::FT_JURI.' THEN sr._2_bank_rs ELSE sr._1_bank_rs END)::text
+                       WHEN '.exrates::YM.'::text THEN sr._1_el_yd::text  
+                       WHEN '.exrates::WMR.'::text THEN sr._1_el_wmr::text
+                       WHEN '.exrates::WMZ.'::text THEN sr._1_el_wmz::text
+                       WHEN '.exrates::FM."::text THEN a.id::text
                       END as account_num,
                      yd.id as yd_id, yd.in_amt as yd_in_amt, yd.out_amt as yd_out_amt, yd.ltr_id as yd_ltr_id, (yd.out_amt >= yd.in_amt) as yd_completed,
                      wm.id as wm_id, wm.in_amt as wm_in_amt, wm.out_amt as wm_out_amt, (wm.out_amt >= wm.in_amt) as wm_completed, 
@@ -700,47 +773,56 @@ class sbr_adm extends sbr
               LEFT JOIN
                 yd_payments yd
                   ON yd.src_id = sp.id
-                 AND yd.src_type = " . yd_payments::SRC_SBR . "
+                 AND yd.src_type = ".yd_payments::SRC_SBR.'
               LEFT JOIN
                 wm_payments wm
                   ON wm.src_id = sp.id
-                 AND wm.src_type = " . wm_payments::SRC_SBR . "
+                 AND wm.src_type = '.wm_payments::SRC_SBR."
                {$where}
             ) as sp
            {$where_account_num}
            ORDER BY {$this->form_cols['payouts'][$dir_col][1][$dir]}
            LIMIT {$limit} OFFSET {$offset}
         ";
-        if(($res=pg_query(self::connect(), $sql)) && pg_num_rows($res))
+        if (($res = pg_query(self::connect(), $sql)) && pg_num_rows($res)) {
             $ret['data'] = pg_fetch_all($res);
+        }
+
         return $ret;
     }
 
     /**
      * Возвращает количество всех отзывов сервису.
-     * @return integer
+     *
+     * @return int
      */
-    function countFeedbacks() {
-        $sql = "SELECT COUNT(*) as cnt FROM sbr s INNER JOIN sbr_feedbacks sf ON sf.id IN (s.frl_feedback_id, s.emp_feedback_id)";
+    public function countFeedbacks()
+    {
+        $sql = 'SELECT COUNT(*) as cnt FROM sbr s INNER JOIN sbr_feedbacks sf ON sf.id IN (s.frl_feedback_id, s.emp_feedback_id)';
         $mem = new memBuff();
-        if($rows = $mem->getSql($err, $sql, 60))
+        if ($rows = $mem->getSql($err, $sql, 60)) {
             return $rows[0]['cnt'];
+        }
+
         return 0;
     }
 
     /**
      * Возвращает количество всех выплат.
      *
-     * @param array $filter   фильтр по дате заявке, этапу, сумме, юзеру и т.д.
-     * @return integer
+     * @param array $filter фильтр по дате заявке, этапу, сумме, юзеру и т.д.
+     *
+     * @return int
      */
-    function countPayouts($filter = NULL) {
+    public function countPayouts($filter = null)
+    {
         //$where = "WHERE ((su.uploaded_docs & " . sbr::DOCS_REQUIRED . ") = " . sbr::DOCS_REQUIRED . " AND su.docs_received = true OR sp.user_id = s.emp_id)";
-        $where = "WHERE su.docs_received = true";
-        if($filter) {
+        $where = 'WHERE su.docs_received = true';
+        if ($filter) {
             $join_u = 'INNER JOIN users u ON u.uid = sp.user_id';
-            if($fcond = $this->_buildPayoutFilter($filter))
-                $where .= ' AND ' . $fcond;
+            if ($fcond = $this->_buildPayoutFilter($filter)) {
+                $where .= ' AND '.$fcond;
+            }
         }
         $sql = "
           SELECT COUNT(*) as cnt
@@ -759,61 +841,71 @@ class sbr_adm extends sbr
           {$where}
         ";
         $mem = new memBuff();
-        if($rows = $mem->getSql($err, $sql, 60))
+        if ($rows = $mem->getSql($err, $sql, 60)) {
             return $rows[0]['cnt'];
+        }
+
         return 0;
     }
-    
+
     /**
-     * Количество зарезервированных денег для возврата
+     * Количество зарезервированных денег для возврата.
      * 
-     * @return int 
+     * @return int
      */
-    function countRefunds() {
-        $sql = "SELECT COUNT(*) as cnt FROM sbr s
+    public function countRefunds()
+    {
+        $sql = 'SELECT COUNT(*) as cnt FROM sbr s
                 INNER JOIN account_operations ao ON ao.id = s.reserved_id
-                WHERE s.reserved_id IS NOT NULL AND ao.payment_sys = 10";
-        
+                WHERE s.reserved_id IS NOT NULL AND ao.payment_sys = 10';
+
         $mem = new memBuff();
-        if($rows = $mem->getSql($err, $sql, 60))
+        if ($rows = $mem->getSql($err, $sql, 60)) {
             return $rows[0]['cnt'];
+        }
+
         return 0;
     }
 
     /**
      * Возвращает количество всех этапов СБР.
      *
-     * @param array $filter   фильтр по дате, этапу, бюджету и т.д.
-     * @return integer
+     * @param array $filter фильтр по дате, этапу, бюджету и т.д.
+     *
+     * @return int
      */
-    function countAll($filter = NULL) {
+    public function countAll($filter = null)
+    {
         $where = 'WHERE s.is_draft = false';
-        if($filter) {
-
-            if($fcond = $this->_buildAllFilter($filter))
-                $where .= ' AND ' . $fcond;
-
+        if ($filter) {
+            if ($fcond = $this->_buildAllFilter($filter)) {
+                $where .= ' AND '.$fcond;
+            }
         }
         $sql = "SELECT COUNT(*) as cnt FROM sbr s INNER JOIN sbr_stages ss ON ss.sbr_id = s.id {$where}";
         $mem = new memBuff();
-        if($rows = $mem->getSql($err, $sql, 60))
+        if ($rows = $mem->getSql($err, $sql, 60)) {
             return $rows[0]['cnt'];
+        }
+
         return 0;
     }
 
     /**
      * Возвращает количество всех этапов с обращение в Арбитраж.
      *
-     * @param array $filter   фильтр по дате, этапу, бюджету и т.д.
-
-     * @return integer
+     * @param array $filter фильтр по дате, этапу, бюджету и т.д.
+     
+     * @return int
      */
-    function countArbitrage($filter = NULL) {
-        if($filter) {
-            if($fcond = $this->_buildArbFilter($filter))
-                $where .= ' AND ' . $fcond;
+    public function countArbitrage($filter = null)
+    {
+        if ($filter) {
+            if ($fcond = $this->_buildArbFilter($filter)) {
+                $where .= ' AND '.$fcond;
+            }
         }
-        $sql = "
+        $sql = '
             SELECT count(*) as cnt
             FROM sbr s
             INNER JOIN sbr_stages ss
@@ -824,92 +916,107 @@ class sbr_adm extends sbr
                 ON ssm.id = ssa.last_msg_id_arbitr AND ssm.is_admin = TRUE
             LEFT JOIN sbr_stages_arbitrs ssar
                 ON ssar.id = ssa.arbitr_id
-            WHERE ss.status = " . sbr_stages::STATUS_INARBITRAGE . "
+            WHERE ss.status = '.sbr_stages::STATUS_INARBITRAGE."
                 AND s.is_draft = false
                 $where";
         $mem = new memBuff();
-        if($rows = $mem->getSql($err, $sql, 60)) {
+        if ($rows = $mem->getSql($err, $sql, 60)) {
             return $rows[0]['cnt'];
         }
+
         return 0;
     }
 
-
     /**
      * Берет массив с количествами элементов для каждой закладки в админке СБР.
-     * @return array   массив, индексированный именами закладок.
+     *
+     * @return array массив, индексированный именами закладок.
      */
-    function getCount() {
-        return array( 'all'=>$this->countAll(), 'arbitrage'=>$this->countArbitrage(), 'feedbacks'=>$this->countFeedbacks(), 'payouts'=>$this->countPayouts(), 'refunds' => $this->countRefunds() );
+    public function getCount()
+    {
+        return array('all' => $this->countAll(), 'arbitrage' => $this->countArbitrage(), 'feedbacks' => $this->countFeedbacks(), 'payouts' => $this->countPayouts(), 'refunds' => $this->countRefunds());
     }
-
 
     // siteadmin
 
     /**
      * Информацию по документообороту СБР для админки.
      *
-     * @param integer $scheme   тип схем сделок.
-     * @param array $filter   фильтр
-     * @param integer $page   номер страницы
-     * @param string $dir   сортировка ASC|DESC
-     * @param integer $dir_col   поле сортировки.
-     * @param integer $page_count   вернет всего кол-во строк.
+     * @param int    $scheme     тип схем сделок.
+     * @param array  $filter     фильтр
+     * @param int    $page       номер страницы
+     * @param string $dir        сортировка ASC|DESC
+     * @param int    $dir_col    поле сортировки.
+     * @param int    $page_count вернет всего кол-во строк.
+     *
      * @return array
      */
-    function getDocsFlow($scheme = sbr::SCHEME_AGNT, $filter = NULL, $page = 1, $dir = 'DESC', $dir_col = 0, &$page_count = NULL) {
-        
-        $dir = $dir=='DESC'?'DESC':'ASC';
+    public function getDocsFlow($scheme = sbr::SCHEME_AGNT, $filter = null, $page = 1, $dir = 'DESC', $dir_col = 0, &$page_count = null)
+    {
+        $dir = $dir == 'DESC' ? 'DESC' : 'ASC';
         $limit = self::PAGE_SA_SIZE;
-        $offset = ($page-1)*$limit;
+        $offset = ($page - 1) * $limit;
         $where = $this->_buildFilterPeriod('ss.arch_closed_time', $filter);
         $page_count = 1;
         $emp_upload_docs_cond = sbr::DOCS_TYPE_ACT | sbr::DOCS_TYPE_ARB_REP; // документы, после загрузки которых выводим работодателя в док-те.
         $frl_upload_docs_cond = sbr::DOCS_TYPE_ACT;
-        if($scheme) {
-            if($scheme != -1) {
+        if ($scheme) {
+            if ($scheme != -1) {
                 $where[] = "ss.arch_closed_time > NOW()::date - interval '6 months'";
                 $scheme_cond = "AND s.scheme_type = {$scheme}";
-                if($scheme == sbr::SCHEME_PDRD || $scheme == sbr::SCHEME_PDRD2) $scheme_cond = "AND ( s.scheme_type = {$scheme} OR s.scheme_type = ".sbr::SCHEME_PDRD2.")";
+                if ($scheme == sbr::SCHEME_PDRD || $scheme == sbr::SCHEME_PDRD2) {
+                    $scheme_cond = "AND ( s.scheme_type = {$scheme} OR s.scheme_type = ".sbr::SCHEME_PDRD2.')';
+                }
             }
             $docs_cond = 'AND su.docs_received = false AND su.is_removed = false';
         } else {
-            if($filter['archive'] == 't')
+            if ($filter['archive'] == 't') {
                 $where[] = "ss.arch_closed_time < NOW()::date - interval '6 months'";
-            if($filter['archive'] == 'f')
+            }
+            if ($filter['archive'] == 'f') {
                 $where[] = "ss.arch_closed_time >= NOW()::date - interval '6 months'";
+            }
         }
 
-        if($fv = pg_escape_string(trim($filter['contract_num']))) {
+        if ($fv = pg_escape_string(trim($filter['contract_num']))) {
             $where[] = "'СБР-'||ss.sbr_id||'-'||ss.num ILIKE '%{$fv}%'";
         }
-        if($fv = pg_escape_string(trim($filter['user'])))
+        if ($fv = pg_escape_string(trim($filter['user']))) {
             $where[] = "(u.login ILIKE '%{$fv}%' OR u.uname ILIKE '%{$fv}%' OR u.usurname ILIKE '%{$fv}%')";
-        if($fv = pg_escape_string(trim($filter['name'])))
-            $where[] = "ss.name ILIKE '%{$fv}%'";
-        if($fv = round((float)str_replace(array(' ', ','), array('', '.'), $filter['act_sum']),2)) 
-            $where[] = "round(su.act_lcomm+su.act_lintr, 2) = {$fv}";
-        if($fv = (int)$filter['act_sys'])
-            $where[] = "ss.act_sys = {$fv}";
-        if($fv = $filter['has_docs'])
-            $where[] = "su.docs_received = '{$fv}'";
-        if($fv = $filter['has_act'])
-            $where[] = "((su.uploaded_docs & " . sbr::DOCS_TYPE_COPY_ACT . ") <> 0) = '{$fv}'";
-        if($fv = $filter['has_fct'])
-            $where[] = "((su.uploaded_docs & " . sbr::DOCS_TYPE_COPY_FACTURA . ") <> 0) = '{$fv}'";
-        if($fv = $filter['has_reqv'])
-            $where[] = "COALESCE(sr.is_filled[sr.form_type], false) = '{$fv}'";
-        if($fv = $filter['is_removed']) 
-            $where[] = "su.is_removed = '{$fv}'";
-        if($scheme == 0) {
-            $where[] = " ( ss.scheme_type <> " . sbr::SCHEME_LC . " ) "; // исключаем Аккредитив
         }
-        if($where)
-            $where = 'WHERE ' . implode(' AND ', $where);
+        if ($fv = pg_escape_string(trim($filter['name']))) {
+            $where[] = "ss.name ILIKE '%{$fv}%'";
+        }
+        if ($fv = round((float) str_replace(array(' ', ','), array('', '.'), $filter['act_sum']), 2)) {
+            $where[] = "round(su.act_lcomm+su.act_lintr, 2) = {$fv}";
+        }
+        if ($fv = (int) $filter['act_sys']) {
+            $where[] = "ss.act_sys = {$fv}";
+        }
+        if ($fv = $filter['has_docs']) {
+            $where[] = "su.docs_received = '{$fv}'";
+        }
+        if ($fv = $filter['has_act']) {
+            $where[] = '((su.uploaded_docs & '.sbr::DOCS_TYPE_COPY_ACT.") <> 0) = '{$fv}'";
+        }
+        if ($fv = $filter['has_fct']) {
+            $where[] = '((su.uploaded_docs & '.sbr::DOCS_TYPE_COPY_FACTURA.") <> 0) = '{$fv}'";
+        }
+        if ($fv = $filter['has_reqv']) {
+            $where[] = "COALESCE(sr.is_filled[sr.form_type], false) = '{$fv}'";
+        }
+        if ($fv = $filter['is_removed']) {
+            $where[] = "su.is_removed = '{$fv}'";
+        }
+        if ($scheme == 0) {
+            $where[] = ' ( ss.scheme_type <> '.sbr::SCHEME_LC.' ) '; // исключаем Аккредитив
+        }
+        if ($where) {
+            $where = 'WHERE '.implode(' AND ', $where);
+        }
 
-             
-        $leftPdrd = "WHERE sp.completed IS NOT NULL OR su.user_id IS NOT NULL";            
-        if($scheme == SBR::SCHEME_PDRD || $scheme == sbr::SCHEME_PDRD2) {
+        $leftPdrd = 'WHERE sp.completed IS NOT NULL OR su.user_id IS NOT NULL';
+        if ($scheme == SBR::SCHEME_PDRD || $scheme == sbr::SCHEME_PDRD2) {
             $leftPdrd = "LEFT JOIN 
                  sbr_stages_users su1 
                    ON su1.stage_id = wss.id 
@@ -918,7 +1025,7 @@ class sbr_adm extends sbr
                   WHERE su1.user_id IS NOT NULL OR su.user_id IS NOT NULL
                   ";
         }
-            
+
         $from = "
             FROM (
               WITH w_sbr_stages AS (
@@ -1008,16 +1115,17 @@ class sbr_adm extends sbr
                 ORDER BY stage_id, publ_time DESC
           ) docs ON docs.stage_id = ss.id
             */
-        if($res = pg_query(self::connect(), $sql)) {
-            if($ret = pg_fetch_all($res)) {
-                $account = new account;
-                foreach($ret as &$row) {
-                    if($row['uploaded_docs']) {
+        if ($res = pg_query(self::connect(), $sql)) {
+            if ($ret = pg_fetch_all($res)) {
+                $account = new account();
+                foreach ($ret as &$row) {
+                    if ($row['uploaded_docs']) {
                         $access_role = is_emp($row['role']) ? self::DOCS_ACCESS_EMP : self::DOCS_ACCESS_FRL;
-                        if($docs = sbr_meta::getDocs("WHERE sd.stage_id = '{$row['id']}' AND (sd.access_role & {$access_role}) = {$access_role} AND sd.is_deleted = false", NULL, true)) {
+                        if ($docs = sbr_meta::getDocs("WHERE sd.stage_id = '{$row['id']}' AND (sd.access_role & {$access_role}) = {$access_role} AND sd.is_deleted = false", null, true)) {
                             $row['uploaded_docs_a'] = array();
-                            foreach($docs as $doc)
+                            foreach ($docs as $doc) {
                                 $row['uploaded_docs_a'][$doc['type']] = $doc;
+                            }
                         }
                     }
                     // это потом переделать
@@ -1026,8 +1134,9 @@ class sbr_adm extends sbr
                 }
                 $sql = "SELECT COUNT(1) as cnt {$from} {$where}";
                 $mem = new memBuff();
-                if($rows = $mem->getSql($err, $sql, 60))
+                if ($rows = $mem->getSql($err, $sql, 60)) {
                     $page_count = $rows[0]['cnt'];
+                }
             }
         }
 
@@ -1035,42 +1144,46 @@ class sbr_adm extends sbr
     }
 
     /**
-     * Строит фильтр для SQL запроса
+     * Строит фильтр для SQL запроса.
      *
-     * @param  array $dcol имя поля
-     * @param  array $filter фильтр по периоду
+     * @param array $dcol   имя поля
+     * @param array $filter фильтр по периоду
+     *
      * @return array
      */
-    function _buildFilterPeriod($dcol, $filter) {
-        if($filter['from']) {
+    public function _buildFilterPeriod($dcol, $filter)
+    {
+        if ($filter['from']) {
             $fv = date('Y-m-d', strtotime($filter['from']['day'].'.'.$filter['from']['month'].'.'.$filter['from']['year']));
             $where[] = "{$dcol} >= '{$fv}'::date";
         }
-        if($filter['to']) {
+        if ($filter['to']) {
             $fv = date('Y-m-d', strtotime($filter['to']['day'].'.'.$filter['to']['month'].'.'.$filter['to']['year']));
             $where[] = "{$dcol} < '{$fv}'::date + 1";
         }
+
         return $where;
-
     }
-
 
     /**
      * Возвращает график для статистики СБР в админке.
      *
-     * @param array $filter   можно фильтровать по периоду.
-     * @return array   
+     * @param array $filter можно фильтровать по периоду.
+     *
+     * @return array
      */
-    function getStats($filter = NULL, $ignore_staff = FALSE) {
+    public function getStats($filter = null, $ignore_staff = false)
+    {
         $ret = array();
-        if($fltpa = $this->_buildFilterPeriod('s.date', $filter))
-            $where = 'WHERE ' . implode(' AND ', $fltpa);
-        
+        if ($fltpa = $this->_buildFilterPeriod('s.date', $filter)) {
+            $where = 'WHERE '.implode(' AND ', $fltpa);
+        }
+
         if ($ignore_staff) {
-            $where = $where ? $where . ' AND ' : ' WHERE ';
+            $where = $where ? $where.' AND ' : ' WHERE ';
             $where .= " NOT (s.date >= '2011-01-01' AND s.user_id IN (SELECT uid FROM users WHERE ignore_in_stats = TRUE))";
         }
-        
+
         $sql = "
           SELECT s.graph_type, s.sys, date_trunc('month', s.date) as month, SUM(s.sum) as sum, COUNT(*) as cnt
             FROM (
@@ -1143,36 +1256,39 @@ class sbr_adm extends sbr
                    AND su.user_id = s.emp_id
                  WHERE s.reserved_id IS NOT NULL
                    AND s.norisk_id IS NULL
-                   AND s.status = " . sbr::STATUS_COMPLETED . "
+                   AND s.status = ".sbr::STATUS_COMPLETED."
                  --GROUP BY s.id, s.cost_sys, s.reserved_time, s.emp_id
             ) as s
            {$where}
            GROUP BY s.graph_type, s.sys, month
            ORDER BY s.graph_type, s.sys, month
         ";
-           
+
         $fft = 0;
         $llt = 0;
-        if($res = pg_query(self::connect(), $sql)) {
+        if ($res = pg_query(self::connect(), $sql)) {
             $this->getExrates();
-            while($row = pg_fetch_assoc($res)) {
+            while ($row = pg_fetch_assoc($res)) {
                 $gt = $row['graph_type'];
                 $sys = $row['sys'];
-                if(!$ret[$gt]) {
+                if (!$ret[$gt]) {
                     $ret[$gt] = array(
-                      'graphs'=>array(),
-                      'total'=>array('cnt'=>0, 'fm_sum'=>0.00, 'fm_max'=>0.00)
+                      'graphs' => array(),
+                      'total' => array('cnt' => 0, 'fm_sum' => 0.00, 'fm_max' => 0.00),
                     );
                 }
                 $mt = strtotime($row['month']);
-                if($mt < $fft || !$fft) $fft = $mt;
-                if($mt > $llt) $llt = $mt;
-                if(!$ret[$gt]['graphs'][$sys]) {
+                if ($mt < $fft || !$fft) {
+                    $fft = $mt;
+                }
+                if ($mt > $llt) {
+                    $llt = $mt;
+                }
+                if (!$ret[$gt]['graphs'][$sys]) {
                     $ret[$gt]['graphs'][$sys] = array(
-                      'months'=>array(),
-                      'total'=>array('cnt'=>0, 'sum'=>0.00, 'max'=>0.00, 'fdate'=>$mt, 'ldate'=>$mt)
+                      'months' => array(),
+                      'total' => array('cnt' => 0, 'sum' => 0.00, 'max' => 0.00, 'fdate' => $mt, 'ldate' => $mt),
                     );
-
                 }
                 $ret[$gt]['total']['cnt'] += $row['cnt'];
                 if ($sys != 1 || ($sys == 1 && $gt >= 4)) {
@@ -1184,17 +1300,17 @@ class sbr_adm extends sbr
                 $ret[$gt]['graphs'][$sys]['total']['sum'] += $row['sum'];
                 $ret[$gt]['graphs'][$sys]['total']['ldate'] = $mt;
 
-                if($row['sum'] > $ret[$gt]['graphs'][$sys]['total']['max']) // !!! убрать.
+                if ($row['sum'] > $ret[$gt]['graphs'][$sys]['total']['max']) { // !!! убрать.
                     $ret[$gt]['graphs'][$sys]['total']['max'] = $row['sum'];
-                if($row['fm_sum'] > $ret[$gt]['total']['fm_max'])
+                }
+                if ($row['fm_sum'] > $ret[$gt]['total']['fm_max']) {
                     $ret[$gt]['total']['fm_max'] = $row['fm_sum'];
+                }
                 $ret[$gt]['graphs'][$sys]['months'][date('Y', $mt)][date('n', $mt)] = $row;
-
             }
 
-
-            foreach($ret as &$st) {
-                foreach($st['graphs'] as &$graph) {
+            foreach ($ret as &$st) {
+                foreach ($st['graphs'] as &$graph) {
                     // если начало и конец можно задать индивидуально.
                     $ft = $graph['total']['fdate'];
                     $lt = $graph['total']['ldate'];
@@ -1205,45 +1321,48 @@ class sbr_adm extends sbr
                     $mmy = array();
                     $y = date('Y', $ft);
                     $m = date('n', $ft);
-                    while(strtotime("01-{$m}-{$y}") <= $lt) {
-                        if(!isset($graph['months'][$y][$m])) {
-                            $graph['months'][$y][$m] = array('cnt'=>0, 'sum'=>0.00);
-                            if(!$mmy[$y])
+                    while (strtotime("01-{$m}-{$y}") <= $lt) {
+                        if (!isset($graph['months'][$y][$m])) {
+                            $graph['months'][$y][$m] = array('cnt' => 0, 'sum' => 0.00);
+                            if (!$mmy[$y]) {
                                 $mmy[$y] = &$graph['months'][$y];
+                            }
                         }
-                        if($m == 12) {
+                        if ($m == 12) {
                             $m = 0;
-                            $y++;
+                            ++$y;
                         }
-                        $m++;
+                        ++$m;
                     }
                     ksort($graph['months']);
-                    foreach($mmy as $y=>$m)
+                    foreach ($mmy as $y => $m) {
                         ksort($mmy[$y]);
+                    }
                 }
-                
             }
-
         }
+
         return $ret;
     }
 
     /**
      * Возвращает график для статистики СБР в админке.
      *
-     * @param array $filter   можно фильтровать по периоду.
-     * @return array   
+     * @param array $filter можно фильтровать по периоду.
+     *
+     * @return array
      */
-    function getStatsByDay($filter = NULL, $ignore_staff = false, $trunc = 'day') {
+    public function getStatsByDay($filter = null, $ignore_staff = false, $trunc = 'day')
+    {
         $ret = array();
-        if($fltpa = $this->_buildFilterPeriod('s.date', $filter))
-            $where = 'WHERE ' . implode(' AND ', $fltpa);
-        if ($ignore_staff) { 
-            $where = $where ? $where . ' AND ' : ' WHERE '; 
-            $where .= " NOT (s.date >= '2011-01-01' AND s.user_id IN (SELECT uid FROM users WHERE ignore_in_stats = TRUE))"; 
-        } 
-            
-            
+        if ($fltpa = $this->_buildFilterPeriod('s.date', $filter)) {
+            $where = 'WHERE '.implode(' AND ', $fltpa);
+        }
+        if ($ignore_staff) {
+            $where = $where ? $where.' AND ' : ' WHERE ';
+            $where .= " NOT (s.date >= '2011-01-01' AND s.user_id IN (SELECT uid FROM users WHERE ignore_in_stats = TRUE))";
+        }
+
         $sql = "
           SELECT s.graph_type, s.sys, date_trunc('{$trunc}', s.date) as day, SUM(s.sum) as sum, COUNT(*) as cnt
             FROM (
@@ -1288,7 +1407,7 @@ class sbr_adm extends sbr
                    AND su.user_id = s.emp_id
                  WHERE s.reserved_id IS NOT NULL
 
-                   AND s.status = " . sbr::STATUS_COMPLETED . "
+                   AND s.status = ".sbr::STATUS_COMPLETED."
                    AND s.norisk_id IS NULL
             ) as s
            {$where}
@@ -1296,30 +1415,32 @@ class sbr_adm extends sbr
            ORDER BY s.graph_type, s.sys, day
 
         ";
-           
+
         $fft = 0;
         $llt = 0;
-        if($res = pg_query(self::connect(), $sql)) {
+        if ($res = pg_query(self::connect(), $sql)) {
             $this->getExrates();
-            while($row = pg_fetch_assoc($res)) {
+            while ($row = pg_fetch_assoc($res)) {
                 $gt = $row['graph_type'];
                 $sys = $row['sys'];
-                if(!$ret[$gt]) {
+                if (!$ret[$gt]) {
                     $ret[$gt] = array(
-                      'graphs'=>array(),
-                      'total'=>array('cnt'=>0, 'fm_sum'=>0.00, 'fm_max'=>0.00)
+                      'graphs' => array(),
+                      'total' => array('cnt' => 0, 'fm_sum' => 0.00, 'fm_max' => 0.00),
                     );
                 }
                 $mt = strtotime($row['day']);
-                if($mt < $fft || !$fft) $fft = $mt;
-                if($mt > $llt) $llt = $mt;
-                if(!$ret[$gt]['graphs'][$sys]) {
-
+                if ($mt < $fft || !$fft) {
+                    $fft = $mt;
+                }
+                if ($mt > $llt) {
+                    $llt = $mt;
+                }
+                if (!$ret[$gt]['graphs'][$sys]) {
                     $ret[$gt]['graphs'][$sys] = array(
-                      'days'=>array(),
-                      'total'=>array('cnt'=>0, 'sum'=>0.00, 'max'=>0.00, 'fdate'=>$mt, 'ldate'=>$mt)
+                      'days' => array(),
+                      'total' => array('cnt' => 0, 'sum' => 0.00, 'max' => 0.00, 'fdate' => $mt, 'ldate' => $mt),
                     );
-
                 }
                 $ret[$gt]['total']['cnt'] += $row['cnt'];
                 $row['fm_sum'] = $row['sum'] * $this->exrates[exrates::BANK.exrates::FM];
@@ -1328,59 +1449,61 @@ class sbr_adm extends sbr
                 $ret[$gt]['graphs'][$sys]['total']['cnt'] += $row['cnt'];
                 $ret[$gt]['graphs'][$sys]['total']['sum'] += $row['sum'];
                 $ret[$gt]['graphs'][$sys]['total']['ldate'] = $mt;
-                if($row['sum'] > $ret[$gt]['graphs'][$sys]['total']['max']) // !!! убрать.
+                if ($row['sum'] > $ret[$gt]['graphs'][$sys]['total']['max']) { // !!! убрать.
                     $ret[$gt]['graphs'][$sys]['total']['max'] = $row['sum'];
-                if($row['fm_sum'] > $ret[$gt]['total']['fm_max'])
+                }
+                if ($row['fm_sum'] > $ret[$gt]['total']['fm_max']) {
                     $ret[$gt]['total']['fm_max'] = $row['fm_sum'];
-                if ( $trunc == 'year' ) {
+                }
+                if ($trunc == 'year') {
                     $ret[$gt]['graphs'][$sys]['days'][date('Y', $mt)] = $row;
-                } else if ( $trunc == 'month' ) {
+                } elseif ($trunc == 'month') {
                     $ret[$gt]['graphs'][$sys]['days'][date('Y', $mt)][date('n', $mt)] = $row;
                 } else {
                     $ret[$gt]['graphs'][$sys]['days'][date('Y', $mt)][date('n', $mt)][date('j', $mt)] = $row;
                 }
             }
 
-            foreach($ret as &$st) {
-                foreach($st['graphs'] as &$graph) {
+            foreach ($ret as &$st) {
+                foreach ($st['graphs'] as &$graph) {
                     $ft = mktime(0, 0, 0, $filter['from']['month'], $filter['from']['day'], $filter['from']['year']);
                     $lt = mktime(0, 0, 0, $filter['to']['month'], $filter['to']['day'], $filter['to']['year']);
                     $c = $ft;
-                    
-                    while ( $c <= $lt ) {
+
+                    while ($c <= $lt) {
                         $y = date('Y', $c);
                         $m = date('n', $c);
                         $d = date('j', $c);
-                        switch ( $trunc ) {
+                        switch ($trunc) {
                             case 'day': {
-                                if( !isset($graph['days'][$y][$m][$d]) ) {
-                                    $graph['days'][$y][$m][$d] = array('cnt'=>0, 'sum'=>0.00, 'day'=>date('Y-m-d H:i:s', $c));
+                                if (!isset($graph['days'][$y][$m][$d])) {
+                                    $graph['days'][$y][$m][$d] = array('cnt' => 0, 'sum' => 0.00, 'day' => date('Y-m-d H:i:s', $c));
                                 }
                                 $c = mktime(0, 0, 0, $m, $d + 1, $y);
                                 break;
                             }
                             case 'month': {
-                                if( !isset($graph['days'][$y][$m]) ) {
-                                    $graph['days'][$y][$m] = array('cnt'=>0, 'sum'=>0.00, 'day'=>date('Y-m-d H:i:s', $c));
+                                if (!isset($graph['days'][$y][$m])) {
+                                    $graph['days'][$y][$m] = array('cnt' => 0, 'sum' => 0.00, 'day' => date('Y-m-d H:i:s', $c));
                                 }
                                 $c = mktime(0, 0, 0, $m + 1, $d, $y);
                                 break;
                             }
                             case 'year': {
-                                if( !isset($graph['days'][$y]) ) {
-                                    $graph['days'][$y] = array('cnt'=>0, 'sum'=>0.00, 'day'=>date('Y-m-d H:i:s', $c));
+                                if (!isset($graph['days'][$y])) {
+                                    $graph['days'][$y] = array('cnt' => 0, 'sum' => 0.00, 'day' => date('Y-m-d H:i:s', $c));
                                 }
                                 $c = mktime(0, 0, 0, $m, $d, $y + 1);
                                 break;
                             }
                         }
                     }
-                    
+
                     ksort($graph['days']);
-                    if ( $trunc == 'month' || $trunc == 'day' ) {
-                        foreach ( $graph['days'] as $year => $months ) {
-                            if ( $trunc == 'day' ) {
-                                foreach ( $graph['days'][$year] as $month => $days ) {
+                    if ($trunc == 'month' || $trunc == 'day') {
+                        foreach ($graph['days'] as $year => $months) {
+                            if ($trunc == 'day') {
+                                foreach ($graph['days'][$year] as $month => $days) {
                                     ksort($graph['days'][$year][$month]);
                                 }
                             }
@@ -1389,30 +1512,33 @@ class sbr_adm extends sbr
                     }
                 }
             }
-
         }
+
         return $ret;
     }
 
     /**
      * Возвращает отчеты по приходам СБР за указанный период.
-     * @param array $filter   фильтр по дате и валюте резервирования.
+     *
+     * @param array $filter фильтр по дате и валюте резервирования.
      */
-    function getReports($filter = NULL) {
+    public function getReports($filter = null)
+    {
         $ret = array();
-        $where = 'WHERE ao.op_code = ' . sbr::OP_RESERVE;
-        if($fltpa = $this->_buildFilterPeriod('ao.op_date', $filter))
-            $where .= ' AND ' . implode(' AND ', $fltpa);
+        $where = 'WHERE ao.op_code = '.sbr::OP_RESERVE;
+        if ($fltpa = $this->_buildFilterPeriod('ao.op_date', $filter)) {
+            $where .= ' AND '.implode(' AND ', $fltpa);
+        }
 
-        if($filter['cost_sys']) {
+        if ($filter['cost_sys']) {
             $fv = implode(',', $filter['cost_sys']);
             $where .= " AND s.cost_sys IN ({$fv})";
-            if(in_array(exrates::WMR, $filter['cost_sys'])) {
+            if (in_array(exrates::WMR, $filter['cost_sys'])) {
                 require_once $_SERVER['DOCUMENT_ROOT'].'/classes/wmpay.php';
                 require_once $_SERVER['DOCUMENT_ROOT'].'/classes/pmpay.php';
                 $wmpay = new wmpay();
                 $pmpay = new pmpay();
-                $where .= " AND (s.cost_sys <> ".exrates::WMR." OR ao.descr ILIKE '%на кошелек {$wmpay->wmzr[2]}%'OR ao.descr ILIKE '%на кошелек {$pmpay->merchants[1]}%')"; // только белый WMR
+                $where .= ' AND (s.cost_sys <> '.exrates::WMR." OR ao.descr ILIKE '%на кошелек {$wmpay->wmzr[2]}%'OR ao.descr ILIKE '%на кошелек {$pmpay->merchants[1]}%')"; // только белый WMR
             }
         }
 
@@ -1440,7 +1566,7 @@ class sbr_adm extends sbr
                    ao.op_date as date,
                    replace(substring(ao.descr from E'с кошелька R\\\\d+'),'с кошелька ','') as wmpurse,
                    replace(substring(ao.descr from E'с кошелька \\\\d+'),'с кошелька ','') as ympurse,
-                   replace(CASE WHEN sr.form_type = 1 OR s.cost_sys = " . exrates::YM . " THEN sr._1_fio ELSE COALESCE(sr._2_full_name,sr._2_org_name) END, '&quot;', '\"') as emp_name,
+                   replace(CASE WHEN sr.form_type = 1 OR s.cost_sys = ".exrates::YM." THEN sr._1_fio ELSE COALESCE(sr._2_full_name,sr._2_org_name) END, '&quot;', '\"') as emp_name,
                    replace(CASE WHEN sf.form_type = 1 THEN sf._1_fio ELSE COALESCE(sf._2_full_name,sf._2_org_name) END, '&quot;', '\"') as frl_name
               FROM account_operations ao
             INNER JOIN
@@ -1457,165 +1583,180 @@ class sbr_adm extends sbr
              ORDER BY s.cost_sys, ao.op_date
         ";
 
-        if($res = pg_query(self::connect(), $sql)) {
-            while($row = pg_fetch_assoc($res)) {
+        if ($res = pg_query(self::connect(), $sql)) {
+            while ($row = pg_fetch_assoc($res)) {
                 $row['contract_num'] = $this->getContractNum($row['id'], $row['scheme_type']);
                 $row['date'] = date('d.m.Y H:s', strtotime($row['date']));
                 $ret[$row['cost_sys']][] = $row;
             }
         }
+
         return $ret;
     }
 
     /**
-     * Формирует строки периода времени
+     * Формирует строки периода времени.
      *
-     * @param  array $filter фильтр по дате и валюте резервирования.
+     * @param array $filter фильтр по дате и валюте резервирования.
+     *
      * @return array
      */
-    function _createPeriodStr($filter) {
+    public function _createPeriodStr($filter)
+    {
         $period = array();
-        if($filter['to']) 
+        if ($filter['to']) {
             $to_time = strtotime($filter['to']['day'].'.'.$filter['to']['month'].'.'.$filter['to']['year']);
-        if($filter['from'])
-            $from_time = strtotime($filter['from']['day'].'.'.$filter['from']['month'].'.'.$filter['from']['year']);
-        $period[0] = 'Период'.($from_time ? ' с '.date('d.m.Y', $from_time) : '').' по '.date('d.m.Y', $to_time);
-        if($filter['from']['month'] == $filter['to']['month']
-           && $filter['from']['year'] == $filter['to']['year']
-           && $filter['from']['day']==1 && $filter['to']['day']==date('t', $from_time))
-        {
-            $period[1] = $filter['to']['day'].' '.$GLOBALS['MONTHA'][$filter['to']['month']].' '.$filter['to']['year'] .' года';
         }
+        if ($filter['from']) {
+            $from_time = strtotime($filter['from']['day'].'.'.$filter['from']['month'].'.'.$filter['from']['year']);
+        }
+        $period[0] = 'Период'.($from_time ? ' с '.date('d.m.Y', $from_time) : '').' по '.date('d.m.Y', $to_time);
+        if ($filter['from']['month'] == $filter['to']['month']
+           && $filter['from']['year'] == $filter['to']['year']
+           && $filter['from']['day'] == 1 && $filter['to']['day'] == date('t', $from_time)) {
+            $period[1] = $filter['to']['day'].' '.$GLOBALS['MONTHA'][$filter['to']['month']].' '.$filter['to']['year'].' года';
+        }
+
         return $period;
     }
 
     /**
      * Формирует .xls отчеты по приходам СБР за указанный период.
-     * @param array $filter   фильтр по дате и валюте резервирования.
+     *
+     * @param array $filter фильтр по дате и валюте резервирования.
      */
-    function printReports($filter = NULL) {
-        if(!$filter['to'])
-            $filter['to'] = array('day'=>date('d'), 'month'=>date('n'), 'year'=>date('Y'));
-        if(!($reps = $this->getReports($filter)))
+    public function printReports($filter = null)
+    {
+        if (!$filter['to']) {
+            $filter['to'] = array('day' => date('d'), 'month' => date('n'), 'year' => date('Y'));
+        }
+        if (!($reps = $this->getReports($filter))) {
             return false;
+        }
 
         $period = $this->_createPeriodStr($filter);
 
-        $ROW_NAME     = 1;
-        $ROW_NOTE     = 2;
-        $ROW_PERIOD   = 5;
+        $ROW_NAME = 1;
+        $ROW_NOTE = 2;
+        $ROW_PERIOD = 5;
         $ROW_TBL_HEAD = 7;
-        $ROW_TBL_FST  = 8;
+        $ROW_TBL_FST = 8;
 
         require_once 'Spreadsheet/Excel/Writer.php';
         $workbook = new Spreadsheet_Excel_Writer();
         $workbook->send('СБР_'.str_replace('.', '_', $period[0]).'.xls');
         $main_sty = array(
-          'FontFamily'=>'Calibri Bold',
-          'VAlign'=>'top',
-          'Align'=>'center',
-          'NumFormat'=>'#'
+          'FontFamily' => 'Calibri Bold',
+          'VAlign' => 'top',
+          'Align' => 'center',
+          'NumFormat' => '#',
         );
 
-        $smpl_sty = $main_sty + array('Size'=>11);
-        $l_sty = array('Align'=>'left', 'NumFormat'=>'#');
-        $r_sty = array('Align'=>'right', 'NumFormat'=>'### ### ##0.00');
-        $fld_sty = $smpl_sty + array('Border'=>1, 'BorderColor'=>'black');
-        $fmtH = &$workbook->addFormat($main_sty + array('Size'=>12));
+        $smpl_sty = $main_sty + array('Size' => 11);
+        $l_sty = array('Align' => 'left', 'NumFormat' => '#');
+        $r_sty = array('Align' => 'right', 'NumFormat' => '### ### ##0.00');
+        $fld_sty = $smpl_sty + array('Border' => 1, 'BorderColor' => 'black');
+        $fmtH = &$workbook->addFormat($main_sty + array('Size' => 12));
         $fmtS = &$workbook->addFormat($smpl_sty);
         $fmtSR = &$workbook->addFormat($r_sty + $smpl_sty);
         $fmtSL = &$workbook->addFormat($l_sty + $smpl_sty);
         $fmtFld = &$workbook->addFormat($fld_sty);
         $fmtFldL = &$workbook->addFormat($l_sty + $fld_sty);
         $fmtFldR = &$workbook->addFormat($r_sty + $fld_sty);
-        $fmtU = &$workbook->addFormat($smpl_sty + array('Bottom'=>1, 'BottomColor'=>'black'));
+        $fmtU = &$workbook->addFormat($smpl_sty + array('Bottom' => 1, 'BottomColor' => 'black'));
 
-        foreach($reps as $sys=>$rep) {
-            if(!($rpss = self::$reports_ss[$sys])) continue;
+        foreach ($reps as $sys => $rep) {
+            if (!($rpss = self::$reports_ss[$sys])) {
+                continue;
+            }
             $col_cnt = count($rpss['columns']);
-            
+
             $worksheet = $workbook->addWorksheet($GLOBALS['EXRATE_CODES'][$sys][3]);
             $worksheet->setInputEncoding('windows-1251');
 
             // Заголовок
-            if($sys == exrates::YM){
-                $from_time =  mktime (0,0,0,(int)$filter['from']['month'],(int)$filter['from']['day'], (int)$filter['from']['year']);
+            if ($sys == exrates::YM) {
+                $from_time = mktime(0, 0, 0, (int) $filter['from']['month'], (int) $filter['from']['day'], (int) $filter['from']['year']);
                 //$to_time = mktime (59,59,59,(int)$filter['to']['month'],(int)$filter['to']['day'], (int)$filter['to']['year']);
-                $event_time = mktime(0,0,0,5,1,2011);
-                if($from_time >= $event_time){
-                    $rpss['name'] = strtr($rpss['name'],array('11111.01 от 03/05/2007' => '11111.04 от 9 марта 2011 г.'));
+                $event_time = mktime(0, 0, 0, 5, 1, 2011);
+                if ($from_time >= $event_time) {
+                    $rpss['name'] = strtr($rpss['name'], array('11111.01 от 03/05/2007' => '11111.04 от 9 марта 2011 г.'));
                 }
             }
             $worksheet->write($ROW_NAME, 0, $rpss['name'], $fmtH);
             $worksheet->setRow($ROW_NAME, 30);
-            $worksheet->mergeCells($ROW_NAME, 0, $ROW_NAME, $col_cnt-1);
-            
+            $worksheet->mergeCells($ROW_NAME, 0, $ROW_NAME, $col_cnt - 1);
+
             // Примечание.
-            if($rpss['note']) {
+            if ($rpss['note']) {
                 $worksheet->write($ROW_NOTE, 0, $rpss['note'], $fmtS);
                 $worksheet->setRow($ROW_NOTE, 20);
-                $worksheet->mergeCells($ROW_NOTE, 0, $ROW_NOTE, $col_cnt-1);
+                $worksheet->mergeCells($ROW_NOTE, 0, $ROW_NOTE, $col_cnt - 1);
             }
 
             // Период.
-            if($period[0])
+            if ($period[0]) {
                 $worksheet->write($ROW_PERIOD, 1, $period[0], $fmtS);
-            if($period[1])
-                $worksheet->write($ROW_PERIOD, $col_cnt-1, $period[1], $fmtS);
+            }
+            if ($period[1]) {
+                $worksheet->write($ROW_PERIOD, $col_cnt - 1, $period[1], $fmtS);
+            }
 
             // Шапка таблицы.
-            $i=0;
-            foreach($rpss['columns'] as $f=>$col) {
+            $i = 0;
+            foreach ($rpss['columns'] as $f => $col) {
                 $worksheet->setColumn($i, $i, $col[1][0]);
                 $worksheet->write($ROW_TBL_HEAD, $i, $col[0], $fmtFld);
-                if($f=='sum')
+                if ($f == 'sum') {
                     $sum_idx = $i;
-                if($f=='sum_deal')
-                	$sum_deal_idx = $i;
-                if($f=='sum_commision') 
-                	$sum_commision_idx = $i;	    
-                $i++;
+                }
+                if ($f == 'sum_deal') {
+                    $sum_deal_idx = $i;
+                }
+                if ($f == 'sum_commision') {
+                    $sum_commision_idx = $i;
+                }
+                ++$i;
             }
 
             // Таблица.
-            $i=$ROW_TBL_FST;
-            foreach($rep as $row) {
-                $j=0;
-                foreach($rpss['columns'] as $nm=>$col) {
-                    $worksheet->write($i, $j, htmlspecialchars_decode($row[$nm], ENT_QUOTES), $col[1][1]=='right' ? $fmtFldR : ($col[1][1]=='left' ? $fmtFldL : $fmtFld));
-                    $j++;
+            $i = $ROW_TBL_FST;
+            foreach ($rep as $row) {
+                $j = 0;
+                foreach ($rpss['columns'] as $nm => $col) {
+                    $worksheet->write($i, $j, htmlspecialchars_decode($row[$nm], ENT_QUOTES), $col[1][1] == 'right' ? $fmtFldR : ($col[1][1] == 'left' ? $fmtFldL : $fmtFld));
+                    ++$j;
                 }
-                $i++;
-
+                ++$i;
             }
-            
+
             // Дно таблицы (итого).
             $worksheet->write($i, 0, 'Итого с учетом НДС ', $fmtSR);
-            $worksheet->mergeCells($i, 0, $i, ($sys == exrates::YM || $sys == exrates::WMR || $sys == exrates::WMZ || $sys == exrates::BANK ?$sum_deal_idx-1:$sum_idx-1));
-            if($i>$ROW_TBL_FST) {
-            	if($sum_deal_idx) {
-	                $c1 = Spreadsheet_Excel_Writer::rowcolToCell($ROW_TBL_FST, $sum_deal_idx);
-	                $c2 = Spreadsheet_Excel_Writer::rowcolToCell($i-1, $sum_deal_idx);
-	                $worksheet->writeFormula($i, $sum_deal_idx, "=SUM({$c1}:{$c2})", $fmtSR);
+            $worksheet->mergeCells($i, 0, $i, ($sys == exrates::YM || $sys == exrates::WMR || $sys == exrates::WMZ || $sys == exrates::BANK ? $sum_deal_idx - 1 : $sum_idx - 1));
+            if ($i > $ROW_TBL_FST) {
+                if ($sum_deal_idx) {
+                    $c1 = Spreadsheet_Excel_Writer::rowcolToCell($ROW_TBL_FST, $sum_deal_idx);
+                    $c2 = Spreadsheet_Excel_Writer::rowcolToCell($i - 1, $sum_deal_idx);
+                    $worksheet->writeFormula($i, $sum_deal_idx, "=SUM({$c1}:{$c2})", $fmtSR);
                 }
-                
-                if($sum_commision_idx) {
-	                $c1 = Spreadsheet_Excel_Writer::rowcolToCell($ROW_TBL_FST, $sum_commision_idx);
-	                $c2 = Spreadsheet_Excel_Writer::rowcolToCell($i-1, $sum_commision_idx);
-	                $worksheet->writeFormula($i, $sum_commision_idx, "=SUM({$c1}:{$c2})", $fmtSR);
+
+                if ($sum_commision_idx) {
+                    $c1 = Spreadsheet_Excel_Writer::rowcolToCell($ROW_TBL_FST, $sum_commision_idx);
+                    $c2 = Spreadsheet_Excel_Writer::rowcolToCell($i - 1, $sum_commision_idx);
+                    $worksheet->writeFormula($i, $sum_commision_idx, "=SUM({$c1}:{$c2})", $fmtSR);
                 }
-                
+
                 $c1 = Spreadsheet_Excel_Writer::rowcolToCell($ROW_TBL_FST, $sum_idx);
-                $c2 = Spreadsheet_Excel_Writer::rowcolToCell($i-1, $sum_idx);
+                $c2 = Spreadsheet_Excel_Writer::rowcolToCell($i - 1, $sum_idx);
                 $worksheet->writeFormula($i, $sum_idx, "=SUM({$c1}:{$c2})", $fmtSR);
             }
 
             // Дно листа.
-            $i+=2;
+            $i += 2;
             $worksheet->write($i, 1,  '        Генеральный директор ООО "ВААН"', $fmtSL);
             $worksheet->write($i, 3,  '', $fmtU);
             $worksheet->write($i, 4,  'Тарханов В.О.', $fmtSL);
-            $i+=2;
+            $i += 2;
             $worksheet->write($i, 1,  '        Главный бухгалтер ООО "ВААН"', $fmtSL);
             $worksheet->write($i, 3,  '', $fmtU);
             $worksheet->write($i, 4,  'Яцук Е.Г.', $fmtSL);
@@ -1623,144 +1764,147 @@ class sbr_adm extends sbr
 
         $workbook->close();
     }
-    
+
     /**
      * Формирует отчет по арбитражу за определенный период.
      *
      * @param string $sStartDate дата начала периода
-     * @param string $sEndDate дата конца периода
+     * @param string $sEndDate   дата конца периода
      */
-    function printArbitrageReport( $sStartDate = null, $sEndDate = null ) {
+    public function printArbitrageReport($sStartDate = null, $sEndDate = null)
+    {
         global $EXRATE_CODES;
-        
+
         // имя итогового файла
-        $sWorkTitle  = 'Arbitrage report';
-        $sWorkTitle .= ( $sStartDate ) ? ' '.$sStartDate : '';
-        $sWorkTitle .= ( $sEndDate ) ? ' - '.$sEndDate : '';
+        $sWorkTitle = 'Arbitrage report';
+        $sWorkTitle .= ($sStartDate) ? ' '.$sStartDate : '';
+        $sWorkTitle .= ($sEndDate) ? ' - '.$sEndDate : '';
         $sWorkTitle .= '.xls';
-        
+
         // выбираем все этапы которые закрыты арбитражом
         global $DB;
-        $sQuery  = 'SELECT ss.id, sd.num FROM sbr_stages ss 
+        $sQuery = 'SELECT ss.id, sd.num FROM sbr_stages ss 
             LEFT JOIN sbr_docs sd ON ss.sbr_id = sd.sbr_id AND sd.type = 8 
-            WHERE ss.status = ' . sbr_stages::STATUS_ARBITRAGED;
-        $sQuery .= ( $sStartDate ) ? " AND ss.closed_time >= '$sStartDate'" : '';
-        $sQuery .= ( $sEndDate ) ? " AND ss.closed_time <= '$sEndDate'" : '';
-        $aRows   = $DB->rows( $sQuery. ' ORDER BY ss.closed_time' );
-        
+            WHERE ss.status = '.sbr_stages::STATUS_ARBITRAGED;
+        $sQuery .= ($sStartDate) ? " AND ss.closed_time >= '$sStartDate'" : '';
+        $sQuery .= ($sEndDate) ? " AND ss.closed_time <= '$sEndDate'" : '';
+        $aRows = $DB->rows($sQuery.' ORDER BY ss.closed_time');
+
         // подключаем pear
-        require_once( 'Spreadsheet/Excel/Writer.php' );
-        
+        require_once 'Spreadsheet/Excel/Writer.php';
+
         // создаем документ
         $workbook = new Spreadsheet_Excel_Writer();
-        $workbook->setVersion( 8 );
-        
-        // создаем лист
-        $worksheet =& $workbook->addWorksheet( '1' );
-        $worksheet->setInputEncoding( 'CP1251' );
-        
-        // заголовок листа
-        $worksheet->write( 0, 0, 'ООО "Ваан"' );
-        $worksheet->write( 2, 1, 'Таблица по актам арбитража' );
-        
-        $m_sty    = array('NumFormat' => '### ### ##0.00', 'Align'=>'right' );
-        $d_sty    = array('NumFormat' => 'DD MMM, YYYY HH:MM:SS' );
-        $td_sty = array('FontFamily'=>'Calibri', 'VAlign'=>'vequal_space', 'Align'=>'center', 'Border'=>1, 'BorderColor'=>'black');
-        $th_sty = array('FontFamily'=>'Arial', 'Size'=>10, 'Align'=>'center', 'Border'=>1, 'BorderColor'=>'black', 'Bold'=>1);
-        
-        $format_top   =& $workbook->addFormat( $th_sty );
-        $format_td    =& $workbook->addFormat( $td_sty );
-        $format_money =& $workbook->addFormat( array_merge($td_sty, $m_sty) );
-        $format_date  =& $workbook->addFormat( array_merge($td_sty, $d_sty) );
-        
-        $format_top->setTextWrap( 1 );
-        
-        $aHeader = array('№ п/п', 'Номер акта', 'Дата', 'Номер «Безопасной Сделки»', "Наименование Работодателя", 'Наименование Исполнителя', 'Сумма к выплате Работодателю, руб.коп.', 'Сумма к выплате Исполнителю, руб.коп.', 'Способ выплаты' );
-        
-        for ( $i = 0; $i<count($aHeader); $i++ ) {
-            $worksheet->write( 3, $i, $aHeader[$i], $format_top );
-        }
-        
-        // данные
-        if ( $aRows ) {
+        $workbook->setVersion(8);
 
+        // создаем лист
+        $worksheet = &$workbook->addWorksheet('1');
+        $worksheet->setInputEncoding('CP1251');
+
+        // заголовок листа
+        $worksheet->write(0, 0, 'ООО "Ваан"');
+        $worksheet->write(2, 1, 'Таблица по актам арбитража');
+
+        $m_sty = array('NumFormat' => '### ### ##0.00', 'Align' => 'right');
+        $d_sty = array('NumFormat' => 'DD MMM, YYYY HH:MM:SS');
+        $td_sty = array('FontFamily' => 'Calibri', 'VAlign' => 'vequal_space', 'Align' => 'center', 'Border' => 1, 'BorderColor' => 'black');
+        $th_sty = array('FontFamily' => 'Arial', 'Size' => 10, 'Align' => 'center', 'Border' => 1, 'BorderColor' => 'black', 'Bold' => 1);
+
+        $format_top = &$workbook->addFormat($th_sty);
+        $format_td = &$workbook->addFormat($td_sty);
+        $format_money = &$workbook->addFormat(array_merge($td_sty, $m_sty));
+        $format_date = &$workbook->addFormat(array_merge($td_sty, $d_sty));
+
+        $format_top->setTextWrap(1);
+
+        $aHeader = array('№ п/п', 'Номер акта', 'Дата', 'Номер «Безопасной Сделки»', 'Наименование Работодателя', 'Наименование Исполнителя', 'Сумма к выплате Работодателю, руб.коп.', 'Сумма к выплате Исполнителю, руб.коп.', 'Способ выплаты');
+
+        for ($i = 0; $i < count($aHeader); ++$i) {
+            $worksheet->write(3, $i, $aHeader[$i], $format_top);
+        }
+
+        // данные
+        if ($aRows) {
             $nCnt = 1;
             $aRates = exrates::GetAll();
-            
-        	foreach ($aRows as $aOne) {
-        	    $sbr   = sbr_meta::getInstance( sbr_meta::ADMIN_ACCESS );
-        		$stage = $sbr->initFromStage( $aOne['id'], false );
-        		$stage->getArbitrage( true );
-        		
-        		// № п/п
-        		$worksheet->write( $nCnt+3, 0, $nCnt, $format_td );
-        		
-        		// Номер акта
-        		$worksheet->write( $nCnt+3, 1, $aOne['num'], $format_td );
-        		
-        		// Дата
-        		$sDate = date('Y-m-d H:i:s', strtotime($stage->arbitrage['resolved']));
-        		$worksheet->write( $nCnt+3, 2, $sDate, $format_date );
-        		
-        		// Номер СБР
-        		$worksheet->write( $nCnt+3, 3, $stage->sbr->getContractNum(), $format_td );
-        		
-        		// Наименование Работодателя
+
+            foreach ($aRows as $aOne) {
+                $sbr = sbr_meta::getInstance(sbr_meta::ADMIN_ACCESS);
+                $stage = $sbr->initFromStage($aOne['id'], false);
+                $stage->getArbitrage(true);
+
+                // № п/п
+                $worksheet->write($nCnt + 3, 0, $nCnt, $format_td);
+
+                // Номер акта
+                $worksheet->write($nCnt + 3, 1, $aOne['num'], $format_td);
+
+                // Дата
+                $sDate = date('Y-m-d H:i:s', strtotime($stage->arbitrage['resolved']));
+                $worksheet->write($nCnt + 3, 2, $sDate, $format_date);
+
+                // Номер СБР
+                $worksheet->write($nCnt + 3, 3, $stage->sbr->getContractNum(), $format_td);
+
+                // Наименование Работодателя
                 $stage->sbr->getEmpReqvs();
-        		$sEmpFio = sbr_meta::getFioFromReqvs( $stage->sbr->emp_reqvs );
-        		
-        		if ( !$sEmpFio ) {
-        			$emp = new employer();
-        			$emp->GetUserByUID( $stage->sbr->emp_id );
-        			$sEmpFio = $emp->uname.' '.$emp->usurname.' ['.$emp->login.']';
-        		}
-        		
-        		$worksheet->write( $nCnt+3, 4, $sEmpFio, $format_td );
-        		
-        		// Наименование Исполнителя
-        		$stage->sbr->getFrlReqvs();
-                $sFrlFio = sbr_meta::getFioFromReqvs( $stage->sbr->frl_reqvs );
-                
-                if ( !$sFrlFio ) {
-        			$frl = new freelancer();
-        			$frl->GetUserByUID( $stage->sbr->frl_id );
-        			$sFrlFio = $frl->uname.' '.$frl->usurname.' ['.$frl->login.']';
-        		}
-                
-                $worksheet->write( $nCnt+3, 5, $sFrlFio, $format_td );
-                
+                $sEmpFio = sbr_meta::getFioFromReqvs($stage->sbr->emp_reqvs);
+
+                if (!$sEmpFio) {
+                    $emp = new employer();
+                    $emp->GetUserByUID($stage->sbr->emp_id);
+                    $sEmpFio = $emp->uname.' '.$emp->usurname.' ['.$emp->login.']';
+                }
+
+                $worksheet->write($nCnt + 3, 4, $sEmpFio, $format_td);
+
+                // Наименование Исполнителя
+                $stage->sbr->getFrlReqvs();
+                $sFrlFio = sbr_meta::getFioFromReqvs($stage->sbr->frl_reqvs);
+
+                if (!$sFrlFio) {
+                    $frl = new freelancer();
+                    $frl->GetUserByUID($stage->sbr->frl_id);
+                    $sFrlFio = $frl->uname.' '.$frl->usurname.' ['.$frl->login.']';
+                }
+
+                $worksheet->write($nCnt + 3, 5, $sFrlFio, $format_td);
+
                 // Сумма к выплате Работодателю, руб.коп.
-                $nSumm  = $stage->getPayoutSum( sbr::EMP, exrates::BANK );
-                $worksheet->write( $nCnt+3, 6, $nSumm, $format_money );
-                
+                $nSumm = $stage->getPayoutSum(sbr::EMP, exrates::BANK);
+                $worksheet->write($nCnt + 3, 6, $nSumm, $format_money);
+
                 // Сумма к выплате Исполнителю, руб.коп.
-                $nSumm  = $stage->getPayoutSum( sbr::FRL, exrates::BANK );
-                $worksheet->write( $nCnt+3, 7, $nSumm, $format_money );
-                
+                $nSumm = $stage->getPayoutSum(sbr::FRL, exrates::BANK);
+                $worksheet->write($nCnt + 3, 7, $nSumm, $format_money);
+
                 // Способ выплаты
-                $worksheet->write( $nCnt+3, 8, $EXRATE_CODES[$stage->sbr->cost_sys][1], $format_td );
-        		
-        		$nCnt++;
-        	}
+                $worksheet->write($nCnt + 3, 8, $EXRATE_CODES[$stage->sbr->cost_sys][1], $format_td);
+
+                ++$nCnt;
+            }
         }
-        
+
         // отправляем на скачивание
-        $workbook->send( $sWorkTitle );
-        
+        $workbook->send($sWorkTitle);
+
         // закрываем документ
         $workbook->close();
     }
 
     /**
      * Выдает данные по НДФЛ в СБР за указанный период.
-     * @param array $filter   фильтр по дате.
+     *
+     * @param array $filter фильтр по дате.
      */
-    function getNdflReport($filter = NULL) {
+    public function getNdflReport($filter = null)
+    {
         $ret = array();
         $where = 'WHERE sp.completed IS NOT NULL';
-        if($fltpa = $this->_buildFilterPeriod('sp.completed', $filter))
-            $where .= ' AND ' . implode(' AND ', $fltpa);
-        
+        if ($fltpa = $this->_buildFilterPeriod('sp.completed', $filter)) {
+            $where .= ' AND '.implode(' AND ', $fltpa);
+        }
+
         $sql = "
           SELECT ss.sbr_id, s.scheme_type, s.scheme_id,
                  sp.credit_sum, sp.credit_sys, sp.completed,
@@ -1805,9 +1949,9 @@ class sbr_adm extends sbr
            ORDER BY sp.completed
         ";
 
-        if($res = pg_query(self::connect(), $sql)) {
-            $i=1;
-            while($row = pg_fetch_assoc($res)) {
+        if ($res = pg_query(self::connect(), $sql)) {
+            $i = 1;
+            while ($row = pg_fetch_assoc($res)) {
                 $exr = $row['credit_sys'] == exrates::FM ? $row['fm_rate'] : 1;
                 $row['num'] = $i;
                 $row['profit'] = round($exr * $row['credit_sum'] + $row['act_lndfl'], 2);
@@ -1818,24 +1962,29 @@ class sbr_adm extends sbr
                 $row['contract_num'] = $this->getContractNum($row['sbr_id'], $row['scheme_type']);
                 $row['idcard'] = $row['idcard_name'].' № '.$row['idcard'].' '.$row['idcard_from'].' '.$row['idcard_by'];
                 $row['birthday'] = date('d.m.Y', strtotime($row['birthday']));
-                $row['address'] = ($row['indx']?"{$row['indx']}, ":"")."{$row['country']}, {$row['city']}, {$row['address']}";
+                $row['address'] = ($row['indx'] ? "{$row['indx']}, " : '')."{$row['country']}, {$row['city']}, {$row['address']}";
                 $ret[] = $row;
-                $i++;
+                ++$i;
             }
         }
+
         return $ret;
     }
 
     /**
      * Формирует .xls отчет по НДФЛ в СБР за указанный период.
-     * @param array $filter   фильтр по дате.
+     *
+     * @param array $filter фильтр по дате.
      */
-    function printNdflReport($filter = NULL) {
-        if(!$filter['to'])
-            $filter['to'] = array('day'=>date('d'), 'month'=>date('n'), 'year'=>date('Y'));
-        
-        if(!($rep = $this->getNdflReport($filter)))
+    public function printNdflReport($filter = null)
+    {
+        if (!$filter['to']) {
+            $filter['to'] = array('day' => date('d'), 'month' => date('n'), 'year' => date('Y'));
+        }
+
+        if (!($rep = $this->getNdflReport($filter))) {
             return false;
+        }
 
         $period = $this->_createPeriodStr($filter);
         $rpss = self::$reports_ss['NDFL'];
@@ -1845,12 +1994,12 @@ class sbr_adm extends sbr
         require_once 'Spreadsheet/Excel/Writer.php';
         $workbook = new Spreadsheet_Excel_Writer();
         $workbook->send('СБР_НДФЛ_'.str_replace('.', '_', $period[0]).'.xls');
-        
-        $body_sty = array('FontFamily'=>'Arial', 'Size'=>10, 'Bold'=>1);
-        $td_sty = array('FontFamily'=>'Calibri', 'VAlign'=>'vequal_space', 'Align'=>'center', 'Size'=>11, 'Border'=>1, 'BorderColor'=>'black', 'NumFormat'=>'#');
-        $th_sty = array('FontFamily'=>'Arial', 'Size'=>10, 'Align'=>'center', 'Border'=>1, 'BorderColor'=>'black', 'Bold'=>1);
-        $l_sty = array('Align'=>'left');
-        $r_sty = array('Align'=>'right', 'NumFormat'=>'### ### ##0.00');
+
+        $body_sty = array('FontFamily' => 'Arial', 'Size' => 10, 'Bold' => 1);
+        $td_sty = array('FontFamily' => 'Calibri', 'VAlign' => 'vequal_space', 'Align' => 'center', 'Size' => 11, 'Border' => 1, 'BorderColor' => 'black', 'NumFormat' => '#');
+        $th_sty = array('FontFamily' => 'Arial', 'Size' => 10, 'Align' => 'center', 'Border' => 1, 'BorderColor' => 'black', 'Bold' => 1);
+        $l_sty = array('Align' => 'left');
+        $r_sty = array('Align' => 'right', 'NumFormat' => '### ### ##0.00');
 
         $fmtBODY = &$workbook->addFormat($body_sty);
         $fmtTD = &$workbook->addFormat($td_sty);
@@ -1862,47 +2011,49 @@ class sbr_adm extends sbr
         $worksheet = $workbook->addWorksheet('НДФЛ');
         $worksheet->setInputEncoding('windows-1251');
         $worksheet->setZoom(75);
-        $worksheet->setColumn(0,0, 2);
+        $worksheet->setColumn(0, 0, 2);
 
         // Заголовок
         $worksheet->write(0, $COL_START, $rpss['name'], $fmtBODY);
         $worksheet->mergeCells(0, $COL_START, 0, 6);
 
-
         // Шапка таблицы.
-        $i=$COL_START;
-        foreach($rpss['columns'] as $f=>$col) {
+        $i = $COL_START;
+        foreach ($rpss['columns'] as $f => $col) {
             $worksheet->setColumn($i, $i, $col[1][0]);
             $worksheet->write(2, $i, $col[0], $fmtTH);
-            $i++;
+            ++$i;
         }
-        
+
         // Таблица.
-        $i=3;
-        foreach($rep as $row) {
-            $j=$COL_START;
-            foreach($rpss['columns'] as $nm=>$col) {
-                $worksheet->write($i, $j, htmlspecialchars_decode($row[$nm],ENT_QUOTES), $col[1][1]=='right' ? $fmtTDR : ($col[1][1]=='left' ? $fmtTDL : $fmtTD));
-                $j++;
+        $i = 3;
+        foreach ($rep as $row) {
+            $j = $COL_START;
+            foreach ($rpss['columns'] as $nm => $col) {
+                $worksheet->write($i, $j, htmlspecialchars_decode($row[$nm], ENT_QUOTES), $col[1][1] == 'right' ? $fmtTDR : ($col[1][1] == 'left' ? $fmtTDL : $fmtTD));
+                ++$j;
             }
-            $i++;
+            ++$i;
         }
 
         $workbook->close();
     }
-    
+
     /**
      * Данные о деньгах работодателей по текущим незакрытым сделкам за указанный период.
      *
-     * @param array $filter   фильтр по дате.
+     * @param array $filter фильтр по дате.
+     *
      * @return array
      */
-    function getRevisionReport($filter) {
+    public function getRevisionReport($filter)
+    {
         $ret = array();
         $where = 'WHERE ss.closed_time IS NULL';
-        if($fltpa = $this->_buildFilterPeriod('s.reserved_time', $filter))
-            $where .= ' AND ' . implode(' AND ', $fltpa);
-        
+        if ($fltpa = $this->_buildFilterPeriod('s.reserved_time', $filter)) {
+            $where .= ' AND '.implode(' AND ', $fltpa);
+        }
+
         $sql = "SELECT ss.sbr_id, ss.id as stage_id, ss.cost, su.act_lcomm, s.scheme_id, s.scheme_type, sa.id as is_arb, sa.resolved, srh.form_type, ss.num+1 as stage_num,
                     COALESCE(COALESCE (bp.fio, srh._1_fio), sr._1_fio) as fio, s.cost_sys, 
 				    replace(
@@ -1933,42 +2084,51 @@ class sbr_adm extends sbr
                {$where}
                ORDER BY ss.sbr_id DESC";
 
-        if($res = pg_query(self::connect(), $sql)) {
-            $i=1;
-            while($row = pg_fetch_assoc($res)) {
+        if ($res = pg_query(self::connect(), $sql)) {
+            $i = 1;
+            while ($row = pg_fetch_assoc($res)) {
                 $exr = $row['credit_sys'] == exrates::FM ? $row['fm_rate'] : 1;
                 $row['num'] = $i;
                 $row['contract_num'] = $this->getContractNum($row['sbr_id'], $row['scheme_type'])."-({$row['stage_num']})";
-                if(trim($row['fio']) == "" || $row['form_type'] == 2) $row['fio'] = $row['emp_name'];
-                if(trim($row['fio']) == "" && ($row['cost_sys'] == exrates::YM || $row['cost_sys'] == exrates::WMR)) $row['fio'] = 'Физическое лицо';
-                if($row['tax'] > 0) {
-                    $row['sum_commision'] = $row['tax'];
-                    $row['sum_deal']      = $row['is_arb'] > 0 ? $row['cost'] : ($row['cost'] - $row['tax']);
-                } else if($row['scheme_type'] == sbr::SCHEME_PDRD2) {
-                    $row['sum_deal']      = $row['is_arb'] > 0 ? $row['cost'] : ($row['cost'] - ($row['cost'] * 0.03));
-                    $row['sum_commision'] = $row['is_arb'] > 0 ? "" : ($row['cost'] * 0.03);
-                } else {
-                    $row['sum_deal']      = $row['is_arb'] > 0 ? $row['cost'] : ($row['cost'] - ($row['cost'] * 0.05));
-                    $row['sum_commision'] = $row['is_arb'] > 0 ? "" : ($row['cost'] * 0.05);
+                if (trim($row['fio']) == '' || $row['form_type'] == 2) {
+                    $row['fio'] = $row['emp_name'];
                 }
-                $row['sum_dept']      = $row['cost'];
+                if (trim($row['fio']) == '' && ($row['cost_sys'] == exrates::YM || $row['cost_sys'] == exrates::WMR)) {
+                    $row['fio'] = 'Физическое лицо';
+                }
+                if ($row['tax'] > 0) {
+                    $row['sum_commision'] = $row['tax'];
+                    $row['sum_deal'] = $row['is_arb'] > 0 ? $row['cost'] : ($row['cost'] - $row['tax']);
+                } elseif ($row['scheme_type'] == sbr::SCHEME_PDRD2) {
+                    $row['sum_deal'] = $row['is_arb'] > 0 ? $row['cost'] : ($row['cost'] - ($row['cost'] * 0.03));
+                    $row['sum_commision'] = $row['is_arb'] > 0 ? '' : ($row['cost'] * 0.03);
+                } else {
+                    $row['sum_deal'] = $row['is_arb'] > 0 ? $row['cost'] : ($row['cost'] - ($row['cost'] * 0.05));
+                    $row['sum_commision'] = $row['is_arb'] > 0 ? '' : ($row['cost'] * 0.05);
+                }
+                $row['sum_dept'] = $row['cost'];
                 $ret[] = $row;
-                $i++;
+                ++$i;
             }
         }
-        return $ret;    
+
+        return $ret;
     }
-    
+
     /**
      * Формирует .xls данные о деньгах работодателей по текущим незакрытым сделкам за указанный период.
-     * @param array $filter   фильтр по дате.
+     *
+     * @param array $filter фильтр по дате.
      */
-    function printRevisionReport($filter = NULL) {
-        if(!$filter['to'])
-            $filter['to'] = array('day'=>date('d'), 'month'=>date('n'), 'year'=>date('Y'));
-        
-        if(!($rep = $this->getRevisionReport($filter)))
+    public function printRevisionReport($filter = null)
+    {
+        if (!$filter['to']) {
+            $filter['to'] = array('day' => date('d'), 'month' => date('n'), 'year' => date('Y'));
+        }
+
+        if (!($rep = $this->getRevisionReport($filter))) {
             return false;
+        }
 
         $period = $this->_createPeriodStr($filter);
         $rpss = self::$reports_ss['REV'];
@@ -1978,12 +2138,12 @@ class sbr_adm extends sbr
         require_once 'Spreadsheet/Excel/Writer.php';
         $workbook = new Spreadsheet_Excel_Writer();
         $workbook->send('СБР_сверка_'.str_replace('.', '_', $period[0]).'.xls');
-        
-        $body_sty = array('FontFamily'=>'Arial', 'Size'=>10, 'Bold'=>1);
-        $td_sty = array('FontFamily'=>'Calibri', 'VAlign'=>'vequal_space', 'Align'=>'center', 'Size'=>11, 'Border'=>1, 'BorderColor'=>'black', 'NumFormat'=>'#');
-        $th_sty = array('FontFamily'=>'Arial', 'Size'=>10, 'Align'=>'center', 'Border'=>1, 'BorderColor'=>'black', 'Bold'=>1);
-        $l_sty = array('Align'=>'left');
-        $r_sty = array('Align'=>'right', 'NumFormat'=>'### ### ##0.00');
+
+        $body_sty = array('FontFamily' => 'Arial', 'Size' => 10, 'Bold' => 1);
+        $td_sty = array('FontFamily' => 'Calibri', 'VAlign' => 'vequal_space', 'Align' => 'center', 'Size' => 11, 'Border' => 1, 'BorderColor' => 'black', 'NumFormat' => '#');
+        $th_sty = array('FontFamily' => 'Arial', 'Size' => 10, 'Align' => 'center', 'Border' => 1, 'BorderColor' => 'black', 'Bold' => 1);
+        $l_sty = array('Align' => 'left');
+        $r_sty = array('Align' => 'right', 'NumFormat' => '### ### ##0.00');
 
         $fmtBODY = &$workbook->addFormat($body_sty);
         $fmtBODYR = &$workbook->addFormat($body_sty + $r_sty);
@@ -1997,98 +2157,102 @@ class sbr_adm extends sbr
         $worksheet = $workbook->addWorksheet('Сверка');
         $worksheet->setInputEncoding('windows-1251');
         $worksheet->setZoom(75);
-        $worksheet->setColumn(0,0, 2);
+        $worksheet->setColumn(0, 0, 2);
 
         // Заголовок
         $worksheet->write(0, $COL_START, $rpss['name'], $fmtBODY);
-        $worksheet->write(1, $COL_START, "Остатки кредиторской задолженности по сервису «Безопасная Сделка»", $fmtBODY);
+        $worksheet->write(1, $COL_START, 'Остатки кредиторской задолженности по сервису «Безопасная Сделка»', $fmtBODY);
         $worksheet->write(2, $COL_START, $period[0], $fmtBODY);
-        $worksheet->write(2, 5, "Дата ".date('d.m.Y H:i'), $fmtBODY);
+        $worksheet->write(2, 5, 'Дата '.date('d.m.Y H:i'), $fmtBODY);
         $worksheet->mergeCells(0, $COL_START, 0, 6);
 
-
         // Шапка таблицы.
-        $i=$COL_START;
-        foreach($rpss['columns'] as $f=>$col) {
+        $i = $COL_START;
+        foreach ($rpss['columns'] as $f => $col) {
             $worksheet->setColumn($i, $i, $col[1][0]);
             $worksheet->write(4, $i, $col[0], $fmtTH);
-            $i++;
+            ++$i;
         }
-        
+
         // Таблица.
-        $i=5;
+        $i = 5;
         $sum_all = 0;
-        foreach($rep as $row) {
-            $j=$COL_START;
+        foreach ($rep as $row) {
+            $j = $COL_START;
             $sum_all += $row['sum_dept'];
-            foreach($rpss['columns'] as $nm=>$col) {
-                $worksheet->write($i, $j, htmlspecialchars_decode($row[$nm],ENT_QUOTES), $col[1][1]=='right' ? $fmtTDR : ($col[1][1]=='left' ? $fmtTDL : $fmtTD));
-                $j++;
+            foreach ($rpss['columns'] as $nm => $col) {
+                $worksheet->write($i, $j, htmlspecialchars_decode($row[$nm], ENT_QUOTES), $col[1][1] == 'right' ? $fmtTDR : ($col[1][1] == 'left' ? $fmtTDL : $fmtTD));
+                ++$j;
             }
-            $i++;
+            ++$i;
         }
-        
+
         // Дно таблицы (итого).
         $worksheet->write($i, 0, 'ИТОГО', $fmtBODYR);
         $worksheet->mergeCells($i, 0, $i, 2);
         $c1 = Spreadsheet_Excel_Writer::rowcolToCell(5, 3);
-	    $c2 = Spreadsheet_Excel_Writer::rowcolToCell($i-1, 3);
-	    $worksheet->writeFormula($i, 3, "=SUM({$c1}:{$c2})", $fmtSR);
-	    
-	    $c1 = Spreadsheet_Excel_Writer::rowcolToCell(5, 4);
-	    $c2 = Spreadsheet_Excel_Writer::rowcolToCell($i-1, 4);
-	    $worksheet->writeFormula($i, 4, "=SUM({$c1}:{$c2})", $fmtSR);
-	    
-	    $c1 = Spreadsheet_Excel_Writer::rowcolToCell(5, 5);
-	    $c2 = Spreadsheet_Excel_Writer::rowcolToCell($i-1, 5);
-	    $worksheet->writeFormula($i, 5, "=SUM({$c1}:{$c2})", $fmtSR);
-	    
-	    $i += 3;
-	    $r = explode("." , (string)$sum_all);
-	    $worksheet->write($i, 0, "На {$filter['to']['day']}.".($filter['to']['month']<10?"0".$filter['to']['month']:$filter['to']['month']).".{$filter['to']['year']} задолженность ООО \"Ваан\" в пользу Работодателей  по сервису «Безопасная Сделка»", $fmtBODY);
-	    $worksheet->write($i+1, 0, "Cоставляет ".intval($r[0])." руб. ".intval($r[1])." коп.", $fmtBODY);
-	    
+        $c2 = Spreadsheet_Excel_Writer::rowcolToCell($i - 1, 3);
+        $worksheet->writeFormula($i, 3, "=SUM({$c1}:{$c2})", $fmtSR);
+
+        $c1 = Spreadsheet_Excel_Writer::rowcolToCell(5, 4);
+        $c2 = Spreadsheet_Excel_Writer::rowcolToCell($i - 1, 4);
+        $worksheet->writeFormula($i, 4, "=SUM({$c1}:{$c2})", $fmtSR);
+
+        $c1 = Spreadsheet_Excel_Writer::rowcolToCell(5, 5);
+        $c2 = Spreadsheet_Excel_Writer::rowcolToCell($i - 1, 5);
+        $worksheet->writeFormula($i, 5, "=SUM({$c1}:{$c2})", $fmtSR);
+
+        $i += 3;
+        $r = explode('.', (string) $sum_all);
+        $worksheet->write($i, 0, "На {$filter['to']['day']}.".($filter['to']['month'] < 10 ? '0'.$filter['to']['month'] : $filter['to']['month']).".{$filter['to']['year']} задолженность ООО \"Ваан\" в пользу Работодателей  по сервису «Безопасная Сделка»", $fmtBODY);
+        $worksheet->write($i + 1, 0, 'Cоставляет '.intval($r[0]).' руб. '.intval($r[1]).' коп.', $fmtBODY);
+
         $workbook->close();
     }
     /**
-     * Устанавливает удалена или нет запись
+     * Устанавливает удалена или нет запись.
      * 
-     * @param  string $suid stage_id . '_'  .user_id
+     * @param string $suid stage_id . '_'  .user_id
+     *
      * @return bool новое состояние флага
      */
-    function setRemoved($suid) {
+    public function setRemoved($suid)
+    {
         $sql = "UPDATE sbr_stages_users SET is_removed = CASE WHEN is_removed = FALSE THEN TRUE ELSE FALSE END  WHERE stage_id||'_'||user_id IN ('{$suid}') RETURNING is_removed";
-        if(($res=pg_query(self::connect(), $sql)) && pg_num_rows($res))
+        if (($res = pg_query(self::connect(), $sql)) && pg_num_rows($res)) {
             return pg_fetch_assoc($res);
-        return NULL;
+        }
+
+        return;
     }
-    
-    
-    
+
     /**
      * Формирует .xls отчет по выплатам ЯД за указанный период.
-     * @param array $filter   фильтр по дате.
+     *
+     * @param array $filter фильтр по дате.
      */
-    function printYdReport($filter = NULL) {
-        if(!$filter['to'])
-            $filter['to'] = array('day'=>date('d'), 'month'=>date('n'), 'year'=>date('Y'));
-        
+    public function printYdReport($filter = null)
+    {
+        if (!$filter['to']) {
+            $filter['to'] = array('day' => date('d'), 'month' => date('n'), 'year' => date('Y'));
+        }
+
         $period = $this->_createPeriodStr($filter);
         $period1 = str_replace('.', '_', $period[0]);
-        
+
         $filter['fromdate'] = implode('-', array(
-            $filter['from']['year'], 
-            $filter['from']['month'], 
-            $filter['from']['day']
+            $filter['from']['year'],
+            $filter['from']['month'],
+            $filter['from']['day'],
         ));
-        
+
         $filter['todate'] = implode('-', array(
-            $filter['to']['year'], 
-            $filter['to']['month'], 
-            $filter['to']['day']
+            $filter['to']['year'],
+            $filter['to']['month'],
+            $filter['to']['day'],
         ));
         $rep = $this->getYdReport($filter);
-        
+
         $rpss = self::$reports_ss['YD_REPORT'];
 
         $COL_START = 0;
@@ -2097,12 +2261,12 @@ class sbr_adm extends sbr
         $workbook = new Spreadsheet_Excel_Writer();
         $workbook->setVersion(8);
         $workbook->send("СБР_Выплаты_ЯД_{$period1}.xls");
-        
-        $body_sty = array('FontFamily'=>'Arial', 'Size'=>10, 'Bold'=>1);
-        $td_sty = array('FontFamily'=>'Calibri', 'VAlign'=>'vequal_space', 'Align'=>'center', 'Size'=>11, 'Border'=>1, 'BorderColor'=>'black', 'NumFormat'=>'#');
-        $th_sty = array('FontFamily'=>'Arial', 'Size'=>10, 'Align'=>'center', 'Border'=>1, 'BorderColor'=>'black', 'Bold'=>1);
-        $l_sty = array('Align'=>'left');
-        $r_sty = array('Align'=>'right', 'NumFormat'=>'### ### ##0.00');
+
+        $body_sty = array('FontFamily' => 'Arial', 'Size' => 10, 'Bold' => 1);
+        $td_sty = array('FontFamily' => 'Calibri', 'VAlign' => 'vequal_space', 'Align' => 'center', 'Size' => 11, 'Border' => 1, 'BorderColor' => 'black', 'NumFormat' => '#');
+        $th_sty = array('FontFamily' => 'Arial', 'Size' => 10, 'Align' => 'center', 'Border' => 1, 'BorderColor' => 'black', 'Bold' => 1);
+        $l_sty = array('Align' => 'left');
+        $r_sty = array('Align' => 'right', 'NumFormat' => '### ### ##0.00');
 
         $fmtBODY = &$workbook->addFormat($body_sty);
         $fmtTD = &$workbook->addFormat($td_sty);
@@ -2114,50 +2278,49 @@ class sbr_adm extends sbr
         $worksheet = $workbook->addWorksheet('Выплаты ЯД');
         $worksheet->setInputEncoding('windows-1251');
         $worksheet->setZoom(75);
-        $worksheet->setColumn(0,0, 2);
+        $worksheet->setColumn(0, 0, 2);
 
         // Заголовок
-        $worksheet->write(0, $COL_START, $rpss['name'] . ' ' . $period[0] , $fmtBODY);
+        $worksheet->write(0, $COL_START, $rpss['name'].' '.$period[0], $fmtBODY);
         $worksheet->mergeCells(0, $COL_START, 0, 5);
 
-
         // Шапка таблицы.
-        $i=$COL_START;
-        foreach($rpss['columns'] as $f=>$col) {
+        $i = $COL_START;
+        foreach ($rpss['columns'] as $f => $col) {
             $worksheet->setColumn($i, $i, $col[1][0]);
             $worksheet->write(2, $i, $col[0], $fmtTH);
-            $i++;
+            ++$i;
         }
-        
+
         // Таблица.
-        $i=3;
-        foreach($rep as $k => $row) {
-            $row['num'] = $k+1;
-            $j=$COL_START;
-            foreach($rpss['columns'] as $nm=>$col) {
+        $i = 3;
+        foreach ($rep as $k => $row) {
+            $row['num'] = $k + 1;
+            $j = $COL_START;
+            foreach ($rpss['columns'] as $nm => $col) {
                 if ($nm == 'pdate') {
                     $row[$nm] = date('d.m.Y H:i', strtotime($row[$nm]));
                 }
-                $worksheet->write($i, $j, htmlspecialchars_decode($row[$nm],ENT_QUOTES), $col[1][1]=='right' ? $fmtTDR : ($col[1][1]=='left' ? $fmtTDL : $fmtTD));
-                $j++;
+                $worksheet->write($i, $j, htmlspecialchars_decode($row[$nm], ENT_QUOTES), $col[1][1] == 'right' ? $fmtTDR : ($col[1][1] == 'left' ? $fmtTDL : $fmtTD));
+                ++$j;
             }
-            $i++;
+            ++$i;
         }
 
         $workbook->close();
-        
     }
 
-    
     /**
-     * Данные для отчета по выплатам ЯД
+     * Данные для отчета по выплатам ЯД.
      *
-     * @param array $filter   фильтр по дате.
+     * @param array $filter фильтр по дате.
+     *
      * @return array
      */
-    function getYdReport($filter) {
+    public function getYdReport($filter)
+    {
         $DB = new DB('master');
-        
+
         $sql = "select sp.completed as pdate, 
                         sp.credit_sum as summ, 
                         coalesce(yt.dstacnt_nr, sr._1_el_yd) as recp,
@@ -2176,43 +2339,48 @@ class sbr_adm extends sbr
                 where sp.completed >= ? and sp.completed < ?
                 and sp.credit_sys = 4 and s.scheme_type <> 4 
                 order by sp.completed;";
-        
+
         $res = $DB->rows($sql, $filter['fromdate'], $filter['todate']);
-        
+
         return $res;
     }
-    
+
     /**
-     * Возврат денежных средств 
+     * Возврат денежных средств.
      * 
      * @global type $DB
-     * @param type $payment_id  ИД операции в paymaster
-     * @return boolean 
+     *
+     * @param type $payment_id ИД операции в paymaster
+     *
+     * @return bool
      */
-    public function refund($payment_id = null, $stage = null, $debug = false) {
+    public function refund($payment_id = null, $stage = null, $debug = false)
+    {
         global $DB;
         $log = new log('pmpay/refundPayments-%d%m%Y.log', 'a', '%d.%m.%Y %H:%M:%S : ');
         $log->writeln("payment_id = [{$payment_id}], stage = [{$stage}], debug = [{$debug}]");
-        if(!$payment_id) return false;
-        
+        if (!$payment_id) {
+            return false;
+        }
+
         require_once $_SERVER['DOCUMENT_ROOT'].'/classes/pmpay.php';
         require_once $_SERVER['DOCUMENT_ROOT'].'/classes/exrates.php';
         $pmpay = new pmpay();
-        
+
         // Возврат осуществляется только при резервировании через WMR
-        $sql = "SELECT * FROM sbr_stages_payouts WHERE stage_id = ?i AND user_id = ?i AND is_refund IS NULL;";
+        $sql = 'SELECT * FROM sbr_stages_payouts WHERE stage_id = ?i AND user_id = ?i AND is_refund IS NULL;';
         $row = $DB->row($sql, $stage->id, $stage->sbr->emp_id); // Возврат осуществляется только для работодателей
-        if($row) {
-            if(DEBUG) {
-                $log->writeln("debug_mode = ON");
+        if ($row) {
+            if (DEBUG) {
+                $log->writeln('debug_mode = ON');
                 $pmpay->setDebugUrl($GLOBALS['host'].'/norisk2/admin/pm-server-test.php');
-            }  
+            }
             $operation = (array) $pmpay->refundPayments($payment_id, $row['credit_sum']);
-            if($operation && $operation['Status'] != 'FAILURE' && $operation['ErrorCode'] == 0) {
-                if($operation['Status'] == 'EXECUTING' || $operation['Status'] == 'PENDING') {
+            if ($operation && $operation['Status'] != 'FAILURE' && $operation['ErrorCode'] == 0) {
+                if ($operation['Status'] == 'EXECUTING' || $operation['Status'] == 'PENDING') {
                     $update = array('is_refund' => false, 'refund_id' => $operation['RefundID']);
                     $this->refundStatusUpdate($update, $row['id']);
-                } elseif($operation['Status'] == 'SUCCESS') {
+                } elseif ($operation['Status'] == 'SUCCESS') {
                     $update = array('is_refund' => true, 'refund_id' => $operation['RefundID'], 'completed' => 'NOW()');
                     $this->refundStatusUpdate($update, $row['id']);
                 } else {
@@ -2225,120 +2393,131 @@ class sbr_adm extends sbr
             $log->writeln("Ошибка выдачи SQL -- [{$DB->sql}].");
         }
     }
-    
+
     /**
-     * Обновляем статус возврата денег
+     * Обновляем статус возврата денег.
      * 
      * @global type $DB
-     * @param type $update  Данные для обновления
-     * @param type $id      ИД операции
-     * @return type 
+     *
+     * @param type $update Данные для обновления
+     * @param type $id     ИД операции
+     *
+     * @return type
      */
-    public function refundStatusUpdate($update, $id) {
+    public function refundStatusUpdate($update, $id)
+    {
         global $DB;
+
         return $DB->update('sbr_stages_payouts', $update, 'id = ?i', $id); // Обновляем плату
     }
-    
-    
+
     /**
-     * Выбирает список всех записей, загруженных из 1с
+     * Выбирает список всех записей, загруженных из 1с.
      * 
      * @param type $filter
+     *
      * @return type
      */
-    public function getInvoices ($filter = null) {
+    public function getInvoices($filter = null)
+    {
         $db = new DB('master');
-        
+
         $where = ' WHERE TRUE ';
-        $where .= $filter['f_sbr'] ? ' AND ' . $db->parse('s.id = ?i', $filter['f_sbr']) : '';
-        $where .= $filter['f_login'] ? ' AND ' . $db->parse('rr.login = ?', $filter['f_login']) : '';
-        $where .= $filter['f_akkr'] ? ' AND ' . $db->parse('rr.lc_id = ?i', $filter['f_akkr']) : '';
-        $where .= $filter['f_actdate_pg'] ? " AND '" . $filter['f_actdate_pg'] . " 00:00:00' <= rr.actdate AND rr.actdate <= '" . $filter['f_actdate_pg'] . " 23:59:59'" : '';
-        $where .= $filter['f_invdate_pg'] ? " AND '" . $filter['f_invdate_pg'] . " 00:00:00' <= rr.invdate AND rr.invdate <= '" . $filter['f_invdate_pg'] . " 23:59:59'" : '';
-        $where .= $filter['f_sum'] ? ' AND ' . $db->parse('rr.sum = ?', $filter['f_sum']) : '';
-        
-        if (in_array($filter['f_status'], array_keys(sbr_adm::$invoice_state)) && $filter['f_status'] !== null) {
-            $where .= ' AND ' . $db->parse('rr.status = ?', $filter['f_status']) ;
+        $where .= $filter['f_sbr'] ? ' AND '.$db->parse('s.id = ?i', $filter['f_sbr']) : '';
+        $where .= $filter['f_login'] ? ' AND '.$db->parse('rr.login = ?', $filter['f_login']) : '';
+        $where .= $filter['f_akkr'] ? ' AND '.$db->parse('rr.lc_id = ?i', $filter['f_akkr']) : '';
+        $where .= $filter['f_actdate_pg'] ? " AND '".$filter['f_actdate_pg']." 00:00:00' <= rr.actdate AND rr.actdate <= '".$filter['f_actdate_pg']." 23:59:59'" : '';
+        $where .= $filter['f_invdate_pg'] ? " AND '".$filter['f_invdate_pg']." 00:00:00' <= rr.invdate AND rr.invdate <= '".$filter['f_invdate_pg']." 23:59:59'" : '';
+        $where .= $filter['f_sum'] ? ' AND '.$db->parse('rr.sum = ?', $filter['f_sum']) : '';
+
+        if (in_array($filter['f_status'], array_keys(self::$invoice_state)) && $filter['f_status'] !== null) {
+            $where .= ' AND '.$db->parse('rr.status = ?', $filter['f_status']);
         }
-        
-        $orders = array (
-            'sbr'       => 's.id',
-            'login'     => 'rr.login',
-            'akkr'      => 'rr.lc_id',
-            'actdate'   => 'rr.actdate',
-            'invdate'   => 'rr.invdate',
-            'sum'       => 'rr.sum',
-            'status'    => 'rr.status'
+
+        $orders = array(
+            'sbr' => 's.id',
+            'login' => 'rr.login',
+            'akkr' => 'rr.lc_id',
+            'actdate' => 'rr.actdate',
+            'invdate' => 'rr.invdate',
+            'sum' => 'rr.sum',
+            'status' => 'rr.status',
         );
-        $orderBy = ' ORDER BY ' . $orders[$filter['f_orderby']] . ($filter['f_desc'] ? ' DESC' : '');
-        
-        $offset = $filter['f_offset'] ? ' OFFSET ' . (int)$filter['f_offset'] . ' ' : '';
-        $limit = $filter['f_limit'] ? ' LIMIT ' . (int)$filter['f_limit'] . ' ' : '';
-        
-        $sql = "SELECT rr.*, s.id sbr_id
+        $orderBy = ' ORDER BY '.$orders[$filter['f_orderby']].($filter['f_desc'] ? ' DESC' : '');
+
+        $offset = $filter['f_offset'] ? ' OFFSET '.(int) $filter['f_offset'].' ' : '';
+        $limit = $filter['f_limit'] ? ' LIMIT '.(int) $filter['f_limit'].' ' : '';
+
+        $sql = 'SELECT rr.*, s.id sbr_id
                 FROM pskb_invoice_raw rr
                 LEFT JOIN pskb_lc lc ON lc.lc_id = rr.lc_id
                 LEFT JOIN sbr s ON s.id = lc.sbr_id
-                " . $where . $orderBy . $limit . $offset;
-        
+                '.$where.$orderBy.$limit.$offset;
+
         return $db->rows($sql);
     }
-    
+
     /**
      * возвращает количество страниц в разделе /siteadmin/norisk2/?site=invoices
-     * учитывается фильтр (такой же как в getInvoices())
+     * учитывается фильтр (такой же как в getInvoices()).
+     *
      * @global type $DB
+     *
      * @param type $filter
+     *
      * @return type
      */
-    public function getInvoicesPagesCount ($filter) {
+    public function getInvoicesPagesCount($filter)
+    {
         global $DB;
         $pageSize = self::INVOICES_PAGE_SIZE;
-        
+
         $where = ' WHERE TRUE ';
-        $where .= $filter['f_sbr'] ? ' AND ' . $DB->parse('s.id = ?i', $filter['f_sbr']) : '';
-        $where .= $filter['f_login'] ? ' AND ' . $DB->parse('rr.login = ?', $filter['f_login']) : '';
-        $where .= $filter['f_akkr'] ? ' AND ' . $DB->parse('rr.lc_id = ?i', $filter['f_akkr']) : '';
-        $where .= $filter['f_actdate_pg'] ? " AND '" . $filter['f_actdate_pg'] . " 00:00:00' <= rr.actdate AND rr.actdate <= '" . $filter['f_actdate_pg'] . " 23:59:59'" : '';
-        $where .= $filter['f_invdate_pg'] ? " AND '" . $filter['f_invdate_pg'] . " 00:00:00' <= rr.invdate AND rr.invdate <= '" . $filter['f_invdate_pg'] . " 23:59:59'" : '';
-        $where .= $filter['f_sum'] ? ' AND ' . $DB->parse('rr.sum = ?', $filter['f_sum']) : '';
-        
-        if (in_array($filter['f_status'], array_keys(sbr_adm::$invoice_state)) && $filter['f_status'] !== null) {
-            $where .= ' AND ' . $DB->parse('rr.status = ?', $filter['f_status']) ;
+        $where .= $filter['f_sbr'] ? ' AND '.$DB->parse('s.id = ?i', $filter['f_sbr']) : '';
+        $where .= $filter['f_login'] ? ' AND '.$DB->parse('rr.login = ?', $filter['f_login']) : '';
+        $where .= $filter['f_akkr'] ? ' AND '.$DB->parse('rr.lc_id = ?i', $filter['f_akkr']) : '';
+        $where .= $filter['f_actdate_pg'] ? " AND '".$filter['f_actdate_pg']." 00:00:00' <= rr.actdate AND rr.actdate <= '".$filter['f_actdate_pg']." 23:59:59'" : '';
+        $where .= $filter['f_invdate_pg'] ? " AND '".$filter['f_invdate_pg']." 00:00:00' <= rr.invdate AND rr.invdate <= '".$filter['f_invdate_pg']." 23:59:59'" : '';
+        $where .= $filter['f_sum'] ? ' AND '.$DB->parse('rr.sum = ?', $filter['f_sum']) : '';
+
+        if (in_array($filter['f_status'], array_keys(self::$invoice_state)) && $filter['f_status'] !== null) {
+            $where .= ' AND '.$DB->parse('rr.status = ?', $filter['f_status']);
         }
-        
-        $sql = "SELECT count(*)
+
+        $sql = 'SELECT count(*)
                 FROM pskb_invoice_raw rr
                 LEFT JOIN pskb_lc lc ON lc.lc_id = rr.lc_id
                 LEFT JOIN sbr s ON s.id = lc.sbr_id
-                " . $where;
+                '.$where;
         $invoices = $DB->val($sql);
         $pages = ceil($invoices / $pageSize);
+
         return $pages;
     }
-    
+
     /**
      * Обработка данных, загруженных из 1С
      */
-    public static function processInvoiceData() {
+    public static function processInvoiceData()
+    {
         $db = new DB('master');
-        $sql = "SELECT rr.*, s.id sbr_id, s.emp_id, (u.uid = s.emp_id)::int is_emp
+        $sql = 'SELECT rr.*, s.id sbr_id, s.emp_id, (u.uid = s.emp_id)::int is_emp
                 FROM pskb_invoice_raw rr 
                 INNER JOIN users u ON u.login = rr.login
                 INNER JOIN pskb_lc lc ON lc.lc_id = rr.lc_id
                 INNER JOIN sbr s ON s.id = lc.sbr_id
                 WHERE rr.status = 0
-                ORDER BY id LIMIT 50";
-        
+                ORDER BY id LIMIT 50';
+
         $rows = $db->rows($sql);
-        
+
         foreach ($rows as $row) {
             $err = '';
             $params = array(
                 'status' => 1,
-                'err' => ''
+                'err' => '',
             );
-            $db->update('pskb_invoice_raw', array('status' => 99), 'lc_id = ? AND login = ? AND status != ? AND actnum = ? AND invnum = ?', 
+            $db->update('pskb_invoice_raw', array('status' => 99), 'lc_id = ? AND login = ? AND status != ? AND actnum = ? AND invnum = ?',
                 $row['lc_id'], $row['login'], 1, $row['actnum'], $row['invnum']);
             if (!self::addInvoice($row, $err)) {
                 $params = array(
@@ -2348,174 +2527,180 @@ class sbr_adm extends sbr
             if ($err) {
                 $params['err'] = $err;
             }
-            $db->update('pskb_invoice_raw', $params, 'lc_id = ? AND login = ? AND status != ? AND actnum = ? AND invnum = ?', 
+            $db->update('pskb_invoice_raw', $params, 'lc_id = ? AND login = ? AND status != ? AND actnum = ? AND invnum = ?',
                 $row['lc_id'], $row['login'], 1, $row['actnum'], $row['invnum']);
         }
     }
-    
+
     /**
      * Формирование актов и счет-фактур по данным из pskb_invoice_raw
-     * Загрузка документов в сделку
+     * Загрузка документов в сделку.
      * 
-     * @param type $data        массив с данными - строка результата запроса из sbr_adm::processInvoiceData
+     * @param type $data  массив с данными - строка результата запроса из sbr_adm::processInvoiceData
      * @param type $error
-     * @return boolean
+     *
+     * @return bool
      */
-    public static  function addInvoice ($data, &$error = '') {        
+    public static function addInvoice($data, &$error = '')
+    {
         $row = $data;
-        
+
         if (!$row) {
             $error = 'Не найден аккредитив';
+
             return false;
         }
-        
+
         if (!trim($row['addr'])) {
             $error = 'Не указан юрадрес';
 //            return false;
         }
-        
+
         $sbr = sbr_meta::getInstanceLocal($row['emp_id']);
         $sbr->initFromId($row['sbr_id'], false, false, false);
-        
-        
-        require_once ($_SERVER['DOCUMENT_ROOT'].'/classes/odt2pdf.php');
-        require_once (dirname(__FILE__).'/num_to_word.php');
-        
-        /**
+
+        require_once $_SERVER['DOCUMENT_ROOT'].'/classes/odt2pdf.php';
+        require_once dirname(__FILE__).'/num_to_word.php';
+
+        /*
          * Акт на сумму комиссии ВААН
          */
         $replace = array(
             'USER_NAME' => $row['name'],
-            'ACT_SUM'   => number_format($row['sum'], 2, ',', ''),
-            'NDS_SUM'   => number_format($row['sum'] - ($row['sum']/1.18), 2, ',', ''),
-            'NO_NDS_SUM'   => number_format($row['sum']/1.18, 2, ',', ''),
-            'ACT_NUM'   => intval($row['actnum']),
-            'DOC_NUM'   => $sbr->getContractNum(),
-            'SUM_STR'   => num2strEx(floatval($row['sum'])),
-            'ACT_DATE'  => date('d.m.Y', strtotime($row['actdate']))
+            'ACT_SUM' => number_format($row['sum'], 2, ',', ''),
+            'NDS_SUM' => number_format($row['sum'] - ($row['sum'] / 1.18), 2, ',', ''),
+            'NO_NDS_SUM' => number_format($row['sum'] / 1.18, 2, ',', ''),
+            'ACT_NUM' => intval($row['actnum']),
+            'DOC_NUM' => $sbr->getContractNum(),
+            'SUM_STR' => num2strEx(floatval($row['sum'])),
+            'ACT_DATE' => date('d.m.Y', strtotime($row['actdate'])),
         );
         $tpl = 'pskb_close_act.ods';
         $pdf = new odt2pdf($tpl);
         $pdf->convert($replace);
-        if(!($file = $sbr->_saveDocFile($pdf->Output(NULL, 'S')))) {
+        if (!($file = $sbr->_saveDocFile($pdf->Output(null, 'S')))) {
             $error = 'Ошибка при формировании Акта';
+
             return false;
         }
-        
+
         $docs[] = array(
-            'file_id'       => $file->id, 
-            'status'        => sbr::DOCS_STATUS_PUBL, 
-            'access_role'   => ($row['is_emp'] ? sbr::DOCS_ACCESS_EMP : sbr::DOCS_ACCESS_FRL),
-            'owner_role'    => 0, 
-            'type'          => sbr::DOCS_TYPE_PSKB_ACT
+            'file_id' => $file->id,
+            'status' => sbr::DOCS_STATUS_PUBL,
+            'access_role' => ($row['is_emp'] ? sbr::DOCS_ACCESS_EMP : sbr::DOCS_ACCESS_FRL),
+            'owner_role' => 0,
+            'type' => sbr::DOCS_TYPE_PSKB_ACT,
         );
-        
-        /**
+
+        /*
          * Счет-фактура
          */
         $replace = array(
             'USER_NAME' => $row['name'],
             'USER_ADDR' => $row['addr'],
-            'USER_INN' => $row['inn'] . ($row['kpp'] ? '/' . $row['kpp'] : ''),
-            'INV_SUM'   => number_format($row['sum'], 2, ',', ''),
-            'NDS_SUM'   => number_format($row['sum'] - ($row['sum']/1.18), 2, ',', ''),
-            'NO_NDS_SUM'   => number_format($row['sum']/1.18, 2, ',', ''),
-            'INV_NUM'   => intval($row['invnum']),
-            'DOC_NUM'   => $sbr->getContractNum(),
-            'INV_DATE'  => date('d.m.Y', strtotime($row['invdate']))
+            'USER_INN' => $row['inn'].($row['kpp'] ? '/'.$row['kpp'] : ''),
+            'INV_SUM' => number_format($row['sum'], 2, ',', ''),
+            'NDS_SUM' => number_format($row['sum'] - ($row['sum'] / 1.18), 2, ',', ''),
+            'NO_NDS_SUM' => number_format($row['sum'] / 1.18, 2, ',', ''),
+            'INV_NUM' => intval($row['invnum']),
+            'DOC_NUM' => $sbr->getContractNum(),
+            'INV_DATE' => date('d.m.Y', strtotime($row['invdate'])),
         );
         $tpl = 'pskb_close_invoice.ods';
         $pdf = new odt2pdf($tpl);
         $pdf->convert($replace);
-        if(!($file = $sbr->_saveDocFile($pdf->Output(NULL, 'S')))) {
+        if (!($file = $sbr->_saveDocFile($pdf->Output(null, 'S')))) {
             $error = 'Ошибка при формировании счета-фактуры';
+
             return false;
         }
-        
+
         $docs[] = array(
-            'file_id'       => $file->id, 
-            'status'        => sbr::DOCS_STATUS_PUBL, 
-            'access_role'   => ($row['is_emp'] ? sbr::DOCS_ACCESS_EMP : sbr::DOCS_ACCESS_FRL),
-            'owner_role'    => 0, 
-            'type'          => sbr::DOCS_TYPE_FACTURA
+            'file_id' => $file->id,
+            'status' => sbr::DOCS_STATUS_PUBL,
+            'access_role' => ($row['is_emp'] ? sbr::DOCS_ACCESS_EMP : sbr::DOCS_ACCESS_FRL),
+            'owner_role' => 0,
+            'type' => sbr::DOCS_TYPE_FACTURA,
         );
-        
-        foreach($docs as $doc) {
+
+        foreach ($docs as $doc) {
             $ok = $sbr->addDocR($doc);
         }
-        
+
         return true;
     }
-    
+
     /**
-     * Парсит файл выгрузки из 1С, для последующей загрузки документов
+     * Парсит файл выгрузки из 1С, для последующей загрузки документов.
      * 
      * @param type $file
-     * @return boolean
+     *
+     * @return bool
      */
-    public static function parseInvoiceData ($file) {
+    public static function parseInvoiceData($file)
+    {
         $db = new DB('master');
-        
+
         if (!file_exists($file)) {
             return false;
         }
-        
+
         $list = array();
-        
+
         $f = fopen($file, 'r');
         $c = 0;
-        
+
         while (!feof($f)) {
             $row = fgets($f);
             $data = explode(';', $row);
             $data = array_map('trim', $data);
-            
+
             if (!$data[0]) {
                 continue;
             }
-            
+
             $data[6] = preg_replace('/[\s\xc2\xa0]/si', '', $data[6]);
             $data[6] = str_replace(',', '.', $data[6]);
             $data[6] = floatval($data[6]);
-            
-            $sql = "SELECT 
+
+            $sql = 'SELECT 
                     s.id,
-                    CASE WHEN u.uid = s.frl_id THEN lc.\"namePerf\" ELSE lc.\"nameCust\" END as name,
-                    CASE WHEN u.uid = s.frl_id THEN lc.\"innPerf\" ELSE lc.\"innCust\" END as inn,
-                    CASE WHEN u.uid = s.frl_id AND lc.\"alienPerf\" = 1 THEN r._2_address_fct 
-                         WHEN u.uid = s.emp_id AND lc.\"alienCust\" = 1 THEN r._2_address_fct
+                    CASE WHEN u.uid = s.frl_id THEN lc."namePerf" ELSE lc."nameCust" END as name,
+                    CASE WHEN u.uid = s.frl_id THEN lc."innPerf" ELSE lc."innCust" END as inn,
+                    CASE WHEN u.uid = s.frl_id AND lc."alienPerf" = 1 THEN r._2_address_fct 
+                         WHEN u.uid = s.emp_id AND lc."alienCust" = 1 THEN r._2_address_fct
                          ELSE r._2_address_jry 
                     END as addr,
                     r._2_kpp kpp,
                     (u.uid = s.emp_id)::int is_emp,
                     i.lc_id is_exists,
-                    CASE WHEN u.uid = s.frl_id THEN lc.\"tagPerf\" ELSE lc.\"tagCust\" END as tag
+                    CASE WHEN u.uid = s.frl_id THEN lc."tagPerf" ELSE lc."tagCust" END as tag
                 FROM pskb_lc lc 
                 INNER JOIN sbr s ON s.id = lc.sbr_id
                 INNER JOIN users u ON u.login = ? AND u.uid IN (s.frl_id, s.emp_id)
                 LEFT JOIN sbr_reqv r ON r.user_id = u.uid 
                 LEFT JOIN pskb_invoice_raw i ON i.lc_id = lc.lc_id AND i.login = u.login AND i.actnum = ? AND i.invnum = ?
-                WHERE lc.lc_id = ?";
+                WHERE lc.lc_id = ?';
             $row = $db->row($sql, $data[0], $data[2], $data[3], $data[1]);
-        
+
             $params = array(
-                'login' =>      $data[0],
-                'lc_id' =>      $data[1],
-                'actnum' =>     $data[2],
-                'invnum' =>     $data[3],
-                'actdate' =>    date('c', strtotime($data[4])),
-                'invdate' =>    date('c', strtotime($data[5])),
-                'sum' =>        $data[6],
-                'name' =>       $row['name'],
-                'addr' =>       $row['addr'],
-                'inn' =>        $row['inn'],
-                'kpp' =>        $row['kpp'],
-                'status' =>     0,
-                'err' =>        '',
+                'login' => $data[0],
+                'lc_id' => $data[1],
+                'actnum' => $data[2],
+                'invnum' => $data[3],
+                'actdate' => date('c', strtotime($data[4])),
+                'invdate' => date('c', strtotime($data[5])),
+                'sum' => $data[6],
+                'name' => $row['name'],
+                'addr' => $row['addr'],
+                'inn' => $row['inn'],
+                'kpp' => $row['kpp'],
+                'status' => 0,
+                'err' => '',
             );
-            
+
             if (!$row) {
-                if ($db->row("SELECT * FROM pskb_invoice_raw WHERE lc_id = ? AND login = ? AND actnum = ? AND invnum = ?", $params['lc_id'], $params['login'], $params['actnum'], $params['invnum'])) {
+                if ($db->row('SELECT * FROM pskb_invoice_raw WHERE lc_id = ? AND login = ? AND actnum = ? AND invnum = ?', $params['lc_id'], $params['login'], $params['actnum'], $params['invnum'])) {
                     continue;
                 }
                 $params['status'] = 2;
@@ -2523,15 +2708,15 @@ class sbr_adm extends sbr
                 $res = $db->insert('pskb_invoice_raw', $params);
                 continue;
             }
-            
+
             if ($row['tag'] != 1) {
                 continue;
             }
-            
+
             if (!$row['is_exists']) {
                 $res = $db->insert('pskb_invoice_raw', $params);
             } else {
-                $res = $db->update('pskb_invoice_raw', $params, 'lc_id = ? AND login = ? AND status != ? AND status != ? AND actnum = ? AND invnum = ?', 
+                $res = $db->update('pskb_invoice_raw', $params, 'lc_id = ? AND login = ? AND status != ? AND status != ? AND actnum = ? AND invnum = ?',
                     $params['lc_id'], $params['login'], 1, 99, $params['actnum'], $params['invnum']);
             }
         }
@@ -2541,29 +2726,31 @@ class sbr_adm extends sbr
 /**
  * Класс для работы с СБР со стороны админа СБР (только просмотр данных).
  */
-class sbr_adm_finance extends sbr_adm {
-
+class sbr_adm_finance extends sbr_adm
+{
     /**
-     * Возвращает данные о комиссиях и сторонах СБР в CSV
+     * Возвращает данные о комиссиях и сторонах СБР в CSV.
      *
-     * @param     string    $date_s    Дата начала периода
-     * @param     string    $date_e    Дата окончания периода
-     * @return    string               Файл с данными в CSV
+     * @param string $date_s Дата начала периода
+     * @param string $date_e Дата окончания периода
+     *
+     * @return string Файл с данными в CSV
      */
-    function exportSBRDataToCSV($date_s, $date_e) {
+    public function exportSBRDataToCSV($date_s, $date_e)
+    {
         global $DB;
-        if(!$date_s) {
+        if (!$date_s) {
             $date_s = '1970-01-01';
         }
-        if(!$date_e) {
-            $date_e = (date('Y')+1).'-01-01';
+        if (!$date_e) {
+            $date_e = (date('Y') + 1).'-01-01';
         }
 
         $pskb_commissions = array();
-        $sql = "SELECT * FROM pskb_lc_commission";
+        $sql = 'SELECT * FROM pskb_lc_commission';
         $commissions = $DB->rows($sql);
-        if($commissions) {
-            foreach($commissions as $v) {
+        if ($commissions) {
+            foreach ($commissions as $v) {
                 $pskb_commissions[$v['lc_id']]['bank'] = $v['bank'];
                 $pskb_commissions[$v['lc_id']]['fl'] = $v['fl'];
             }
@@ -2672,8 +2859,8 @@ class sbr_adm_finance extends sbr_adm {
                 INNER JOIN sbr_reqv AS s_r ON s_r.user_id = _uid";
 
         $qres = $DB->query($sql, $date_s, $date_e, $date_s, $date_e);
-        if($qres) {
-            if(pg_num_rows($qres)) {
+        if ($qres) {
+            if (pg_num_rows($qres)) {
                 //$taxes = sbr::getTaxes(21);
                 /*
                 $res2 = array();
@@ -2692,48 +2879,50 @@ class sbr_adm_finance extends sbr_adm {
                     }
                 }
                 */
-                $file_name = "/tmp/".uniqid("sbrcsvdata");
-                $f = fopen($file_name, "w");
-                while($item = pg_fetch_array($qres)) {
+                $file_name = '/tmp/'.uniqid('sbrcsvdata');
+                $f = fopen($file_name, 'w');
+                while ($item = pg_fetch_array($qres)) {
                     $ps_sys = $item['ps'];
-                    switch($item['u_type']) {
+                    switch ($item['u_type']) {
                         case 'emp':
-                            $f_type = ($item['tagCust']==1 ? 'Юридическое лицо' : 'Физическое лицо');
+                            $f_type = ($item['tagCust'] == 1 ? 'Юридическое лицо' : 'Физическое лицо');
                             $f_name = htmlspecialchars_decode($item['nameCust']);
                             $f_inn = $item['innCust'];
-                            $item['form_type'] = ($item['tagCust']==1 ? 2 : 1);
+                            $item['form_type'] = ($item['tagCust'] == 1 ? 2 : 1);
                             break;
                         case 'frl':
-                            $f_type = ($item['tagPerf']==1 ? 'Юридическое лицо' : 'Физическое лицо');
+                            $f_type = ($item['tagPerf'] == 1 ? 'Юридическое лицо' : 'Физическое лицо');
                             $f_name = htmlspecialchars_decode($item['namePerf']);
                             $f_inn = $item['innPerf'];
-                            $item['form_type'] = ($item['tagPerf']==1 ? 2 : 1);
-                            if($item['tagPerf']!=1 && $item['sum']<=15000 && $item['state']==pskb::PAYOUT_END) {
+                            $item['form_type'] = ($item['tagPerf'] == 1 ? 2 : 1);
+                            if ($item['tagPerf'] != 1 && $item['sum'] <= 15000 && $item['state'] == pskb::PAYOUT_END) {
                                 $item['ps'] = exrates::WEBM;
-                                $ps_sys     = pskb::WW;
+                                $ps_sys = pskb::WW;
                             }
                             break;
                     }
-                    if(!$item['sum']) continue;
+                    if (!$item['sum']) {
+                        continue;
+                    }
                     //$f_name = ($item['form_type']==1 ? $item['_1_fio'] : $item['_2_full_name']);
                     //$f_inn = ($item['form_type']==1 ? $item['_1_inn'] : $item['_2_inn']);
-                    $f_address = htmlspecialchars_decode(($item['form_type']==1 ?
+                    $f_address = htmlspecialchars_decode(($item['form_type'] == 1 ?
                                    "{$item['_1_index']}, {$item['_1_country']}, {$item['_1_city']}, {$item['_1_address']}"
                                     :
                                    "{$item['_2_index']}, {$item['_2_country']}, {$item['_2_city']}, {$item['_2_address']}"
                                  ));
                     //$f_type = ($item['form_type']==1 ? 'Физическое лицо' : 'Юридическое лицо');
-                    $f_u_type = ($item['u_type']=='emp' ? 'Работодатель' : 'Исполнитель');
+                    $f_u_type = ($item['u_type'] == 'emp' ? 'Работодатель' : 'Исполнитель');
                     $f_commission_our = 0;
                     $f_commission_bank = 0;
-                    if ( $item['u_type'] == 'emp' ) {
-                        $ps_sys     = $item['ps'];
+                    if ($item['u_type'] == 'emp') {
+                        $ps_sys = $item['ps'];
                         $item['ps'] = pskb::$exrates_map[$item['ps']];
                     } else {
                         $tt = array(578,714,1057,1257,1344,1600,1600,1748,1795,2215,2234,2336,2573,2727,2833,3042,3134,3250,3502,3527,3599,3964,4224,4326,4333,4828,5331,5389,5631,5693,5778,5778,6167,6342,6730);
-                        if(in_array($item['lc_id'],$tt) && $item['state'] == pskb::PAYOUT_ERR) {
+                        if (in_array($item['lc_id'], $tt) && $item['state'] == pskb::PAYOUT_ERR) {
                             $item['ps'] = exrates::WEBM;
-                            $ps_sys     = pskb::WW;
+                            $ps_sys = pskb::WW;
                         }
                         /*
                         if ( $item['state'] == pskb::PAYOUT_ERR ) {
@@ -2742,18 +2931,18 @@ class sbr_adm_finance extends sbr_adm {
                         */
                     }
 
-                    $f_date = dateFormat("d.m.Y H.i.s", $item['lc_date']);
+                    $f_date = dateFormat('d.m.Y H.i.s', $item['lc_date']);
                     $f_id = $item['lc_id'];
                     $f_sbr = $item['sbr_id'];
                     $f_login = $item['login'];
 
-                    if($item['u_type']=='emp' && in_array($f_id, array_keys($pskb_commissions)) && is_release()) {
+                    if ($item['u_type'] == 'emp' && in_array($f_id, array_keys($pskb_commissions)) && is_release()) {
                         $f_commission_bank = $pskb_commissions[$f_id]['bank'];
                         $f_commission_our = $pskb_commissions[$f_id]['fl'];
                     } else {
                         $f_all = $item['lc_sum'] - $item['sum'];
-                        $f_commission_bank = round( ($f_all - $item['fl_tax']), 2);
-                        $f_commission_our  = round( $item['fl_tax'], 2);
+                        $f_commission_bank = round(($f_all - $item['fl_tax']), 2);
+                        $f_commission_our = round($item['fl_tax'], 2);
                         $f_ps = pskb::$psys[$item['u_type'] == 'emp' ? pskb::USER_EMP : pskb::USER_FRL ][$ps_sys];
                         /*switch($item['ps']) {
                             case exrates::WMR:
@@ -2872,8 +3061,7 @@ class sbr_adm_finance extends sbr_adm {
                 fclose($f);
             }
         }
+
         return $file_name;
     }
 }
-
-?>

@@ -1,6 +1,6 @@
-<? 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-if(is_release()) {
+<?php 
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+if (is_release()) {
     exit;
 }
 ?>

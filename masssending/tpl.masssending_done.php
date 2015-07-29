@@ -22,18 +22,17 @@ if ($count == 1 || (($count > 4) && ($count < 21))) {
     $measure = 'человек';
 }
 if (strlen($count) > 1) {
-	$cn = $count[strlen($count) - 2];
-	$cm = $count[strlen($count) - 1];	
-	if ( ($cm == 1) || ($cm == 0) ) {
+    $cn = $count[strlen($count) - 2];
+    $cm = $count[strlen($count) - 1];
+    if (($cm == 1) || ($cm == 0)) {
         $lex = 'получит';
         $measure = 'человек';
     }
     if (($cn == 1) || ($cm > 4)) {
         $lex = 'получит';
         $measure = 'человек';
-    } 
+    }
 }
-
 
 ?>
                 <div class="b-layout__txt b-layout__txt_padbot_5">Вашу рассылку <?=$lex ?> <span class="b-layout__txt b-layout__txt_bold"><?= $count ?> <?=$measure ?></span></div>

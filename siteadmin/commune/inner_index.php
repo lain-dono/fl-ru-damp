@@ -1,9 +1,13 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
-if(!(hasPermissions('adm') && hasPermissions('communes'))) {
-  exit;
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
 }
-  if(!($groups = commune::GetGroups()))
-    $groups = array();
+if (!(hasPermissions('adm') && hasPermissions('communes'))) {
+    exit;
+}
+  if (!($groups = commune::GetGroups())) {
+      $groups = array();
+  }
 
   $grpCnt = count($groups);
 
@@ -37,16 +41,20 @@ if(!(hasPermissions('adm') && hasPermissions('communes'))) {
 
 </script>
 <strong>Сообщества</strong><br><br>
-<? if ($_GET['result']=='success') { ?>
+<?php if ($_GET['result'] == 'success') {
+    ?>
   <div>
     <img src="/images/ico_ok.gif" alt="" border="0" height="18" width="19"/>&nbsp;&nbsp;Готово!
   </div>
-<? } ?>
-<? if ($error) { ?>
+<?php 
+} ?>
+<?php if ($error) {
+    ?>
   <div>
     <?=view_error($error)?>
   </div>
-<? } ?>
+<?php 
+} ?>
 <br><br>
 <form action="/siteadmin/commune/" method="post">
   <input name="action" type="hidden" value="Insert"/>
@@ -63,13 +71,15 @@ if(!(hasPermissions('adm') && hasPermissions('communes'))) {
 							</div>
       </td>
     </tr>
-    <? if ($alert['name']) { ?>
+    <?php if ($alert['name']) {
+    ?>
       <tr>
         <td colspan="2">
           <?=view_error($alert['name'])?>
         </td>
       </tr>
-    <? } ?>
+    <?php 
+} ?>
     <tr valign="top">
       <td>
         Описание
@@ -101,9 +111,8 @@ if(!(hasPermissions('adm') && hasPermissions('communes'))) {
     <col style="width:25px"/>
     <col style="width:25px"/>
     <col style="width:25px"/>
-    <? for($i=0; $i<$grpCnt; $i++) {
-    
-         $grp = $groups[$i]
+    <?php for ($i = 0; $i < $grpCnt; ++$i) {
+    $grp = $groups[$i]
          // style="background:#7f9db9"
     ?>
       <tr valign="middle">
@@ -112,46 +121,57 @@ if(!(hasPermissions('adm') && hasPermissions('communes'))) {
 							<div class="b-input">
           <input class="b-input__text" maxlength="<?=commune::GROUP_NAME_MAX_LENGTH?>" name="name[]" type="text" value="<?=$grp['name']?>"/>
        </div>
-							   <? 
+							   <?php 
              if ($alert['name[]'][$grp['id']]) {
-               print(view_error($alert['name[]'][$grp['id']]));
+                 print(view_error($alert['name[]'][$grp['id']]));
              } 
-          ?>
+    ?>
         </td>
         <td>
 							<div class="b-input">
           <input class="b-input__text" maxlength="<?=commune::GROUP_DESCR_MAX_LENGTH?>" type="text" name="descr[]" value="<?=$grp['descr']?>"/>
        </div>
         </td>
-        <? if(!$i) { ?>
+        <?php if (!$i) {
+    ?>
           <td align="center">&nbsp;
             
           </td>
-        <? } else { ?>
+        <?php 
+} else {
+    ?>
           <td align="center">
             <a href="#"><span
                     onmouseover="this.style.background='#d0d0d0'" onmouseout="this.style.background=''"
                     onclick="reOrder(this,-1)"
               ><img src="/images/ico_up.gif" alt="" width="9" height="9" border="0"></span></a>
           </td>
-        <? } ?>
-        <? if($i==$grpCnt-1) { ?>
+        <?php 
+}
+    ?>
+        <?php if ($i == $grpCnt - 1) {
+    ?>
           <td>&nbsp;
             
           </td>
-        <? } else { ?>
+        <?php 
+} else {
+    ?>
           <td>
             <a href="#"><span
                     onmouseover="this.style.background='#d0d0d0'" onmouseout="this.style.background=''"
                     onclick="reOrder(this,1)"
               ><img src="/images/ico_down.gif" alt="" width="9" height="9" border="0"></span></a>
           </td>
-        <? } ?>
+        <?php 
+}
+    ?>
         <td align="center">
           <a id="del_comm_<?=$grp['id']?>" href="?id=<?=$grp['id']?>&action=Delete" onclick="return addTokenToLink('del_comm_<?=$grp['id']?>', 'Вы уверены?');"><img src="/images/ico_close.gif" alt="удалить" width="9" height="9" border="0"/></a>
         </td>
       </tr>
-    <? } ?>
+    <?php 
+} ?>
     <tr>
       <td colspan="5" align="right">
         <br/>

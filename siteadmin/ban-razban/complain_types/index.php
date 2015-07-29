@@ -1,7 +1,7 @@
-<?
+<?php
 
 if (!defined('IS_SITE_ADMIN')) {
-    header ("Location: /404.php"); 
+    header ('Location: /404.php'); 
     exit;
 }
 
@@ -20,13 +20,12 @@ if ($action && $action === 'save') {
     $add = array();
     $edit = array();
     $delete = array();
-    
-    foreach($_POST['name'] as $cTypeKey => $cTypeName) {
+
+    foreach ($_POST['name'] as $cTypeKey => $cTypeName) {
         if (!trim($cTypeName)) {
             continue;
         }
-        
-        
+
         $ctID = __paramValue('int', $_POST['id'][$cTypeKey]);
         $ctName = trim(__paramValue('string', $_POST['name'][$cTypeKey]));
         $ctTextarea = __paramValue('bool', $_POST['textarea'][$cTypeKey]);
@@ -40,23 +39,23 @@ if ($action && $action === 'save') {
             $ctPos = 1;
         }
         $ctDel = __paramValue('int', $_POST['del'][$cTypeKey]);
-        
+
         if (!$ctID && !$ctDel) {
             $add[] = array(
-                'name'      => $ctName,
-                'textarea'  => $ctTextarea,
-                'required'  => $ctRequired,
-                'pos'       => $ctPos,
+                'name' => $ctName,
+                'textarea' => $ctTextarea,
+                'required' => $ctRequired,
+                'pos' => $ctPos,
             );
         } elseif ($ctDel && $ctID) {
             $delete[] = array('id' => $ctID);
         } elseif ($ctID && !$ctDel) {
             $edit[] = array(
-                'id'        => $ctID,
-                'name'      => $ctName,
-                'textarea'  => $ctTextarea,
-                'required'  => $ctRequired,
-                'pos'       => $ctPos,
+                'id' => $ctID,
+                'name' => $ctName,
+                'textarea' => $ctTextarea,
+                'required' => $ctRequired,
+                'pos' => $ctPos,
             );
         }
     }
@@ -65,7 +64,7 @@ if ($action && $action === 'save') {
 
 $complainTypes = projects_complains::getTypes($moder, false);
 
-$css_file   = array( 'moderation.css', 'nav.css' );
+$css_file = array('moderation.css', 'nav.css');
 include $rpath.'template.php';
 
 ?>

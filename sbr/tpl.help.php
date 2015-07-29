@@ -1,4 +1,4 @@
-<div class="b-fon b-fon_relative b-fon_padbot_20 <?= (isset($_COOKIE['close_help']) ? "b-fon_hide" : "")?> helpsite-block" >
+<div class="b-fon b-fon_relative b-fon_padbot_20 <?= (isset($_COOKIE['close_help']) ? 'b-fon_hide' : '')?> helpsite-block" >
     <div class="b-fon__body b-fon__body_pad_10 b-fon__body_fontsize_13 b-fon__body_bg_ffebbf b-layout">
         <table class="b-layout__table b-layout__table_width_full" cellpadding="0" cellspacing="0" border="0">
             <tbody>

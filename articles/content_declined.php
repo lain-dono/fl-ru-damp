@@ -1,17 +1,19 @@
 
 <?php
 $crumbs = array();
-$crumbs[] = array("title"=>"Статьи и интервью", "url"=>"/articles/");
-$crumbs[] = array("title"=>"Отклоненные", "url"=>"");
+$crumbs[] = array('title' => 'Статьи и интервью', 'url' => '/articles/');
+$crumbs[] = array('title' => 'Отклоненные', 'url' => '');
 ?>
 <div class="b-menu b-menu_crumbs  b-menu_padbot_20"><?=getCrumbs($crumbs)?></div>
 
-<? include($mpath . '/tabs.php'); ?>
+<?php include $mpath.'/tabs.php'; ?>
 <div class="page-articles">
-    <? include($mpath . '/tpl.sorting.php'); ?>
+    <?php include $mpath.'/tpl.sorting.php'; ?>
     <div class="p-articles-in c">
         <div class="p-a-cnt b-layout__right b-layout__right_relative b-layout__right_width_72ps b-layout__right_float_right">
-            <? if($articles) foreach($articles as $article) { ?>
+            <?php if ($articles) {
+    foreach ($articles as $article) {
+        ?>
             <div class="post-one" id="post_<?=$article['id']?>">
                 <img src="<?=WDCPREFIX?>/<?=$article['path']?><?=$article['fname']?>" alt="" width="100" class="post-img" />
                 <div class="post-txt">
@@ -24,17 +26,23 @@ $crumbs[] = array("title"=>"Отклоненные", "url"=>"");
                         <li class="post-f-lnks">
                             <ul>
                                 <li class="first">
-                                    <? if(hasPermissions('articles')) { ?>
+                                    <?php if (hasPermissions('articles')) {
+    ?>
                                     <a href="javascript:void(0)" style="color: #A23E3E;" onclick="editArticle(<?=$article['id']?>)">Редактировать</a>
                                     &nbsp;|&nbsp;
                                     <a href="javascript:void(0)" style="color: #A23E3E;" onclick="delArticleForm(<?=$article['id']?>);">Удалить</a>
                                     &nbsp;|&nbsp;
-                                    <? } ?>
-                                    <? if($article['approved'] == 'f' && (hasPermissions('articles'))) { ?>
+                                    <?php 
+}
+        ?>
+                                    <?php if ($article['approved'] == 'f' && (hasPermissions('articles'))) {
+    ?>
                                     <a href="/articles/?id=<?=$article['id']?>&task=undecline" style="color: #A23E3E;" onclick="return (confirm('Вы уверены?'));">На модерацию</a>
                                     &nbsp;|&nbsp;
                                     <a href="/articles/?id=<?=$article['id']?>&task=approve" onclick="return (confirm('Вы уверены?'));">Подтвердить</a>
-                                    <? } ?>
+                                    <?php 
+}
+        ?>
                                 </li>
                             </ul>
                         </li>
@@ -44,17 +52,21 @@ $crumbs[] = array("title"=>"Отклоненные", "url"=>"");
                         </li>
                         <li class="post-f-autor">
                             <a href="/users/<?=$article['login']?>">
-                <?= $article['uname'] . ' ' . $article['usurname'] . ' [' . $article['login'] . ']'?>
+                <?= $article['uname'].' '.$article['usurname'].' ['.$article['login'].']'?>
                             </a>
 														<span class="post-f-autor-grad"></span>
                         </li>
                     </ul>
                 </div>
             </div>
-            <? } ?>
+            <?php 
+    }
+} ?>
             
-            <?=new_paginator($page, $pages, 3, "%s?".urldecode(url('ord,p,page', array('p' => '%d')))."%s")?>
-            <? if(hasPermissions('articles')) include('form.php'); ?>
+            <?=new_paginator($page, $pages, 3, '%s?'.urldecode(url('ord,p,page', array('p' => '%d'))).'%s')?>
+            <?php if (hasPermissions('articles')) {
+    include 'form.php';
+} ?>
         </div>
         <div class="p-a-left b-layout__left b-layout__left_width_25ps">
             <div class="p-a-popular c">

@@ -1,15 +1,15 @@
 <?php
 /**
- * Шаблон письма уведомление заказчику о создании заказа услуги (УВ-1-1)
+ * Шаблон письма уведомление заказчику о создании заказа услуги (УВ-1-1).
  */
 
 /**
- * Тема письма
+ * Тема письма.
  */
-$smail->subject = "Регистрация и заказ услуги";
+$smail->subject = 'Регистрация и заказ услуги';
 
-$tu_url = $GLOBALS['host'] . tservices_helper::card_link($tu_id, $tu_title);
-$new_order_url = $GLOBALS['host'] . tservices_helper::getNewOrderUrl($code);
+$tu_url = $GLOBALS['host'].tservices_helper::card_link($tu_id, $tu_title);
+$new_order_url = $GLOBALS['host'].tservices_helper::getNewOrderUrl($code);
 
 ?>
 Здравствуйте.<br/>

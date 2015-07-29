@@ -7,9 +7,8 @@
 
 $smail->subject = "Работа по заказу «{$order['title']}» выполнена";
 
-$order_url = $GLOBALS['host'] . tservices_helper::getOrderCardUrl($order['id']);
+$order_url = $GLOBALS['host'].tservices_helper::getOrderCardUrl($order['id']);
 $title = reformat(htmlspecialchars($order['title']), 30, 0, 1);
-
 
 ?>
 Исполнитель <?=$frl_fullname?> выполнил работу с вами по заказу &laquo;<a href="<?=$order_url?>"><?=$title?></a>&raquo;, готов предоставить конечный результат и получить оплату.

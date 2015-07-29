@@ -2,8 +2,8 @@
 
 namespace YandexMoney3\Presets;
 
-class BaseApiKey 
+class BaseApiKey
 {
-    const CLIENT_ORDER_ID   = 'clientOrderId';
-    const REQUEST_DT        = 'requestDT';
+    const CLIENT_ORDER_ID = 'clientOrderId';
+    const REQUEST_DT = 'requestDT';
 }

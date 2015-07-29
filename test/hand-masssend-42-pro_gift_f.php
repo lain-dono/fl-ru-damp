@@ -1,6 +1,6 @@
 <?php
 /**
- * Уведомление у которых еще не было никогда про, даже тестового
+ * Уведомление у которых еще не было никогда про, даже тестового.
  * */
 ini_set('max_execution_time', '0');
 ini_set('memory_limit', '512M');
@@ -9,7 +9,7 @@ require_once '../classes/stdf.php';
 require_once '../classes/memBuff.php';
 require_once '../classes/smtp2.php';
 
-/**
+/*
  * Логин пользователя от кого осуществляется рассылка
  * 
  */
@@ -21,17 +21,17 @@ $sql = "SELECT uid, email, login, uname, usurname, subscr FROM freelancer WHERE 
 
 $eHost = $GLOBALS['host'];
 
-$eSubject = "Free-lance: мы дарим вам профессиональный аккаунт";
+$eSubject = 'Free-lance: мы дарим вам профессиональный аккаунт';
 
-$mail = new smtp2;
+$mail = new smtp2();
 
-$img29  = $mail->cid();
-$img6  = $mail->cid();
-$img27  = $mail->cid();
+$img29 = $mail->cid();
+$img6 = $mail->cid();
+$img27 = $mail->cid();
 
-$mail->attach(ABS_PATH . '/images/letter/29.png', $img29);
-$mail->attach(ABS_PATH . '/images/letter/6.png', $img6);
-$mail->attach(ABS_PATH . '/images/letter/27.png', $img27);
+$mail->attach(ABS_PATH.'/images/letter/29.png', $img29);
+$mail->attach(ABS_PATH.'/images/letter/6.png', $img6);
+$mail->attach(ABS_PATH.'/images/letter/27.png', $img27);
 
 $link = "$eHost/gift_pro.php?utm_source=newsletter4&utm_medium=email&utm_campaign=podarok_free&uid=%%%UID%%%";
 ob_start(); ?><html>
@@ -398,14 +398,14 @@ ob_start(); ?><html>
 </body>
 </html>
 
-<? $eMessage = ob_get_clean();
+<?php $eMessage = ob_get_clean();
 // ----------------------------------------------------------------------------------------------------------------
 // -- Рассылка ----------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------------
 $master = new DB('master');
 $cnt = 0;
 
-$sender = $master->row("SELECT * FROM users WHERE login = ?", $sender);
+$sender = $master->row('SELECT * FROM users WHERE login = ?', $sender);
 if (empty($sender)) {
     die("Unknown Sender\n");
 }
@@ -426,15 +426,15 @@ $res = $master->query($sql);
 while ($row = pg_fetch_assoc($res)) {
     $mail->recipient[] = array(
         'email' => "{$row['uname']} {$row['usurname']} [{$row['login']}] <{$row['email']}>",
-        'extra' => array('USER_LOGIN' => $row['login'], 'UID' => $row['uid'])
+        'extra' => array('USER_LOGIN' => $row['login'], 'UID' => $row['uid']),
     );
     if (++$i >= 30000) {
         $mail->bind($spamid);
         $mail->recipient = array();
         $i = 0;
     }
-    $master->insert("week_pro_action", array("uid"=>$row['uid'], "is_emp"=>'f') );
-    $cnt++;
+    $master->insert('week_pro_action', array('uid' => $row['uid'], 'is_emp' => 'f'));
+    ++$cnt;
 }
 if ($i) {
     $mail->bind($spamid);

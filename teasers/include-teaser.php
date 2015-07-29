@@ -1,16 +1,16 @@
-<?
-if (!defined("IN_STDF")){
-    header("HTTP/1.1 403 Forbidden");
-    header("location: /403.html");
-	die();
+<?php
+if (!defined('IN_STDF')) {
+    header('HTTP/1.1 403 Forbidden');
+    header('location: /403.html');
+    die();
 }
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/payed.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/payed.php';
 
 /** массив шаблонов тизеров
  * ключ file - обязательно
- * необязательно: exclude - тизеры с этими параметрами исключить
+ * необязательно: exclude - тизеры с этими параметрами исключить.
  */ 
 $teasersEmp = array (
     array('file' => 'tpl.teaser-masssending.php',   'exclude' => array('no-public', 'masssending')), // массовая рассылка
@@ -31,7 +31,6 @@ $teasersFrl = array (
     //array('file' => 'tpl.teaser-offers.php',        'exclude' => array('offers')), // платные ответы
 );
 $filteredTeasers = array();
-
 
 if (!$teasersExclude) {
     $teasersExclude = array();
@@ -58,19 +57,17 @@ if (is_pro()) {
     $teasersExclude[] = 'test-pro';
 }
 
-
-
 // формируем массив из прошедших фильтрацию тизеров
 foreach ($teasers as $key => $teaser) {
     $ok = true;
-    
+
     foreach ($teaser['exclude'] as $filter) {
         if (isset($teasersExclude) && in_array($filter, $teasersExclude)) {
             $ok = false;
             break;
         }
     }
-    
+
     if ($ok) {
         $filteredTeasers[] = $teaser;
     }
@@ -90,7 +87,7 @@ $teaser = $filteredTeasers[$teaserKey]['file'];
 if ($teaser === 'tpl.teaser-up.php' || $teaser === 'tpl.teaser-up-conk.php' || $teaser === 'tpl.teaser-up-top.php') {
     $account = new account();
     $account->GetInfo(get_uid());
-    $transaction_id = $account -> start_transaction(get_uid());
+    $transaction_id = $account->start_transaction(get_uid());
     ?>
     <form action="/users/<?= $_SESSION['login'] ?>/setup/" id="upprj" name="frm" method="POST">
         <input type="hidden" name="action" value="prj_up">
@@ -99,7 +96,8 @@ if ($teaser === 'tpl.teaser-up.php' || $teaser === 'tpl.teaser-up-conk.php' || $
         <input type="hidden" value="<?= $_SESSION['rand'] ?>" name="r">
         <input type="hidden" value="<?= $_SESSION['rand'] ?>" name="u_token_key">
     </form>
-    <?
+    <?php
+
 }
 
 ?>
@@ -111,7 +109,7 @@ if ($teaser === 'tpl.teaser-up.php' || $teaser === 'tpl.teaser-up-conk.php' || $
             <div class="b-dot__body b-dot__body_padtb_10">
                 <table class="b-layout__table b-layout__table_width_full" border="0" cellpadding="0" cellspacing="0">
                     <tr class="b-layout__tr">
-                        <? include($abs_path . "/teasers/$teaser"); ?>
+                        <?php include $abs_path."/teasers/$teaser"; ?>
                     </tr>
                 </table>
             </div>

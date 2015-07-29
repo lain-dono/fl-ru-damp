@@ -1,7 +1,9 @@
-<?php namespace UniversalAnalytics\Track;
+<?php
 
-class Event extends Entity {
+namespace UniversalAnalytics\Track;
 
+class Event extends Entity
+{
     protected $shortName = 'event';
 
     protected $attributes = array(
@@ -24,5 +26,4 @@ class Event extends Entity {
         'ec',
         'ea',
     );
-
 }

@@ -15,12 +15,7 @@
 
 $url = 'operator/index.php';
 
-
- 
-
-header("Location: ".$url);
+header('Location: '.$url);
 exit;
-
-
 
 ?>

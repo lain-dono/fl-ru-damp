@@ -1,4 +1,6 @@
-<?php namespace UniversalAnalytics;
+<?php
+
+namespace UniversalAnalytics;
 
 use UniversalAnalytics\Track\Entity;
 use UniversalAnalytics\Track\Event;
@@ -11,20 +13,16 @@ use UniversalAnalytics\Track\UserTiming;
 use UniversalAnalytics\Exception\InvalidRequestException;
 use UniversalAnalytics\Contracts\ValidableInterface;
 
-class UA implements ValidableInterface {
-
+class UA implements ValidableInterface
+{
     /**
-     * Current set entity
-     *
-     * @access protected
+     * Current set entity.
      */
     private $current;
 
     /**
      * Attributes commone to every request
-     * See getters/setters below
-     *
-     * @access protected
+     * See getters/setters below.
      */
     protected $attributes = array(
         'v' => null,
@@ -32,24 +30,23 @@ class UA implements ValidableInterface {
         'cid' => null,
     );
 
-    public function __construct(Array $attributes=null)
+    public function __construct(Array $attributes = null)
     {
-        if( is_null($attributes) === false )
-        {
+        if (is_null($attributes) === false) {
             $this->build($attributes);
         }
     }
 
     /**
-     * Add object attributes via array
+     * Add object attributes via array.
      *
      * @param Array     Key => Value array of attributes
+     *
      * @return UniversalAnalytics\UA
      */
     public function build(Array $data)
     {
-        foreach( $data as $key => $value )
-        {
+        foreach ($data as $key => $value) {
             $this->attributes[$key] = $value;
         }
 
@@ -57,15 +54,15 @@ class UA implements ValidableInterface {
     }
 
     /**
-     * Version 't' getter/setter
+     * Version 't' getter/setter.
      *
      * @param String    API Version
+     *
      * @return UniversalAnalytics\UA
      */
-    public function version($version=null)
+    public function version($version = null)
     {
-        if( is_null($version) )
-        {
+        if (is_null($version)) {
             return $this->attributes['v'];
         }
 
@@ -75,15 +72,15 @@ class UA implements ValidableInterface {
     }
 
     /**
-     * Tracking ID 'tid' getter/setter
+     * Tracking ID 'tid' getter/setter.
      *
      * @param String    Tracking ID
+     *
      * @return UniversalAnalytics\UA
      */
-    public function trackingid($trackingid=null)
+    public function trackingid($trackingid = null)
     {
-        if( is_null($trackingid) )
-        {
+        if (is_null($trackingid)) {
             return $this->attributes['tid'];
         }
 
@@ -93,15 +90,15 @@ class UA implements ValidableInterface {
     }
 
     /**
-     * Client anonymous ID 'cid' getter/setter
+     * Client anonymous ID 'cid' getter/setter.
      *
      * @param String    Client ID
+     *
      * @return UniversalAnalytics\UA
      */
-    public function clientid($clientid=null)
+    public function clientid($clientid = null)
     {
-        if( is_null($clientid) )
-        {
+        if (is_null($clientid)) {
             return $this->attributes['cid'];
         }
 
@@ -111,15 +108,15 @@ class UA implements ValidableInterface {
     }
 
     /**
-     * Get or Set current Entity
+     * Get or Set current Entity.
      *
      * @param UniversalAnalytics\Track\Entity
+     *
      * @return UniversalAnalytics\UA
      */
-    public function current(Entity $current=null)
+    public function current(Entity $current = null)
     {
-        if( is_null($current) )
-        {
+        if (is_null($current)) {
             return $this->current;
         }
 
@@ -184,15 +181,15 @@ class UA implements ValidableInterface {
 **************************************************************/
 
     /**
-     * Track entity
+     * Track entity.
      *
      * @param UniversalAnalytics\Track\Entity
+     *
      * @return UniversalAnalytics\Request
      */
-    public function track(Entity $track=null)
+    public function track(Entity $track = null)
     {
-        if( is_null($track) )
-        {
+        if (is_null($track)) {
             $track = $this->current;
         } else {
             $this->current = $track;
@@ -200,8 +197,7 @@ class UA implements ValidableInterface {
 
         $this->build($track->toArray(true));
 
-        if( $this->valid() === false )
-        {
+        if ($this->valid() === false) {
             throw new InvalidRequestException('Invalid Request, ensure required fields are set');
         }
 
@@ -209,27 +205,24 @@ class UA implements ValidableInterface {
     }
 
     /**
-     * Validate Request
+     * Validate Request.
      *
      * @return Bool
      */
     public function valid()
     {
-        if( is_null($this->attributes['v'])
+        if (is_null($this->attributes['v'])
             || is_null($this->attributes['tid'])
-            || is_null($this->attributes['cid']) )
-        {
+            || is_null($this->attributes['cid'])) {
             return false;
         }
 
         // This will pass TRUE or FALSE
-        if( $this->current instanceof Entity )
-        {
+        if ($this->current instanceof Entity) {
             return $this->current->valid();
         }
 
         // If no "current", then invalid
         return false;
     }
-
 }

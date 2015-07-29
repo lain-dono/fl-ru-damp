@@ -1,54 +1,55 @@
 					<?php // С Сашей CSS для старого календаря временно решили поставить здесь, до переделки календаря на новый вид ?>
 
 					<?php
-					require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/professions.php");
+                    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/professions.php';
 
-					$filter_categories = professions::GetAllGroupsLite(TRUE);
-					$filter_subcategories = professions::GetAllProfessions(1);
+                    $filter_categories = professions::GetAllGroupsLite(true);
+                    $filter_subcategories = professions::GetAllProfessions(1);
 
-					$all_mirrored_specs = professions::GetAllMirroredProfsId();
-					$mirrored_specs = array();
-					for ($is = 0; $is < sizeof($all_mirrored_specs); $is++) {
-    					$mirrored_specs[$all_mirrored_specs[$is]['main_prof']] = $all_mirrored_specs[$is]['mirror_prof'];
-    					$mirrored_specs[$all_mirrored_specs[$is]['mirror_prof']] = $all_mirrored_specs[$is]['main_prof'];
-					}
-    				$all_specs = professions::GetAllProfessions("", 0, 1);
-					?>
+                    $all_mirrored_specs = professions::GetAllMirroredProfsId();
+                    $mirrored_specs = array();
+                    for ($is = 0; $is < sizeof($all_mirrored_specs); ++$is) {
+                        $mirrored_specs[$all_mirrored_specs[$is]['main_prof']] = $all_mirrored_specs[$is]['mirror_prof'];
+                        $mirrored_specs[$all_mirrored_specs[$is]['mirror_prof']] = $all_mirrored_specs[$is]['main_prof'];
+                    }
+                    $all_specs = professions::GetAllProfessions('', 0, 1);
+                    ?>
 
 					<script type="text/javascript">
     					var qprj_filter_specs = new Array();
     					var qprj_filter_specs_ids = new Array();
-						<?
+						<?php
 						$spec_now = 0;
-						for ($i = 0; $i < sizeof($all_specs); $i++) {
-    						if ($all_specs[$i]['groupid'] != $spec_now) {
-        						$spec_now = $all_specs[$i]['groupid'];
-        						echo "qprj_filter_specs[" . $all_specs[$i]['groupid'] . "]=[";
-    						}
-    						echo "[" . $all_specs[$i]['id'] . ",'" . $all_specs[$i]['profname'] . "']";
-    						if ($all_specs[$i + 1]['groupid'] != $spec_now) {
-	        					echo "];";
-    						} else {
-	        					echo ",";
-    						}
+						for ($i = 0; $i < sizeof($all_specs); ++$i) {
+						    if ($all_specs[$i]['groupid'] != $spec_now) {
+						        $spec_now = $all_specs[$i]['groupid'];
+						        echo 'qprj_filter_specs['.$all_specs[$i]['groupid'].']=[';
+						    }
+						    echo '['.$all_specs[$i]['id'].",'".$all_specs[$i]['profname']."']";
+						    if ($all_specs[$i + 1]['groupid'] != $spec_now) {
+						        echo '];';
+						    } else {
+						        echo ',';
+						    }
 						}
 						$spec_now = 0;
-						for ($i = 0; $i < sizeof($all_specs); $i++) {
-    						if ($all_specs[$i]['groupid'] != $spec_now) {
-        						$spec_now = $all_specs[$i]['groupid'];
-        						echo "qprj_filter_specs_ids[" . $all_specs[$i]['groupid'] . "]={";
-    						}
-    						echo "" . $all_specs[$i]['id'] . ":1";
-    						if ($all_specs[$i + 1]['groupid'] != $spec_now) {
-        						echo "};";
-    						} else {
-        						echo ",";
-    						}
+						for ($i = 0; $i < sizeof($all_specs); ++$i) {
+						    if ($all_specs[$i]['groupid'] != $spec_now) {
+						        $spec_now = $all_specs[$i]['groupid'];
+						        echo 'qprj_filter_specs_ids['.$all_specs[$i]['groupid'].']={';
+						    }
+						    echo ''.$all_specs[$i]['id'].':1';
+						    if ($all_specs[$i + 1]['groupid'] != $spec_now) {
+						        echo '};';
+						    } else {
+						        echo ',';
+						    }
 						}
 						?>
-    					var qprj_filter_mirror_specs = {<?
-						for ($i = 0; $i < count($all_mirrored_specs), $ms = $all_mirrored_specs[$i]; $i++)
-    						print(($i ? ',' : '') . $ms['mirror_prof'] . ':' . $ms['main_prof'] . ',' . $ms['main_prof'] . ':' . $ms['mirror_prof']);
+    					var qprj_filter_mirror_specs = {<?php
+						for ($i = 0; $i < count($all_mirrored_specs), $ms = $all_mirrored_specs[$i]; ++$i) {
+						    print(($i ? ',' : '').$ms['mirror_prof'].':'.$ms['main_prof'].','.$ms['main_prof'].':'.$ms['mirror_prof']);
+						}
 						?>};
         				var qprj_filter_bullets = [[],[]];
                         var PROJECTS_MAX_FILE_COUNT = <?=tmp_project::MAX_FILE_COUNT?>;
@@ -98,15 +99,15 @@
 									                    </div>
 								                    </div>
                                             <?php /*
-								                    <div class="b-check b-check_padbot_10">
-									                    <input id="popup_qedit_prj_is_color" class="b-check__input" name="is_color" type="checkbox" value="1" onClick="popupQEditPrjToggleIsColor();" />
-									                    <label for="popup_qedit_prj_is_color" class="b-check__label b-check__label_margleft_5 ">Выделить цветом</label>
-								                    </div>
-								                    <div class="b-check b-check_padbot_10">
-									                    <input id="popup_qedit_prj_is_bold" class="b-check__input" name="is_bold" type="checkbox" value="1" onClick="popupQEditPrjToggleIsBold();" />
-									                    <label for="popup_qedit_prj_is_bold" class="b-check__label b-check__label_margleft_5">Выделить <span class="">жирным</span></label>
-								                    </div>
-														  */ ?>
+                                                    <div class="b-check b-check_padbot_10">
+                                                        <input id="popup_qedit_prj_is_color" class="b-check__input" name="is_color" type="checkbox" value="1" onClick="popupQEditPrjToggleIsColor();" />
+                                                        <label for="popup_qedit_prj_is_color" class="b-check__label b-check__label_margleft_5 ">Выделить цветом</label>
+                                                    </div>
+                                                    <div class="b-check b-check_padbot_10">
+                                                        <input id="popup_qedit_prj_is_bold" class="b-check__input" name="is_bold" type="checkbox" value="1" onClick="popupQEditPrjToggleIsBold();" />
+                                                        <label for="popup_qedit_prj_is_bold" class="b-check__label b-check__label_margleft_5">Выделить <span class="">жирным</span></label>
+                                                    </div>
+                                                          */ ?>
 								                    <div class="b-check b-check_padbot_10">
 									                    <input id="popup_qedit_prj_is_hide" class="b-check__input" name="is_hide" type="checkbox" value="1"  />
 									                    <label for="popup_qedit_prj_is_hide" class="b-check__label b-check__label_margleft_5 ">Скрытый проект</label>

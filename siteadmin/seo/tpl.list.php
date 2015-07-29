@@ -10,17 +10,21 @@
             <div class="b-layout__txt b-layout__txt_padbot_5 b-layout__txt_bordbot_double_ccc">&nbsp;</div>
         </td>
     </tr>
-    <?php foreach($list as $content) { ?>
+    <?php foreach ($list as $content) {
+    ?>
     <tr class="b-layout__tr">
         <td class="b-layout__one b-layout__one_padbot_10 b-layout__one_padtop_9 b-layout__txt_bordbot_b2">
-            <?php echo $content['parent_id']; ?>
+            <?php echo $content['parent_id'];
+    ?>
         </td>
         <td class="b-layout__one b-layout__one_padbot_10 b-layout__one_padtop_9  b-layout__txt_bordbot_b2 b-layout__txt_color_000">
-            <?=$content['is_spec']=='t'?$content['prof_title']:$content['prof_group_title']; ?>
+            <?=$content['is_spec'] == 't' ? $content['prof_title'] : $content['prof_group_title'];
+    ?>
         </td>
         <td class="b-layout__one b-layout__one_padbot_10 b-layout__one_padtop_9  b-layout__txt_bordbot_b2">
             <a href="/siteadmin/seo/?action=edit&id=<?=$content['id']?>">изменить</a>
         </td>
     </tr>
-    <?php }//foreach?>
+    <?php 
+}//foreach?>
 </table>

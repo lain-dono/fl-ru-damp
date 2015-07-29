@@ -1,11 +1,15 @@
 <div class="b-layout">
     <div class="b-layout__right b-layout__right_width_73ps b-layout__right_float_right">
 	    <h1 class="b-page__title b-page__title_padbot_30">
-            <?php if($type){ ?>
+            <?php if ($type) {
+    ?>
                 Отписка от рассылки
-            <?php } else { ?>
+            <?php 
+} else {
+    ?>
                 Отписка от рассылок
-            <?php } ?>
+            <?php 
+} ?>
             </h1>
    </div>
 

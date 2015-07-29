@@ -1,9 +1,11 @@
-<?
+<?php
 
 $pskb_code = '';
 if (defined('PSKB_TEST_MODE')) {
     $pskb_code = $pskb->getSmsCode($lc['lc_id']);
-    if ($pskb_code) $pskb_code = $pskb_code[0];
+    if ($pskb_code) {
+        $pskb_code = $pskb_code[0];
+    }
 }
 
 ?>

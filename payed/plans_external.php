@@ -3,21 +3,18 @@
 /**
  * Вывод планов покупки ПРО на другие страницы
  * включая попап для покупки, так же везде нужно
- * подключить xajax скрипты
+ * подключить xajax скрипты.
  */
-
 $current_uid = get_uid(false);
 
 //Не показываем блок при условии
-if ($current_uid <= 0 || is_pro() || is_emp() || 
-   (isset($g_page_id) && in_array($g_page_id, array('0|9', '0|35', '0|26', '0|993'))) || 
+if ($current_uid <= 0 || is_pro() || is_emp() ||
+   (isset($g_page_id) && in_array($g_page_id, array('0|9', '0|35', '0|26', '0|993'))) ||
    !isAllowTestPro()) {
-    
     return;
 }
 
-
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/payed.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/payed.php';
 
 ?>
 <div class="b-layout b-layout__page">
@@ -31,8 +28,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/payed.php");
             </div>
 <?php
 
-include_once('plans.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . "/templates/quick_buy_pro.php");
+include_once 'plans.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/templates/quick_buy_pro.php';
 
 ?>
         </div>

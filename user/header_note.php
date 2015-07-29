@@ -1,15 +1,15 @@
 <?php 
-if(!defined('IN_STDF')) { 
-    header("HTTP/1.0 404 Not Found");
+if (!defined('IN_STDF')) {
+    header('HTTP/1.0 404 Not Found');
     exit();
 }
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/notes.php"); 
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/notes.php';
 $oNotes = new notes();
-$aNote  = $oNotes->GetNoteInt( $_SESSION['uid'], $user->uid, $error );
+$aNote = $oNotes->GetNoteInt($_SESSION['uid'], $user->uid, $error);
 ?>
 
-<?php if ( $aNote ) {
-?>
+<?php if ($aNote) {
+    ?>
 <div class="bBD" id="zametkaBD">
     <div id="zametka" class="b-layout b-layout_pad_10 b-layout_bord_ffeda9 b-layout_bordrad_1 b-fon_bg_fff9bf_hover b-layout_hover ">
       <?php /*<a  href="javascript:void(0);" onclick="if(confirm('Вы действительно хотите удалить заметку?')){xajax_saveHeaderNote('<?=$name?>','');}"><img src="/images/btn-remove2.png" width="11" height="11" alt="" /></a>*/ ?>
@@ -19,17 +19,18 @@ $aNote  = $oNotes->GetNoteInt( $_SESSION['uid'], $user->uid, $error );
     </div>
 </div>
 <?php
-}
-else {
-?>
+
+} else {
+    ?>
     <div id="zametka" class="b-layout__txt b-layout__txt_padtop_5 b-layout__txt_inline-block"><span class="b-icon b-icon__cont b-icon__cont_note" ></span><a class="b-layout__link b-layout__link_bordbot_dot_0f71c8 b-layout__link_fontsize_13" href="javascript:void(0);" onclick="$('zametka_fmr').toggleClass('b-layout_hide');">Оставить заметку</a></div>
 <?php
+
 }
 ?>
     
     <div id="zametka_fmr" class="b-layout b-layout_pad_15 b-layout_bord_ffeda9 b-layout_bordrad_1 b-layout_hide b-fon_bg_fff9bf b-fon">
           <form action="">
-             <input type="hidden" name="rating" id="note_rating" value="<?= (int)$aNote['rating']?>">
+             <input type="hidden" name="rating" id="note_rating" value="<?= (int) $aNote['rating']?>">
                  <div class="b-textarea">
                   <textarea class="b-textarea__textarea" id="header_note" name="header_note" cols="70" rows="5" onkeyup="(checknote(this))"></textarea>
                  </div>

@@ -1,6 +1,5 @@
-<? if(!$is_ajax) {
-
-    switch($order) {
+<?php if (!$is_ajax) {
+    switch ($order) {
         case 'time':
             $order = 'дате';
             break;
@@ -11,7 +10,7 @@
             $order = 'алфавиту';
             break;
     }
-?>
+    ?>
 <div class="favorites">
     <h3>Закладки</h3>
     <div class="fav-sort ">
@@ -26,22 +25,28 @@
         </div>
     </div>
     <ul class="fav-list">
-<? } ?>
-        <? if($bookmarks) foreach($bookmarks as $b) { ?>
+<?php 
+} ?>
+        <?php if ($bookmarks) {
+    foreach ($bookmarks as $b) {
+        ?>
         <li id="fav-<?=$b['article_id']?>">
-            <input type="hidden" value="<?=!$b['bookmark_title'] ? (!$b['title'] ? 'Без названия' : $b['title'] ) : $b['bookmark_title']?>" />
-            <img src="/images/ico_star_<?=$b['bookmark']-1?>.gif" alt="" />
+            <input type="hidden" value="<?=!$b['bookmark_title'] ? (!$b['title'] ? 'Без названия' : $b['title']) : $b['bookmark_title']?>" />
+            <img src="/images/ico_star_<?=$b['bookmark'] - 1?>.gif" alt="" />
             <span>
                 <a class="b-layout__link" href="?id=<?=$b['article_id']?>">
-                    <?=!$b['bookmark_title'] ? (!$b['title'] ? 'Без названия' : reformat($b['title'],17, 0, 1) ) : reformat($b['bookmark_title'], 17, 0, 1)?></a>
+                    <?=!$b['bookmark_title'] ? (!$b['title'] ? 'Без названия' : reformat($b['title'], 17, 0, 1)) : reformat($b['bookmark_title'], 17, 0, 1)?></a>
                 <em>
                     <img style="cursor: pointer;" src="/images/ico_close2.gif" onclick="deleteBookmark(<?=$b['article_id']?>)" title="Удалить" alt="Удалить" />&nbsp;&nbsp;<img style="cursor: pointer;" src="/images/ico_edit2.gif" onclick="editBookmark(<?=$b['article_id']?>)" title="Редактировать" alt="Редактировать" />
                 </em>
             </span>
         </li>
-        <? } ?>
+        <?php 
+    }
+} ?>
     </ul>
-<? if(!$is_ajax) { ?>
+<?php if (!$is_ajax) {
+    ?>
     <ul class="fav-list-tpl fav-list">
         <li class="no-bookmarks" style="display: <?=!$bookmarks ? '' : 'none' ?>">Нет закладок</li>
         <li class="fav-one-edit c" style="display: none;">
@@ -60,4 +65,5 @@
         </li>
     </ul>
 </div>
-<? } ?>
+<?php 
+} ?>

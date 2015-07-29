@@ -9,7 +9,7 @@
             view_social_buttons(false, array(
                 'vkontakte' => 'data-ga-event="{ec: \'user\', ea: \'authorization_started\',el: \'vk\'}"',
                 'facebook' => 'data-ga-event="{ec: \'user\', ea: \'authorization_started\',el: \'fb\'}"',
-                'odnoklassniki' => 'data-ga-event="{ec: \'user\', ea: \'authorization_started\',el: \'od\'}"'
+                'odnoklassniki' => 'data-ga-event="{ec: \'user\', ea: \'authorization_started\',el: \'od\'}"',
             ));
         ?>
         <?php if (isset($_SESSION['opauth_error']) && $_SESSION['opauth_error']): ?>

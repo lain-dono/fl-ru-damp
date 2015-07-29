@@ -18,9 +18,11 @@
                                 <span class="form-input">
                                     <select name="state">
                                         <option value="null">-- Не важно --</option>
-                                        <? foreach (pskb::$state_adm_messages as $k => $v) { ?>
+                                        <?php foreach (pskb::$state_adm_messages as $k => $v) {
+    ?>
                                             <option value="<?= $k ?>" <?= $f_state == $k ? 'selected' : '' ?>><?= $v ?></option>
-                                        <? } ?>
+                                        <?php 
+} ?>
                                     </select>
                                 </span>
                             </div>
@@ -29,9 +31,11 @@
                                 <span class="form-input">
                                     <select name="ps_emp">
                                         <option value="null">-- Не важно --</option>
-                                        <? foreach (pskb::$psys[pskb::USER_EMP] as $k => $v) { ?>
+                                        <?php foreach (pskb::$psys[pskb::USER_EMP] as $k => $v) {
+    ?>
                                             <option value="<?= $k ?>" <?= $f_ps_emp == $k ? 'selected' : '' ?>><?= $v ?></option>
-                                        <? } ?>
+                                        <?php 
+} ?>
                                     </select>
                                 </span>
                             </div>
@@ -40,19 +44,21 @@
                                 <span class="form-input">
                                     <select name="ps_frl">
                                         <option value="null">-- Не важно --</option>
-                                        <? foreach (pskb::$psys[pskb::USER_FRL] as $k => $v) { ?>
+                                        <?php foreach (pskb::$psys[pskb::USER_FRL] as $k => $v) {
+    ?>
                                             <option value="<?= $k ?>" <?=  $f_ps_frl == $k ? 'selected' : '' ?>><?= $v ?></option>
-                                        <? } ?>
+                                        <?php 
+} ?>
                                     </select>
                                 </span>
                             </div>
                             <div class="form-el">
                                 <label class="form-label">Дата покрытия</label>
                                 <span class="form-input">
-                                    <? 
+                                    <?php 
                                     $name_element = 'date_cover';
-                                    $filter       = $f_date_cover;
-                                    include($_SERVER['DOCUMENT_ROOT'] . '/norisk2/tpl.filter-period.php');
+                                    $filter = $f_date_cover;
+                                    include $_SERVER['DOCUMENT_ROOT'].'/norisk2/tpl.filter-period.php';
                                     ?>
                                     <a href="javascript:void(0)" onclick="$$('select[name^=date_cover]').each(function(elm){ elm.selectedIndex = 0});">Очистить</a>
                                 </span>
@@ -60,10 +66,10 @@
                             <div class="form-el">
                                 <label class="form-label">Дата закрытия</label>
                                 <span class="form-input">
-                                    <? 
+                                    <?php 
                                     $name_element = 'date_end';
-                                    $filter       = $f_date_end;
-                                    include($_SERVER['DOCUMENT_ROOT'] . '/norisk2/tpl.filter-period.php');
+                                    $filter = $f_date_end;
+                                    include $_SERVER['DOCUMENT_ROOT'].'/norisk2/tpl.filter-period.php';
                                     ?>
                                     <a href="javascript:void(0)" onclick="$$('select[name^=date_end]').each(function(elm){ elm.selectedIndex = 0});">Очистить</a>
                                 </span>
@@ -123,7 +129,8 @@
                 </tr>
             </tfoot>
             <tbody>
-                <? foreach ($pskb_list as $row) { ?>
+                <?php foreach ($pskb_list as $row) {
+    ?>
                     <tr class="<?= (++$j % 2 == 0 ? 'even' : 'odd') ?>">
                         <td id="pp-place-<?= $row['sbr_id'] ?>"><?= $row['sbr_id'] ?></td>
                         <td><a href="javascript:void(0)" onclick="xajax_aGetLCInfo(<?= $row['sbr_id'] ?>)"><?= $row['lc_id'] ?></a></td>
@@ -135,7 +142,8 @@
                         <td><?= $row['state'] ? pskb::$state_adm_messages[$row['state']] : 'Ожидание резерва' ?></td>
                         <td><?= $row['stateReason'] ?></td>
                     </tr>
-                <? } ?>
+                <?php 
+} ?>
             </tbody>
         </table>
     </div>

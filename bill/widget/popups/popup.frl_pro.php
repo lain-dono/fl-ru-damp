@@ -7,25 +7,41 @@
                     <div class="b-shadow__top">
                         <div class="b-shadow__bottom">
                             <div class="b-shadow__body b-shadow__body_bg_fff b-shadow__body_pad_10">
-                            <?php foreach($popup_mini_data as $data) { ?>
+                            <?php foreach ($popup_mini_data as $data) {
+    ?>
                             <div class="b-layout__txt b-layouyt__txt_weight_normal">
                                 <a class="b-layout__link b-layout__link_no-decorat select-type" href="javascript:void(0)"
                                    data-opcode="<?= $data['opcode']?>"
                                    data-cost="<?= $data['cost']?>" 
-                                   data-period="<?= $data['month']?> <? if($data['day']) { ?><?= ending($data['day'], 'день', 'дня', 'дней')?><? } elseif($data['week']) { ?><?= ending($data['week'], 'неделю', 'недели', 'недель')?><? } else { ?><?= ending($data['month'], 'месяц', 'месяца', 'месяцев')?><? } ?>">
-                                    <span class="b-layout__txt b-layout__txt_inline-block b-layout__txt_width_90 <?= $data['opcode'] == $last_operation['op_code'] ? "b-layout__txt_color_808080" : ""?> b-layout__txt_fontsize_15 select-name">
-                                        <? if($data['day']) { ?>
+                                   data-period="<?= $data['month']?> <?php if ($data['day']) {
+    ?><?= ending($data['day'], 'день', 'дня', 'дней')?><?php 
+} elseif ($data['week']) {
+    ?><?= ending($data['week'], 'неделю', 'недели', 'недель')?><?php 
+} else {
+    ?><?= ending($data['month'], 'месяц', 'месяца', 'месяцев')?><?php 
+}
+    ?>">
+                                    <span class="b-layout__txt b-layout__txt_inline-block b-layout__txt_width_90 <?= $data['opcode'] == $last_operation['op_code'] ? 'b-layout__txt_color_808080' : ''?> b-layout__txt_fontsize_15 select-name">
+                                        <?php if ($data['day']) {
+    ?>
                                             <?= $data['day']?> <?= ending($data['day'], 'день', 'дня', 'дней')?>
-                                        <? } elseif ($data['week']) { ?>
+                                        <?php 
+} elseif ($data['week']) {
+    ?>
                                             <?= $data['week']?> <?= ending($data['week'], 'неделю', 'недели', 'недель')?>
-                                        <? } else { ?>
+                                        <?php 
+} else {
+    ?>
                                             <?= $data['month']?> <?= ending($data['month'], 'месяц', 'месяца', 'месяцев')?>
-                                        <? } ?>
+                                        <?php 
+}
+    ?>
                                     </span>
                                     <span class="b-layout__txt b-layout__txt_inline-block b-layout__txt_width_90 b-layout__txt_fontsize_15 b-layout__txt_color_fd6c30 b-layout__txt_nowrap"><?= $data['cost']?> рублей</span>
                                 </a>
                             </div>
-                            <?php }//foreach?>
+                            <?php 
+}//foreach?>
                             </div>
                         </div>
                     </div>
@@ -48,22 +64,28 @@
                     <div class="b-shadow__top">
                         <div class="b-shadow__bottom">
                             <div class="b-shadow__body b-shadow__body_bg_fff b-shadow__body_pad_10">
-                            <?php foreach($popup_mini_data as $data) { $eco   = ( $data['month'] * payed::GetProPrice() - $data['cost'] ); ?>
+                            <?php foreach ($popup_mini_data as $data) {
+    $eco = ($data['month'] * payed::GetProPrice() - $data['cost']);
+    ?>
                             <div class="b-layout__txt b-layouyt__txt_weight_normal">
                                 <a class="b-layout__link b-layout__link_no-decorat select-auto-type" href="javascript:void(0)"
                                    data-opcode="<?= $data['opcode']?>"
                                    data-cost="<?= $data['cost']?>" 
                                    data-period="<?= $data['month']?> <?= ending($data['month'], 'месяц', 'месяца', 'месяцев')?>">
-                                    <span class="b-layout__txt b-layout__txt_inline-block b-layout__txt_width_90 <?= $is_checked ? "b-layout__txt_color_808080" : ""?> b-layout__txt_fontsize_15 select-name">
+                                    <span class="b-layout__txt b-layout__txt_inline-block b-layout__txt_width_90 <?= $is_checked ? 'b-layout__txt_color_808080' : ''?> b-layout__txt_fontsize_15 select-name">
                                         <?= $data['month']?> <?= ending($data['month'], 'месяц', 'месяца', 'месяцев')?>
                                     </span>
                                     <span class="b-layout__txt b-layout__txt_inline-block b-layout__txt_width_90 b-layout__txt_fontsize_15 b-layout__txt_color_fd6c30"><?= $data['cost']?> рублей</span>
-                                    <? if($eco > 0) { ?>
-                                    <span class="b-layout__txt b-layout__txt_fontsize_11 b-layout__txt_color_6db335"><?= $eco;?> руб. экономии</span>
-                                    <? }//if?>
+                                    <?php if ($eco > 0) {
+    ?>
+                                    <span class="b-layout__txt b-layout__txt_fontsize_11 b-layout__txt_color_6db335"><?= $eco;
+    ?> руб. экономии</span>
+                                    <?php 
+}//if?>
                                 </a>
                             </div>
-                            <?php }//foreach?>
+                            <?php 
+}//foreach?>
                             </div>
                         </div>
                     </div>

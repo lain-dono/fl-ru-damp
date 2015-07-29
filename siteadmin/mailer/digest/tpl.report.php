@@ -1,6 +1,6 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/mailer.common.php");
-$xajax->printJavascript('/xajax/'); 
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/mailer.common.php';
+$xajax->printJavascript('/xajax/');
 ?>
 
 <div class="b-layout">	
@@ -41,7 +41,7 @@ $xajax->printJavascript('/xajax/');
                 <div class="b-layout__txt">Получатели</div>
             </td>
             <td class="b-layout__right">
-                <div class="b-layout__txt b-layout__txt_bold b-layout__txt_fontsize_15"><?= (int) ($sum_rec)?> <?=ending((int) ($sum_rec), "человек", "человека", "человек")?></div>
+                <div class="b-layout__txt b-layout__txt_bold b-layout__txt_fontsize_15"><?= (int) ($sum_rec)?> <?=ending((int) ($sum_rec), 'человек', 'человека', 'человек')?></div>
             </td>
         </tr>
     </table>
@@ -54,21 +54,27 @@ $xajax->printJavascript('/xajax/');
             <td class="b-layout__right">
                 <div class="b-layout__txt b-layout__txt_bold b-layout__txt_padbot_10 b-layout__txt_fontsize_15"><?= date('d.m.Y в H:i', strtotime($message['real_date_sending']))?></div>
                 <div class="b-layout__txt b-layout__txt_padbot_5">
-                    <?= ($message['type_regular'] > 1)?"Рассылается регулярно.": ""?>
+                    <?= ($message['type_regular'] > 1) ? 'Рассылается регулярно.' : ''?>
 
-                    <?php if($message['type_regular'] > 1) {?>
-                    <?=  mailer::$TYPE_REGULAR[$message['type_regular']];?>
-                    <?= !empty(mailer::$SUB_TYPE_REGULAR[$message['type_regular']]) ? strtolower(mailer::$SUB_TYPE_REGULAR[$message['type_regular']][$message['type_send_regular']]) : ""; ?>
-                    <?php }//if?>
+                    <?php if ($message['type_regular'] > 1) {
+    ?>
+                    <?=  mailer::$TYPE_REGULAR[$message['type_regular']];
+    ?>
+                    <?= !empty(mailer::$SUB_TYPE_REGULAR[$message['type_regular']]) ? strtolower(mailer::$SUB_TYPE_REGULAR[$message['type_regular']][$message['type_send_regular']]) : '';
+    ?>
+                    <?php 
+}//if?>
                 </div>
-                <?php if($message['type_regular'] > 1) {?>
+                <?php if ($message['type_regular'] > 1) {
+    ?>
                 <div class="b-layout__txt b-layout__txt_padbot_5">
                     <input type="hidden" id="status_sending" value="<?=$message['status_sending']?>">
-                    <span class="b-layout__mail-icon <?= $message['status_sending'] == 1?"b-layout__mail-icon_black":"b-layout__mail-icon_pause"?> b-layout__mail-icon_top_4 b-layout__mail-icon_margleft_-15 b-layout__mail-icon_margright_4"></span>
+                    <span class="b-layout__mail-icon <?= $message['status_sending'] == 1 ? 'b-layout__mail-icon_black' : 'b-layout__mail-icon_pause'?> b-layout__mail-icon_top_4 b-layout__mail-icon_margleft_-15 b-layout__mail-icon_margright_4"></span>
                     Следующая рассылка <?=date('d.m.Y в H:i', strtotime($message['date_sending']))?>.&#160;&#160;
-                    <a class="b-layout__link b-layout__link_fontsize_11 b-layout__link_bordbot_dot_0f71c8 mail-pause" href="javascript:void(0)" onclick="xajax_setStatusSending(<?=(int)$message['id']?>, $('status_sending').get('value'));"><?= $message['status_sending'] == 1?"Поставить на паузу":"Снять с паузы"?></a>
+                    <a class="b-layout__link b-layout__link_fontsize_11 b-layout__link_bordbot_dot_0f71c8 mail-pause" href="javascript:void(0)" onclick="xajax_setStatusSending(<?=(int) $message['id']?>, $('status_sending').get('value'));"><?= $message['status_sending'] == 1 ? 'Поставить на паузу' : 'Снять с паузы'?></a>
                 </div>
-                <?php } //if?>
+                <?php 
+} //if?>
             </td>
         </tr>
     </table>

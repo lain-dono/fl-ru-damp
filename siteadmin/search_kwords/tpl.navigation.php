@@ -1,4 +1,7 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; } ?>
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+} ?>
 <div class="m-cl-bar-sort3">
     <a name="#tabs"></a>
     <a href="./" class="lnk-dot-666">Поисковые запросы</a></strong>

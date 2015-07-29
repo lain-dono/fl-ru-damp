@@ -1,37 +1,39 @@
 <?php
 /**
  * Шаблон письма уведомление исполнителю о создании заказа с резервированием суммы (П-1)
- * Так же используется при отправле ЛС поэтому все переводы каретки (\n) будут заменены <br/> при выводе сообщения и при отправке письма
+ * Так же используется при отправле ЛС поэтому все переводы каретки (\n) будут заменены <br/> при выводе сообщения и при отправке письма.
  */
 
 /**
- * Тема письма
+ * Тема письма.
  */
 $smail->subject = "Заказ на услугу «{$order['title']}» с резервированием суммы";
 
 $tax_price = tservices_helper::cost_format($order['tax_price'], true, false, false);
 $order_price = tservices_helper::cost_format($order['order_price'], true, false, false);
 $title = reformat(htmlspecialchars($order['title']), 30, 0, 1);
-$order_url = $GLOBALS['host'] . tservices_helper::getOrderCardUrl($order['id']);
+$order_url = $GLOBALS['host'].tservices_helper::getOrderCardUrl($order['id']);
 $order_days = tservices_helper::days_format($order['order_days']);
 
-$accept_url = $GLOBALS['host'] . tservices_helper::getOrderStatusUrl($order['id'], 'accept', $order['frl_id']);
-$decline_url = $GLOBALS['host'] . tservices_helper::getOrderStatusUrl($order['id'], 'decline', $order['frl_id']);
+$accept_url = $GLOBALS['host'].tservices_helper::getOrderStatusUrl($order['id'], 'accept', $order['frl_id']);
+$decline_url = $GLOBALS['host'].tservices_helper::getOrderStatusUrl($order['id'], 'decline', $order['frl_id']);
 
 $tax = $order['tax'] * 100;
 ?>
 Здравствуйте.
 
 Заказчик <?=$emp_fullname?> предлагает вам заказ на услугу &laquo;<a href="<?=$order_url?>"><?=$title?></a>&raquo;
-<?php if($order['order_extra']){ ?>
+<?php if ($order['order_extra']) {
+    ?>
 и дополнительно:
 <?php 
-    foreach($order['order_extra'] as $idx )
-    {
-        if(!isset($order['extra'][$idx])) continue; 
-        echo '- ' . reformat(htmlspecialchars($order['extra'][$idx]['title']), 30, 0, 1).PHP_EOL;
+    foreach ($order['order_extra'] as $idx) {
+        if (!isset($order['extra'][$idx])) {
+            continue;
+        }
+        echo '- '.reformat(htmlspecialchars($order['extra'][$idx]['title']), 30, 0, 1).PHP_EOL;
     }
- } 
+}
 ?>
 на сумму <?php echo $order_price ?> со сроком выполнения <?=$order_days?>.
 
@@ -46,7 +48,7 @@ $tax = $order['tax'] * 100;
 4. По окончании работ предоставить заказчику результат, чтобы он принял его;
 5. Завершить заказ, обменяться отзывами и получить оплату.
 </i>
-<?php if($tax > 0): ?>
+<?php if ($tax > 0): ?>
 
 Обратите внимание, что при выплате суммы с вас будет удержана комиссия сервиса в размере <?=$tax?>% от бюджета заказа.
 

@@ -2,21 +2,18 @@
 
 //exit;
 
-ini_set('display_errors',1);
+ini_set('display_errors', 1);
 error_reporting(E_ALL ^ E_NOTICE);
-
 
 ini_set('max_execution_time', 0);
 ini_set('memory_limit', '512M');
 
-if(!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT']))
-{    
-    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME) . '/../../'), '/');
-} 
+if (!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT'])) {
+    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME).'/../../'), '/');
+}
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/smtp.php");
-
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/smtp.php';
 
 $uids = array(
 956091,
@@ -25,7 +22,7 @@ $uids = array(
 1677710,
 2149160,
 307071,
-922949    
+922949,
 /*    
 1646282,
  1693821,
@@ -47,7 +44,7 @@ $uids = array(
  170380,
  2144015,
  888695    
- */   
+ */
  /*   
  1632535,
  1115704,
@@ -120,7 +117,6 @@ $uids = array(
  1270791*/
 );
 
-
 $subject = 'Подозрительная активность на вашем аккаунте FL.ru';
 
 $message = '
@@ -138,35 +134,35 @@ $message = '
 
 //------------------------------------------------------------------------------
 
-$mail = new smtp;
-$mail->subject   = $subject;
-$mail->message   = $message;
+$mail = new smtp();
+$mail->subject = $subject;
+$mail->message = $message;
 $mail->recipient = '';
 $spamid = $mail->send('text/html');
-if ( !$spamid ) {
+if (!$spamid) {
     die("Failed!\n");
 }
 
 $mail->recipient = array();
 
-$users = $DB->rows("
+$users = $DB->rows('
     SELECT DISTINCT uid, uname, usurname, login, email 
     FROM users WHERE uid IN(?l)   
-", $uids);
+', $uids);
 
 if (!$users) {
-    die("Users not found.");
+    die('Users not found.');
 }
 
 foreach ($users as $user) {
     $mail->recipient[] = array(
-        'email' => $user['uname']." ".$user['usurname']." [".$user['login']."] <".$user['email'].">",
+        'email' => $user['uname'].' '.$user['usurname'].' ['.$user['login'].'] <'.$user['email'].'>',
         'extra' => array(
-            'USER_NAME'         => $user['uname'],
-            'USER_SURNAME'      => $user['usurname'],
-            'USER_LOGIN'        => $user['login']
-        )
-    );    
+            'USER_NAME' => $user['uname'],
+            'USER_SURNAME' => $user['usurname'],
+            'USER_LOGIN' => $user['login'],
+        ),
+    );
 }
 
 $mail->bind($spamid, true);

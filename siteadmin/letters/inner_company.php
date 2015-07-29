@@ -1,6 +1,6 @@
 <?php
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/xajax/letters.common.php' );
-$xajax->printJavascript( '/xajax/' );
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/letters.common.php';
+$xajax->printJavascript('/xajax/');
 
 $sym = letters::getCompaniesSymbols();
 ?>
@@ -22,28 +22,48 @@ $sym = letters::getCompaniesSymbols();
 
 
 
-<?php if($sym['ru'] || $sym['num']) { ?>
+<?php if ($sym['ru'] || $sym['num']) {
+    ?>
 <div class="b-layout__txt b-layout__txt_padtop_20">
-	<?php if($sym['ru']) { foreach($sym['ru'] as $tsym) { ?>
+	<?php if ($sym['ru']) {
+    foreach ($sym['ru'] as $tsym) {
+        ?>
 		<a class="b-layout__link b-layout__link_bordbot_dot_0f71c8 b-layout__link_bold" href="#" onClick="letters.showCompanies('<?=$tsym?>'); return false;"><?=mb_strtoupper($tsym)?></a>&nbsp;&nbsp;
-	<?php } } ?>
-	<?php if($sym['num']) { ?>
+	<?php 
+    }
+}
+    ?>
+	<?php if ($sym['num']) {
+    ?>
 		<a class="b-layout__link b-layout__link_bordbot_dot_0f71c8 b-layout__link_bold" href="#" onClick="letters.showCompanies('#'); return false;">#</a>
-	<?php } ?>
+	<?php 
+}
+    ?>
 </div>
-<?php } ?>
+<?php 
+} ?>
 
 
-<?php if($sym['en'] || $sym['num']) { ?>
+<?php if ($sym['en'] || $sym['num']) {
+    ?>
 <div class="b-layout__txt b-layout__txt_padtop_20">
-	<?php if($sym['en']) { foreach($sym['en'] as $tsym) { ?>
+	<?php if ($sym['en']) {
+    foreach ($sym['en'] as $tsym) {
+        ?>
 		<a class="b-layout__link b-layout__link_bordbot_dot_0f71c8 b-layout__link_bold" href="#" onClick="letters.showCompanies('<?=$tsym?>'); return false;"><?=mb_strtoupper($tsym)?></a>&nbsp;&nbsp;
-	<?php } } ?>
-	<?php if($sym['num']) { ?>
+	<?php 
+    }
+}
+    ?>
+	<?php if ($sym['num']) {
+    ?>
 		<a class="b-layout__link b-layout__link_bordbot_dot_0f71c8 b-layout__link_bold" href="#" onClick="letters.showCompanies('#'); return false;">#</a>
-	<?php } ?>
+	<?php 
+}
+    ?>
 </div>
-<?php } ?>
+<?php 
+} ?>
 
 <div>&nbsp;</div>
 

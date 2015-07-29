@@ -1,5 +1,5 @@
 <?php
-    if(isset($title)): 
+    if (isset($title)):
 ?>
 <h1 class="b-page__title b-page__title_padbot_10">
     <?=$title?>

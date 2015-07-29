@@ -1,1 +1,1 @@
-<? include('jooble.php') ?>
+<?php include('jooble.php') ?>

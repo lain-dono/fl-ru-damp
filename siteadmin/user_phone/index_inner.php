@@ -38,23 +38,23 @@
 
 <?php 
 
-if ( $users ) { 
-    foreach ( $users as $aOne ) {  
-        $sObjName = $aOne['uname'] .' '. $aOne['usurname'] .' ['. $aOne['login'].']';
+if ($users) {
+    foreach ($users as $aOne) {
+        $sObjName = $aOne['uname'].' '.$aOne['usurname'].' ['.$aOne['login'].']';
         $sObjLink = "/users/{$aOne['login']}";
-?>
+        ?>
     <div class="search-item c">
         <div class="div-user">
         	<a target="_blank" href="<?=$sObjLink?>"><?=view_avatar($aOne['login'], $aOne['photo'], 1)?></a><br>
         </div>
         <div class="search-item-info">
             <h4><?=view_mark_user(array(
-                                    "login"      => $aOne['login'],
-                                    "is_pro"  => $aOne['is_pro'],
-									"is_pro_test" => $aOne['is_pro_test'],
-									"is_team"     => $aOne['is_team'],
-									"role"        => $aOne['role']), '', true, '');
-            ?><?=$session->view_online_status($aOne['login'], false, '')?><a target="_blank" href="<?=$sObjLink?>" class="<?=(is_emp($aOne['role']) ? 'employer' : 'freelancer')?>-name"><?=$sObjName?></a></h4>
+                                    'login' => $aOne['login'],
+                                    'is_pro' => $aOne['is_pro'],
+                                    'is_pro_test' => $aOne['is_pro_test'],
+                                    'is_team' => $aOne['is_team'],
+                                    'role' => $aOne['role'], ), '', true, '');
+        ?><?=$session->view_online_status($aOne['login'], false, '')?><a target="_blank" href="<?=$sObjLink?>" class="<?=(is_emp($aOne['role']) ? 'employer' : 'freelancer')?>-name"><?=$sObjName?></a></h4>
             <div class="safety">
                 <b>Телефон (юр. лицо):</b> <span id="email_value<?=$aOne['uid']?>" class="safetyvalue"><?=$aOne['_2_mob_phone']?></span><br/>
                 <b>Телефон (физ. лицо):</b> <span id="email_value<?=$aOne['uid']?>" class="safetyvalue"><?=$aOne['_1_mob_phone']?></span>
@@ -65,23 +65,26 @@ if ( $users ) {
         </div>
     </div>
 <?php
+
     }
-      
-    if ( $pages > 1 ) {
-        $sHref = e_url( 'page', null );
-        $sHref = e_url( 'page', '', $sHref );
-        echo get_pager2( $pages, $page, $sHref );
+
+    if ($pages > 1) {
+        $sHref = e_url('page', null);
+        $sHref = e_url('page', '', $sHref);
+        echo get_pager2($pages, $page, $sHref);
     }
-} elseif ( $cmd == 'filter' ) { ?>
+} elseif ($cmd == 'filter') {
+    ?>
     Нет пользователей, удовлетворяющих условиям выборки
-<?php } //elseif?>
+<?php 
+} //elseif?>
 
 </div>
 
 <script type="text/javascript">
 window.addEvent('domready', function() {
-    <?
-    if ( $sZeroClipboard ) {
+    <?php
+    if ($sZeroClipboard) {
         echo 'ZeroClipboard.setMoviePath("'.$GLOBALS['host'].'/scripts/zeroclipboard/ZeroClipboard.swf");';
         echo $sZeroClipboard;
     }

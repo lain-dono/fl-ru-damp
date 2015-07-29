@@ -8,7 +8,7 @@
 $smail->subject = "Отказ от выполнения заказа на типовую услугу «{$order['title']}»";
 
 $title = reformat(htmlspecialchars($order['title']), 30, 0, 1);
-$order_url = $GLOBALS['host'] . tservices_helper::getOrderCardUrl($order['id']);
+$order_url = $GLOBALS['host'].tservices_helper::getOrderCardUrl($order['id']);
 
 ?>
 Здравствуйте.

@@ -11,20 +11,22 @@
  */
 ?>
 <?php
-require_once (dirname(__FILE__) . '/class.basemapper.php');
+require_once dirname(__FILE__).'/class.basemapper.php';
 
-class TimeMapper extends BaseMapper {
+class TimeMapper extends BaseMapper
+{
+    public function __construct(DBDriver $db, $model_name)
+    {
+        parent::__construct($db, $model_name);
+    }
 
-  public function __construct(DBDriver $db, $model_name) {
-    parent::__construct($db, $model_name);	 	
-  }
-  	
-  public function getCurrentTime() {
-    $this->db->Query('SELECT WM_UNIX_TIMESTAMP(SYSDATE) "current" FROM dual');
-    $this->db->nextRecord();
-    $result = $this->db->getRow();
+    public function getCurrentTime()
+    {
+        $this->db->Query('SELECT WM_UNIX_TIMESTAMP(SYSDATE) "current" FROM dual');
+        $this->db->nextRecord();
+        $result = $this->db->getRow();
 
-    return $result['current'];
-  }
+        return $result['current'];
+    }
 }
 ?>

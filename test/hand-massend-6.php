@@ -1,4 +1,5 @@
 <?php
+
 ini_set('max_execution_time', '0');
 ini_set('memory_limit', '512M');
 
@@ -10,26 +11,26 @@ require_once '../classes/smtp.php';
 // -- Блок настроек -----------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------------
 
-/**
+/*
  * Если TRUE - рассылка массовая (to_id = 0), если FALSE - адресная (каждому пользователю свое сообщение)
  * 
  */
-$mass = TRUE;
+$mass = true;
 
-/**
+/*
  * Рассылка только для pro ( только для $mass = TRUE )
  * TRUE - Pro, FALSE - Не Pro, NULL - всем
  * 
  */
-$pro = FALSE;
+$pro = false;
 
-/**
+/*
  * Логин пользователя от кого осуществляется рассылка
  * 
  */
 $sender = 'admin';
 
-/**
+/*
  * Кому рассылать
  * all - всем, employers - работодателям, freelancers - фрилансерам ( <- только для $mass = TRUE )
  * пустая строка - свой массив ( <- для любой $mass )
@@ -37,7 +38,7 @@ $sender = 'admin';
  */
 $recipients = 'employers';
 
-/**
+/*
  * Запрос для получения данных пользователей, если $recipients == ''
  * Обязательные колонки: uid, login, uname, usurname, email, subscr
  * Важно! uid должен быть первым столбцом
@@ -53,9 +54,9 @@ $sql = "SELECT u.* FROM freelancer u WHERE subscr & B'{$sw}' <> B'{$ew}' AND is_
  * Если пустая строка, то в личку не шлем
  * {{name}} заменяются на колонки из $sql (если $mass == FALSE)
  * для $mass == TRUE можно использовать спец.переменные, см. http://www.free-lance.ru/siteadmin/admin/
- * Памятка: Ссылки пишутся в виде http:/{ссылке}/{$h}/quiz/form/ (работают только при рассылке от админа и менеджеров)
+ * Памятка: Ссылки пишутся в виде http:/{ссылке}/{$h}/quiz/form/ (работают только при рассылке от админа и менеджеров).
  */
-$h = preg_replace("/http\:\/\//", "", $GLOBALS['host']);
+$h = preg_replace("/http\:\/\//", '', $GLOBALS['host']);
 
 $pMessage = "Здравствуйте!
 
@@ -71,20 +72,20 @@ $pMessage = "Здравствуйте!
 Команда http:/{Free-lance.ru}/{$h}/
 ";
 
-/**
+/*
  * Массив с id прикрепляемых файлов из таблицы file для лички. Должны быть уже залиты на webdav.
  * NULL - без файлов
  */
-$pFiles = NULL;
+$pFiles = null;
 
-/**
+/*
  * Заголовок для уведомления на почту
  * Если пустая строка, то на почту не шлем
  * {{name}} заменяются на колонки из $sql (для любых $mass)
  */
-$eSubject = "Скидки на услуги Free-lance.ru";
+$eSubject = 'Скидки на услуги Free-lance.ru';
 
-/**
+/*
  * Текст для уведомления на почту (формат HTML)
  * Если пустая строка, то на почту не шлем
  * {{name}} заменяются на колонки из $sql (для любых $mass)
@@ -233,8 +234,7 @@ $eMessage = "<p>Здравствуйте!</p>
 </p>
 ";
 
-
-/**
+/*
  * Флаг подписки (номер байта) колонки subscr из таблицы users, который следует проверять для рассылки почты
  * Если NULL - слать всем
  * Для "Новости от команды Free-lance.ru" флаг == 7
@@ -242,59 +242,57 @@ $eMessage = "<p>Здравствуйте!</p>
  */
 $eSubscr = 7;
 
-/**
+/*
  * Массив с id прикрепляемых файлов из таблицы file для почты. Должны быть уже залиты на webdav.
  * NULL - без файлов
  */
-$eFiles = NULL;
+$eFiles = null;
 
-/**
+/*
  * Через какое количество отосланных сообщений выводить статистику о них
  * (для адресной рассылки и email рассылки)
  * 
  */
 $printStatus = 200;
 
-
 // ----------------------------------------------------------------------------------------------------------------
 // -- Рассылка ----------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------------
 
-$master  = new DB('master');
+$master = new DB('master');
 $plproxy = new DB('plproxy');
-$count   = NULL;
+$count = null;
 
-$sender = $master->row("SELECT * FROM users WHERE login = ?", $sender);
-if ( empty($sender) ) {
+$sender = $master->row('SELECT * FROM users WHERE login = ?', $sender);
+if (empty($sender)) {
     die("Unknown Sender\n");
 }
 
 echo "Send personal messages\n";
 
-if ( $mass ) {
-    
+if ($mass) {
     $count = 0;
-    
-    switch ( $recipients ) {
+
+    switch ($recipients) {
         case 'all': {
-            $message_id = $plproxy->val("SELECT messages_masssend_all(?, ?, ?, ?a)", $sender['uid'], $pro, $pMessage, $pFiles);
+            $message_id = $plproxy->val('SELECT messages_masssend_all(?, ?, ?, ?a)', $sender['uid'], $pro, $pMessage, $pFiles);
             break;
         }
         case 'freelancers': {
-            $message_id = $plproxy->val("SELECT messages_masssend_freelancers(?, ?, ?, ?a)", $sender['uid'], $pro, $pMessage, $pFiles);
+            $message_id = $plproxy->val('SELECT messages_masssend_freelancers(?, ?, ?, ?a)', $sender['uid'], $pro, $pMessage, $pFiles);
             break;
         }
         case 'employers': {
-            $message_id = $plproxy->val("SELECT messages_masssend_employers(?, ?, ?, ?a)", $sender['uid'], $pro, $pMessage, $pFiles);
+            $message_id = $plproxy->val('SELECT messages_masssend_employers(?, ?, ?, ?a)', $sender['uid'], $pro, $pMessage, $pFiles);
             break;
         }
         case '': {
             $users = $master->col($sql);
-            if ( empty($users) ) {
+            if (empty($users)) {
                 die("No users\n");
             }
             $count = count($users);
-            $message_id = $plproxy->val("SELECT messages_masssend(?, ?a, ?, ?a)", $sender['uid'], $users, $pMessage, $pFiles);
+            $message_id = $plproxy->val('SELECT messages_masssend(?, ?a, ?, ?a)', $sender['uid'], $users, $pMessage, $pFiles);
             unset($users);
             break;
         }
@@ -302,79 +300,70 @@ if ( $mass ) {
             die("Unknown mode\n");
         }
     }
-        
 } else {
-    
     $count = 0;
-    
+
     $res = $master->query($sql);
-    while ( $user = pg_fetch_assoc($res) ) {
-        
+    while ($user = pg_fetch_assoc($res)) {
         $msg = preg_replace("/\{\{([-_A-Za-z0-9]+)\}\}/e", "\$user['\\1']", $pMessage);
-        $plproxy->query("SELECT messages_add(?, ?, ?, ?, ?a)", $sender['uid'], $user['uid'], $msg, TRUE, $pFiles);
-        
-        if ( ($count > 0) && ($count % $printStatus == 0) ) {
+        $plproxy->query('SELECT messages_add(?, ?, ?, ?, ?a)', $sender['uid'], $user['uid'], $msg, true, $pFiles);
+
+        if (($count > 0) && ($count % $printStatus == 0)) {
             echo "Working... {$count} emails sended\n";
         }
-        
-        $count++;
-        
+
+        ++$count;
     }
-    
 }
 
-if ( $mass ) {
-    while ( !$plproxy->val("SELECT COUNT(*) FROM messages(?) WHERE id = ?", $sender['uid'], $message_id) ) {
+if ($mass) {
+    while (!$plproxy->val('SELECT COUNT(*) FROM messages(?) WHERE id = ?', $sender['uid'], $message_id)) {
         echo "Wait PGQ (10 seconds)...\n";
         sleep(10);
     }
 }
-    
-$memBuff = new memBuff();
-$memBuff->set("msgsCnt_updated", time());
 
-if ( is_null($count) ) {
+$memBuff = new memBuff();
+$memBuff->set('msgsCnt_updated', time());
+
+if (is_null($count)) {
     die("Settings error\n");
-} else if ( $count ) {
+} elseif ($count) {
     echo "OK. Total: {$count} users\n";
 } else {
     echo "OK.\n";
 }
 
-
-
-if ( $mass ) {
-   $res = $plproxy->query("SELECT * FROM messages_zeros_userdata(?, ?)", $sender['uid'], $message_id);
+if ($mass) {
+    $res = $plproxy->query('SELECT * FROM messages_zeros_userdata(?, ?)', $sender['uid'], $message_id);
 } else {
-   $res = $master->query($sql);
+    $res = $master->query($sql);
 }
 
 echo "Send email messages\n";
 
 $count = 0;
-$smtp  = new SMTP;
-if ( !$smtp->Connect() ) {
+$smtp = new SMTP();
+if (!$smtp->Connect()) {
     die("Don't connect to SMTP\n");
 }
-    
-while ( $user = pg_fetch_assoc($res) ) {
-        
-    if ( empty($user['email']) || (!is_null($eSubscr) && substr($user['subscr'], $eSubscr, 1) == '0') ) {
+
+while ($user = pg_fetch_assoc($res)) {
+    if (empty($user['email']) || (!is_null($eSubscr) && substr($user['subscr'], $eSubscr, 1) == '0')) {
         continue;
     }
-        
-    $smtp->recipient = $user['uname']." ".$user['usurname']." [".$user['login']."] <".$user['email'].">";
-    $smtp->subject   = preg_replace("/\{\{([-_A-Za-z0-9]+)\}\}/e", "\$user['\\1']", $eSubject);
-    $smtp->message   = preg_replace("/\{\{([-_A-Za-z0-9]+)\}\}/e", "\$user['\\1']", $eMessage);
-    
-    if ( ($count > 0) && ($count % $printStatus == 0) ) {
+
+    $smtp->recipient = $user['uname'].' '.$user['usurname'].' ['.$user['login'].'] <'.$user['email'].'>';
+    $smtp->subject = preg_replace("/\{\{([-_A-Za-z0-9]+)\}\}/e", "\$user['\\1']", $eSubject);
+    $smtp->message = preg_replace("/\{\{([-_A-Za-z0-9]+)\}\}/e", "\$user['\\1']", $eMessage);
+
+    if (($count > 0) && ($count % $printStatus == 0)) {
         echo "Working... {$count} emails sended\n";
     }
-    
+
     $smtp->SmtpMail('text/html');
-    
-    $count++;
-        
+
+    ++$count;
 }
 
 echo "OK. Total: {$count} users\n";

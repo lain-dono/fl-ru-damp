@@ -1,5 +1,5 @@
-<? require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/notes.php");
-$note = notes::GetNotes((int)$_SESSION['uid'], (int)$project['user_id'], $error);
+<?php require_once $_SERVER['DOCUMENT_ROOT'].'/classes/notes.php';
+$note = notes::GetNotes((int) $_SESSION['uid'], (int) $project['user_id'], $error);
 if ($note['n_text']) {
     $noteText = reformat($note['n_text'], 22, 0, 0, 1, 22);
     $noteBtn = 'Редактировать';

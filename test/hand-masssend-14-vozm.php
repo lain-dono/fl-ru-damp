@@ -8,13 +8,11 @@ require_once '../classes/stdf.php';
 require_once '../classes/memBuff.php';
 require_once '../classes/smtp.php';
 
-
-/**
+/*
  * Логин пользователя от кого осуществляется рассылка
  * 
  */
 $sender = 'admin';
-
 
 $sql = "SELECT u.uid, u.email, u.login, u.uname, u.usurname, u.subscr FROM (
             SELECT DISTINCT uid as user_id FROM __tmp_PRO_vozm20120523
@@ -25,7 +23,7 @@ $sql = "SELECT u.uid, u.email, u.login, u.uname, u.usurname, u.subscr FROM (
             INNER JOIN users u ON u.uid = q.user_id AND u.is_banned = '0' 
                 AND substr(u.subscr::text,8,1) = '1' AND u.uid != 103";
 
-$pHost = str_replace("http://", "", $GLOBALS['host']);
+$pHost = str_replace('http://', '', $GLOBALS['host']);
 $eHost = $GLOBALS['host'];
 $pMessage = "Здравствуйте.
 
@@ -45,8 +43,7 @@ $DB = new DB('plproxy');
 $master = new DB('master');
 $cnt = 0;
 
-
-$sender = $master->row("SELECT * FROM users WHERE login = ?", $sender);
+$sender = $master->row('SELECT * FROM users WHERE login = ?', $sender);
 if (empty($sender)) {
     die("Unknown Sender\n");
 }
@@ -55,17 +52,18 @@ echo "Send personal messages\n";
 
 // подготавливаем рассылку
 $msgid = $DB->val("SELECT masssend(?, ?, '{}', '')", $sender['uid'], $pMessage);
-if (!$msgid) die('Failed!');
+if (!$msgid) {
+    die('Failed!');
+}
 
 // допустим, мы получаем адресатов с какого-то запроса
 $i = 0;
 while ($users = $master->col("{$sql} LIMIT 30000 OFFSET ?", $i)) {
     $DB->query("SELECT masssend_bind(?, {$sender['uid']}, ?a)", $msgid, $users);
     $i = $i + 30000;
-    $cnt++;
+    ++$cnt;
 }
 // Стартуем рассылку в личку
-$DB->query("SELECT masssend_commit(?, ?)", $msgid, $sender['uid']); 
-
+$DB->query('SELECT masssend_commit(?, ?)', $msgid, $sender['uid']);
 
 echo "OK. Total: {$cnt} users\n";

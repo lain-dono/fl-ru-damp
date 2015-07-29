@@ -1,19 +1,17 @@
 <?php
 
 
-ini_set('display_errors',1);
+ini_set('display_errors', 1);
 error_reporting(E_ALL ^ E_NOTICE);
-
 
 ini_set('max_execution_time', 0);
 ini_set('memory_limit', '512M');
 
-if(!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT']))
-{    
-    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME) . '/../../'), '/');
-} 
+if (!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT'])) {
+    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME).'/../../'), '/');
+}
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/config.php");
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/profiler.php");
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/billing.php");
@@ -23,10 +21,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
 //require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/YandexMoney3/Array2XML.php');
 
 
-
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/YandexMoney3/YandexMoney3.php');
-
-
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/YandexMoney3/YandexMoney3.php';
 
 //------------------------------------------------------------------------------
 
@@ -41,23 +36,21 @@ use YandexMoney3\Request\DepositionRequest;
 use YandexMoney3\Request\BalanceRequest;
 use YandexMoney3\YandexMoney3;
 
-
 //------------------------------------------------------------------------------
 
 $apiFacade = YandexMoney3::getApiFacade();
 $apiFacade->setOptions(array(
     'crypt' => array(
-        'encrypt_cert_path' => ABS_PATH . '/classes/reserves/data/certnew_Vaan.cer',
-        'decrypt_cert_path' => ABS_PATH . '/classes/reserves/data/deposit.cer',
-        'private_key_path' => ABS_PATH . '/classes/reserves/data/private.key',
-        'passphrase' => 'tkaevient2014'
-    )
+        'encrypt_cert_path' => ABS_PATH.'/classes/reserves/data/certnew_Vaan.cer',
+        'decrypt_cert_path' => ABS_PATH.'/classes/reserves/data/deposit.cer',
+        'private_key_path' => ABS_PATH.'/classes/reserves/data/private.key',
+        'passphrase' => 'tkaevient2014',
+    ),
 ));
 
-$clientOrderId = rand(700,800);
+$clientOrderId = rand(700, 800);
 
 //------------------------------------------------------------------------------
-
 
 
 //------------------------------------------------------------------------------
@@ -79,22 +72,16 @@ $depositionRequest->setPofOfferAccepted(1);
 
 $depositionRequest->setDstAccount(410039303807);
 
-try 
-{
+try {
     $result = $apiFacade->makeDeposition($depositionRequest);
-} 
-catch (\Exception $e) 
-{
+} catch (\Exception $e) {
     $results['test_8 Error Message'] = $e->getMessage();
-}    
-
-if($result)
-{
-    $results['test_8 isSuccess'] = $result->isSuccess();
-    $results['test_8 getDefinedParams'] = print_r($result->getDefinedParams(),true);
 }
 
-
+if ($result) {
+    $results['test_8 isSuccess'] = $result->isSuccess();
+    $results['test_8 getDefinedParams'] = print_r($result->getDefinedParams(), true);
+}
 
 //------------------------------------------------------------------------------
 
@@ -132,11 +119,7 @@ if($result)
 }
 */
 
-
-
-
 //------------------------------------------------------------------------------
-
 
 
 /*
@@ -193,8 +176,6 @@ $results['test_2 isSuccess'] = $result->isSuccess();
 $results['test_2 getDefinedParams'] = print_r($result->getDefinedParams(),true);
 */
 
-
-
 //------------------------------------------------------------------------------
 
 /*
@@ -244,7 +225,6 @@ catch (\Exception $e)
 $results['test_4 isSuccess'] = $result->isSuccess();
 $results['test_4 getDefinedParams'] = print_r($result->getDefinedParams(),true);
 */
-
 
 //------------------------------------------------------------------------------
 
@@ -303,14 +283,11 @@ for($i=0; $i<6; $i++)
 }
 */
 
-
 //------------------------------------------------------------------------------
 
 //$profiler->start('fill_frl_mem');
 
 //------------------------------------------------------------------------------
-
-
 
 
 //------------------------------------------------------------------------------
@@ -322,7 +299,7 @@ for($i=0; $i<6; $i++)
 
 //------------------------------------------------------------------------------
 
-array_walk($results, function(&$value, $key){
+array_walk($results, function (&$value, $key) {
     $value = sprintf('%s = %s'.PHP_EOL, $key, $value);
 });
 

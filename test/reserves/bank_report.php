@@ -1,9 +1,8 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/siteadmin/reserves/models/ReservesAdminBankReportGeneratorModel.php');
+require_once $_SERVER['DOCUMENT_ROOT'].'/siteadmin/reserves/models/ReservesAdminBankReportGeneratorModel.php';
 
 $reservesAdminBankReportGeneratorModel = new ReservesAdminBankReportGeneratorModel();
-
 
 $payouts = array(array(
     'frl_id' => 1,
@@ -13,7 +12,7 @@ $payouts = array(array(
     'order_id' => 42,
     'frl_fio' => 'Леонид Агутин',
     'price' => 5000,
-    'emp_fio' => 'Анжелика Варум'
+    'emp_fio' => 'Анжелика Варум',
 ));
 
 $paybacks = array(array(
@@ -24,7 +23,7 @@ $paybacks = array(array(
     'order_id' => 47,
     'frl_fio' => 'Леонид Агутин',
     'price' => 500,
-    'emp_fio' => 'Анжелика Варум'
+    'emp_fio' => 'Анжелика Варум',
 ));
 
-echo '<a href="'.WDCPREFIX . $reservesAdminBankReportGeneratorModel->generate2($payouts, $paybacks).'">Файл</a>';
+echo '<a href="'.WDCPREFIX.$reservesAdminBankReportGeneratorModel->generate2($payouts, $paybacks).'">Файл</a>';

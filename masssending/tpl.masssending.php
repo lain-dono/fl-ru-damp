@@ -8,7 +8,7 @@
         <div class="form-in">
             <div class="form-block first">
                 <div class="form-el">
-                    <textarea id="msg" name="msg" rows="6" cols="100" onfocus="if (this.className != '') { this.className = ''; this.value = '' }" onchange="spam.set(this.name, this.value)"><?=($params['msg']? htmlspecialchars($params['msg']): '')?></textarea>
+                    <textarea id="msg" name="msg" rows="6" cols="100" onfocus="if (this.className != '') { this.className = ''; this.value = '' }" onchange="spam.set(this.name, this.value)"><?=($params['msg'] ? htmlspecialchars($params['msg']) : '')?></textarea>
                 </div>
                                     <div>
                             <strong>Важно!</strong> Рассылка предназначена только для реальных целевых проектов и поиска исполнителей. Реклама к рассылке не допускается.
@@ -16,7 +16,7 @@
             </div>
             <div class="form-block last">
                 <div class="form-el">
-                    <div class="masss-files<?=(empty($params['files'])? ' flt-hide': ' flt-show')?>" id="masss-files" page="0">
+                    <div class="masss-files<?=(empty($params['files']) ? ' flt-hide' : ' flt-show')?>" id="masss-files" page="0">
                         <div class="masss-files-clip">
                             <a href="javascript: void(0);" class="flt-tgl-lnk lnk-dot-blue">Прикрепленные файлы (развернуть)</a>
                         </div>
@@ -47,28 +47,28 @@
 
 
 <!-- Фильтр -->
-<div <?=(empty($params)? ' class="flt-hide"': ' class="flt-show"')?>>
+<div <?=(empty($params) ? ' class="flt-hide"' : ' class="flt-show"')?>>
 <div class="flt-out flt-masss" id="flt-masss" page="3">
     <b class="b1"></b>
     <b class="b2"></b>
     <div class="flt-bar">
-            <a href="javascript: void(0);" class="flt-tgl-lnk"><?=(empty($params)? 'Развернуть': 'Свернуть')?></a>
+            <a href="javascript: void(0);" class="flt-tgl-lnk"><?=(empty($params) ? 'Развернуть' : 'Свернуть')?></a>
             <h4>Дополнительные параметры</h4>
     </div>
-    <div id="flt-cnt" class="flt-cnt-masssend"><input type="hidden" value="<?php print $_SESSION["rand"]?>" name="u_token_key"/>
+    <div id="flt-cnt" class="flt-cnt-masssend"><input type="hidden" value="<?php print $_SESSION['rand']?>" name="u_token_key"/>
         <div class="flt-block flt-b-fc">
             <label class="flt-lbl">&nbsp;</label>
             <div class="flt-b-in">
             <ul class="flt-more c">
-                <li><label><input class="i-chk" type="checkbox" name="opi_is_positive" id="opi_is_positive" value="1" onclick="spam.set(this.name, this.checked)" onkeyup="spam.set(this.name, this.checked)" <?=(empty($params['opi_is_positive'])? '': 'checked="checked" ')?>/> С положительными отзывами</label></li>
-                <li><label><input class="i-chk" type="checkbox" name="opi_not_negative" id="opi_not_negative" value="1" onclick="spam.set(this.name, this.checked)" onkeyup="spam.set(this.name, this.checked)" <?=(empty($params['opi_not_negative'])? '': 'checked="checked" ')?>/> Без отрицательных отзывов</label></li>
-                <li><label><input class="i-chk" type="checkbox" name="opi_is_verify" id="opi_is_verify" value="1" onclick="spam.set(this.name, this.checked)" onkeyup="spam.set(this.name, this.checked)" <?=(empty($params['opi_is_verify'])? '': 'checked="checked" ')?>/> С <span class="b-icon b-icon__ver" alt="верифицированым" title="верифицированым"></span> аккаунтом</label></li>
+                <li><label><input class="i-chk" type="checkbox" name="opi_is_positive" id="opi_is_positive" value="1" onclick="spam.set(this.name, this.checked)" onkeyup="spam.set(this.name, this.checked)" <?=(empty($params['opi_is_positive']) ? '' : 'checked="checked" ')?>/> С положительными отзывами</label></li>
+                <li><label><input class="i-chk" type="checkbox" name="opi_not_negative" id="opi_not_negative" value="1" onclick="spam.set(this.name, this.checked)" onkeyup="spam.set(this.name, this.checked)" <?=(empty($params['opi_not_negative']) ? '' : 'checked="checked" ')?>/> Без отрицательных отзывов</label></li>
+                <li><label><input class="i-chk" type="checkbox" name="opi_is_verify" id="opi_is_verify" value="1" onclick="spam.set(this.name, this.checked)" onkeyup="spam.set(this.name, this.checked)" <?=(empty($params['opi_is_verify']) ? '' : 'checked="checked" ')?>/> С <span class="b-icon b-icon__ver" alt="верифицированым" title="верифицированым"></span> аккаунтом</label></li>
 
-                <?/*<li><label><input class="i-chk" type="checkbox" name="positive" id="positive" value="1" onclick="spam.set(this.name, this.checked)" onkeyup="spam.set(this.name, this.checked)" <?=(empty($params['positive'])? '': 'checked="checked" ')?>/> С положительными отзывами</label></li>*/?>
-                <li><label><input class="i-chk" type="checkbox" name="free" id="free" value="1" onclick="spam.set(this.name, this.checked)" onkeyup="spam.set(this.name, this.checked)" <?=(empty($params['free'])? '': 'checked="checked" ')?>/> Только свободные</label></li>
-                <?/* <li><label><input class="i-chk" type="checkbox" name="negative" id="negative" value="1" onclick="spam.set(this.name, this.checked)" onkeyup="spam.set(this.name, this.checked)" <?=(empty($params['negative'])? '': 'checked="checked" ')?>/> Без отрицательных отзывов</label></li> */?>
-                <li class="flt-more-b"><label><input class="i-chk" type="checkbox" id="portfolio" name="portfolio" value="1" onclick="spam.set(this.name, this.checked)" onkeyup="spam.set(this.name, this.checked)" <?=(empty($params['portfolio'])? '': 'checked="checked" ')?>/> Только с примерами работ</label></li>
-                <li><label><input class="i-chk" type="checkbox" name="favorites" id="favorites" value="1" onclick="spam.set(this.name, this.checked)" onkeyup="spam.set(this.name, this.checked)" <?=(empty($params['favorites'])? '': 'checked="checked" ')?>/> У меня в избранных</label></li>
+                <?/*<li><label><input class="i-chk" type="checkbox" name="positive" id="positive" value="1" onclick="spam.set(this.name, this.checked)" onkeyup="spam.set(this.name, this.checked)" <?=(empty($params['positive']) ? '' : 'checked="checked" ')?>/> С положительными отзывами</label></li>*/?>
+                <li><label><input class="i-chk" type="checkbox" name="free" id="free" value="1" onclick="spam.set(this.name, this.checked)" onkeyup="spam.set(this.name, this.checked)" <?=(empty($params['free']) ? '' : 'checked="checked" ')?>/> Только свободные</label></li>
+                <?/* <li><label><input class="i-chk" type="checkbox" name="negative" id="negative" value="1" onclick="spam.set(this.name, this.checked)" onkeyup="spam.set(this.name, this.checked)" <?=(empty($params['negative']) ? '' : 'checked="checked" ')?>/> Без отрицательных отзывов</label></li> */?>
+                <li class="flt-more-b"><label><input class="i-chk" type="checkbox" id="portfolio" name="portfolio" value="1" onclick="spam.set(this.name, this.checked)" onkeyup="spam.set(this.name, this.checked)" <?=(empty($params['portfolio']) ? '' : 'checked="checked" ')?>/> Только с примерами работ</label></li>
+                <li><label><input class="i-chk" type="checkbox" name="favorites" id="favorites" value="1" onclick="spam.set(this.name, this.checked)" onkeyup="spam.set(this.name, this.checked)" <?=(empty($params['favorites']) ? '' : 'checked="checked" ')?>/> У меня в избранных</label></li>
             </ul>
             </div>
         </div>
@@ -81,9 +81,11 @@
                         <span class="flt-add"><span class="flt-spec"><span class="flt-s-in"><a id="btnAddLocation" href="." onclick="locations.add(); return false;"><img src="/images/flt-add.png" alt="" width="15" height="15" />Добавить еще</a></span></span></span>
                         <span class="flt-prm"><select name="country" id="countries" onchange="GetCities(this.value); spam.send();">
                             <option value="0">Все страны</option>
-                            <? foreach ($countries as $country) { ?>
-                                <option value="<?=$country['id']?>"<?=((!empty($params['defs']) && $params['defs']['countries'] == $country['id'])? ' selected="selected"': '')?>><?=htmlspecialchars($country['country_name'])?></option>
-                            <? } ?>
+                            <?php foreach ($countries as $country) {
+    ?>
+                                <option value="<?=$country['id']?>"<?=((!empty($params['defs']) && $params['defs']['countries'] == $country['id']) ? ' selected="selected"' : '')?>><?=htmlspecialchars($country['country_name'])?></option>
+                            <?php 
+} ?>
                             </select></span><span class="flt-prm">
                             <select name="city" id="cities" onchange="spam.send()">
                             <option value="0">Все города</option>
@@ -93,12 +95,14 @@
                 </div>
 
                 <div class="flt-b-row flt-b-row-mb">
-                    <label><input class="i-chk" type="checkbox" id="inoffice" name="inoffice" value="1" onclick="spam.set(this.name, this.checked)" onkeyup="spam.set(this.name, this.checked)" <?=(empty($params['inoffice'])? '': 'checked="checked" ')?> /> Ищет работу в офисе</label>
+                    <label><input class="i-chk" type="checkbox" id="inoffice" name="inoffice" value="1" onclick="spam.set(this.name, this.checked)" onkeyup="spam.set(this.name, this.checked)" <?=(empty($params['inoffice']) ? '' : 'checked="checked" ')?> /> Ищет работу в офисе</label>
                 </div>
 
                 <script type="text/javascript">
-                    GetCities( document.getElementById('countries').value, <?=(empty($params['defs'])? '0': intval($params['defs']['cities']))?> );
-                    <? if (!empty($params)) { ?>locations.restore();<? } ?>
+                    GetCities( document.getElementById('countries').value, <?=(empty($params['defs']) ? '0' : intval($params['defs']['cities']))?> );
+                    <?php if (!empty($params)) {
+    ?>locations.restore();<?php 
+} ?>
                 </script>
 
             </div>
@@ -115,8 +119,8 @@
             <label class="flt-lbl">Опыт работы:</label>
             <div class="flt-b-in">
                 <span class="flt-prm">
-                    <input id="expire_from" maxlength="2" name="expire_from" type="text" size="10" class="flt-prm3" onchange="spam.set(this.name, this.value)" onkeypress="return isNumKeyPressed(event)" value="<?=(empty($params['expire_from'])? '': $params['expire_from'])?>" /> &mdash; 
-                    <input id="expire_to" maxlength="2" name="expire_to" type="text" size="10" class="flt-prm3" onchange="spam.set(this.name, this.value)" onkeypress="return isNumKeyPressed(event)" value="<?=(empty($params['expire_to'])? '': $params['expire_to'])?>" />&nbsp; лет
+                    <input id="expire_from" maxlength="2" name="expire_from" type="text" size="10" class="flt-prm3" onchange="spam.set(this.name, this.value)" onkeypress="return isNumKeyPressed(event)" value="<?=(empty($params['expire_from']) ? '' : $params['expire_from'])?>" /> &mdash; 
+                    <input id="expire_to" maxlength="2" name="expire_to" type="text" size="10" class="flt-prm3" onchange="spam.set(this.name, this.value)" onkeypress="return isNumKeyPressed(event)" value="<?=(empty($params['expire_to']) ? '' : $params['expire_to'])?>" />&nbsp; лет
                 </span>
             </div>
         </div>
@@ -144,10 +148,12 @@
                         <span class="flt-add"><span class="flt-spec"><span class="flt-s-in"><a href="." onclick="professions.add(); return false;"><img src="/images/flt-add.png" alt="" width="15" height="15" />Добавить еще</a></span></span></span>
                         <span class="flt-prm"><select id="prof_groups" name="prof_group" onchange="GetProfessions(this.value); spam.send();">
                             <option value="-1">&lt;Выберите раздел&gt;</option>
-                            <option value="0"<?=((isset($params['defs']['prof_groups']) && ($params['defs']['prof_groups']==0))? ' selected="selected"': '')?>>Все разделы</option>
-                            <? for ($i=0; $i<count($prof_groups); $i++) { ?>
-                                <option value="<?=$prof_groups[$i]['id']?>"<?=(empty($params['defs'])? (($dcg==$prof_groups[$i]['id'])? ' selected="selected"': ''): (($params['defs']['prof_groups']==$prof_groups[$i]['id'])? ' selected="selected"': ''))?>><?=htmlspecialchars($prof_groups[$i]['name'])?></option>
-                            <? } ?>
+                            <option value="0"<?=((isset($params['defs']['prof_groups']) && ($params['defs']['prof_groups'] == 0)) ? ' selected="selected"' : '')?>>Все разделы</option>
+                            <?php for ($i = 0; $i < count($prof_groups); ++$i) {
+    ?>
+                                <option value="<?=$prof_groups[$i]['id']?>"<?=(empty($params['defs']) ? (($dcg == $prof_groups[$i]['id']) ? ' selected="selected"' : '') : (($params['defs']['prof_groups'] == $prof_groups[$i]['id']) ? ' selected="selected"' : ''))?>><?=htmlspecialchars($prof_groups[$i]['name'])?></option>
+                            <?php 
+} ?>
                             </select></span><span class="flt-prm">
                             <select id="profs" name="profession" onchange="spam.send()">
                                 <option>Все подразделы</option>
@@ -158,8 +164,10 @@
             </div>
         </div>
         <script type="text/javascript">
-            GetProfessions( document.getElementById('prof_groups').value, <?=(empty($params['defs'])? intval($dcp): intval($params['defs']['professions']))?> );
-            <? if (!empty($params['professions'])) { ?>professions.restore();<? } ?>
+            GetProfessions( document.getElementById('prof_groups').value, <?=(empty($params['defs']) ? intval($dcp) : intval($params['defs']['professions']))?> );
+            <?php if (!empty($params['professions'])) {
+    ?>professions.restore();<?php 
+} ?>
         </script>
     </div>
 
@@ -177,7 +185,7 @@
         <div class="form-block first last">
 
             <div class="b-check b-check_margleft_-20 b-check_padbot_10">
-                <input id="chk-pro" class="b-check__input" name="is_pro" type="checkbox" onclick="spam.set(this.name, this.checked)" onkeyup="spam.set(this.name, this.checked)" <?=(empty($params['is_pro'])? '': 'checked="checked" ')?>/>
+                <input id="chk-pro" class="b-check__input" name="is_pro" type="checkbox" onclick="spam.set(this.name, this.checked)" onkeyup="spam.set(this.name, this.checked)" <?=(empty($params['is_pro']) ? '' : 'checked="checked" ')?>/>
                 <label class="b-check__label b-check__label_bold" for="chk-pro">Только с <a href="/payed/" class="b-layout__link b-layout__link_inline-block b-layout__link_lineheight_1"><span title="Платный аккаунт" class="b-icon b-icon__pro b-icon__pro_f b-icon_top_-1"></span></a> аккаунтом</label>
             </div>
 

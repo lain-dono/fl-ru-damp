@@ -3,7 +3,6 @@
 
 class Form_Filter_Htmlspecialchars implements Zend_Filter_Interface
 {
-
     public function filter($value)
     {
         //return htmlspecialchars($value, ENT_QUOTES, 'cp1251'); 

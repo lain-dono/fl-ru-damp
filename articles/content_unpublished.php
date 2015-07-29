@@ -1,22 +1,27 @@
 
 <?php
 $crumbs = array();
-$crumbs[] = array("title"=>"Статьи и интервью", "url"=>"/articles/");
-$crumbs[] = array("title"=>"Статьи на модерации", "url"=>"");
+$crumbs[] = array('title' => 'Статьи и интервью', 'url' => '/articles/');
+$crumbs[] = array('title' => 'Статьи на модерации', 'url' => '');
 ?>
 <div class="b-menu b-menu_crumbs b-menu_padbot_20"><?=getCrumbs($crumbs)?></div>
 
-<? include($mpath . '/tabs.php'); ?>
+<?php include $mpath.'/tabs.php'; ?>
 <div class="page-articles">
     <div class="p-articles-in c">
         <div class="p-a-cnt b-layout__right b-layout__right_relative b-layout__right_width_72ps b-layout__right_float_right" id="articles_list">
-            <? if($articles) foreach($articles as $article) { ?>
+            <?php if ($articles) {
+    foreach ($articles as $article) {
+        ?>
             <div class="post-one" id="post_<?=$article['id']?>">
-                <? if ($article['fname']) { ?>
+                <?php if ($article['fname']) {
+    ?>
                     <img src="<?=WDCPREFIX?>/<?=$article['path']?><?=$article['fname']?>" alt="" width="100" class="post-img" />
-                <? } ?>
+                <?php 
+}
+        ?>
                 <div class="post-txt">
-                    <h3><a class="b-layout__link" href="<?=getFriendlyURL('article', $article['id']).($page ? "?p=$page" : "")?>"><?=!$article['title'] ? 'Без названия' : reformat($article['title'], 32, 0, 1) ?></a></h3>
+                    <h3><a class="b-layout__link" href="<?=getFriendlyURL('article', $article['id']).($page ? "?p=$page" : '')?>"><?=!$article['title'] ? 'Без названия' : reformat($article['title'], 32, 0, 1) ?></a></h3>
                     <p class="post-body">
                         <?= reformat($article['short'], 50, 0, 0, 1) ?></p>
                 </div>
@@ -25,17 +30,23 @@ $crumbs[] = array("title"=>"Статьи на модерации", "url"=>"");
                         <li class="post-f-lnks">
                             <ul>
                                 <li class="first">
-                                    <? if(hasPermissions('articles')) { ?>
+                                    <?php if (hasPermissions('articles')) {
+    ?>
                                     <a href="javascript:void(0)" style="color: #A23E3E;" onclick="editArticle(<?=$article['id']?>)">Редактировать</a>
                                     &nbsp;|&nbsp;
                                     <a href="javascript:void(0)" style="color: #A23E3E;" onclick="delArticleForm(<?=$article['id']?>);">Удалить</a>
                                     &nbsp;|&nbsp;
-                                    <? } ?>
-                                    <? if($article['approved'] == 'f' && (hasPermissions('articles'))) { ?>
+                                    <?php 
+}
+        ?>
+                                    <?php if ($article['approved'] == 'f' && (hasPermissions('articles'))) {
+    ?>
                                     <a href="javascript:void(0)" style="color: #A23E3E;" class="moderator_decline" article_id="<?= $article['id'] ?>">Отклонить</a>
                                     &nbsp;|&nbsp;
                                     <a href="javascript:void(0)" class="moderator_approve" article_id="<?= $article['id'] ?>">Подтвердить</a>
-                                    <? } ?>
+                                    <?php 
+}
+        ?>
                                 </li>
                             </ul>
                         </li>
@@ -45,25 +56,31 @@ $crumbs[] = array("title"=>"Статьи на модерации", "url"=>"");
                         </li>
                         <li class="post-f-autor">
                             <a href="/users/<?=$article['login']?>">
-                <?= $article['uname'] . ' ' . $article['usurname'] . ' [' . $article['login'] . ']'?>
+                <?= $article['uname'].' '.$article['usurname'].' ['.$article['login'].']'?>
                             </a>
 														<span class="post-f-autor-grad"></span>
                         </li>
                     </ul>
                 </div>
             </div>
-            <? } ?>
+            <?php 
+    }
+} ?>
             
-            <? if (hasPermissions('articles')) { ?>
+            <?php if (hasPermissions('articles')) {
+    ?>
                 <form method="post" id="moderator_form">
                     <input type="hidden" name="u_token_key" value="<?= $_SESSION['rand'] ?>" />
                     <input type="hidden" name="task" id="moderator_form_task" />
                     <input type="hidden" name="id" id="moderator_form_article_id" />
                 </form>
-            <? } ?>
+            <?php 
+} ?>
             
-            <?=new_paginator($page, $pages, 3, "%s?".urldecode(url('ord,p,page', array('p' => '%d')))."%s")?>
-            <? if(hasPermissions('articles')) include('form.php'); ?>
+            <?=new_paginator($page, $pages, 3, '%s?'.urldecode(url('ord,p,page', array('p' => '%d'))).'%s')?>
+            <?php if (hasPermissions('articles')) {
+    include 'form.php';
+} ?>
         </div>
         <div class="p-a-left b-layout__left b-layout__left_width_25ps">
             <div class="p-a-popular c">

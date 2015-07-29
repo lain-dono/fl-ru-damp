@@ -1,7 +1,12 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
+<?php
+
+if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
 
 if (!$parser) {
-    header("Location: /404.php");
+    header('Location: /404.php');
     exit;
 }
 
@@ -9,7 +14,6 @@ $content = 'tpl.filters.php';
 
 $data = $parser->getFilters();
 $rules = $parser->getRules();
-
 
 $action = __paramInit('string', 'action', 'action');
 
@@ -32,7 +36,7 @@ switch ($action) {
             header_location_exit($_SERVER['HTTP_REFERER']);
         }
 
-        $parser->addFilter($word, $filter_rule, TRUE);
+        $parser->addFilter($word, $filter_rule, true);
 
         header_location_exit($_SERVER['HTTP_REFERER']);
         break;

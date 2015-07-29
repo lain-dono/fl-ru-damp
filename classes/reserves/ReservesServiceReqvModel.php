@@ -1,22 +1,23 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/reserves/BaseModel.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/reserves/ReservesHelper.php');
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/reserves/BaseModel.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/reserves/ReservesHelper.php';
 
 class ReservesServiceReqvModel extends BaseModel
 {
     protected $TABLE = 'reserves_service_reqv';
-    
+
     private $reserve_id;
-    
+
     public function __construct($reserve_id)
     {
         $this->reserve_id = $reserve_id;
     }
-    
+
     /**
-     * Сохраняет слепок реквизитов заказчика, если они не были сохранены ранее 
-     * @return boolean
+     * Сохраняет слепок реквизитов заказчика, если они не были сохранены ранее.
+     *
+     * @return bool
      */
     public function captureEmpReqv($emp_id)
     {
@@ -25,30 +26,31 @@ class ReservesServiceReqvModel extends BaseModel
             FROM {$this->TABLE} 
             WHERE reserve_id = ?i
         ", $this->reserve_id);
-        
+
         if ($isCaptured) {
             return false;
         }
-        
+
         $reqvs = ReservesHelper::getInstance()->getUserReqvs($emp_id);
         if (!$reqvs || !$reqvs['form_type']) {
             return false;
         }
         $reqv = $reqvs[$reqvs['form_type']];
-        
+
         $reqv['form_type'] = $reqvs['form_type'];
         $reqv['rez_type'] = $reqvs['rez_type'];
-        
+
         $data = array(
             'reserve_id' => $this->reserve_id,
-            'fields' => serialize($reqv)
+            'fields' => serialize($reqv),
         );
-        
+
         return $this->db()->insert($this->TABLE, $data, 'id');
     }
-    
+
     /**
-     * Возвращает реквизиты заказчика из слепков
+     * Возвращает реквизиты заказчика из слепков.
+     *
      * @return type
      */
     public function getReqv($emp_id = 0)
@@ -65,9 +67,7 @@ class ReservesServiceReqvModel extends BaseModel
                 $reqv['rez_type'] = $reqvs['rez_type'];
             }
         }
-        
+
         return $reqv;
     }
-    
-    
 }

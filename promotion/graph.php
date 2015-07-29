@@ -1,5 +1,5 @@
-<?
-	require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/rating.common.php");
+<?php
+	require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/rating.common.php';
 	$xajax->printJavascript('/xajax/');
 ?>
 <script type="text/javascript">
@@ -19,9 +19,12 @@
     });
 </script>
 <div class="month-rate-graph">
-    <? if(preg_match( "'Opera.*?Version/10\.10'si", $_SERVER['HTTP_USER_AGENT'])) { ?>
+    <?php if (preg_match("'Opera.*?Version/10\.10'si", $_SERVER['HTTP_USER_AGENT'])) {
+    ?>
     <iframe src="/promotion/graph.fix.php" width="750" height="233" frameborder="0" scrolling="no"></iframe>
-    <? } else { ?>
+    <?php 
+} else {
+    ?>
     <h3 class="b-page__iphone">График изменений рейтинга</h3>
     <select name="ratingmode">
         <option value="month">в этом месяце</option>
@@ -30,5 +33,6 @@
     </select>
     <h3 class="b-page__desktop b-page__ipad">График изменений рейтинга</h3>
     <div id="raph"></div>
-    <? } ?>
+    <?php 
+} ?>
 </div>

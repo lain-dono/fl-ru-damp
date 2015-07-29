@@ -4,10 +4,10 @@
     <tbody>
         <tr class="b-layout__tr">
             <td class="b-layout__td b-layout__td_padright_20">
-                <form method="POST" action="<?= ( is_release() ? "https://www.okpay.com/process.html" : "/bill/test/okpay.php" )?>" id="<?= $type_payment ?>" name="<?= $type_payment ?>">
+                <form method="POST" action="<?= (is_release() ? 'https://www.okpay.com/process.html' : '/bill/test/okpay.php')?>" id="<?= $type_payment ?>" name="<?= $type_payment ?>">
                     <div class="b-layout__txt b-layout__txt_inline-block b-layout__txt_padtop_5 b-page__desktop b-page__ipad">Мобильный телефон</div>
                     <div class="b-combo b-combo_inline-block b-combo_padbot_20">
-                        <div class="b-combo__input <?= $bill->error['phone'] ? "b-combo__input_error" : ""?> b-combo__input_width_170 b-combo__input_tel
+                        <div class="b-combo__input <?= $bill->error['phone'] ? 'b-combo__input_error' : ''?> b-combo__input_width_170 b-combo__input_tel
                                b-combo__input_phone_countries_dropdown b-combo__input_visible_items_5 use_scroll show_all_records
                                                     b-combo__input_init_countryPhoneCodes">
                             <input type="text" maxlength="15" id="reg_phone" class="b-combo__input-text payment-system js-payform_input" name="phone" size="80" value="7">
@@ -16,7 +16,7 @@
                     </div>
                     
                     <div class="i-shadow">
-                        <div id="error_phone" class="b-shadow b-shadow_zindex_3 b-shadow_m <?= $bill->error['phone'] ? "" : "b-shadow_hide"?>" style="top:-50px !important; left:308px;">
+                        <div id="error_phone" class="b-shadow b-shadow_zindex_3 b-shadow_m <?= $bill->error['phone'] ? '' : 'b-shadow_hide'?>" style="top:-50px !important; left:308px;">
                             <div class="b-shadow__right">
                                 <div class="b-shadow__left">
                                     <div class="b-shadow__top">
@@ -37,7 +37,7 @@
                     <input type="hidden" name="ok_currency" value="RUB"/>
                     <input type="hidden" name="ok_item_1_type" value="digital"/>
                     <input type="hidden" name="ok_item_1_price" value="<?= $payment_sum ?>"/>
-                    <input type="hidden" name="ok_item_1_name" value="<?= (iconv('CP1251', 'UTF-8', "Оплата за услуги сайта www.free-lance.ru, в том числе НДС - 18%. Счет #" . $bill->acc['id'] . ", логин " . $bill->user['login'])) ?>"/>
+                    <input type="hidden" name="ok_item_1_name" value="<?= (iconv('CP1251', 'UTF-8', 'Оплата за услуги сайта www.free-lance.ru, в том числе НДС - 18%. Счет #'.$bill->acc['id'].', логин '.$bill->user['login'])) ?>"/>
                     <input type="hidden" name="ok_fees" value="1"/>
                     <input type="hidden" name="ok_return_success" value="<?=$host?>/bill/"/>
                     <input type="hidden" name="ok_ipn" value="<?=$host?>/income/okpay.php"/>
@@ -52,8 +52,8 @@
                     <div class="b-layout__txt b-layout__txt_fontsize_11">— Оплата услуг осуществляется в течение 2-3 минут.</div>
                     <div class="b-layout__txt b-layout__txt_fontsize_11">— После нажатия на кнопку «Оплатить» вы будете перенаправлены на сайт Okpay.</div>
                 </div>
-                <? $checked = "checkOKPAYFields";?>
-                <? include ( $_SERVER['DOCUMENT_ROOT'] . "/bill/payment/paysystems/tpl.button_buy.php");?>                
+                <?php $checked = 'checkOKPAYFields';?>
+                <?php include $_SERVER['DOCUMENT_ROOT'].'/bill/payment/paysystems/tpl.button_buy.php';?>                
             </td>
             <td class="b-layout__td b-layout__td_padleft_30 b-layout__td_width_50ps">
             </td>

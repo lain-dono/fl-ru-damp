@@ -1,9 +1,10 @@
 <?php 
-if(!defined('IN_STDF')) { 
-    header("HTTP/1.0 404 Not Found");
+if (!defined('IN_STDF')) {
+    header('HTTP/1.0 404 Not Found');
     exit();
 }
-if(get_uid(false) && $_SESSION['sex'] === null){ ?>
+if (get_uid(false) && $_SESSION['sex'] === null) {
+    ?>
 <script type="text/javascript">
 window.addEvent('domready', function() {
    $('ov-sex-list').getElements('.b-radio__label').addEvent('click', function(){
@@ -93,4 +94,5 @@ function setSex() {
 	<div class="b-shadow__br"></div>
 </div>
 <div id="need_sex" class="b-shadow__overlay"></div>
-<?php } ?>
+<?php 
+} ?>

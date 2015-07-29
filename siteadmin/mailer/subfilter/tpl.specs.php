@@ -1,5 +1,5 @@
-<input type="hidden" id="fspec" name="fspec" value="<?= ( !empty($message['fspec'])? 1 : 0 )?>">
-<div class="b-fon-subfilter b-fon b-fon_width_full b-fon_padbot_15 <?= !empty($message['fspec']) ? "" : "b-fon_hide"; ?>">
+<input type="hidden" id="fspec" name="fspec" value="<?= (!empty($message['fspec']) ? 1 : 0)?>">
+<div class="b-fon-subfilter b-fon b-fon_width_full b-fon_padbot_15 <?= !empty($message['fspec']) ? '' : 'b-fon_hide'; ?>">
     <div class="b-fon__body b-fon__body_pad_10 b-fon__body_fontsize_13 b-fon__body_bg_f0ffdf i-button">
         <a class="b-button b-button_admin_del b-button_float_right close-block " href="#" onclick="$('fspec').set('value', 0);"></a>
         <div class="b-layout__txt b-layout__txt_bold b-layout__txt_padbot_20 b-layout__txt_fontsize_13 b-layout__txt_float_left">Специализация</div>
@@ -12,11 +12,17 @@
                     <div class="b-select">
                         <select name="fspec_orig" class="b-select__select b-select__select_width_300">
                             <option value="0">Любая</option>
-                            <?php if( $specs ) { ?>
-                            <?php foreach($specs as $key=>$value) { ?>
-                            <option value="<?= $value['id'];?>" <?= ($value['id'] == $message['fspec']['spec_orig']?"selected":"")?>><?=$value['name'];?></option>
-                            <?php }//foreach?>
-                            <?php }//if?>
+                            <?php if ($specs) {
+    ?>
+                            <?php foreach ($specs as $key => $value) {
+    ?>
+                            <option value="<?= $value['id'];
+    ?>" <?= ($value['id'] == $message['fspec']['spec_orig'] ? 'selected' : '')?>><?=$value['name'];
+    ?></option>
+                            <?php 
+}//foreach?>
+                            <?php 
+}//if?>
                         </select>
                     </div>
                 </td>
@@ -31,11 +37,17 @@
                     <div class="b-select">
                         <select name="fspec_dspec[0]" class="b-select__select b-select__select_width_300">
                             <option value="0">Любая</option>
-                            <?php if( $specs ) { ?>
-                            <?php foreach($specs as $key=>$value) { ?>
-                            <option value="<?= $value['id'];?>" <?= ($value['id'] == $message['fspec']['specs'][0]['spec']?"selected":"")?>><?=$value['name'];?></option>
-                            <?php }//foreach?>
-                            <?php }//if?>
+                            <?php if ($specs) {
+    ?>
+                            <?php foreach ($specs as $key => $value) {
+    ?>
+                            <option value="<?= $value['id'];
+    ?>" <?= ($value['id'] == $message['fspec']['specs'][0]['spec'] ? 'selected' : '')?>><?=$value['name'];
+    ?></option>
+                            <?php 
+}//foreach?>
+                            <?php 
+}//if?>
                         </select>
                     </div>
                 </td>

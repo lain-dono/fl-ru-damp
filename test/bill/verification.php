@@ -1,7 +1,7 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] ."/classes/session_Memcached.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
 
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/session_Memcached.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
 
 $login = 'danil5';
 

@@ -1,11 +1,14 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; } ?>
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+} ?>
 <h2>Поиск</h2>
 <div class="admin">
 <div class="lm-col">
     <div class="admin-menu">
         <h3>Поиск</h3>
 
-        <? include ($rpath . "/siteadmin/leftmenu.php") ?>
+        <?php include ($rpath.'/siteadmin/leftmenu.php') ?>
 
     </div>
 </div>
@@ -13,7 +16,7 @@
 <div class="r-col">
     <div class="ban-razban">
         <h3>Условия фильтрации</h3>
-        <? include_once ('tpl.navigation.php'); ?>
+        <?php include_once 'tpl.navigation.php'; ?>
         <br/>
 
         <form name="frm" method="post" action="">
@@ -64,7 +67,8 @@
                 </tr>
             </thead>
             <tbody>
-                <? foreach ($data as $row) { ?>
+                <?php foreach ($data as $row) {
+    ?>
                     <tr id="query<?= $row['id'] ?>">
                         <td class="c-st">
                             &bull;
@@ -78,7 +82,8 @@
                             <a href="./?tab=rules&action=delete_rule&id=<?= $row['id'] ?>" onclick="return confirm('Точно удалить?')">Удалить</a>
                         </td>
                     </tr>
-                <? } ?>
+                <?php 
+} ?>
             </tbody>
         </table>
 

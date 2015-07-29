@@ -1,11 +1,12 @@
-<? require_once($_SERVER['DOCUMENT_ROOT'].'/drafts/content_header.php'); ?>
+<?php require_once $_SERVER['DOCUMENT_ROOT'].'/drafts/content_header.php'; ?>
 
-<?
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/blogs.common.php");
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/blogs.common.php';
 $xajax->printJavascript('/xajax/');
 ?>
 
-    <? if($drafts) { ?>
+    <?php if ($drafts) {
+    ?>
         <form id="draft_frm" action="/drafts/" method="post">
 				<div>
         <input type="hidden" name="p" value="blogs" />
@@ -22,7 +23,8 @@ $xajax->printJavascript('/xajax/');
 </div>
         
 
-        <? if($is_ban) { ?>
+        <?php if ($is_ban) {
+    ?>
         
 <div class="b-fon b-fon_bg_fcc">
 		<b class="b-fon__b1"></b>
@@ -35,7 +37,9 @@ $xajax->printJavascript('/xajax/');
 </div>
         
         
-        <? } ?>
+        <?php 
+}
+    ?>
 
     	<table class="tbl-projects-draft">
             <colgroup>
@@ -46,28 +50,46 @@ $xajax->printJavascript('/xajax/');
 				<col width="80" />
 				<col width="60" />
 			</colgroup>
-                <? foreach($drafts as $draft) { ?>
-                <? if($draft['post_id']) { $blogmsg = blogs::GetMsgInfo($draft['post_id'], $error, $perm); } ?>
+                <?php foreach ($drafts as $draft) {
+    ?>
+                <?php if ($draft['post_id']) {
+    $blogmsg = blogs::GetMsgInfo($draft['post_id'], $error, $perm);
+}
+    ?>
                 <tr class="b-layout__tr">
 					<td class="b-layout__one b-layout__one_bordbot_ccc b-layout__one_padtb_10"><div class="b-check b-check_padleft_10 b-check_top_2"><input id="del_draft_<?=$draft['id']?>" class="b-check__input" type="checkbox" name="del_draft[]" value="<?=$draft['id']?>" onClick="DraftsCheckToggleDeleteAll(this);" /></div></td>
 					<td class="b-layout__one b-layout__one_bordbot_ccc b-layout__one_padtb_10"><div class="b-layout__txt">
-                        <? if($is_ban || $draft['is_blocked']) { ?>
-                        <?=($draft['title']!=''?reformat(htmlspecialchars($draft['title']),27,0,1):'[без названия]')?>
-                        <? } else { ?>
-                        <a class="b-layout__link" href="<?=($draft['post_id'] ? getFriendlyUrl('blog',$blogmsg['thread_id'])."?id={$draft['post_id']}&draft_id={$draft['id']}&action=edit" : getFriendlyUrl('blog_group',$draft['category'])."?draft_id={$draft['id']}#bottom")?>"><?=($draft['title']!=''?reformat(htmlspecialchars($draft['title']),27,0,1):'[без названия]')?></a>
-                        <? } ?>
+                        <?php if ($is_ban || $draft['is_blocked']) {
+    ?>
+                        <?=($draft['title'] != '' ? reformat(htmlspecialchars($draft['title']), 27, 0, 1) : '[без названия]')?>
+                        <?php 
+} else {
+    ?>
+                        <a class="b-layout__link" href="<?=($draft['post_id'] ? getFriendlyUrl('blog', $blogmsg['thread_id'])."?id={$draft['post_id']}&draft_id={$draft['id']}&action=edit" : getFriendlyUrl('blog_group', $draft['category'])."?draft_id={$draft['id']}#bottom")?>"><?=($draft['title'] != '' ? reformat(htmlspecialchars($draft['title']), 27, 0, 1) : '[без названия]')?></a>
+                        <?php 
+}
+    ?>
                     </div>
                     </td>
 					<td class="b-layout__one b-layout__one_bordbot_ccc b-layout__one_padtb_10"><div class="b-layout__txt"><a class="b-layout__link b-layout__link_color_6db335" href="/blogs/viewgroup.php?gr=<?=$draft['category']?>"><?=$draft['category_title']?></a></div></td>
     				<td class="b-layout__one b-layout__one_bordbot_ccc b-layout__one_padtb_10"><div class="b-layout__txt"><?=$draft['pdate']?></div></td>
-					<td class="b-layout__one b-layout__one_bordbot_ccc b-layout__one_padtb_10"><div class="b-layout__txt"><? if($is_ban || $draft['is_blocked']) { ?>&nbsp;<? } else { ?><a class="b-layout__link" href="" onClick="xajax_PostDraft(<?=$draft['id']?>, 3 <?=($draft['post_id']?',1':'')?>); return false;">Опубликовать</a><? } ?></div></td>
+					<td class="b-layout__one b-layout__one_bordbot_ccc b-layout__one_padtb_10"><div class="b-layout__txt"><?php if ($is_ban || $draft['is_blocked']) {
+    ?>&nbsp;<?php 
+} else {
+    ?><a class="b-layout__link" href="" onClick="xajax_PostDraft(<?=$draft['id']?>, 3 <?=($draft['post_id'] ? ',1' : '')?>); return false;">Опубликовать</a><?php 
+}
+    ?></div></td>
 					<td class="b-layout__one b-layout__one_bordbot_ccc b-layout__one_padtb_10"><div class="b-layout__txt"><a class="b-layout__link b-layout__link_color_c10600" href="" onClick="DraftDeleteSubmit(<?=$draft['id']?>); return false;">Удалить</a></div></td>
 				</tr>
-                <? } ?>
+                <?php 
+}
+    ?>
         </table>
 				</div>
         </form>
-    <? } else { ?>
+    <?php 
+} else {
+    ?>
     
 <div class="b-fon">
 		<b class="b-fon__b1"></b>
@@ -79,7 +101,8 @@ $xajax->printJavascript('/xajax/');
 		<b class="b-fon__b1"></b>
 </div>
     
-    <? } ?>
+    <?php 
+} ?>
 
 <form id="f_frm" style="display:none;" action="" method="post">
 <div>

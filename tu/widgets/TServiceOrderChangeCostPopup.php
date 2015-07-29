@@ -1,27 +1,26 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/tu/models/TServiceOrderModel.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/tservices/tservices_helper.php');
+require_once $_SERVER['DOCUMENT_ROOT'].'/tu/models/TServiceOrderModel.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/tservices/tservices_helper.php';
 
 /**
  * Class TServiceOrderChangeCostPopup
- * Виджет показывает попап в заказе ТУ при изменении стоимости, сроков и вида расчета для заказчика
+ * Виджет показывает попап в заказе ТУ при изменении стоимости, сроков и вида расчета для заказчика.
  */
-
-class TServiceOrderChangeCostPopup extends CWidget 
+class TServiceOrderChangeCostPopup extends CWidget
 {
-        public $order;
-        
+    public $order;
+
         /**
          * Метод сразу печатает в поток окошко попапа
-         * см render
+         * см render.
          * 
-         * @return boolean
+         * @return bool
          */
-        public function run() 
-        {            
+        public function run()
+        {
             //Задействуем для этого юзера и категории ТУ новую БС с резервом или нет
-            $sufix = ((tservices_helper::isAllowOrderReserve($this->order['category_id']))?'-reserve':'');
+            $sufix = ((tservices_helper::isAllowOrderReserve($this->order['category_id'])) ? '-reserve' : '');
             $this->render("t-service-order-change-cost{$sufix}-popup", array('order' => $this->order));
-	}
+        }
 }

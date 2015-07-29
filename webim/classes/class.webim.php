@@ -12,26 +12,30 @@
 ?>
 <?php 
 
-    class CWebim {
-        function BeforeUserAdd(&$arFields) {
-            if (strstr($_SERVER['HTTP_REFERER'], "webim")) {
-                $filter = array("STRING_ID" => "webim");
+    class CWebim
+    {
+        public function BeforeUserAdd(&$arFields)
+        {
+            if (strstr($_SERVER['HTTP_REFERER'], 'webim')) {
+                $filter = array('STRING_ID' => 'webim');
                 $by = 'c_sort';
                 $order = 'DESC';
                 $rsGroups = CGroup::GetList($by, $order, $filter);
                 $is_filtered = $rsGroups->is_filtered;
 
                 if ($row = $rsGroups->GetNext()) {
-                    $arFields["GROUP_ID"][] = array("GROUP_ID" => $row["ID"]);
+                    $arFields['GROUP_ID'][] = array('GROUP_ID' => $row['ID']);
                 }
             }
         }
 
-        function UserDelete($id) {
-          Operator::getInstance()->DeleteOperator($id);
+        public function UserDelete($id)
+        {
+            Operator::getInstance()->DeleteOperator($id);
         }
 
-        static function getAvatar($uid = false) {
+        public static function getAvatar($uid = false)
+        {
             global $USER;
 
             if ($uid === false) {
@@ -40,16 +44,17 @@
 
             $rsUser = CUser::GetByID($uid);
             $arResult = $rsUser->GetNext(false);
-            if (!empty($arResult) && !empty($arResult["PERSONAL_PHOTO"])) {
-              $db_img = CFile::GetByID($arResult["PERSONAL_PHOTO"]);
-              $db_img_arr = $db_img->Fetch();
-              
-              if (!empty($db_img_arr)) {
-                $strImageStorePath = COption::GetOptionString("main", "upload_dir", "upload");
-                $sImagePath = "/".$strImageStorePath."/".$db_img_arr["SUBDIR"]."/".$db_img_arr["FILE_NAME"];
-                $sImagePath = str_replace("//","/",$sImagePath);
-                return $sImagePath;
-              }
+            if (!empty($arResult) && !empty($arResult['PERSONAL_PHOTO'])) {
+                $db_img = CFile::GetByID($arResult['PERSONAL_PHOTO']);
+                $db_img_arr = $db_img->Fetch();
+
+                if (!empty($db_img_arr)) {
+                    $strImageStorePath = COption::GetOptionString('main', 'upload_dir', 'upload');
+                    $sImagePath = '/'.$strImageStorePath.'/'.$db_img_arr['SUBDIR'].'/'.$db_img_arr['FILE_NAME'];
+                    $sImagePath = str_replace('//', '/', $sImagePath);
+
+                    return $sImagePath;
+                }
             }
 
             return false;

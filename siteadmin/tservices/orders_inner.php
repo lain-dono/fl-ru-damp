@@ -1,22 +1,25 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
 
-    if ( !hasPermissions('tservices') ) {
+    if (!hasPermissions('tservices')) {
         exit;
     }
 
-    $aDatetypes = array( 'create' => 'date', 'accept' => 'accept_date', 'close' => 'close_date' );
-    $sDate = ( isset($_GET['filterdate']) ) ? (in_array($_GET['filterdate'], array_keys($aDatetypes)) ? $aDatetypes[$_GET['filterdate']] : 'date') : 'date';
+    $aDatetypes = array('create' => 'date', 'accept' => 'accept_date', 'close' => 'close_date');
+    $sDate = (isset($_GET['filterdate'])) ? (in_array($_GET['filterdate'], array_keys($aDatetypes)) ? $aDatetypes[$_GET['filterdate']] : 'date') : 'date';
 
-    if($_GET['date_begin']=='' || $_GET['date_end']=='') {
-    	$date_begin = date("d-m-Y", mktime(0,0,0,date("m")-1,date("d"),date("Y")));
-    	$date_end = date("d-m-Y");
+    if ($_GET['date_begin'] == '' || $_GET['date_end'] == '') {
+        $date_begin = date('d-m-Y', mktime(0, 0, 0, date('m') - 1, date('d'), date('Y')));
+        $date_end = date('d-m-Y');
     } else {
-    	$date_begin = $_GET['date_begin'];
-    	$date_end = $_GET['date_end'];
+        $date_begin = $_GET['date_begin'];
+        $date_end = $_GET['date_end'];
     }
 
-    $s_date_begin = substr($date_begin, 6,4)."-".substr($date_begin, 3,2)."-".substr($date_begin, 0,2);
-    $s_date_end = substr($date_end, 6,4)."-".substr($date_end, 3,2)."-".substr($date_end, 0,2).' 23:59:59';
+    $s_date_begin = substr($date_begin, 6, 4).'-'.substr($date_begin, 3, 2).'-'.substr($date_begin, 0, 2);
+    $s_date_end = substr($date_end, 6, 4).'-'.substr($date_end, 3, 2).'-'.substr($date_end, 0, 2).' 23:59:59';
 
     $orders = $DB->rows("-- #0026621
 
@@ -55,17 +58,17 @@ LIMIT 2000 OFFSET 0", $s_date_begin, $s_date_end);
         '-2' => 'работодатель отменил',
         '1' => 'в работе',
         '2' => 'завершен фрилансером',
-        '3' => 'завершен работодателем'
+        '3' => 'завершен работодателем',
     );
-    
+
     $feedbacks = array(
       '-1' => 'отрицательный',
        '1' => 'положительный',
-        '' => 'отсутствует'
+        '' => 'отсутствует',
     );
-    
-    require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/billing.php");
-   
+
+    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/billing.php';
+
 ?>
 
 <h3>Статусы заказов типовых услуг</h3>
@@ -85,9 +88,9 @@ LIMIT 2000 OFFSET 0", $s_date_begin, $s_date_end);
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     
     <select name="filterdate">
-        <option value="create"<?php echo $_GET['filterdate']=='create'?' selected="selected"':''?>>дата создания заказа</option>
-        <option value="accept"<?php echo $_GET['filterdate']=='accept'?' selected="selected"':''?>>дата подтверждения исполнителем</option>
-        <option value="close"<?php echo $_GET['filterdate']=='close'?' selected="selected"':''?>>дата завершения сотрудничества в заказе</option>
+        <option value="create"<?php echo $_GET['filterdate'] == 'create' ? ' selected="selected"' : ''?>>дата создания заказа</option>
+        <option value="accept"<?php echo $_GET['filterdate'] == 'accept' ? ' selected="selected"' : ''?>>дата подтверждения исполнителем</option>
+        <option value="close"<?php echo $_GET['filterdate'] == 'close' ? ' selected="selected"' : ''?>>дата завершения сотрудничества в заказе</option>
     </select>
     
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -114,7 +117,7 @@ LIMIT 2000 OFFSET 0", $s_date_begin, $s_date_end);
         <td style="text-align:center"><b>баланс на счету исполнителя</b></td>
 </tr>
 
-<?php foreach ($orders as $order) { 
+<?php foreach ($orders as $order) {
     $bill = new billing($order['frl_id']);
     $paid_tax = $order['tax_price']; //$order['status'] > 1 ? $order['tax_price'] : 0; // Реально списанная комиссия
 ?>
@@ -122,16 +125,17 @@ LIMIT 2000 OFFSET 0", $s_date_begin, $s_date_end);
     <td style="text-align:center" align="center"><a href="/tu/order/<?=$order['id']?>/"><?=$order['id']?></a></td>
     <td style="text-align:center">&nbsp;<?=$order['emp_login'] ?></td>
     <td style="text-align:center">&nbsp;<?=$order['frl_login'] ?></td>
-    <td style="text-align:center">&nbsp;<?= dateFormat("d.m.Y H:i", $order['date'])?></td>
-    <td style="text-align:center">&nbsp;<?= $order['accept_date'] ? dateFormat("d.m.Y H:i", $order['accept_date']) : "-"?></td>
-    <td style="text-align:center">&nbsp;<?= $order['close_date'] ? dateFormat("d.m.Y H:i", $order['close_date']) : "-"?></td>
+    <td style="text-align:center">&nbsp;<?= dateFormat('d.m.Y H:i', $order['date'])?></td>
+    <td style="text-align:center">&nbsp;<?= $order['accept_date'] ? dateFormat('d.m.Y H:i', $order['accept_date']) : '-'?></td>
+    <td style="text-align:center">&nbsp;<?= $order['close_date'] ? dateFormat('d.m.Y H:i', $order['close_date']) : '-'?></td>
     <td style="text-align:center">&nbsp;<?=$statuses[$order['status']]?></td>
     <td style="text-align:center">&nbsp;<?=$feedbacks[$order['frl_feedback']]?></td>
     <td style="text-align:center">&nbsp;<?=$feedbacks[$order['emp_feedback']]?></td>
     <td style="text-align:center">&nbsp;<?=$paid_tax?></td>
     <td style="text-align:center">&nbsp;<?=to_money($bill->acc['sum'], 2)?> руб.</td>
 </tr>
-<?php } ?>
+<?php 
+} ?>
 
 </table>
 

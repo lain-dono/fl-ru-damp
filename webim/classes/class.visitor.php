@@ -11,56 +11,62 @@
  */
 ?>
 <?php
-require_once('common.php');
-require_once('models/generic/class.mapperfactory.php');
-require_once('functions.php');
+require_once 'common.php';
+require_once 'models/generic/class.mapperfactory.php';
+require_once 'functions.php';
 
-class Visitor  {
-    private static $instance = NULL;
+class Visitor
+{
+    private static $instance = null;
 
-    static function getInstance() {
-        if (self::$instance == NULL) {
-            self::$instance = new Visitor();
+    public static function getInstance()
+    {
+        if (self::$instance == null) {
+            self::$instance = new self();
         }
+
         return self::$instance;
     }
 
-    private function __construct() {
-
+    private function __construct()
+    {
     }
 
-    private function __clone() {
+    private function __clone()
+    {
     }
 
-    public function canVisitorChangeName() {
-     
-
-        
+    public function canVisitorChangeName()
+    {
         return true;
-    
     }
 
-    public  function getEmail($threadid = false) {
-        if(!$threadid) return '';
-        $firstMessage = MapperFactory::getMapper("Message")->getFirstMessage($threadid);
-        if(sizeof($firstMessage) == 0) return '';
+    public function getEmail($threadid = false)
+    {
+        if (!$threadid) {
+            return '';
+        }
+        $firstMessage = MapperFactory::getMapper('Message')->getFirstMessage($threadid);
+        if (sizeof($firstMessage) == 0) {
+            return '';
+        }
         preg_match("/mail:.*?(\S*?@\S*?\.\S*)/mix", $firstMessage['message'], $find);
-        if($find[1]) return $find[1];
-        
+        if ($find[1]) {
+            return $find[1];
+        }
+
         return '';
     }
 
-    public function getPhone() {
-         
+    public function getPhone()
+    {
         return '';
     }
 
-  public function setVisitorNameCookie($visitorName) {
-
-    setcookie(WEBIM_COOKIE_VISITOR_NAME, $visitorName, time()+60*60*24*365, '/');
-  }
-
-
+    public function setVisitorNameCookie($visitorName)
+    {
+        setcookie(WEBIM_COOKIE_VISITOR_NAME, $visitorName, time() + 60 * 60 * 24 * 365, '/');
+    }
 }
 
 ?>

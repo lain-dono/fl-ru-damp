@@ -1,170 +1,164 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/sbr.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/sbr_meta.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/reserves/ReservesPayout.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/reserves/ReservesPayoutPopup.php');
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/sbr.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/sbr_meta.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/reserves/ReservesPayout.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/reserves/ReservesPayoutPopup.php';
 
-class ReservesHelper 
+class ReservesHelper
 {
     protected static $instance;
-    
+
     protected $reqs_list;
     protected $is_valids;
-    
 
     protected $payout = null;
     protected $payout_reqv;
 
-
     /**
-    * Создаем синглтон
-    * @return object
-    */
-    public static function getInstance() 
+     * Создаем синглтон.
+     *
+     * @return object
+     */
+    public static function getInstance()
     {
-
         if (null === static::$instance) {
-            static::$instance = new static;
+            static::$instance = new static();
         }
 
         return static::$instance;
     }
-    
-    
-    
+
     public function getPayout()
     {
-        if(!$this->payout) {
+        if (!$this->payout) {
             $this->payout = new ReservesPayout();
         }
-        
+
         return $this->payout;
     }
 
-    
     public function getPayoutReqv($reserve_id)
     {
-        if(!isset($this->payout_reqv[$reserve_id])) {
+        if (!isset($this->payout_reqv[$reserve_id])) {
             $this->payout_reqv[$reserve_id] = $this->getPayout()->getPayoutReqv($reserve_id);
         }
-        
+
         return $this->payout_reqv[$reserve_id];
     }
 
-    
-    
     public function getPayoutType($reserve_id, $short = false)
     {
         $payout_reqv = $this->getPayoutReqv($reserve_id);
-        if(!$payout_reqv) return '';
-        
-        $text = ($short)?ReservesPayoutPopup::$payments_short_text[$payout_reqv['pay_type']]:
+        if (!$payout_reqv) {
+            return '';
+        }
+
+        $text = ($short) ? ReservesPayoutPopup::$payments_short_text[$payout_reqv['pay_type']] :
                          ReservesPayoutPopup::$payments_text[$payout_reqv['pay_type']];
-        
+
         return $text;
     }
 
-    
-
-
     /**
      * Получить реквизиты юзера
-     * даже если их нет
+     * даже если их нет.
      * 
      * @param int $uid
+     *
      * @return array
      */
     public function getUserReqvs($uid = null, $rewrite = false)
     {
-        if(!$uid) $uid = get_uid(false);
-        
-        if(!isset($this->reqs_list[$uid]) || $rewrite) 
-        {
+        if (!$uid) {
+            $uid = get_uid(false);
+        }
+
+        if (!isset($this->reqs_list[$uid]) || $rewrite) {
             $this->reqs_list[$uid] = sbr_meta::getUserReqvs($uid);
         }
-        
+
         return $this->reqs_list[$uid];
     }
-   
-    
-    
+
     /**
      * Юзер физик и резидент или беженец?
      * 
      * @param type $uid
-     * @return boolean
+     *
+     * @return bool
      */
     public function isPhisRT($uid)
     {
         $reqvs = $this->getUserReqvs($uid);
-        if(!$reqvs || !$reqvs['form_type']) return false;
-        
-        return ($reqvs['form_type'] == sbr::FT_PHYS && 
+        if (!$reqvs || !$reqvs['form_type']) {
+            return false;
+        }
+
+        return ($reqvs['form_type'] == sbr::FT_PHYS &&
                 in_array($reqvs['rez_type'], array(sbr::RT_RU, sbr::RT_REFUGEE, sbr::RT_RESIDENCE)));
     }
 
-    
     /**
      * Юзер юрик?
      * 
      * @param type $uid
-     * @return boolean
+     *
+     * @return bool
      */
     public function isJuri($uid)
     {
         $reqvs = $this->getUserReqvs($uid);
-        if (!$reqvs || !$reqvs['form_type']) { 
-            return false; 
+        if (!$reqvs || !$reqvs['form_type']) {
+            return false;
         }
-        
+
         return $reqvs['form_type'] == sbr::FT_JURI;
     }
-
-    
 
     public function getNDFL($sum, $uid)
     {
         if (!$this->isPhisRT($uid)) {
             return 0;
         }
-        
+
         return round($sum * 0.13);
     }
 
-    
-
-
     /**
-     * Получить статус заполнения финансов
+     * Получить статус заполнения финансов.
      * 
      * @param type $uid
+     *
      * @return int
      */
     public function getFinStatus($uid = null)
     {
         $reqvs = $this->getUserReqvs($uid);
-        if(!$reqvs || !$reqvs['form_type']) return false;
-        return (int)$reqvs['validate_status'];
+        if (!$reqvs || !$reqvs['form_type']) {
+            return false;
+        }
+
+        return (int) $reqvs['validate_status'];
     }
 
-    
     /**
      * Финансы отклонены модератором?
      * 
      * @param type $uid
+     *
      * @return type
      */
     public function finStatusIsDecline($uid = null)
     {
         return $this->getFinStatus($uid) == sbr_meta::VALIDATE_STATUS_DECLINE;
-    }    
-    
-    
+    }
+
     /**
      * Финансы удалены пользователем?
      * 
      * @param type $uid
+     *
      * @return type
      */
     public function finStatusIsDeleted($uid = null)
@@ -172,12 +166,11 @@ class ReservesHelper
         return $this->getFinStatus($uid) == sbr_meta::VALIDATE_STATUS_DELETED;
     }
 
-    
-
     /**
      * Финансы заблокированы на использоание / редактирование?
      * 
      * @param type $uid
+     *
      * @return type
      */
     public function finStatusIsBlocked($uid = null)
@@ -185,101 +178,94 @@ class ReservesHelper
         return $this->getFinStatus($uid) == sbr_meta::VALIDATE_STATUS_BLOCKED;
     }
 
-    
-
-
-
     /**
-     * Вернуть причину блокировки финансов
+     * Вернуть причину блокировки финансов.
      * 
      * @param type $uid
+     *
      * @return type
      */
     public function getFinBlockedReason($uid)
     {
         //Если это отклонение модератором или блокировка 
         //то показываем текст причины
-        if ($this->finStatusIsDecline($uid) || 
+        if ($this->finStatusIsDecline($uid) ||
             $this->finStatusIsBlocked($uid)) {
-            
             return sbr_meta::getReqvBlockedReason($uid);
         }
-        
+
         return false;
     }
 
-    
-    
     /**
-     * Сохраняем текущий URL для возврата из финансов
+     * Сохраняем текущий URL для возврата из финансов.
      * 
      * @param type $is_valid
      */
     public function saveCurrentUrlForFinance($is_valid = false)
     {
         unset($_SESSION['redirect_from_finance']);
-        if(!$is_valid && isset($_SESSION['ref_uri'])) {
+        if (!$is_valid && isset($_SESSION['ref_uri'])) {
             $_SESSION['redirect_from_finance'] = $_SESSION['ref_uri'];
         }
     }
 
-
     /**
-     * Проверить наличие финансовой информации
+     * Проверить наличие финансовой информации.
      * 
      * @param type $uid
-     * @return boolean
+     *
+     * @return bool
      */
     public function isValidUserReqvs($uid, $is_emp = false)
     {
-        if(isset($this->is_valids[$uid])) return $this->is_valids[$uid];
-        
+        if (isset($this->is_valids[$uid])) {
+            return $this->is_valids[$uid];
+        }
+
         $reqvs = $this->getUserReqvs($uid);
-        if(!$reqvs || !$reqvs['form_type']) return false;
-        
+        if (!$reqvs || !$reqvs['form_type']) {
+            return false;
+        }
+
         $reqv = $reqvs[$reqvs['form_type']];
-        
+
         //@todo: использую существующий метод вместо своего
         $errors = sbr::checkRequired($reqvs['form_type'], $reqvs['rez_type'], $reqv, $is_emp);
         $is_valid = empty($errors);
-        
+
         //Если фрилансер физик и не резидент 
         //то проверяем есть ли скан паспорта
-        
+
         //@todo: это доп.проверка так как на странице финансов это поле обязательно
         //то возможно данные были заполнены еще до ввода скана в обязаловку
-        
+
         //Позже после того как пометим всех нерезидентов у которых нет сканов
         //как не корректные финансы - проверку можно убрать
-        if ($is_valid && !$is_emp && 
+        if ($is_valid && !$is_emp &&
             $reqvs['form_type'] == sbr::FT_PHYS) {
-            
-            require_once(ABS_PATH . "/classes/account.php");
-            
+            require_once ABS_PATH.'/classes/account.php';
+
             $account = new account();
             $account->GetInfo($uid, true);
             $is_valid = $account->isExistAttach();
-            
+
             if (!$is_valid) {
                 session::setFlashMessage(account::MSG_UPLOAD_REQ, 'isValidUserReqvs');
             }
         }
-        
-        
-        //если исполнитель беженец то проверяем действительны ли еще у него документы
-        if ($is_valid && !$is_emp && 
-            in_array($reqvs['rez_type'], array(sbr::RT_REFUGEE, sbr::RT_RESIDENCE))) {
-            
-                $is_valid = isset($reqv['idcard_to']) && !empty($reqv['idcard_to'])? 
-                        strtotime($reqv['idcard_to']) > strtotime('+ 1 day') : false;
-                
-                if (!$is_valid) {
-                    session::setFlashMessage(account::MSG_UPLOAD_OLD, 'isValidUserReqvs');
-                }                
-        }
-        
 
-        
+        //если исполнитель беженец то проверяем действительны ли еще у него документы
+        if ($is_valid && !$is_emp &&
+            in_array($reqvs['rez_type'], array(sbr::RT_REFUGEE, sbr::RT_RESIDENCE))) {
+            $is_valid = isset($reqv['idcard_to']) && !empty($reqv['idcard_to']) ?
+                        strtotime($reqv['idcard_to']) > strtotime('+ 1 day') : false;
+
+            if (!$is_valid) {
+                session::setFlashMessage(account::MSG_UPLOAD_OLD, 'isValidUserReqvs');
+            }
+        }
+
         /*
         $reqv = array_filter($reqv, function($value){ 
             return $value !== null && !empty($value); 
@@ -323,68 +309,54 @@ class ReservesHelper
         $req_keys = array_merge($req_keys, $req_keys_more);
         $is_valid = (count(array_intersect($req_keys, $valid_keys)) == count($req_keys));
          */
-        
-        
+
         $this->is_valids[$uid] = $is_valid;
+
         return $is_valid;
     }
-    
-    
-    
 
     public function getAllowedPayoutTypes($form, $rez, $price)
     {
         $payments = array_flip(ReservesPayoutPopup::$payment_list);
-        
-        $code = $form . $rez;
-        
-        switch($code)
-        {
-            case sbr::FT_PHYS . sbr::RT_REFUGEE:
-            case sbr::FT_PHYS . sbr::RT_RESIDENCE:
-                unset($payments[ReservesPayoutPopup::PAYMENT_TYPE_CARD]);
-                
-                
-            case sbr::FT_PHYS . sbr::RT_RU:
 
-                
+        $code = $form.$rez;
+
+        switch ($code) {
+            case sbr::FT_PHYS.sbr::RT_REFUGEE :
+            case sbr::FT_PHYS.sbr::RT_RESIDENCE:
+                unset($payments[ReservesPayoutPopup::PAYMENT_TYPE_CARD]);
+
+            case sbr::FT_PHYS.sbr::RT_RU:
+
                 unset($payments[ReservesPayoutPopup::PAYMENT_TYPE_BANK]);
-                
-                if($price <= ReservesPayout::MAX_SUM)
-                {
-                   unset($payments[ReservesPayoutPopup::PAYMENT_TYPE_CARD],
-                         $payments[ReservesPayoutPopup::PAYMENT_TYPE_RS]); 
+
+                if ($price <= ReservesPayout::MAX_SUM) {
+                    unset($payments[ReservesPayoutPopup::PAYMENT_TYPE_CARD],
+                         $payments[ReservesPayoutPopup::PAYMENT_TYPE_RS]);
                 }
 
                 break;
-                
-                
-            case sbr::FT_PHYS . sbr::RT_UABYKZ:
-                
-                unset($payments[ReservesPayoutPopup::PAYMENT_TYPE_RS], 
+
+            case sbr::FT_PHYS.sbr::RT_UABYKZ:
+
+                unset($payments[ReservesPayoutPopup::PAYMENT_TYPE_RS],
                       $payments[ReservesPayoutPopup::PAYMENT_TYPE_CARD]);
-                
-                if($price <= ReservesPayout::MAX_SUM)
-                {
+
+                if ($price <= ReservesPayout::MAX_SUM) {
                     unset($payments[ReservesPayoutPopup::PAYMENT_TYPE_BANK]);
                 }
-                
+
                 break;
-            
-                
+
             default:
                 unset($payments[ReservesPayoutPopup::PAYMENT_TYPE_RS],
                       $payments[ReservesPayoutPopup::PAYMENT_TYPE_CARD],
                       $payments[ReservesPayoutPopup::PAYMENT_TYPE_YA]);
         }
-        
+
         //@todo: выключаем выплату на счет, пока ЯД решает проблему
         unset($payments[ReservesPayoutPopup::PAYMENT_TYPE_RS]);
-        
+
         return $payments;
     }
-    
-    
-    
-    
 }

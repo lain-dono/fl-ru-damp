@@ -7,8 +7,7 @@ require_once '../classes/stdf.php';
 require_once '../classes/memBuff.php';
 require_once '../classes/smtp.php';
 
-
-/**
+/*
  * Логин пользователя от кого осуществляется рассылка
  * 
  */
@@ -17,7 +16,7 @@ $sender = 'admin';
 // Только фрилансерам
 $sql = "SELECT uid, email, login, uname, usurname, subscr FROM freelancer WHERE substring(subscr from 8 for 1)::integer = 1 AND is_banned = B'0'";
 
-$pHost = str_replace("http://", "", $GLOBALS['host']);
+$pHost = str_replace('http://', '', $GLOBALS['host']);
 $eHost = $GLOBALS['host'];
 $pMessage = "
 Здравствуйте!
@@ -62,7 +61,7 @@ $pMessage = "
 Приятной работы!
 Команда Free-lance.ru";
 
-$eSubject = "10 фактов о рекомендациях на Free-lance.ru";
+$eSubject = '10 фактов о рекомендациях на Free-lance.ru';
 
 $eMessage = "<p>Здравствуйте!</p>
 
@@ -133,8 +132,7 @@ $DB = new DB('plproxy');
 $master = new DB('master');
 $cnt = 0;
 
-
-$sender = $master->row("SELECT * FROM users WHERE login = ?", $sender);
+$sender = $master->row('SELECT * FROM users WHERE login = ?', $sender);
 if (empty($sender)) {
     die("Unknown Sender\n");
 }
@@ -143,7 +141,9 @@ echo "Send personal messages\n";
 
 // подготавливаем рассылку
 $msgid = $DB->val("SELECT masssend(?, ?, '{}', '')", $sender['uid'], $pMessage);
-if (!$msgid) die('Failed!');
+if (!$msgid) {
+    die('Failed!');
+}
 
 // допустим, мы получаем адресатов с какого-то запроса
 $i = 0;
@@ -152,15 +152,17 @@ while ($users = $master->col("{$sql} LIMIT 30000 OFFSET ?", $i)) {
     $i = $i + 30000;
 }
 // Стартуем рассылку в личку
-$DB->query("SELECT masssend_commit(?, ?)", $msgid, $sender['uid']); 
+$DB->query('SELECT masssend_commit(?, ?)', $msgid, $sender['uid']);
 echo "Send email messages\n";
 
-$mail = new smtp;
+$mail = new smtp();
 $mail->subject = $eSubject;  // заголовок письма
 $mail->message = $eMessage; // текст письма
 $mail->recipient = ''; // свойство 'получатель' оставляем пустым
 $spamid = $mail->send('text/html');
-if (!$spamid) die('Failed!');
+if (!$spamid) {
+    die('Failed!');
+}
 // с этого момента рассылка создана, но еще никому не отправлена!
 // допустим нам нужно получить список получателей с какого-либо запроса
 $i = 0;
@@ -169,14 +171,14 @@ $res = $master->query($sql);
 while ($row = pg_fetch_assoc($res)) {
     $mail->recipient[] = array(
         'email' => $row['email'],
-        'extra' => array('first_name' => $row['uname'], 'last_name' => $row['usurname'], 'USER_LOGIN' => $row['login'])
+        'extra' => array('first_name' => $row['uname'], 'last_name' => $row['usurname'], 'USER_LOGIN' => $row['login']),
     );
     if (++$i >= 30000) {
         $mail->bind($spamid);
         $mail->recipient = array();
         $i = 0;
     }
-    $cnt++;
+    ++$cnt;
 }
 if ($i) {
     $mail->bind($spamid);

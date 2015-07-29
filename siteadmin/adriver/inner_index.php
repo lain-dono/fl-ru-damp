@@ -1,4 +1,7 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; } ?>
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+} ?>
 <h1>
     Справочник ключевых слов для настройки таргетинга в AdRiver
 </h1>

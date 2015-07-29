@@ -11,7 +11,7 @@
         </tr>
     </thead>
     <tbody>
-<?php foreach($data as $code): ?>
+<?php foreach ($data as $code): ?>
     <tr>
         <td class="b-layout__td b-layout__td_pad_10">
             <strong><?=$code['code']?></strong><br/>
@@ -31,4 +31,3 @@
 <p>Ни одного кода не найдено</p>
 <?php 
 endif;
-

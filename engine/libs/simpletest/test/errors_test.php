@@ -1,27 +1,31 @@
 <?php
-require_once(dirname(__FILE__) . '/../autorun.php');
-require_once(dirname(__FILE__) . '/../errors.php');
-require_once(dirname(__FILE__) . '/../expectation.php');
-require_once(dirname(__FILE__) . '/../test_case.php');
+
+require_once dirname(__FILE__).'/../autorun.php';
+require_once dirname(__FILE__).'/../errors.php';
+require_once dirname(__FILE__).'/../expectation.php';
+require_once dirname(__FILE__).'/../test_case.php';
 Mock::generate('SimpleTestCase');
 Mock::generate('SimpleExpectation');
 SimpleTest::ignore('MockSimpleTestCase');
 
-class TestOfErrorQueue extends UnitTestCase {
-
-    function setUp() {
+class TestOfErrorQueue extends UnitTestCase
+{
+    public function setUp()
+    {
         $context = &SimpleTest::getContext();
         $queue = &$context->get('SimpleErrorQueue');
         $queue->clear();
     }
 
-    function tearDown() {
+    public function tearDown()
+    {
         $context = &SimpleTest::getContext();
         $queue = &$context->get('SimpleErrorQueue');
         $queue->clear();
     }
 
-    function testOrder() {
+    public function testOrder()
+    {
         $context = &SimpleTest::getContext();
         $queue = &$context->get('SimpleErrorQueue');
         $queue->add(1024, 'Ouch', 'here.php', 100);
@@ -35,24 +39,26 @@ class TestOfErrorQueue extends UnitTestCase {
         $this->assertFalse($queue->extract());
     }
 
-    function testAssertNoErrorsGivesTrueWhenNoErrors() {
+    public function testAssertNoErrorsGivesTrueWhenNoErrors()
+    {
         $test = &new MockSimpleTestCase();
         $test->expectOnce('assert', array(
                 new IdenticalExpectation(new TrueExpectation()),
                 true,
-                'Should be no errors'));
+                'Should be no errors', ));
         $test->setReturnValue('assert', true);
         $queue = &new SimpleErrorQueue();
         $queue->setTestCase($test);
         $this->assertTrue($queue->assertNoErrors('%s'));
     }
 
-    function testAssertNoErrorsIssuesFailWhenErrors() {
+    public function testAssertNoErrorsIssuesFailWhenErrors()
+    {
         $test = &new MockSimpleTestCase();
         $test->expectOnce('assert', array(
                 new IdenticalExpectation(new TrueExpectation()),
                 false,
-                'Should be no errors'));
+                'Should be no errors', ));
         $test->setReturnValue('assert', false);
         $queue = &new SimpleErrorQueue();
         $queue->setTestCase($test);
@@ -60,7 +66,8 @@ class TestOfErrorQueue extends UnitTestCase {
         $this->assertFalse($queue->assertNoErrors('%s'));
     }
 
-    function testAssertErrorFailsWhenNoError() {
+    public function testAssertErrorFailsWhenNoError()
+    {
         $test = &new MockSimpleTestCase();
         $test->expectOnce('fail', array('Expected error not found'));
         $test->setReturnValue('assert', false);
@@ -69,12 +76,13 @@ class TestOfErrorQueue extends UnitTestCase {
         $this->assertFalse($queue->assertError(false, '%s'));
     }
 
-    function testAssertErrorFailsWhenErrorDoesntMatchTheExpectation() {
+    public function testAssertErrorFailsWhenErrorDoesntMatchTheExpectation()
+    {
         $test = &new MockSimpleTestCase();
         $test->expectOnce('assert', array(
                 new IdenticalExpectation(new FailedExpectation()),
                 'B',
-                'Expected PHP error [B] severity [E_USER_NOTICE] in [b.php] line [100]'));
+                'Expected PHP error [B] severity [E_USER_NOTICE] in [b.php] line [100]', ));
         $test->setReturnValue('assert', false);
         $queue = &new SimpleErrorQueue();
         $queue->setTestCase($test);
@@ -82,12 +90,13 @@ class TestOfErrorQueue extends UnitTestCase {
         $this->assertFalse($queue->assertError(new FailedExpectation(), '%s'));
     }
 
-    function testExpectationMatchCancelsIncomingError() {
+    public function testExpectationMatchCancelsIncomingError()
+    {
         $test = &new MockSimpleTestCase();
         $test->expectOnce('assert', array(
                 new IdenticalExpectation(new AnythingExpectation()),
                 'B',
-                'a message'));
+                'a message', ));
         $test->setReturnValue('assert', true);
         $test->expectNever('error');
         $queue = &new SimpleErrorQueue();
@@ -97,26 +106,31 @@ class TestOfErrorQueue extends UnitTestCase {
     }
 }
 
-class TestOfErrorTrap extends UnitTestCase {
-    var $_old;
+class TestOfErrorTrap extends UnitTestCase
+{
+    public $_old;
 
-    function setUp() {
+    public function setUp()
+    {
         $this->_old = error_reporting(E_ALL);
         set_error_handler('SimpleTestErrorHandler');
     }
 
-    function tearDown() {
+    public function tearDown()
+    {
         restore_error_handler();
         error_reporting($this->_old);
     }
 
-    function testQueueStartsEmpty() {
+    public function testQueueStartsEmpty()
+    {
         $context = &SimpleTest::getContext();
         $queue = &$context->get('SimpleErrorQueue');
         $this->assertFalse($queue->extract());
     }
 
-    function testTrappedErrorPlacedInQueue() {
+    public function testTrappedErrorPlacedInQueue()
+    {
         trigger_error('Ouch!');
         $context = &SimpleTest::getContext();
         $queue = &$context->get('SimpleErrorQueue');
@@ -126,103 +140,123 @@ class TestOfErrorTrap extends UnitTestCase {
         $this->assertFalse($queue->extract());
     }
 
-    function testErrorsAreSwallowedByMatchingExpectation() {
+    public function testErrorsAreSwallowedByMatchingExpectation()
+    {
         $this->expectError('Ouch!');
         trigger_error('Ouch!');
     }
 
-    function testErrorsAreSwallowedInOrder() {
+    public function testErrorsAreSwallowedInOrder()
+    {
         $this->expectError('a');
         $this->expectError('b');
         trigger_error('a');
         trigger_error('b');
     }
 
-    function testAnyErrorCanBeSwallowed() {
+    public function testAnyErrorCanBeSwallowed()
+    {
         $this->expectError();
         trigger_error('Ouch!');
     }
 
-    function testErrorCanBeSwallowedByPatternMatching() {
+    public function testErrorCanBeSwallowedByPatternMatching()
+    {
         $this->expectError(new PatternExpectation('/ouch/i'));
         trigger_error('Ouch!');
     }
 
-    function testErrorWithPercentsPassesWithNoSprintfError() {
-        $this->expectError("%");
+    public function testErrorWithPercentsPassesWithNoSprintfError()
+    {
+        $this->expectError('%');
         trigger_error('%');
     }
 }
 
-class TestOfErrors extends UnitTestCase {
-    var $_old;
+class TestOfErrors extends UnitTestCase
+{
+    public $_old;
 
-    function setUp() {
+    public function setUp()
+    {
         $this->_old = error_reporting(E_ALL);
     }
 
-    function tearDown() {
+    public function tearDown()
+    {
         error_reporting($this->_old);
     }
 
-    function testDefaultWhenAllReported() {
+    public function testDefaultWhenAllReported()
+    {
         error_reporting(E_ALL);
         trigger_error('Ouch!');
         $this->assertError('Ouch!');
     }
 
-    function testNoticeWhenReported() {
+    public function testNoticeWhenReported()
+    {
         error_reporting(E_ALL);
         trigger_error('Ouch!', E_USER_NOTICE);
         $this->assertError('Ouch!');
     }
 
-    function testWarningWhenReported() {
+    public function testWarningWhenReported()
+    {
         error_reporting(E_ALL);
         trigger_error('Ouch!', E_USER_WARNING);
         $this->assertError('Ouch!');
     }
 
-    function testErrorWhenReported() {
+    public function testErrorWhenReported()
+    {
         error_reporting(E_ALL);
         trigger_error('Ouch!', E_USER_ERROR);
         $this->assertError('Ouch!');
     }
 
-    function testNoNoticeWhenNotReported() {
+    public function testNoNoticeWhenNotReported()
+    {
         error_reporting(0);
         trigger_error('Ouch!', E_USER_NOTICE);
     }
 
-    function testNoWarningWhenNotReported() {
+    public function testNoWarningWhenNotReported()
+    {
         error_reporting(0);
         trigger_error('Ouch!', E_USER_WARNING);
     }
 
-    function testNoticeSuppressedWhenReported() {
+    public function testNoticeSuppressedWhenReported()
+    {
         error_reporting(E_ALL);
         @trigger_error('Ouch!', E_USER_NOTICE);
     }
 
-    function testWarningSuppressedWhenReported() {
+    public function testWarningSuppressedWhenReported()
+    {
         error_reporting(E_ALL);
         @trigger_error('Ouch!', E_USER_WARNING);
     }
 
-    function testErrorWithPercentsReportedWithNoSprintfError() {
+    public function testErrorWithPercentsReportedWithNoSprintfError()
+    {
         trigger_error('%');
         $this->assertError('%');
     }
 }
 
-class TestOfPHP52RecoverableErrors extends UnitTestCase {
-    function skip() {
+class TestOfPHP52RecoverableErrors extends UnitTestCase
+{
+    public function skip()
+    {
         $this->skipIf(
                 version_compare(phpversion(), '5.2', '<'),
                 'E_RECOVERABLE_ERROR not tested for PHP below 5.2');
     }
 
-    function testError() {
+    public function testError()
+    {
         eval('
             class RecoverableErrorTestingStub {
                 function ouch(RecoverableErrorTestingStub $obj) {
@@ -236,19 +270,23 @@ class TestOfPHP52RecoverableErrors extends UnitTestCase {
     }
 }
 
-class TestOfErrorsExcludingPHP52AndAbove extends UnitTestCase {
-    function skip() {
+class TestOfErrorsExcludingPHP52AndAbove extends UnitTestCase
+{
+    public function skip()
+    {
         $this->skipIf(
                 version_compare(phpversion(), '5.2', '>='),
                 'E_USER_ERROR not tested for PHP 5.2 and above');
     }
 
-    function testNoErrorWhenNotReported() {
+    public function testNoErrorWhenNotReported()
+    {
         error_reporting(0);
         trigger_error('Ouch!', E_USER_ERROR);
     }
 
-    function testErrorSuppressedWhenReported() {
+    public function testErrorSuppressedWhenReported()
+    {
         error_reporting(E_ALL);
         @trigger_error('Ouch!', E_USER_ERROR);
     }
@@ -261,8 +299,10 @@ SimpleTest::ignore('TestOfNotEnoughErrors');
  *
  * @ignore
  */
-class TestOfNotEnoughErrors extends UnitTestCase {
-    function testExpectTwoErrorsThrowOne() {
+class TestOfNotEnoughErrors extends UnitTestCase
+{
+    public function testExpectTwoErrorsThrowOne()
+    {
         $this->expectError('Error 1');
         trigger_error('Error 1');
         $this->expectError('Error 2');
@@ -276,25 +316,30 @@ SimpleTest::ignore('TestOfLeftOverErrors');
  *
  * @ignore
  */
-class TestOfLeftOverErrors extends UnitTestCase {
-    function testExpectOneErrorGetTwo() {
+class TestOfLeftOverErrors extends UnitTestCase
+{
+    public function testExpectOneErrorGetTwo()
+    {
         $this->expectError('Error 1');
         trigger_error('Error 1');
         trigger_error('Error 2');
     }
 }
 
-class TestRunnerForLeftOverAndNotEnoughErrors extends UnitTestCase {
-    function testRunLeftOverErrorsTestCase() {
+class TestRunnerForLeftOverAndNotEnoughErrors extends UnitTestCase
+{
+    public function testRunLeftOverErrorsTestCase()
+    {
         $test = new TestOfLeftOverErrors();
         $this->assertFalse($test->run(new SimpleReporter()));
     }
 
-    function testRunNotEnoughErrors() {
+    public function testRunNotEnoughErrors()
+    {
         $test = new TestOfNotEnoughErrors();
         $this->assertFalse($test->run(new SimpleReporter()));
     }
 }
 
 // TODO: Add stacked error handler test
-?>
+;

@@ -1,10 +1,11 @@
 <?php
 /**
- * Шаблон попап формы быстрого редактирования Платные места
+ * Шаблон попап формы быстрого редактирования Платные места.
+ *
  * @author Max 'BlackHawk' Yastrembovich
  */
-if ( !defined('IN_STDF') ) { 
-    header("HTTP/1.0 404 Not Found"); // ибо нефиг
+if (!defined('IN_STDF')) {
+    header('HTTP/1.0 404 Not Found'); // ибо нефиг
     exit();
 }
 
@@ -73,11 +74,13 @@ $sHref = '';
         <input type="hidden" id="old_val" name="old_val" value="<?=$place['ad_img_file_name']?>">
         
         <?php
-        if ( $place['ad_img_file_name'] ) {
-            $sHref = WDCPREFIX . '/users/' . $place['login'] . '/foto/' . $place['ad_img_file_name'];
+        if ($place['ad_img_file_name']) {
+            $sHref = WDCPREFIX.'/users/'.$place['login'].'/foto/'.$place['ad_img_file_name'];
         }
         ?>
-        <br/><span id="span_new_val"><?php if ( $sHref ) { ?><a href="<?=$sHref?>" class="blue" target="_blank">Посмотреть загруженный файл</a>&nbsp;&nbsp;<input type="checkbox" class="b-check__input" id="adm_edit_del_prev" name="del_prev" value="1"><label class="b-check__label" for="adm_edit_del_prev">Удалить файл</label><?php } ?></span>
+        <br/><span id="span_new_val"><?php if ($sHref) {
+    ?><a href="<?=$sHref?>" class="blue" target="_blank">Посмотреть загруженный файл</a>&nbsp;&nbsp;<input type="checkbox" class="b-check__input" id="adm_edit_del_prev" name="del_prev" value="1"><label class="b-check__label" for="adm_edit_del_prev">Удалить файл</label><?php 
+} ?></span>
         <div class="b-shadow__txt b-shadow__txt_fontsize_11 b-shadow__txt_padbot_5">Разрешенные форматы: jpg, png, размером не более 1000х1000 пикс объемом не более 1 Мб.</div>
     </div>
 </div>

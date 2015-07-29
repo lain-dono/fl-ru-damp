@@ -1,6 +1,7 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/pgq/api/PGQ.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/pgq/api/SimpleLogger.php");
+
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/pgq/api/PGQ.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/pgq/api/SimpleLogger.php';
 
 /**
  * This PGQ consumer class allows to have interactive consuming. That
@@ -12,193 +13,214 @@ require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/pgq/api/SimpleLogger.php");
  * get their list of events to process, and the clients have to care
  * about the never-ending consuming loop.
  */
+abstract class PGQInteractiveConsumer
+{
+    protected $qname;
+    protected $cname;
+    protected $src_constr;
+    protected $pgcon;
+    protected $log;
 
-abstract class PGQInteractiveConsumer {
+    public function __construct($qname, $cname,
+                  $src_constr, $loglevel, $logfile)
+    {
+        $this->qname = $qname;
+        $this->cname = $qname;
+        $this->src_constr = $src_constr;
 
-  protected $qname;
-  protected $cname;
-  protected $src_constr;
-  protected $pgcon;
-  protected $log;
-
-  public function __construct($qname, $cname, 
-			      $src_constr, $loglevel, $logfile) {
-    $this->qname      = $qname;
-    $this->cname      = $qname;
-    $this->src_constr = $src_constr;
-
-    $this->pgcon = pg_connect($this->src_constr);
-      pg_query($this->pgcon, "SET client_encoding='WIN1251'");
-    $this->log   = new SimpleLogger($loglevel, $logfile);
-  }
+        $this->pgcon = pg_connect($this->src_constr);
+        pg_query($this->pgcon, "SET client_encoding='WIN1251'");
+        $this->log = new SimpleLogger($loglevel, $logfile);
+    }
 
   /**
    * Implementers need to define process_event.
    */
-  public function process_event(&$event) {}
+  public function process_event(&$event)
+  {
+  }
 
   /**
    * Will consume all existing events & batches. Implementer should
    * call it at one point in order for process_event() to get fired.
    */
-  public function process() {
-    if( $this->connect() === False )
-      return False;
-
-    do {
-      $batch_id = $this->next_batch();
-      if( $batch_id !== False ) {
-	$this->log->notice("Processing batch %d", $batch_id);
-
-	pg_query($this->pgcon, "BEGIN;");
-
-	$events = $this->get_batch_events($batch_id);
-
-	foreach($events as $event) {
-	  $this->log->verbose("Processing event %d", $event->id);
-	  $tag = $event->tag( $this->process_event($event) );
-
-	  switch( $tag ) {
-	  case PGQ_EVENT_OK:
-	  case PGQ_EVENT_FAILED:
-	  case PGQ_EVENT_RETRY:
-	    // ignore
-	    break;
-
-	  case PGQ_ABORT_BATCH:
-	    $this->rollback();
-	    return PGQ_ABORT_BATCH;
-	    break;
-	  }
-	}
-	
-	$this->finish_batch($batch_id);
-	pg_query($this->pgcon, "COMMIT;");
+  public function process()
+  {
+      if ($this->connect() === false) {
+          return false;
       }
-    }
-    while( $batch_id !== null );
 
-    $this->disconnect();
+      do {
+          $batch_id = $this->next_batch();
+          if ($batch_id !== false) {
+              $this->log->notice('Processing batch %d', $batch_id);
 
-    $this->log->notice("PGQInteractiveConsumer.process: next_batch is null");
-    return True;
+              pg_query($this->pgcon, 'BEGIN;');
+
+              $events = $this->get_batch_events($batch_id);
+
+              foreach ($events as $event) {
+                  $this->log->verbose('Processing event %d', $event->id);
+                  $tag = $event->tag($this->process_event($event));
+
+                  switch ($tag) {
+      case PGQ_EVENT_OK:
+      case PGQ_EVENT_FAILED:
+      case PGQ_EVENT_RETRY:
+        // ignore
+        break;
+
+      case PGQ_ABORT_BATCH:
+        $this->rollback();
+
+        return PGQ_ABORT_BATCH;
+        break;
+      }
+              }
+
+              $this->finish_batch($batch_id);
+              pg_query($this->pgcon, 'COMMIT;');
+          }
+      } while ($batch_id !== null);
+
+      $this->disconnect();
+
+      $this->log->notice('PGQInteractiveConsumer.process: next_batch is null');
+
+      return true;
   }
 
   /**
    * Connects to the conw & conp connection strings.
    */
-  public function connect($force = False) { 
-    if( $this->connected && ! $force ) {
-      $this->log->notice("connect called when connected is True");
-      return;
-    }
+  public function connect($force = false)
+  {
+      if ($this->connected && !$force) {
+          $this->log->notice('connect called when connected is True');
 
-    if( $this->src_constr != "" ) {
-      $this->log->verbose("Opening pg_src connexion '%s'.", $this->src_constr);
-      $this->pg_src_con = pg_connect($this->src_constr);
-      
-      if( $this->pg_src_con === False ) {
-	$this->log->fatal("Could not open pg_src connection '%s'.",
-			  $this->src_constr);
-	$this->stop();
+          return;
       }
-      pg_query($this->pg_src_con, "SET client_encoding='WIN1251'");
-    }
-    $this->connected = True;
+
+      if ($this->src_constr != '') {
+          $this->log->verbose("Opening pg_src connexion '%s'.", $this->src_constr);
+          $this->pg_src_con = pg_connect($this->src_constr);
+
+          if ($this->pg_src_con === false) {
+              $this->log->fatal("Could not open pg_src connection '%s'.",
+              $this->src_constr);
+              $this->stop();
+          }
+          pg_query($this->pg_src_con, "SET client_encoding='WIN1251'");
+      }
+      $this->connected = true;
   }
-	
+
   /**
-   * Disconnect from databases
+   * Disconnect from databases.
    */
-  public function disconnect() {
-    if( ! $this->connected ) {
-      $this->log->notice("disconnect called when $this->connected is False");
-      return;
-    }
-    
-    if( $this->pg_src_con != null && $this->pg_src_con !== False ) {
-      $this->log->verbose("Closing pg_src connection '%s'.",
-			  $this->src_constr);
-      pg_close($this->pg_src_con);
-      $this->pg_src_con = null;
-    }
-    $this->connected = False;
+  public function disconnect()
+  {
+      if (!$this->connected) {
+          $this->log->notice("disconnect called when $this->connected is False");
+
+          return;
+      }
+
+      if ($this->pg_src_con != null && $this->pg_src_con !== false) {
+          $this->log->verbose("Closing pg_src connection '%s'.",
+              $this->src_constr);
+          pg_close($this->pg_src_con);
+          $this->pg_src_con = null;
+      }
+      $this->connected = false;
   }
-	
+
   /**
-   * ROLLBACK ongoing transactions on src & dst connections
+   * ROLLBACK ongoing transactions on src & dst connections.
    */
-  protected function rollback() {
-    if( $this->pg_src_con != null && $this->pg_src_con !== False ) {
-      $this->log->notice("ROLLBACK pg_src connection '%s'.",
-			 $this->src_constr);
-      pg_query($this->pg_src_con, "ROLLBACK;");
-    }
+  protected function rollback()
+  {
+      if ($this->pg_src_con != null && $this->pg_src_con !== false) {
+          $this->log->notice("ROLLBACK pg_src connection '%s'.",
+             $this->src_constr);
+          pg_query($this->pg_src_con, 'ROLLBACK;');
+      }
   }
   /**
    * Separate reimplementation of same methods from PGQConsumer,
    * because we can't have PGQConsumer extends more that one class and
    * it needs to be a SystemDaemon.
    */
-  protected function queue_exists() {
-    return PGQ::queue_exists($this->log, $this->pg_src_con, $this->qname);
-  }
-	
-  protected function is_registered() {
-    return PGQ::is_registered($this->log, $this->pg_src_con, 
-			      $this->qname, $this->cname);
+  protected function queue_exists()
+  {
+      return PGQ::queue_exists($this->log, $this->pg_src_con, $this->qname);
   }
 
-  protected function get_consumer_info() {
-    return PGQ::get_consumer_info($this->log, $this->pg_src_con, 
-				  $this->qname, $this->cname);
-  }
-	
-  protected function next_batch() {
-    return PGQ::next_batch($this->log, $this->pg_src_con, 
-			   $this->qname, $this->cname);
-  }
+    protected function is_registered()
+    {
+        return PGQ::is_registered($this->log, $this->pg_src_con,
+                  $this->qname, $this->cname);
+    }
 
-  protected function finish_batch($batch_id) {
-    return PGQ::next_batch($this->log, $this->pg_src_con, $batch_id);
-  }
+    protected function get_consumer_info()
+    {
+        return PGQ::get_consumer_info($this->log, $this->pg_src_con,
+                  $this->qname, $this->cname);
+    }
 
-  protected function get_batch_events($batch_id) {
-    return PGQ::get_batch_events($this->log, $this->pg_src_con, $batch_id);
-  }
-	
-  protected function event_failed($batch_id, $event) {
-    return PGQ::event_failed($this->log, $this->pg_src_con, $batch_id, $event);
-  }
+    protected function next_batch()
+    {
+        return PGQ::next_batch($this->log, $this->pg_src_con,
+               $this->qname, $this->cname);
+    }
 
-  protected function event_retry($batch_id, $event) {
-    return PGQ::event_retry($this->log, $this->pg_src_con, $batch_id, $event);
-  }
+    protected function finish_batch($batch_id)
+    {
+        return PGQ::next_batch($this->log, $this->pg_src_con, $batch_id);
+    }
 
-  protected function failed_event_list() {
-    return PGQ::failed_event_list($this->log, $this->pg_src_con,
-				  $qname, $cname);
-  }
+    protected function get_batch_events($batch_id)
+    {
+        return PGQ::get_batch_events($this->log, $this->pg_src_con, $batch_id);
+    }
 
-  protected function failed_event_delete_all() {
-    return PGQ::failed_event_delete_all($this->log, $this->pg_src_con,
-					$qname, $cname);
-  }
+    protected function event_failed($batch_id, $event)
+    {
+        return PGQ::event_failed($this->log, $this->pg_src_con, $batch_id, $event);
+    }
 
-  protected function failed_event_delete($event_id) {
-    return PGQ::failed_event_delete($this->log, $this->pg_src_con,
-				    $qname, $cname, $event_id);
-  }
+    protected function event_retry($batch_id, $event)
+    {
+        return PGQ::event_retry($this->log, $this->pg_src_con, $batch_id, $event);
+    }
 
-  protected function failed_event_retry_all() {
-    return PGQ::failed_event_retry_all($this->log, $this->pg_src_con,
-				       $qname, $cname);
-  }
+    protected function failed_event_list()
+    {
+        return PGQ::failed_event_list($this->log, $this->pg_src_con,
+                  $qname, $cname);
+    }
 
-  protected function failed_event_retry($event_id) {
-    return PGQ::failed_event_retry($this->log, $this->pg_src_con,
-				   $qname, $cname, $event_id);
-  }
+    protected function failed_event_delete_all()
+    {
+        return PGQ::failed_event_delete_all($this->log, $this->pg_src_con,
+                    $qname, $cname);
+    }
+
+    protected function failed_event_delete($event_id)
+    {
+        return PGQ::failed_event_delete($this->log, $this->pg_src_con,
+                    $qname, $cname, $event_id);
+    }
+
+    protected function failed_event_retry_all()
+    {
+        return PGQ::failed_event_retry_all($this->log, $this->pg_src_con,
+                       $qname, $cname);
+    }
+
+    protected function failed_event_retry($event_id)
+    {
+        return PGQ::failed_event_retry($this->log, $this->pg_src_con,
+                   $qname, $cname, $event_id);
+    }
 }
-
-?>

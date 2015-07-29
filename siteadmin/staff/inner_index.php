@@ -1,4 +1,7 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; } ?>
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+} ?>
 <style>
     table.team {
         background: black;
@@ -25,7 +28,10 @@
 <input type="hidden" name="action" value="addteam">
 Добавить пользователя<br/>
 Логин: <input type="text" name="login"> <input type="submit" value="Добавить">
-<?php if($error_login) {?><?= view_error(htmlspecialchars($error_login));?><?php } //if?>
+<?php if ($error_login) {
+    ?><?= view_error(htmlspecialchars($error_login));
+    ?><?php 
+} //if?>
 </form>
 
 <form method="POST" action="." id="delform">
@@ -47,25 +53,31 @@
         </tr>
     </thead>
     <tbody>
-        <?php if($users_team) {?>
-        <?php foreach($users_team as $i=>$uteam) { ?>
-        <tr class='<?= ($i%2!=0?"odd":"env")?>'>
-            <td align="center"><?=($i+1)?></td>
+        <?php if ($users_team) {
+    ?>
+        <?php foreach ($users_team as $i => $uteam) {
+    ?>
+        <tr class='<?= ($i % 2 != 0 ? 'odd' : 'env')?>'>
+            <td align="center"><?=($i + 1)?></td>
             <td>
                 <table> 
                     <tr> 
                         <td><?=view_avatar($uteam['login'], $uteam['photo'])?><td/>
-                        <td><?=view_user($uteam);?></td>
+                        <td><?=view_user($uteam);
+    ?></td>
                     </tr>
                 </table>
             </td>
             <td align="center">[<a href="javascript:void(0)" onclick="if(confirm('Удалить пользователя из списка?')) {$('login_team').set('value', '<?=$uteam['login']?>'); $('delform').submit(); } else { return false; }" class="public_red">удалить</a>]</td>
         </tr>
-        <?php } //foreach?>
-        <?php } else { //if?>
+        <?php 
+} //foreach?>
+        <?php 
+} else { //if?>
         <tr class="env">
             <td colspan="3" align="center"><strong>Пользователей нет</strong></td>
         </tr>
-        <?php } // else?>
+        <?php 
+} // else?>
     </tbody>
 </table>    

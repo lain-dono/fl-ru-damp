@@ -1,6 +1,6 @@
 <?php
 
-require_once('DocGenException.php');
+require_once 'DocGenException.php';
 
 class DocGenBillException extends DocGenException
 {

@@ -2,29 +2,21 @@
 
 namespace YandexMoney3\Utils;
 
-require_once(__DIR__ . '/../Exception/Exception.php');
-require_once(__DIR__ . '/../Exception/ApiException.php');
-require_once(__DIR__ . '/../Exception/ApiConnectionException.php');
-require_once(__DIR__ . '/../Exception/InsufficientScopeException.php');
-require_once(__DIR__ . '/../Exception/InternalServerException.php');
-require_once(__DIR__ . '/../Response/OriginalServerResponse.php');
-require_once(__DIR__ . '/Array2XML.php');
-require_once(__DIR__ . '/CryptBlock.php');
-
+require_once __DIR__.'/../Exception/Exception.php';
+require_once __DIR__.'/../Exception/ApiException.php';
+require_once __DIR__.'/../Exception/ApiConnectionException.php';
+require_once __DIR__.'/../Exception/InsufficientScopeException.php';
+require_once __DIR__.'/../Exception/InternalServerException.php';
+require_once __DIR__.'/../Response/OriginalServerResponse.php';
+require_once __DIR__.'/Array2XML.php';
+require_once __DIR__.'/CryptBlock.php';
 
 use YandexMoney3\Exception;
-use YandexMoney3\Utils\Array2XML;
-use YandexMoney3\Utils\CryptBlock;
 use YandexMoney3\Response\OriginalServerResponse;
-
-
 
 class ApiNetworkClient
 {
     private $options = array();
-
-
-
 
     /**
      * @var string
@@ -51,9 +43,6 @@ class ApiNetworkClient
      */
     private $originalServerResponse;
 
-    
-    
-    
     /**
      * @return bool
      */
@@ -64,7 +53,7 @@ class ApiNetworkClient
     }
     */
     /**
-     * @param boolean $headerRequired
+     * @param bool $headerRequired
      */
     /*
     public function toggleHeadersRequired($headerRequired = false)
@@ -72,9 +61,9 @@ class ApiNetworkClient
         $this->headerRequired = $headerRequired;
     }
     */
-    
+
     /**
-     * @return boolean
+     * @return bool
      */
     /*
     public function areHeadersRequired()
@@ -82,9 +71,9 @@ class ApiNetworkClient
         return $this->headerRequired;
     }
     */
-    
+
     /**
-     * @param boolean $transmitRawResponse
+     * @param bool $transmitRawResponse
      */
     /*
     public function toggleTransmitRawResponse($transmitRawResponse = false)
@@ -92,9 +81,9 @@ class ApiNetworkClient
         $this->transmitRawResponse = $transmitRawResponse;
     }
     */
-    
+
     /**
-     * @return boolean
+     * @return bool
      */
     /*
     public function isTransmitRawResponseEnable()
@@ -102,16 +91,15 @@ class ApiNetworkClient
         return $this->transmitRawResponse;
     }
     */
-    
-    
+
     /**
      * @param string $logFile
-     * @param bool $sslVerification
+     * @param bool   $sslVerification
      */
     public function __construct($options = array(), $logFile = null, $sslVerification = true)
     {
         $this->options = $options;
-        
+
         //@todo: вынести эти настройки в options
         $this->logFile = $logFile;
         $this->sslVerificationRequired = $sslVerification;
@@ -120,27 +108,27 @@ class ApiNetworkClient
     /**
      * @param string $uri
      * @param string $params
+     *
      * @return \YandexMoney3\Response\OriginalServerResponse
      */
     public function request($uri, $params)
     {
         $this->makePostCurlRequest($uri, $params);
         $this->checkOriginalServerResponse();
-        
+
         return $this->originalServerResponse;
     }
 
-
     private function getCryptOption()
     {
-        return isset($this->options['crypt']) && 
-               !empty($this->options['crypt']) ?$this->options['crypt']:null;
+        return isset($this->options['crypt']) &&
+               !empty($this->options['crypt']) ? $this->options['crypt'] : null;
     }
 
-    
     /**
      * @param string $uri
      * @param string $params
+     *
      * @return OriginalServerResponse
      */
     private function makePostCurlRequest($uri, $params)
@@ -152,23 +140,23 @@ class ApiNetworkClient
         $converter->setConvertFromEncoding('windows-1251');
         $converter->setTopNodeName($cmd);
         $converter->importArray($params);
-        $data = $converter->saveXml();  
-        
+        $data = $converter->saveXml();
+
         $crypt = $this->getCryptOption();
-        
+
         if ($crypt) {
             $cryptBlock = new CryptBlock($crypt);
             $encryptData = $cryptBlock->encrypt($data);
         } else {
             $encryptData = $data;
         }
-        
-        require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/log.php");
+
+        require_once $_SERVER['DOCUMENT_ROOT'].'/classes/log.php';
         $log = new \log('reserves_payout/'.SERVER.'-%d%m%Y.log');
-        $log->writeln(PHP_EOL . PHP_EOL);
-        $log->writeln('[' . date('d.m.Y H:i:s') . ']');
+        $log->writeln(PHP_EOL.PHP_EOL);
+        $log->writeln('['.date('d.m.Y H:i:s').']');
         $log->writeln($data);
-        
+
         $headers = $this->prepareRequestHeaders();
 
         $curl = curl_init($uri);
@@ -182,7 +170,7 @@ class ApiNetworkClient
             curl_setopt($curl, CURLOPT_SSLKEY, $crypt['private_key_path']);
             curl_setopt($curl, CURLOPT_SSLKEYPASSWD, $crypt['passphrase']);
         }
-            
+
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30);
         curl_setopt($curl, CURLOPT_TIMEOUT, 80);
@@ -206,17 +194,16 @@ class ApiNetworkClient
             if ($crypt && $cryptBlock->isReqDecrypt()) {
                 $responseBodyRaw = $cryptBlock->decrypt($responseBodyRaw);
             }
-            
+
             $log->writeln($responseBodyRaw);
         }
-        
-        
+
         /*
         $this->writeMessageToLogFile(
             $this->prepareLogMessageExtended($uri, $params, $responseCode, $errorCode, $errorMessage)
         );
         */
-        
+
         $this->originalServerResponse = new OriginalServerResponse();
         $this->originalServerResponse->setCode($responseCode);
         $this->originalServerResponse->setHeadersRaw($responseHeadersRaw);
@@ -225,7 +212,6 @@ class ApiNetworkClient
         $this->originalServerResponse->setErrorMessage($errorMessage);
     }
 
-    
     private function checkOriginalServerResponse()
     {
         $this->checkForCurlErrors();
@@ -233,7 +219,7 @@ class ApiNetworkClient
     }
 
     /**
-     * @param int $errorCode
+     * @param int    $errorCode
      * @param string $errorMessage
      *
      * @throws \YandexMoney\Exception\ApiConnectionException
@@ -244,14 +230,14 @@ class ApiNetworkClient
             case CURLE_COULDNT_CONNECT:
             case CURLE_COULDNT_RESOLVE_HOST:
             case CURLE_OPERATION_TIMEOUTED:
-                $msg = "Could not connect to Yandex.Money. Please check your internet connection and try again.";
+                $msg = 'Could not connect to Yandex.Money. Please check your internet connection and try again.';
                 break;
             case CURLE_SSL_CACERT:
             case CURLE_SSL_PEER_CERTIFICATE:
                 $msg = "Could not verify Yandex.Money's SSL certificate. Please make sure that your network is not intercepting certificates.";
                 break;
             default:
-                $msg = "Unexpected error communicating with Yandex.Money.";
+                $msg = 'Unexpected error communicating with Yandex.Money.';
         }
 
         $msg .= "\n\n(Network error: $errorMessage)";
@@ -262,16 +248,16 @@ class ApiNetworkClient
     /**
      * @param string $responseCode
      * @param string $responseBody
+     *
      * @throws \YandexMoney3\Exception\InsufficientScopeException
      * @throws \YandexMoney3\Exception\InternalServerErrorException
      * @throws \YandexMoney3\Exception\ApiException
-     * @internal param string $response
      *
+     * @internal param string $response
      */
     private function handleApiError($responseCode, $responseBody)
     {
-        switch ($responseCode) 
-        {
+        switch ($responseCode) {
             case 400:
                 //Запрос не принят к обработке. Тело запроса испорчено, сервер не смог прочитать или разобрать запрос.
                 //Возможные причины: запрос невозможно разобрать; неверный MIME-тип (Content-Type).
@@ -281,13 +267,13 @@ class ApiNetworkClient
                 //Сертификат Контрагента не зарегистрирован в Системе, либо в настоящий момент шлюз отключен.
                 throw new Exception\InsufficientScopeException('The certificate does not have permissions for the requested operation.',
                     $responseCode, $responseBody);
-            
+
             case 500:
                 //Технические проблемы Системы. Обратитесь в службу поддержки.
                 throw new Exception\InternalServerErrorException('It is a technical error occurs, the server responds with the HTTP code
                     500 Internal Server Error. The application should repeat the request with the same parameters later.',
                     $responseCode, $responseBody);
-                
+
             case 501:
                 //Запрос отправлен методом, отличным от POST.
                 throw new Exception\ApiException('Not Implemented', $responseCode, $responseBody);
@@ -320,8 +306,8 @@ class ApiNetworkClient
                 throw new Exception\Exception("couldn't open log file $f for appending");
             }
 
-            $time = '[' . date("Y-m-d H:i:s") . '] ';
-            if (fwrite($handle, $time . $message . "\r\n") === false) {
+            $time = '['.date('Y-m-d H:i:s').'] ';
+            if (fwrite($handle, $time.$message."\r\n") === false) {
                 throw new Exception\Exception("couldn't fwrite message log to $f");
             }
 
@@ -365,18 +351,16 @@ class ApiNetworkClient
         return $m;
     }
     */
-    
-    
+
     /**
      * @param string $uri
      * @param string $params
-     * @param int $code
-     * @param int $errorCode
+     * @param int    $code
+     * @param int    $errorCode
      * @param string $errorMessage
      *
      * @return string
      */
-    
     private function prepareLogMessageExtended($uri, $params, $code, $errorCode, $errorMessage)
     {
         if ($this->logFile === null) {
@@ -385,25 +369,24 @@ class ApiNetworkClient
 
         $m = $this->prepareLogMessage($uri, $params);
         $m = str_replace('request: ', 'response: ', $m);
-        $m = $m . "http_code = $code; curl_errno = $errorCode; curl_error = $errorMessage";
+        $m = $m."http_code = $code; curl_errno = $errorCode; curl_error = $errorMessage";
 
         return $m;
     }
 
-    
-    
     /**
      * @internal param $headers
+     *
      * @return array
      */
     private function prepareRequestHeaders()
     {
         $headers = array();
         $headers[] = 'Content-Type: application/pkcs7-mime';
+
         return $headers;
     }
 
-    
     private function checkForCurlErrors()
     {
         if ($this->originalServerResponse->getErrorCode() != 0) {

@@ -8,8 +8,7 @@ require_once '../classes/memBuff.php';
 require_once '../classes/smtp.php';
 require_once '../classes/users.php';
 
-
-/**
+/*
  * Логин пользователя от кого осуществляется рассылка
  * 
  */
@@ -17,7 +16,7 @@ $sender = 'admin';
 
 $eHost = $GLOBALS['host'];
 
-$eSubject = "Мы нашли для вас простой способ верификации";
+$eSubject = 'Мы нашли для вас простой способ верификации';
 
 $eMessage = "<p>Здравствуйте!</p>
 
@@ -51,11 +50,10 @@ $eMessage = "<p>Здравствуйте!</p>
 $DB = new DB('master');
 $cnt = 0;
 
-
 // Только всем, незабаненным (is_banned = B'0'), с включенными рассылками (substring(subscr from 8 for 1)::integer = 1)
 //sql = "SELECT uid, email, login, uname, usurname, subscr FROM users WHERE substring(subscr from 8 for 1)::integer = 1 AND is_banned = B'0'";
 //всем незабаненым, кто пытался верифицироваться всеми способами кроме okpay и не смог
-$limit = 8000;  
+$limit = 8000;
 $sql = "
 (SELECT DISTINCT ff.user_id AS uid, u.login, u.email, u.uname, u.usurname, usk.key AS ukey FROM verify_ff AS ff 
    INNER JOIN users AS u ON ff.user_id = u.uid AND u.is_verify = false
@@ -88,39 +86,43 @@ UNION
 )
 ";
 
-$sender = $DB->row("SELECT * FROM users WHERE login = ?", $sender);
+$sender = $DB->row('SELECT * FROM users WHERE login = ?', $sender);
 if (empty($sender)) {
     die("Unknown Sender\n");
 }
 
-$mail = new smtp;
+$mail = new smtp();
 $mail->subject = $eSubject;  // заголовок письма
 $mail->message = $eMessage; // текст письма
 $mail->recipient = ''; // свойство 'получатель' оставляем пустым
 $spamid = $mail->send('text/html');
-if (!$spamid) die('Failed!');
+if (!$spamid) {
+    die('Failed!');
+}
 // с этого момента рассылка создана, но еще никому не отправлена!
 // допустим нам нужно получить список получателей с какого-либо запроса
 $i = 0;
 $mail->recipient = array();
 $res = $DB->query($sql);
 while ($row = pg_fetch_assoc($res)) {
-    if($row['email'] == '') continue;
-    if ( strlen($row['ukey']) == 0 ) {
-        $row['ukey'] = users::writeUnsubscribeKey($row["uid"], true);
+    if ($row['email'] == '') {
+        continue;
+    }
+    if (strlen($row['ukey']) == 0) {
+        $row['ukey'] = users::writeUnsubscribeKey($row['uid'], true);
     }
     $mail->recipient[] = array(
         'email' => $row['email'],
-        'extra' => array('first_name' => $row['uname'], 'last_name' => $row['usurname'], 
+        'extra' => array('first_name' => $row['uname'], 'last_name' => $row['usurname'],
                          'USER_LOGIN' => $row['login'],
-                         'UNSUBSCRIBE_KEY' => $row['ukey'])
+                         'UNSUBSCRIBE_KEY' => $row['ukey'], ),
     );
     if (++$i >= 30000) {
         $mail->bind($spamid);
         $mail->recipient = array();
         $i = 0;
     }
-    $cnt++;
+    ++$cnt;
 }
 if ($i) {
     $mail->bind($spamid);

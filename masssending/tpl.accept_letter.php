@@ -53,7 +53,7 @@
                             <td class="pad_null" width="100"><a target="_blank" href="<?= $host ?>/masssending/pay/<?=$params['id']?>/<?= $UTM ?>"><img src="cid:<?= $cid; ?>" width="96" height="36" border="0"></a></td>
                             <td class="pad_null" valign="middle">&nbsp;&nbsp;&nbsp;
                                 <b>
-                                    <font color="#fd6c30" size="2" face="tahoma,sans-serif"><?= to_money($params['amount'], 2) . ending(to_money($params['amount']), ' рубль', ' рубля', ' рублей')?></font>
+                                    <font color="#fd6c30" size="2" face="tahoma,sans-serif"><?= to_money($params['amount'], 2).ending(to_money($params['amount']), ' рубль', ' рубля', ' рублей')?></font>
                                 </b>
                             </td>
                             <td class="pad_null" width="20"></td>

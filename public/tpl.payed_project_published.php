@@ -17,66 +17,81 @@
                 <div class="b-layout__txt b-layout__txt_padbot_5">Вы заказали платные услуги:</div>
                 <table class="b-layout__table " cellpadding="0" cellspacing="0" border="0">
 
-                <? if($inoffice) { ?>
+                <?php if ($inoffice) {
+    ?>
                 <tr class="b-layout__tr">
                     <td class="b-layout__left b-layout__left_width_200">
                         <div class="b-layout__txt b-layout__txt_bold b-layout__txt_padbot_5">Публикация проекта</div>
                     </td>
                     <td class="b-layout__right">
-                        <div class="b-layout__txt b-layout__txt_color_fd6c30 b-layout__txt_bold"><?= $inoffice; ?> рублей</div>
+                        <div class="b-layout__txt b-layout__txt_color_fd6c30 b-layout__txt_bold"><?= $inoffice;
+    ?> рублей</div>
                     </td>
                 </tr>
-                <? } ?>
+                <?php 
+} ?>
                 
-                <? if ($top && $top_days) { ?>
+                <?php if ($top && $top_days) {
+    ?>
                 <tr class="b-layout__tr">
                     <td class="b-layout__left b-layout__left_width_200">
-                        <div class="b-layout__txt b-layout__txt_bold b-layout__txt_padbot_5">Закрепление наверху<br />ленты на <?= $top_days . " " . ending($top_days, "день", "дня", "дней") ?></div>
+                        <div class="b-layout__txt b-layout__txt_bold b-layout__txt_padbot_5">Закрепление наверху<br />ленты на <?= $top_days.' '.ending($top_days, 'день', 'дня', 'дней') ?></div>
                     </td>
                     <td class="b-layout__right">
-                        <div class="b-layout__txt b-layout__txt_color_fd6c30 b-layout__txt_bold"><?= $top; ?> рублей</div>
+                        <div class="b-layout__txt b-layout__txt_color_fd6c30 b-layout__txt_bold"><?= $top;
+    ?> рублей</div>
                     </td>
                 </tr>
-                <? } ?>
-                <? if ($color) { ?>
+                <?php 
+} ?>
+                <?php if ($color) {
+    ?>
                 <tr class="b-layout__tr">
                     <td class="b-layout__left b-layout__left_width_200">
                         <div class="b-layout__txt b-layout__txt_bold b-layout__txt_padbot_5">Выделение цветом</div>
                     </td>
                     <td class="b-layout__right">
-                        <div class="b-layout__txt b-layout__txt_color_fd6c30 b-layout__txt_bold"><?= $color; ?> рублей</div>
+                        <div class="b-layout__txt b-layout__txt_color_fd6c30 b-layout__txt_bold"><?= $color;
+    ?> рублей</div>
                     </td>
                 </tr>
-                <? } ?>
-                <? if ($bold) { ?>
+                <?php 
+} ?>
+                <?php if ($bold) {
+    ?>
                 <tr class="b-layout__tr">
                     <td class="b-layout__left b-layout__left_width_200">
                         <div class="b-layout__txt b-layout__txt_bold b-layout__txt_padbot_5">Выделение жирным</div>
                     </td>
                     <td class="b-layout__right">
-                        <div class="b-layout__txt b-layout__txt_color_fd6c30 b-layout__txt_bold"><?= $bold; ?> рублей</div>
+                        <div class="b-layout__txt b-layout__txt_color_fd6c30 b-layout__txt_bold"><?= $bold;
+    ?> рублей</div>
                     </td>
                 </tr>
-                <? } ?>
-                <? if ($logo) { ?>
+                <?php 
+} ?>
+                <?php if ($logo) {
+    ?>
                 <tr class="b-layout__tr">
                     <td class="b-layout__left b-layout__left_width_200">
                         <div class="b-layout__txt b-layout__txt_bold b-layout__txt_padbot_5">Логотип со ссылкой</div>
                     </td>
                     <td class="b-layout__right">
-                        <div class="b-layout__txt b-layout__txt_color_fd6c30 b-layout__txt_bold"><?= $logo; ?> рублей</div>
+                        <div class="b-layout__txt b-layout__txt_color_fd6c30 b-layout__txt_bold"><?= $logo;
+    ?> рублей</div>
                     </td>
                 </tr>
-                <? } ?>
+                <?php 
+} ?>
                 
                 </table>
 
-                <?
+                <?php
                 $teasersExclude = array('no-public', 'contest');
                 if ($top) {
                     $teasersExclude[] = 'top';
                 }
-                include($abs_path . '/teasers/include-teaser.php');
+                include $abs_path.'/teasers/include-teaser.php';
                 ?>
 
             </td>							

@@ -1,5 +1,5 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/bill.common.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/bill.common.php';
 $xajax->printJavascript('/xajax/');
 ?>
 <a name="top"></a>

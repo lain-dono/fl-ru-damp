@@ -1,6 +1,6 @@
 <?php
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/xajax/letters.common.php' );
-$xajax->printJavascript( '/xajax/' );
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/letters.common.php';
+$xajax->printJavascript('/xajax/');
 
 ?>
 
@@ -32,14 +32,21 @@ $xajax->printJavascript( '/xajax/' );
 
 <div id="letters_company_lists">
 
-	<?php if($templates_list) { ?>
-        <?php foreach ($templates_list as $template){ ?>
+	<?php if ($templates_list) {
+    ?>
+        <?php foreach ($templates_list as $template) {
+    ?>
         <div class="b-layout__txt b-layout__txt_padbot_15">
             <a class="b-layout__link b-layout__link_bold b-layout__link_fontsize_15" href="/siteadmin/letters/?mode=edit_template&id=<?=$template['id']?>"><?=($template['title'] ? $template['title'] : '[без названия]')?></a> [<a id="tpl_id_<?=$template['id']?>" class="b-fon__link b-fon__link_bordbot_dot_0f71c8 b-fon__link_fontsize_11" href="/siteadmin/letters/?mode=del_template&id=<?=$template['id']?>" onclick="return addTokenToLink('tpl_id_<?=$template['id']?>', 'Вы уверены?')" >удалить</a>]
         </div>
-        <?php } ?>
-	<?php } else { ?>
+        <?php 
+}
+    ?>
+	<?php 
+} else {
+    ?>
 		<div><strong>Шаблонов не найдено</div>
-	<?php } ?>
+	<?php 
+} ?>
 
 </div>

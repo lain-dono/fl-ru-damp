@@ -1,8 +1,8 @@
-<?
-	require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
+<?php
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
 	session_start();
 	$i = trim($_GET['i']);
-	
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 
@@ -15,13 +15,17 @@
 <!--
 	window.returnValue = false;
 	
-<? 
+<?php 
 	$num = intval($_GET['num']);
-	if ($num){ ?>
+	if ($num) {
+	    ?>
 var	num = <?=$num?>
-<?	} else { ?>
+<?php	
+	} else {
+	    ?>
 var num = window.dialogArguments;
-<? } ?>
+<?php 
+	} ?>
 	
 	function subm(i){
 		window.returnValue = i;

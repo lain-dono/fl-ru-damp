@@ -3,22 +3,28 @@
         <a href="javascript:void(0)" class="b-layout__link b-layout__link_inline-block b-layout__link_bold b-layout__link_fontsize_18 b-layout__link_ygol popup-mini-open upd-period-data"><?= $last_operation['month']?> <?= ending($last_operation['month'], 'месяц', 'месяца', 'месяцев')?></a>
         <div class="b-shadow b-shadow_m b-shadow_left_-11 b-shadow_top_25 b-shadow_hide b-shadow_width_220 popup-mini body-shadow-close period-pro-popup">
             <div class="b-shadow__body b-shadow__body_bg_fff b-shadow__body_pad_10">
-            <?php foreach($popup_mini_data as $data) { $eco   = ( $data['month'] * payed::PRICE_EMP_PRO - $data['cost'] ); ?>
+            <?php foreach ($popup_mini_data as $data) {
+    $eco = ($data['month'] * payed::PRICE_EMP_PRO - $data['cost']);
+    ?>
             <div class="b-layout__txt b-layouyt__txt_weight_normal">
                 <a class="b-layout__link b-layout__link_no-decorat select-type" href="javascript:void(0)"
                    data-opcode="<?= $data['opcode']?>"
                    data-cost="<?= $data['cost']?>" 
                    data-period="<?= $data['month']?> <?= ending($data['month'], 'месяц', 'месяца', 'месяцев')?>">
-                    <span class="b-layout__txt b-layout__txt_inline-block b-layout__txt_width_90 <?= $data['opcode'] == $service['last_operation']['op_code'] ? "b-layout__txt_color_808080" : ""?> b-layout__txt_fontsize_15 select-name">
+                    <span class="b-layout__txt b-layout__txt_inline-block b-layout__txt_width_90 <?= $data['opcode'] == $service['last_operation']['op_code'] ? 'b-layout__txt_color_808080' : ''?> b-layout__txt_fontsize_15 select-name">
                         <?= $data['month']?> <?= ending($data['month'], 'месяц', 'месяца', 'месяцев')?>
                     </span>
                     <span class="b-layout__txt b-layout__txt_inline-block b-layout__txt_width_90 b-layout__txt_fontsize_15 b-layout__txt_color_fd6c30 b-layout__txt_nowrap"><?= $data['cost']?> рублей</span>
-                    <? if($eco > 0) { ?>
-                    <span class="b-layout__txt b-layout__txt_fontsize_11 b-layout__txt_color_6db335 b-layout__txt_nowrap" style="padding-left:90px;">&#160;<?= $eco;?> руб. экономии</span>
-                    <? }//if?>
+                    <?php if ($eco > 0) {
+    ?>
+                    <span class="b-layout__txt b-layout__txt_fontsize_11 b-layout__txt_color_6db335 b-layout__txt_nowrap" style="padding-left:90px;">&#160;<?= $eco;
+    ?> руб. экономии</span>
+                    <?php 
+}//if?>
                 </a>
             </div>
-            <?php }//foreach?>
+            <?php 
+}//foreach?>
             </div>
             <span class="b-shadow__icon b-shadow__icon_nosik b-shadow__icon_left_30"></span>
         </div>

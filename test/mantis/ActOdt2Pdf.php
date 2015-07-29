@@ -1,35 +1,32 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/odt2pdf.php');
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/odt2pdf.php';
 
 class ActOdt2Pdf extends odt2pdf
 {
-   protected $_stop_remove = false;
-   
-   
-   public function setStopRemove($stop = true)
-   {
-       $this->_stop_remove = $stop;
-   }
+    protected $_stop_remove = false;
 
-   public function getOdtContent() 
-   {
+    public function setStopRemove($stop = true)
+    {
+        $this->_stop_remove = $stop;
+    }
+
+    public function getOdtContent()
+    {
         return file_get_contents($this->file_path);
-   }
-   
-   public function convert($replace = false, $filename = "") 
-   {
-        if($this->prepareFile()) {
+    }
 
-            if($this->initZipOpenFile()) {
-
+    public function convert($replace = false, $filename = '')
+    {
+        if ($this->prepareFile()) {
+            if ($this->initZipOpenFile()) {
                 $this->getContentFile();
-                
-                if(is_array($replace)) {
+
+                if (is_array($replace)) {
                     $toContent = $this->parseStructure($this->getContent(), $replace);
                     $this->setContentFile($toContent);
                 }
-                
+
                 $this->zip->close();
                 $this->execConvert();
 //                if($exec != '') {
@@ -42,25 +39,24 @@ class ActOdt2Pdf extends odt2pdf
 //                    return false;
 //                }
 //                $this->output = $this->getOutput();
-                if($this->output == '') {
+                if ($this->output == '') {
                     $this->log->writeln("Ошибка конвертации шаблона (проверте шаблон на повержденные участки (не валидный xml внутри шаблона) -- {$this->doc})");
                 }
-                
-                if(!$this->_stop_remove){
+
+                if (!$this->_stop_remove) {
                     $this->remove();
                 }
-                
-                if($filename != "" && $this->output != "") {
-                    file_put_contents($this->getTmpFolder() . $filename, $this->output);
+
+                if ($filename != '' && $this->output != '') {
+                    file_put_contents($this->getTmpFolder().$filename, $this->output);
                 }
             } else {
                 $this->log->writeln("Template: {$this->doc}");
                 $this->log->writeln("Ошибка открытия архива -- {$this->file_path}");
             }
         } else {
-            $fname = $this->getFolder() . $this->doc;
+            $fname = $this->getFolder().$this->doc;
             $this->log->writeln("Ошибка клонирования файла шаблона -- {$fname}");
         }
     }
-    
 }

@@ -1,34 +1,34 @@
 <?php
 
 /**
- * Класс обрабатывающий все действия на странице /press/
- *
+ * Класс обрабатывающий все действия на странице /press/.
  */
-class page_press extends page_base {    
-	/**
-	 * Переменная необходимая для баннеров (определяет какой тип баннеров выводить на данной странице)
-	 *
-	 * @var unknown_type
-	 */
-	public $b_page = "0|2";
-	
-	function __construct() {
-	    front::og("tpl")->main_css  = "/css/press-center.css";
-		front::og("tpl")->g_page_id = $this->b_page;
-        front::og("tpl")->page = 'press';
-        front::og("tpl")->page_title = "Удаленная работа (фри-ланс) на Free-lance.ru";
-	}
-	/**
-	 * Обработчик событий главной страницы /press/
-	 *
-	 */
-    function indexAction() {
+class page_press extends page_base
+{
+    /**
+     * Переменная необходимая для баннеров (определяет какой тип баннеров выводить на данной странице).
+     *
+     * @var unknown_type
+     */
+    public $b_page = '0|2';
+
+    public function __construct()
+    {
+        front::og('tpl')->main_css = '/css/press-center.css';
+        front::og('tpl')->g_page_id = $this->b_page;
+        front::og('tpl')->page = 'press';
+        front::og('tpl')->page_title = 'Удаленная работа (фри-ланс) на Free-lance.ru';
+    }
+    /**
+     * Обработчик событий главной страницы /press/.
+     */
+    public function indexAction()
+    {
         $this->contactsAction();
     }
     /**
-	 * Обработчик событий страницы /press/news/
-	 *
-	 */
+     * Обработчик событий страницы /press/news/.
+     */
     /*function newsAction() {
         $db    = front::og("db");
         $first = $this->uri[0];
@@ -55,35 +55,33 @@ class page_press extends page_base {
         front::og("tpl")->display("press_center/press_news.tpl");
     }*/
     /**
-     * Показа новость полностью страница вида /press/news/ID/
+     * Показа новость полностью страница вида /press/news/ID/.
      *
-     * @param integer $id ID Новости
+     * @param int $id ID Новости
      */
-    function showNews($id) {
-        $db = front::og("db"); 
-        front::og("tpl")->one_news = $db->select("SELECT id, post_date, header, n_text FROM news WHERE id = ?n LIMIT 1;", $id)->fetchRow();
-        
-        front::og("tpl")->display("press_center/press_news.tpl");
+    public function showNews($id)
+    {
+        $db = front::og('db');
+        front::og('tpl')->one_news = $db->select('SELECT id, post_date, header, n_text FROM news WHERE id = ?n LIMIT 1;', $id)->fetchRow();
+
+        front::og('tpl')->display('press_center/press_news.tpl');
     }
     /**
-     * Обработчик событий страницы /press/about/ (О Фри-лансе)
-     *
+     * Обработчик событий страницы /press/about/ (О Фри-лансе).
      */
     /*function aboutAction() {
         front::og("tpl")->text = static_pages::get("press_about");
         front::og("tpl")->display("press_center/press_about.tpl");
     }*/
     /**
-     * Обработчик событий страницы /press/opinions/ (Отзывы)
-     *
+     * Обработчик событий страницы /press/opinions/ (Отзывы).
      */
     /*function opinionsAction() {
         front::og("tpl")->msgs = sopinions::GetMsgs();
         front::og("tpl")->display("press_center/press_opinions.tpl");
     }*/
     /**
-     * Обработчик событий страницы /press/parthners/ (Партнеры)
-     *
+     * Обработчик событий страницы /press/parthners/ (Партнеры).
      */
     /*function partnersAction() {
         $db = front::og("db"); 
@@ -91,17 +89,16 @@ class page_press extends page_base {
         front::og("tpl")->display("press_center/press_partners.tpl");
     }*/
     /**
-     * Обработчик событий страницы /press/adv/ (Реклама)
-     *
+     * Обработчик событий страницы /press/adv/ (Реклама).
      */
-    function advAction() {
-        front::og("tpl")->text = static_pages::get("press_adv");
-        front::og("tpl")->css  = "/css/main.css";
-        front::og("tpl")->display("press_center/press_adv.tpl");
+    public function advAction()
+    {
+        front::og('tpl')->text = static_pages::get('press_adv');
+        front::og('tpl')->css = '/css/main.css';
+        front::og('tpl')->display('press_center/press_adv.tpl');
     }
     /**
-     * Обработчик событий страницы /press/smi/ (СМИ о Фри-лансе)
-     *
+     * Обработчик событий страницы /press/smi/ (СМИ о Фри-лансе).
      */
     /*function smiAction() {
         front::og("tpl")->msgs = press::GetMsgs($msg_cntr, 1, $num_msgs, $error);
@@ -120,12 +117,11 @@ class page_press extends page_base {
         front::og("tpl")->display("press_center/press_smi.tpl");
     }*/
     /**
-     * Обработчик событий страницы /press/contacts/ (Контакты)
-     *
+     * Обработчик событий страницы /press/contacts/ (Контакты).
      */
-    function contactsAction() {
-        front::og("tpl")->text = static_pages::get("press_contacts");
-        front::og("tpl")->display("press_center/press_contacts.tpl");
+    public function contactsAction()
+    {
+        front::og('tpl')->text = static_pages::get('press_contacts');
+        front::og('tpl')->display('press_center/press_contacts.tpl');
     }
 }
-?>

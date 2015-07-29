@@ -1,19 +1,17 @@
 <?php
 
 
-ini_set('display_errors',1);
+ini_set('display_errors', 1);
 error_reporting(E_ALL ^ E_NOTICE);
-
 
 ini_set('max_execution_time', 0);
 ini_set('memory_limit', '512M');
 
-if(!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT']))
-{    
-    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME) . '/../../'), '/');
-} 
+if (!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT'])) {
+    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME).'/../../'), '/');
+}
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/config.php");
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/profiler.php");
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/billing.php");
@@ -21,8 +19,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
 //require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/sbr_meta.php');
 //require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/reserves/ReservesModelFactory.php');
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/YandexMoney3Tmp/YandexMoney3.php');
-
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/YandexMoney3Tmp/YandexMoney3.php';
 
 //------------------------------------------------------------------------------
 
@@ -58,9 +55,6 @@ $results = array();
 
  */
 
-
-
-
 //------------------------------------------------------------------------------
 
 $params = array(
@@ -71,7 +65,7 @@ $params = array(
         'dstAccount' => '25700130535186',
         'amount' => '249.00',
         'currency' => 10643,
-        'contract'=> ''
+        'contract' => '',
     )
     /*
     ,
@@ -98,10 +92,9 @@ $params = array(
         'pdr_postcode' => 194044,
         'pdr_country' => 'Санкт-Петербург',
         'pdr_city' => '',
-        'pdr_address' => 'Большой пр, ПС, д.12'
-    )
+        'pdr_address' => 'Большой пр, ПС, д.12',
+    ),
 );
-
 
 //use YandexMoney3\YandexMoney3;
 
@@ -110,18 +103,14 @@ $ym = new YandexMoney3();
 
 $data = $ym->request('testDeposition', $params);
 
-
 print_r($data);
 exit;
-
 
 //------------------------------------------------------------------------------
 
 //$profiler->start('fill_frl_mem');
 
 //------------------------------------------------------------------------------
-
-
 
 
 //------------------------------------------------------------------------------
@@ -133,7 +122,7 @@ exit;
 
 //------------------------------------------------------------------------------
 
-array_walk($results, function(&$value, $key){
+array_walk($results, function (&$value, $key) {
     $value = sprintf('%s = %s'.PHP_EOL, $key, $value);
 });
 

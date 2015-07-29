@@ -12,13 +12,11 @@
 ?>
 <?php
 
- 
 
-
-require_once('../classes/functions.php');
-require_once('../classes/class.operator.php');
-require_once('../classes/class.smartyclass.php');
-require_once('../classes/models/generic/class.mapperfactory.php');
+require_once '../classes/functions.php';
+require_once '../classes/class.operator.php';
+require_once '../classes/class.smartyclass.php';
+require_once '../classes/models/generic/class.mapperfactory.php';
 
 Operator::getInstance()->IsCurrentUserAdminOrRedirect();
 

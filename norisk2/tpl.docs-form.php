@@ -18,9 +18,11 @@
                       <span class="nra-doc-sel">
                           <select name="stage_id">
                               <option value="0">Весь проект</option>
-                              <? foreach($sbr->stages as $stg) { ?>
-                              <option value="<?=$stg->id?>"<?=($stg->id==$stage_id ? ' selected="true"' : '')?>><?=$stg->getOuterNum().': '.$stg->name?></option>
-                              <? } ?>
+                              <?php foreach ($sbr->stages as $stg) {
+    ?>
+                              <option value="<?=$stg->id?>"<?=($stg->id == $stage_id ? ' selected="true"' : '')?>><?=$stg->getOuterNum().': '.$stg->name?></option>
+                              <?php 
+} ?>
                           </select>
                       </span>
                   </div>
@@ -28,42 +30,53 @@
                       <label class="form-label3">Тип документа:</label>
                       <span class="nra-doc-sel">
                           <select name="type">
-                              <?
-                                foreach(sbr::$docs_types as $type=>$val) {
-                                    if(!$sbr->isAdmin() && !($val[1] & (sbr::DOCS_ACCESS_EMP*$sbr->isEmp() | sbr::DOCS_ACCESS_FRL*$sbr->isFrl()))) continue;
-                              ?>
-                              <option value="<?=$type?>"<?=($type==$doc['type'] ? ' selected="true"' : '')?>><?=$val[0]?></option>
-                              <? } ?>
+                              <?php
+                                foreach (sbr::$docs_types as $type => $val) {
+                                    if (!$sbr->isAdmin() && !($val[1] & (sbr::DOCS_ACCESS_EMP * $sbr->isEmp() | sbr::DOCS_ACCESS_FRL * $sbr->isFrl()))) {
+                                        continue;
+                                    }
+                                    ?>
+                              <option value="<?=$type?>"<?=($type == $doc['type'] ? ' selected="true"' : '')?>><?=$val[0]?></option>
+                              <?php 
+                                } ?>
                           </select>
                       </span>
                   </div>
                   <div class="form-el">
                       <label class="form-label3">Выберите файл:</label>
                       <span class="nra-docs-file">
-                          <? if($is_edit) { ?>
+                          <?php if ($is_edit) {
+    ?>
                             <ul class="form-files-added">
                                 <li>
-                                    <? /* <a href="javascript:;" title="Удалить" onclick=""><img src="/images/btn-remove2.png" alt="Удалить" /></a> */ ?><a href="<?=WDCPREFIX.'/'.$doc['file_path'].$doc['file_name']?>" target="_blank" class="mime <?=CFile::getext($doc['file_name'])?>"><?=$doc['file_name']?></a>
+                                    <?php /* <a href="javascript:;" title="Удалить" onclick=""><img src="/images/btn-remove2.png" alt="Удалить" /></a> */ ?><a href="<?=WDCPREFIX.'/'.$doc['file_path'].$doc['file_name']?>" target="_blank" class="mime <?=CFile::getext($doc['file_name'])?>"><?=$doc['file_name']?></a>
                                 </li>
                             </ul>
-                          <? } ?>
+                          <?php 
+} ?>
                           <span class="form-hint">
                               2 МБ: DOC, DOCX, ZIP, RAR, PDF и др.
                           </span>
                           <input type="file" name="attach" size="23" />
                       </span>
-                      <? if($doc['file_id']) { ?>
+                      <?php if ($doc['file_id']) {
+    ?>
                         <span class="form-hint">Существующий файл будет заменен новым</span>
-                      <? } ?>
+                      <?php 
+} ?>
                   </div>
-                  <? if($sbr->isAdmin()) { ?>
+                  <?php if ($sbr->isAdmin()) {
+    ?>
                     <div class="form-el">
                         <label class="form-label3">Статус документа:</label>
                         <span class="nra-doc-sel">
                             <select name="status">
-                                <? foreach(sbr::$docs_ss as $id=>$val) { ?>
-                                <option value="<?=$id?>"<?=($id==$doc['status'] ? ' selected="true"' : '')?>><?=$val[0]?></option>
-                                <? } ?>
+                                <?php foreach (sbr::$docs_ss as $id => $val) {
+    ?>
+                                <option value="<?=$id?>"<?=($id == $doc['status'] ? ' selected="true"' : '')?>><?=$val[0]?></option>
+                                <?php 
+}
+    ?>
                             </select>
                         </span>
                     </div>
@@ -71,13 +84,17 @@
                         <label class="form-label3">Доступ просмотра:</label>
                         <span class="nra-doc-sel">
                             <select name="access_role">
-                                <? foreach(sbr::$docs_access as $id=>$val) { ?>
-                                <option value="<?=$id?>"<?=($id==$doc['access_role'] ? ' selected="true"' : '')?>><?=$val[0]?></option>
-                                <? } ?>
+                                <?php foreach (sbr::$docs_access as $id => $val) {
+    ?>
+                                <option value="<?=$id?>"<?=($id == $doc['access_role'] ? ' selected="true"' : '')?>><?=$val[0]?></option>
+                                <?php 
+}
+    ?>
                             </select>
                         </span>
                     </div>
-                  <? } ?>
+                  <?php 
+} ?>
               </div>
               <div class="form-block last">
                   <div class="form-btn">

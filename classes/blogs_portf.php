@@ -1,27 +1,29 @@
-<?
+<?php
+
 /**
- * Подключаем файл для работы с блогами
+ * Подключаем файл для работы с блогами.
  */
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/blogs_proto.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/blogs_proto.php';
 /**
- * Класс для работы с сообщениями портфолио
- *
+ * Класс для работы с сообщениями портфолио.
  */
 class blogs_portf extends blogs_proto
 {
-	/**
-     * Выборка треда сообщения
+    /**
+     * Выборка треда сообщения.
      *
      * @todo Функция возвращает пременные которые не существуют в самой функции, стоит проверить где вызывается и убрать.
      * 
-     * @param integer $portf_id  ИД темы
-     * @param string  $error     Возвращает сообщение об ошибке
-     * @return array 
+     * @param integer $portf_id ИД темы
+     * @param string  $error    Возвращает сообщение об ошибке
+     *
+     * @return array
      */
-	function GetThread($portf_id, &$error){
-        global $DB;
-		$curname = get_class($this);
-		$sql = "SELECT id, fromuser_id, reply_to, post_time, msgtext, attach, title, uname, usurname, login, photo, role, modified, modified_id, deluser_id, deleted, small, payed
+	public function GetThread($portf_id, &$error)
+	{
+	    global $DB;
+	    $curname = get_class($this);
+	    $sql = "SELECT id, fromuser_id, reply_to, post_time, msgtext, attach, title, uname, usurname, login, photo, role, modified, modified_id, deluser_id, deleted, small, payed
 		FROM 
 		(SELECT $curname.item_id, $curname.fromuser_id, $curname.id, $curname.reply_to, $curname.post_time, $curname.msgtext, $curname.attach, $curname.title, $curname.modified, $curname.modified_id, $curname.deleted, $curname.deluser_id, $curname.small, 1 as t FROM $curname 
 		UNION ALL 
@@ -34,18 +36,22 @@ class blogs_portf extends blogs_proto
 		 ON pay.from_id=uid
 		WHERE item_id=?i ORDER BY blg.t, reply_to, post_time";
 
-        $this->thread = $DB->rows($sql, $portf_id, $portf_id);
+	    $this->thread = $DB->rows($sql, $portf_id, $portf_id);
 
-		$error .= $DB->error;
-		if ($error) $error = parse_db_error($error);
-		 else {
-		 	$this->msg_num = count($this->thread);
-		 	if ($this->msg_num > 0) $this->SetVars(0);
-		 }
-		return array($name, $id_gr, 100);
+	    $error .= $DB->error;
+	    if ($error) {
+	        $error = parse_db_error($error);
+	    } else {
+	        $this->msg_num = count($this->thread);
+	        if ($this->msg_num > 0) {
+	            $this->SetVars(0);
+	        }
+	    }
+
+	    return array($name, $id_gr, 100);
 	}
 	/**
-	 * Добавить комментарии к портфолио
+	 * Добавить комментарии к портфолио.
 	 *
 	 * @param integer $fid    ID Пользователя
 	 * @param integer $reply  Идентификатор сообщения ответом на которое является данное сообщение
@@ -56,17 +62,23 @@ class blogs_portf extends blogs_proto
 	 * @param string  $ip     ИП отправителя
 	 * @param mixed   $error  Возвращает сообщение об ошибке
 	 * @param mixed   $small  Метод показа
+ *
 	 * @return integer Возвращает ИД добавленного коментария
 	 */
-	function Add($fid, $reply, $thread, $msg, $name, $attach, $ip, &$error, $small){
-        global $DB;
-		$curname = get_class($this);
-		$sql = "SELECT show_comms FROM portfolio WHERE portfolio.id = ?i";
-		$portf_comments = $DB->val($sql, $thread);
-        $error = $DB->error;
-		if ($portf_comments != 't') {$error = "Пользователь запретил оставлять комментарии"; return 0;}
-		return parent::Add($fid, $reply, $thread, $msg, $name, $attach, $ip, $error, $small);
+	public function Add($fid, $reply, $thread, $msg, $name, $attach, $ip, &$error, $small)
+	{
+	    global $DB;
+	    $curname = get_class($this);
+	    $sql = 'SELECT show_comms FROM portfolio WHERE portfolio.id = ?i';
+	    $portf_comments = $DB->val($sql, $thread);
+	    $error = $DB->error;
+	    if ($portf_comments != 't') {
+	        $error = 'Пользователь запретил оставлять комментарии';
+
+	        return 0;
+	    }
+
+	    return parent::Add($fid, $reply, $thread, $msg, $name, $attach, $ip, $error, $small);
 	}
-	
 }
 ?>

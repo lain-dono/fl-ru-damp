@@ -1,21 +1,21 @@
 <?php
 
-define( 'IS_SITE_ADMIN', 1 );
+define('IS_SITE_ADMIN', 1);
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once(__DIR__ . '/controllers/ReservesAdminController.php');
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once __DIR__.'/controllers/ReservesAdminController.php';
 
 session_start();
 
 if (!hasPermissions('sbr') && !hasPermissions('sbr_finance')) {
     header_location_exit('/404.php');
 }
- 
+
 $css_file = array(
     '/css/block/b-menu/_tabs/b-menu_tabs.css',
     '/css/block/b-label/b-label.css',
     'nav.css',
-    'norisk-admin.css');
+    'norisk-admin.css', );
 
 $js_file[] = 'reserves/reserves_admin.js';
 
@@ -35,5 +35,5 @@ $controller = new ReservesAdminController('reserves-admin', $module);
 $controller->init($action); // инициализация контролера
 $controller->run($action);
 
-$content = "tpl.index.php";
-include ($_SERVER['DOCUMENT_ROOT'] . "/template.php");
+$content = 'tpl.index.php';
+include $_SERVER['DOCUMENT_ROOT'].'/template.php';

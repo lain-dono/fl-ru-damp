@@ -1,10 +1,11 @@
 <?php
+
 /**
- * Профайлер БД, запись времени выполнения запросов
+ * Профайлер БД, запись времени выполнения запросов.
  * 
  * @see        search
+ *
  * @category   Free-lance.ru
- * @package    System
  */
 class profiler
 {
@@ -18,7 +19,7 @@ class profiler
     /**
      * Конечное время.
      *
-     * @var array 
+     * @var array
      */
     private $_end = array();
 
@@ -27,13 +28,14 @@ class profiler
      *
      * @param string $key Специальный ключ для операции
      */
-    function start($key) {
+    public function start($key)
+    {
         //Считываем текущее время 
-        $mtime = microtime(); 
+        $mtime = microtime();
         //Разделяем секунды и миллисекунды 
-        $mtime = explode(" ",$mtime); 
+        $mtime = explode(' ', $mtime);
         //Составляем одно число из секунд и миллисекунд 
-        $mtime = $mtime[1] + $mtime[0]; 
+        $mtime = $mtime[1] + $mtime[0];
         //Записываем стартовое время в переменную с указанным ключем.
         $this->_start[$key] = $mtime;
     }
@@ -43,13 +45,14 @@ class profiler
      *
      * @param string $key Специальный ключ для операции
      */
-    function stop($key) {
+    public function stop($key)
+    {
         //Считываем текущее время 
-        $mtime = microtime(); 
+        $mtime = microtime();
         //Разделяем секунды и миллисекунды 
-        $mtime = explode(" ",$mtime); 
+        $mtime = explode(' ', $mtime);
         //Составляем одно число из секунд и миллисекунд 
-        $mtime = $mtime[1] + $mtime[0]; 
+        $mtime = $mtime[1] + $mtime[0];
         //Записываем время окончания в переменную с указанным ключем.
         $this->_end[$key] = $mtime;
     }
@@ -60,10 +63,11 @@ class profiler
      *
      * @param string $key Специальный ключ для операции
      */
-    function clear($key = null) {
+    public function clear($key = null)
+    {
         if ($key === null) {
             $this->_start = array();
-            $this->_end   = array();
+            $this->_end = array();
         } else {
             if (is_array($this->_start) && (array_key_exists($key, $this->_start))) {
                 unset($this->_start[$key]);
@@ -79,9 +83,11 @@ class profiler
      * Если ключ не указан - возвращает время выполнения всех операций.
      *
      * @param string $key Специальный ключ для операции
+     *
      * @return float время выполения или false, если операция не найдена или операций нет.
      */
-    function get($key = null) {
+    public function get($key = null)
+    {
         $result = false;
         if ($key === null) {
             if (is_array($this->_start) && (array_key_exists($key, $this->_start)) && is_array($this->_end) && (array_key_exists($key, $this->_end))) {
@@ -97,6 +103,7 @@ class profiler
                 }
             }
         }
+
         return $result;
     }
 }

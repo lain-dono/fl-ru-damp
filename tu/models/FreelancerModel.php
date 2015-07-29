@@ -1,42 +1,42 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/tservices/atservices_model.php');
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/tservices/atservices_model.php';
 
 /**
  * Class UserModel
- * Модель пользователя - фрилансера
+ * Модель пользователя - фрилансера.
  */
-class FreelancerModel extends atservices_model {
+class FreelancerModel extends atservices_model
+{
+    private $TABLE_USERS = 'users';
 
-	private $TABLE_USERS = 'users';
+    /**
+     * Для каждой строки массива $rows извлекает сведения о пользователе, ID которого указан в $id_attr
+     * Если $extend_attr указан, то сведения вписываются в строки rows отдельным ключом
+     * Иначе ключи строк расширяются извлечёнными сведениями, при необходимости им дописываются префиксы $extend_prefix.
+     *
+     * @param $rows
+     * @param $id_attr
+     * @param $extend_attr
+     * @param $extend_prefix
+     *
+     * @return $this
+     */
+    public function extend(&$rows, $id_attr, $extend_attr = null, $extend_prefix = '')
+    {
+        $ids = array();
+        foreach ($rows as $row) {
+            // собрать ID
 
-	/**
-	 * Для каждой строки массива $rows извлекает сведения о пользователе, ID которого указан в $id_attr
-	 * Если $extend_attr указан, то сведения вписываются в строки rows отдельным ключом
-	 * Иначе ключи строк расширяются извлечёнными сведениями, при необходимости им дописываются префиксы $extend_prefix
-	 *
-	 * @param $rows
-	 * @param $id_attr
-	 * @param $extend_attr
-	 * @param $extend_prefix
-	 * @return $this
-	 */
-	public function extend(&$rows, $id_attr, $extend_attr = null, $extend_prefix = '')
-	{
-		$ids = array();
-		foreach($rows as $row) // собрать ID
-		{
-			if (!empty($row[$id_attr]))
-			{
-				$ids[$row[$id_attr]] = false;
-			}
-		}
-		if (empty($ids))
-		{
-			return $this;
-		}
+            if (!empty($row[$id_attr])) {
+                $ids[$row[$id_attr]] = false;
+            }
+        }
+        if (empty($ids)) {
+            return $this;
+        }
 
-		$sql = <<<SQL
+        $sql = <<<SQL
 SELECT
 	u.uid as {$extend_prefix}uid,
 	u.uname as {$extend_prefix}uname, -- имя
@@ -53,41 +53,41 @@ SELECT
 FROM {$this->TABLE_USERS} u
 WHERE u.uid in (?lu)
 SQL;
-		$extends = $this->db()->cache(300)->rows($sql, array_keys($ids));
-		foreach($extends as $extend) // разобрать строки по ID
-		{
-			$ids[$extend['uid']] = $extend;
-		}
+        $extends = $this->db()->cache(300)->rows($sql, array_keys($ids));
+        foreach ($extends as $extend) {
+            // разобрать строки по ID
 
-		foreach($rows as &$row) // подставить дополнительные сведения в исходный список строк
-		{
-			if (empty($ids[$row[$id_attr]]))
-			{
-				continue;
-			}
-			$extend = $ids[$row[$id_attr]];
-			if (false === $extend)
-			{
-				continue;
-			}
+            $ids[$extend['uid']] = $extend;
+        }
 
-			if ($extend_attr)
-			{
-				$row[$extend_attr] = $extend; // отдельный ключ
-			} else
-			{
-				$row = array_merge($row, $extend); // расширение массива
-			}
-		}
-		return $this;
-	}
+        foreach ($rows as &$row) {
+            // подставить дополнительные сведения в исходный список строк
 
-	/**
-	 * @return FreelancerModel
-	 */
-	public static function model()
-	{
-		$class = get_called_class();
-		return new $class;
-	}
+            if (empty($ids[$row[$id_attr]])) {
+                continue;
+            }
+            $extend = $ids[$row[$id_attr]];
+            if (false === $extend) {
+                continue;
+            }
+
+            if ($extend_attr) {
+                $row[$extend_attr] = $extend; // отдельный ключ
+            } else {
+                $row = array_merge($row, $extend); // расширение массива
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return FreelancerModel
+     */
+    public static function model()
+    {
+        $class = get_called_class();
+
+        return new $class();
+    }
 }

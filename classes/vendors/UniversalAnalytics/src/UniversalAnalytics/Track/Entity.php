@@ -1,49 +1,41 @@
-<?php namespace UniversalAnalytics\Track;
+<?php
+
+namespace UniversalAnalytics\Track;
 
 use UniversalAnalytics\Contracts\JsonableInterface;
 use UniversalAnalytics\Contracts\ArrayableInterface;
 use UniversalAnalytics\Contracts\ValidableInterface;
 use UniversalAnalytics\Exception\InvalidAttributeException;
 
-abstract class Entity implements ArrayableInterface, JsonableInterface, ValidableInterface {
-
+abstract class Entity implements ArrayableInterface, JsonableInterface, ValidableInterface
+{
     /**
-     * Shortname for differentiating in Attribute Map
-     *
-     * @access protected
+     * Shortname for differentiating in Attribute Map.
      */
     protected $shortName = 'entity';
 
     /**
-     * Attributes for tracking entity
-     *
-     * @access protected
+     * Attributes for tracking entity.
      */
     protected $attributes = array();
 
     /**
      * Google Attributes for tracking entity
      * These are machine-friendly but not humany friendly,
-     * so we do some converting for our human friends
-     *
-     * @access protected
+     * so we do some converting for our human friends.
      */
     protected $googleAttributes = array();
 
     /**
      * Required attributes
      * Use Google attributes
-     *  rather than "human" ones
-     *
-     * @access protected
+     *  rather than "human" ones.
      */
     protected $required = array();
 
     /**
      * All attributes mapping
-     * for "human" to "robot" attribute mapping
-     *
-     * @access protected
+     * for "human" to "robot" attribute mapping.
      */
     protected $attributeMap = array(
         'type' => 't',
@@ -52,7 +44,6 @@ abstract class Entity implements ArrayableInterface, JsonableInterface, Validabl
         'page:hostname' => 'dh',
         'page:page' => 'dp',
         'page:title' => 'dt',
-
 
         /* Event */
         'event:category' => 'ec',
@@ -94,26 +85,23 @@ abstract class Entity implements ArrayableInterface, JsonableInterface, Validabl
 
     );
 
-
-
-    public function __construct($data=array())
+    public function __construct($data = array())
     {
-        if( count($data) > 0 )
-        {
+        if (count($data) > 0) {
             $this->build($data);
         }
     }
 
     /**
-     * Add object attributes via array
+     * Add object attributes via array.
      *
      * @param Array     Key => Value array of attributes
+     *
      * @return Entity
      */
     public function build(Array $data)
     {
-        foreach( $data as $key => $value )
-        {
+        foreach ($data as $key => $value) {
             $this->$key = $value;
         }
 
@@ -122,31 +110,31 @@ abstract class Entity implements ArrayableInterface, JsonableInterface, Validabl
 
     /**
      * Magic Method - retreive
-     * from $attributes array
+     * from $attributes array.
      *
      * @param String  Attribute name
+     *
      * @return Mixed
      */
     public function __get($key)
     {
-        if( array_key_exists($key, $this->attributes) )
-        {
+        if (array_key_exists($key, $this->attributes)) {
             return $this->attributes[$key];
         }
     }
 
     /**
      * Magic Method - set to
-     * $attributes array
+     * $attributes array.
      *
      * @param String    Name of attribute
      * @param Mixed     Value of attribute
+     *
      * @throws UniversalAnalytics\Exception\InvalidAttributeException
      */
     public function __set($key, $value)
     {
-        if( array_key_exists($key, $this->attributes) )
-        {
+        if (array_key_exists($key, $this->attributes)) {
             $this->attributes[$key] = $value;
 
             $this->googleAttributes[$this->attributeMap[$this->shortName.':'.$key]] = $value;
@@ -157,11 +145,9 @@ abstract class Entity implements ArrayableInterface, JsonableInterface, Validabl
 
     public function valid()
     {
-        foreach( $this->required as $key )
-        {
+        foreach ($this->required as $key) {
             // If not set or is null, it's invalid, based on required attributes
-            if( !isset($this->googleAttributes[$key]) || is_null($this->googleAttributes[$key]))
-            {
+            if (!isset($this->googleAttributes[$key]) || is_null($this->googleAttributes[$key])) {
                 return false;
             }
         }
@@ -171,14 +157,13 @@ abstract class Entity implements ArrayableInterface, JsonableInterface, Validabl
 
     /**
      * Return array representation of this object
-     * $attributes array
+     * $attributes array.
      *
      * @return Array
      */
-    public function toArray($google=false)
+    public function toArray($google = false)
     {
-        if($google)
-        {
+        if ($google) {
             return $this->googleAttributes;
         }
 
@@ -187,19 +172,18 @@ abstract class Entity implements ArrayableInterface, JsonableInterface, Validabl
 
     /**
      * Return array representation of this object
-     * JSON format of $attributes array
+     * JSON format of $attributes array.
      *
      * @param Int   Options as required by json_encode function
-     * @return String   JSON representation in string format
+     *
+     * @return String JSON representation in string format
      */
-    public function toJson($google=false, $options = 0)
+    public function toJson($google = false, $options = 0)
     {
-        if($google)
-        {
+        if ($google) {
             return json_encode($this->googleAttributes);
         }
 
         return json_encode($this->attributes, $options);
     }
-
 }

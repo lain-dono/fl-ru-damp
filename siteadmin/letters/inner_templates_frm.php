@@ -1,21 +1,21 @@
 <?php
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/xajax/letters.common.php' );
-$xajax->printJavascript( '/xajax/' );
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/letters.common.php';
+$xajax->printJavascript('/xajax/');
 ?>
 
 
 <script type="text/javascript">
 var deliveryList = {
 					<?php
-					$deliveries = letters::getDeliveries();
-					$html = '';
-					$html .= "0:'Не выбрано',";
-					foreach($deliveries as $delivery) {
-						$html .= "{$delivery['id']}:'{$delivery['title']}',";
-					}
-					$html = preg_replace("/,$/", "", $html);
-					echo $html;
-					?>
+                    $deliveries = letters::getDeliveries();
+                    $html = '';
+                    $html .= "0:'Не выбрано',";
+                    foreach ($deliveries as $delivery) {
+                        $html .= "{$delivery['id']}:'{$delivery['title']}',";
+                    }
+                    $html = preg_replace('/,$/', '', $html);
+                    echo $html;
+                    ?>
 					};
 is_templates_mode = true;
 </script>
@@ -23,11 +23,15 @@ is_templates_mode = true;
 
 <div class="b-layout__txt"><a class="b-layout__link" href="/siteadmin/letters/?mode=templates">Все шаблоны</a> &rarr;</div>
 
-<?php if($_GET['mode']=='edit_template') { ?>
+<?php if ($_GET['mode'] == 'edit_template') {
+    ?>
 <h2 class="b-layout__title">Редактирование шаблона: <?=htmlspecialchars($template['title'])?></h2>
-<?php } else { ?>
+<?php 
+} else {
+    ?>
 <h2 class="b-layout__title">Новый шаблон</h2>
-<?php } ?>
+<?php 
+} ?>
 
 
 <table cellspacing="0" cellpadding="0" border="0" class="b-layout__table b-layout__table_width_full b-layout__table_margbot_20">
@@ -50,7 +54,7 @@ is_templates_mode = true;
 
 <div id="letters_form_start"></div>
 <?php
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/siteadmin/letters/tpl.forms.php' );
+require_once $_SERVER['DOCUMENT_ROOT'].'/siteadmin/letters/tpl.forms.php';
 ?>
 
 <div id="l_form_1" class="b-shadow__title">Новый документ <div id="l_form_1_1" class="b-layout__txt b-layout__txt_inline-block"><a class="b-button b-button_poll_plus" href="" onClick="letters.TemplateInsertNewDoc(); return false;"></a> <a class="b-layout__link b-layout__link_fontsize_15 b-layout__link_bordbot_dot_0f71c8" href="" onClick="letters.TemplateInsertNewDoc(); return false;">добавить</a></div></div>
@@ -199,28 +203,38 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/siteadmin/letters/tpl.forms.php' );
 <br><br>
 
 								<div class="b-buttons b-buttons_padleft_78">
-									<a id="f_button_actionwork" class="b-button b-button_flat b-button_flat_green" onclick="<? if($_GET['mode']=='add_template') { ?>letters.TemplateAddDoc();<? } else { ?>letters.TemplateUpdateDoc();<? } ?> return false;" href="javascript:void()"><span id="f_button_actionwork_txt">Сохранить</span></a>
+									<a id="f_button_actionwork" class="b-button b-button_flat b-button_flat_green" onclick="<?php if ($_GET['mode'] == 'add_template') {
+    ?>letters.TemplateAddDoc();<?php 
+} else {
+    ?>letters.TemplateUpdateDoc();<?php 
+} ?> return false;" href="javascript:void()"><span id="f_button_actionwork_txt">Сохранить</span></a>
 									<span class="b-buttons__txt b-buttons__txt_padleft_10">или</span>
 									<a class="b-buttons__link b-buttons__link_dot_c10601" href="/siteadmin/letters/?mode=templates">закрыть не добавляя</a>
 								</div>
 
 
-<?php if($_GET['mode']=='edit_template') { ?>
+<?php if ($_GET['mode'] == 'edit_template') {
+    ?>
 <script>
 window.addEvent('domready', function() {
-	<?php for($n=0; $n<count($template['docs'])-1; $n++) { ?>
+	<?php for ($n = 0; $n < count($template['docs']) - 1; ++$n) {
+    ?>
 	letters.TemplateInsertNewDoc();
-	<?php } ?>
-	<?php $num=0; foreach($template['docs'] as $doc) { ?>
+	<?php 
+}
+    ?>
+	<?php $num = 0;
+    foreach ($template['docs'] as $doc) {
+        ?>
 		letters.TemplateData[<?=$num?>] = [];
 		letters.TemplateData[<?=$num?>]['letters_doc_frm_title'] = '<?=$doc['title']?>';
 		letters.TemplateData[<?=$num?>]['letters_doc_frm_group_db_id'] = '<?=intval($doc['group_id'])?>';
 		letters.TemplateData[<?=$num?>]['letters_doc_frm_user_1_db_id'] = '<?=intval($doc['user_1'])?>';
-		letters.TemplateData[<?=$num?>]['letters_doc_frm_user_1_section'] = '<?=($doc['is_user_1_company']=='t' ? 1 : 0)?>';
+		letters.TemplateData[<?=$num?>]['letters_doc_frm_user_1_section'] = '<?=($doc['is_user_1_company'] == 't' ? 1 : 0)?>';
 		letters.TemplateData[<?=$num?>]['letters_doc_frm_user_2_db_id'] = '<?=intval($doc['user_2'])?>';
-		letters.TemplateData[<?=$num?>]['letters_doc_frm_user_2_section'] = '<?=($doc['is_user_2_company']=='t' ? 1 : 0)?>';
+		letters.TemplateData[<?=$num?>]['letters_doc_frm_user_2_section'] = '<?=($doc['is_user_2_company'] == 't' ? 1 : 0)?>';
 		letters.TemplateData[<?=$num?>]['letters_doc_frm_user_3_db_id'] = '<?=intval($doc['user_3'])?>';
-		letters.TemplateData[<?=$num?>]['letters_doc_frm_user_3_section'] = '<?=($doc['is_user_3_company']=='t' ? 1 : 0)?>';
+		letters.TemplateData[<?=$num?>]['letters_doc_frm_user_3_section'] = '<?=($doc['is_user_3_company'] == 't' ? 1 : 0)?>';
 		letters.TemplateData[<?=$num?>]['letters_doc_frm_delivery_db_id'] = '<?=intval($doc['delivery'])?>';
 		letters.TemplateData[<?=$num?>]['letters_doc_frm_delivery_cost'] = '<?=$doc['delivery_cost']?>';
 		letters.TemplateData[<?=$num?>]['letters_doc_frm_parent_db_id'] = '<?=$doc['parent']?>';
@@ -236,8 +250,11 @@ window.addEvent('domready', function() {
 		letters.TemplateData[<?=$num?>]['letters_doc_frm_user2_status_date_data'] = '<?=($doc['user_status_date_2'] ? dateFormat('Y-m-d', $doc['user_status_date_2']) : '')?>';
 		letters.TemplateData[<?=$num?>]['letters_doc_frm_user3_status_date_data'] = '<?=($doc['user_status_date_3'] ? dateFormat('Y-m-d', $doc['user_status_date_3']) : '')?>';
 
-	<?php $num++; } ?>
+	<?php ++$num;
+    }
+    ?>
 	letters.TemplateShowDoc(1, false);
 });
 </script>
-<?php } ?>
+<?php 
+} ?>

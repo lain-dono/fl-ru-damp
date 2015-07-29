@@ -7,8 +7,7 @@ require_once '../classes/stdf.php';
 require_once '../classes/memBuff.php';
 require_once '../classes/smtp.php';
 
-
-/**
+/*
  * Логин пользователя от кого осуществляется рассылка
  * 
  */
@@ -33,7 +32,7 @@ INNER JOIN
 	freelancer u ON s.frl_id = u.uid AND substring(subscr from 8 for 1)::integer = 1 AND is_banned = B'0'
 ";
 
-$pHost = str_replace("http://", "", $GLOBALS['host']);
+$pHost = str_replace('http://', '', $GLOBALS['host']);
 $eHost = $GLOBALS['host'];
 $pMessage = "
 Здравствуйте!
@@ -48,8 +47,7 @@ $pMessage = "
 Приятной работы,
 Команда http:/{Free-lance.ru}/{$pHost}/";
 
-
-$eSubject = "Нам важно ваше мнение!";
+$eSubject = 'Нам важно ваше мнение!';
 
 $eMessage = "<p>Здравствуйте!</p>
 
@@ -69,7 +67,6 @@ $eMessage = "<p>Здравствуйте!</p>
 Приятной работы!<br/>
 Команда <a href='{$eHost}' target='_blank'>Free-lance.ru</a>";
 
-
 // ----------------------------------------------------------------------------------------------------------------
 // -- Рассылка ----------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------------
@@ -77,37 +74,34 @@ $DB = new DB('plproxy');
 $master = new DB('master');
 $cnt = 0;
 
-
-$sender = $master->row("SELECT * FROM users WHERE login = ?", $sender);
+$sender = $master->row('SELECT * FROM users WHERE login = ?', $sender);
 if (empty($sender)) {
     die("Unknown Sender\n");
 }
 
-
-if ( $pMessage != '' ) {
+if ($pMessage != '') {
     echo "Send personal messages\n";
     $msgid = $DB->val("SELECT masssend(?, ?, '{}', '')", $sender['uid'], $pMessage);
     if (!$msgid) {
         die("Failed!\n");
     }
     $i = 0;
-    while ( $users = $master->col("{$sql} LIMIT 30000 OFFSET ?", $i) ) {
+    while ($users = $master->col("{$sql} LIMIT 30000 OFFSET ?", $i)) {
         $DB->query("SELECT masssend_bind(?, {$sender['uid']}, ?a)", $msgid, $users);
         $i = $i + 30000;
         echo "{$i} users\n";
     }
-    $DB->query("SELECT masssend_commit(?, ?)", $msgid, $sender['uid']); 
+    $DB->query('SELECT masssend_commit(?, ?)', $msgid, $sender['uid']);
     echo "Send email messages\n";
 }
 
-
-if ( $eMessage != '' ) {
-    $mail = new smtp;
-    $mail->subject   = $eSubject;
-    $mail->message   = $eMessage;
+if ($eMessage != '') {
+    $mail = new smtp();
+    $mail->subject = $eSubject;
+    $mail->message = $eMessage;
     $mail->recipient = '';
     $spamid = $mail->send('text/html');
-    if ( !$spamid ) {
+    if (!$spamid) {
         die("Failed!\n");
     }
 
@@ -118,7 +112,7 @@ if ( $eMessage != '' ) {
     while ($row = pg_fetch_assoc($res)) {
         $mail->recipient[] = array(
             'email' => "{$row['uname']} {$row['usurname']} [{$row['login']}] <{$row['email']}>",
-            'extra' => array('USER_NAME' => $row['uname'], 'USER_SURNAME' => $row['usurname'], 'USER_LOGIN' => $row['login'])
+            'extra' => array('USER_NAME' => $row['uname'], 'USER_SURNAME' => $row['usurname'], 'USER_LOGIN' => $row['login']),
         );
         if (++$i >= 30000) {
             $mail->bind($spamid);
@@ -126,7 +120,7 @@ if ( $eMessage != '' ) {
             $i = 0;
             echo "{$c} users\n";
         }
-        $c++;
+        ++$c;
     }
     if ($i) {
         $mail->bind($spamid);

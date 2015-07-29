@@ -1,37 +1,44 @@
 <?php
+
 // $Id: shell_tester_test.php 1505 2007-04-30 23:39:59Z lastcraft $
-require_once(dirname(__FILE__) . '/../autorun.php');
-require_once(dirname(__FILE__) . '/../shell_tester.php');
+require_once dirname(__FILE__).'/../autorun.php';
+require_once dirname(__FILE__).'/../shell_tester.php';
 Mock::generate('SimpleShell');
 
-class TestOfShellTestCase extends ShellTestCase {
-    var $_mock_shell = false;
-    
-    function &_getShell() {
+class TestOfShellTestCase extends ShellTestCase
+{
+    public $_mock_shell = false;
+
+    public function &_getShell()
+    {
         return $this->_mock_shell;
     }
-    
-    function testGenericEquality() {
+
+    public function testGenericEquality()
+    {
         $this->assertEqual('a', 'a');
         $this->assertNotEqual('a', 'A');
     }
-    
-    function testExitCode() {
+
+    public function testExitCode()
+    {
         $this->_mock_shell = &new MockSimpleShell();
         $this->_mock_shell->setReturnValue('execute', 0);
         $this->_mock_shell->expectOnce('execute', array('ls'));
         $this->assertTrue($this->execute('ls'));
         $this->assertExitCode(0);
     }
-    
-    function testOutput() {
+
+    public function testOutput()
+    {
         $this->_mock_shell = &new MockSimpleShell();
         $this->_mock_shell->setReturnValue('execute', 0);
         $this->_mock_shell->setReturnValue('getOutput', "Line 1\nLine 2\n");
         $this->assertOutput("Line 1\nLine 2\n");
     }
-    
-    function testOutputPatterns() {
+
+    public function testOutputPatterns()
+    {
         $this->_mock_shell = &new MockSimpleShell();
         $this->_mock_shell->setReturnValue('execute', 0);
         $this->_mock_shell->setReturnValue('getOutput', "Line 1\nLine 2\n");
@@ -39,4 +46,3 @@ class TestOfShellTestCase extends ShellTestCase {
         $this->assertNoOutputPattern('/line 2/');
     }
 }
-?>

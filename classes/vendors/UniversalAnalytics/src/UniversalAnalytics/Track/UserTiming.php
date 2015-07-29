@@ -1,7 +1,9 @@
-<?php namespace UniversalAnalytics\Track;
+<?php
 
-class UserTiming extends Entity {
+namespace UniversalAnalytics\Track;
 
+class UserTiming extends Entity
+{
     protected $shortName = 'user';
 
     protected $attributes = array(
@@ -21,5 +23,4 @@ class UserTiming extends Entity {
     );
 
     protected $required = array();
-
 }

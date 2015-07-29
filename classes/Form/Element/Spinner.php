@@ -10,9 +10,9 @@ class Zend_Form_Element_Spinner extends Zend_Form_Element_Text
 
         $max = $this->getAttrib('max');
         $min = $this->getAttrib('min');
-        
-        if($max && $min) {
-            $this->addValidator('Between', true, array('max' => $max,'min' => $min));
+
+        if ($max && $min) {
+            $this->addValidator('Between', true, array('max' => $max, 'min' => $min));
         }
     }
 }

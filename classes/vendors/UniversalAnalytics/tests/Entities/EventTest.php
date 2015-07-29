@@ -1,113 +1,111 @@
 <?php
 
-class EventTest extends PHPUnit_Framework_TestCase {
+class EventTest extends PHPUnit_Framework_TestCase
+{
+    public function testIndivisualAttributes()
+    {
+        $entity = new UniversalAnalytics\Track\Event();
 
-	public function testIndivisualAttributes()
-	{
-		$entity = new UniversalAnalytics\Track\Event;
+        $entity->category = 'Video';
+        $entity->action = 'play';
+        $entity->label = 'Cat Video';
+        $entity->value = '0';
 
-		$entity->category = 'Video';
-		$entity->action = 'play';
-		$entity->label = 'Cat Video';
-		$entity->value = '0';
+        $this->assertEquals('Video', $entity->category);
+        $this->assertEquals('play', $entity->action);
+        $this->assertEquals('Cat Video', $entity->label);
+        $this->assertEquals('0', $entity->value);
+    }
 
-		$this->assertEquals('Video', $entity->category);
-		$this->assertEquals('play', $entity->action);
-		$this->assertEquals('Cat Video', $entity->label);
-		$this->assertEquals('0', $entity->value);
-	}
-
-	public function testConstructorAttributes()
-	{
-		$data = array(
-			'category' => 'Video',
-	        'action' => 'play',
-	        'label' => 'Cat Video',
-	        'value' => '0',
-		);
-
-		$entity = new UniversalAnalytics\Track\Event($data);
-
-		$this->assertEquals('Video', $entity->category);
-		$this->assertEquals('play', $entity->action);
-		$this->assertEquals('Cat Video', $entity->label);
-		$this->assertEquals('0', $entity->value);
-	}
-
-	public function testGoogleAttributes()
+    public function testConstructorAttributes()
     {
         $data = array(
-			'category' => 'Video',
-	        'action' => 'play',
-	        'label' => 'Cat Video',
-	        'value' => '0',
-		);
+            'category' => 'Video',
+            'action' => 'play',
+            'label' => 'Cat Video',
+            'value' => '0',
+        );
+
+        $entity = new UniversalAnalytics\Track\Event($data);
+
+        $this->assertEquals('Video', $entity->category);
+        $this->assertEquals('play', $entity->action);
+        $this->assertEquals('Cat Video', $entity->label);
+        $this->assertEquals('0', $entity->value);
+    }
+
+    public function testGoogleAttributes()
+    {
+        $data = array(
+            'category' => 'Video',
+            'action' => 'play',
+            'label' => 'Cat Video',
+            'value' => '0',
+        );
 
         $entity = new UniversalAnalytics\Track\Event($data);
 
         $googleAttr = $entity->toArray(true);
 
         $this->assertEquals('Video', $googleAttr['ec']);
-		$this->assertEquals('play', $googleAttr['ea']);
-		$this->assertEquals('Cat Video', $googleAttr['el']);
-		$this->assertEquals('0', $googleAttr['ev']);
+        $this->assertEquals('play', $googleAttr['ea']);
+        $this->assertEquals('Cat Video', $googleAttr['el']);
+        $this->assertEquals('0', $googleAttr['ev']);
     }
 
-	/**
+    /**
      * @expectedException UniversalAnalytics\Exception\InvalidAttributeException
      */
-	public function testInvalidAttributeThrowsException()
-	{
-		$entity = new UniversalAnalytics\Track\Event();
+    public function testInvalidAttributeThrowsException()
+    {
+        $entity = new UniversalAnalytics\Track\Event();
 
-		$entity->wrongattribute = 'this throws and exception';
-	}
+        $entity->wrongattribute = 'this throws and exception';
+    }
 
-	/**
+    /**
      * @expectedException UniversalAnalytics\Exception\InvalidAttributeException
      */
-	public function testInvalidConstructorAttributeThrowsException()
-	{
-		$badData = array(
-			'anotherbadattribute' => 'this also throws and exception'
-		);
+    public function testInvalidConstructorAttributeThrowsException()
+    {
+        $badData = array(
+            'anotherbadattribute' => 'this also throws and exception',
+        );
 
-		$entity = new UniversalAnalytics\Track\Event($badData);
+        $entity = new UniversalAnalytics\Track\Event($badData);
+    }
 
-	}
+    public function testIsValid()
+    {
+        // ID required
+        $data = array(
+            'category' => 'Video',
+            'action' => 'play',
+        );
 
-	public function testIsValid()
-	{
-		// ID required
-		$data = array(
-			'category' => 'Video',
-			'action' => 'play',
-		);
+        $entity = new UniversalAnalytics\Track\Event($data);
 
-		$entity = new UniversalAnalytics\Track\Event($data);
+        $this->assertTrue($entity->valid());
+    }
 
-		$this->assertTrue($entity->valid());
-	}
+    public function testIsNotValid()
+    {
+        // No Action
+        $dataName = array(
+            'category' => 'Video',
+        );
 
-	public function testIsNotValid()
-	{
-		// No Action
-		$dataName = array(
-			'category' => 'Video',
-		);
+        $entityName = new UniversalAnalytics\Track\Event($dataName);
 
-		$entityName = new UniversalAnalytics\Track\Event($dataName);
+        $this->assertFalse($entityName->valid());
 
-		$this->assertFalse($entityName->valid());
+        // No Category
+        $dataName = array(
+            'action' => 'play',
+        );
 
-		// No Category
-		$dataName = array(
-			'action' => 'play',
-		);
+        $entityName = new UniversalAnalytics\Track\Event($dataName);
 
-		$entityName = new UniversalAnalytics\Track\Event($dataName);
-
-		$this->assertFalse($entityName->valid());
-	}
-
+        $this->assertFalse($entityName->valid());
+    }
 }

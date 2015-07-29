@@ -6,7 +6,7 @@
 ?>
 <p>Здравствуйте.</p>
 
-<p>Заказчик <?php echo $emp_fullname ?> завершил сотрудничество с вами по проекту «<a href="<?php echo $project_url ?>"><?php echo $project_title ?></a>» и оставил <?php echo $rating > 0 ? 'положительный':'отрицательный'?> отзыв:</p>
+<p>Заказчик <?php echo $emp_fullname ?> завершил сотрудничество с вами по проекту «<a href="<?php echo $project_url ?>"><?php echo $project_title ?></a>» и оставил <?php echo $rating > 0 ? 'положительный' : 'отрицательный'?> отзыв:</p>
 <br />
 <p><em><?php echo $text ?></em></p>
 <br />

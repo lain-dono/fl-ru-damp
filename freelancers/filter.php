@@ -1,40 +1,48 @@
-<?
+<?php
 
-    require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/professions.php");
-    require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/country.php");
-    require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/city.php");
-    
+    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/professions.php';
+    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/country.php';
+    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/city.php';
+
     $filter_categories = professions::GetAllGroupsLite(TRUE);
     $filter_subcategories = professions::GetAllProfessions(1);
     $filter_countries = country::GetCountries();
-    if ($mFilter['country']) {$filter_cities = city::GetCities($mFilter['country']);}
-    
+    if ($mFilter['country']) {
+        $filter_cities = city::GetCities($mFilter['country']);
+    }
+
     //
     $all_mirrored_specs = professions::GetAllMirroredProfsId();
     $mirrored_specs = array();
-    for ($is=0; $is<sizeof($all_mirrored_specs); $is++) {
+    for ($is = 0; $is < sizeof($all_mirrored_specs); ++$is) {
         $mirrored_specs[$all_mirrored_specs[$is]['main_prof']] = $all_mirrored_specs[$is]['mirror_prof'];
         $mirrored_specs[$all_mirrored_specs[$is]['mirror_prof']] = $all_mirrored_specs[$is]['main_prof'];
     }
 
-    switch($filter_page) {
+    switch ($filter_page) {
     case 1:
       $frm_action = '/proj/?p=list';
-      $prmd='&amp;';
+      $prmd = '&amp;';
       $has_hidd = FALSE;
       break;
     default:
       $frm_action = '/freelancers/';
-      if(!$prof_id) $prmd='?';
-      else $prmd = "{$prof_link}/".($f_country_lnk ? $f_country_lnk.'/' : '').($f_city_lnk ? $f_city_lnk.'/' : '')."?";
+      if (!$prof_id) {
+          $prmd = '?';
+      } else {
+          $prmd = "{$prof_link}/".($f_country_lnk ? $f_country_lnk.'/' : '').($f_city_lnk ? $f_city_lnk.'/' : '').'?';
+      }
     }
-    
+
     //создаем массив специализаций (для фильтра на главной он уже есть в $prfs, для фильтра в проектах фрилансера его нет, поэтому делаем проверку на существование
-    if (!sizeof($profs)) {$all_specs = professions::GetAllProfessions("", 0, 1);}
-    else                 {$all_specs = $profs;}
-    
+    if (!sizeof($profs)) {
+        $all_specs = professions::GetAllProfessions('', 0, 1);
+    } else {
+        $all_specs = $profs;
+    }
+
     $rank = freelancers_filters::getRankCount($prof_id);
-    
+
 ?>
 <script language="javascript" type="text/javascript">
 
@@ -46,11 +54,11 @@ window.onload = function() {
     
    
 }*/
-<? if($mFilter['success_sbr'][0]==1 || $mFilter['success_sbr'][1]==1 || $mFilter['success_sbr'][2]==1 || $mFilter['success_sbr'][3]==1): ?>
+<?php if ($mFilter['success_sbr'][0] == 1 || $mFilter['success_sbr'][1] == 1 || $mFilter['success_sbr'][2] == 1 || $mFilter['success_sbr'][3] == 1): ?>
 var vsbr = 1;
-<? else:?>
+<?php else:?>
 var vsbr = 0;
-<? endif; ?>
+<?php endif; ?>
 
 
 function FilterCatalogAddCategoryType()
@@ -73,38 +81,40 @@ var maxCostBlock = 12;
 var filter_user_specs = new Array();
 var filter_specs = new Array();
 var filter_specs_ids = new Array();
-<?
+<?php
 $spec_now = 0;
-for ($i=0; $i<sizeof($all_specs); $i++)
-{
-  if ($all_specs[$i]['groupid'] != $spec_now) {
-    $spec_now = $all_specs[$i]['groupid'];
-    echo "filter_specs[".$all_specs[$i]['groupid']."]=[";
-  }
+for ($i = 0; $i < sizeof($all_specs); ++$i) {
+    if ($all_specs[$i]['groupid'] != $spec_now) {
+        $spec_now = $all_specs[$i]['groupid'];
+        echo 'filter_specs['.$all_specs[$i]['groupid'].']=[';
+    }
 
-  
-  echo "[".$all_specs[$i]['id'].",'".$all_specs[$i]['profname']."']";
+    echo '['.$all_specs[$i]['id'].",'".$all_specs[$i]['profname']."']";
 
-  if ($all_specs[$i+1]['groupid'] != $spec_now) {echo "];";}
-  else {echo ",";}
+    if ($all_specs[$i + 1]['groupid'] != $spec_now) {
+        echo '];';
+    } else {
+        echo ',';
+    }
 }
 
 $spec_now = 0;
-for ($i=0; $i<sizeof($all_specs); $i++)
-{
-  if ($all_specs[$i]['groupid'] != $spec_now) {
-    $spec_now = $all_specs[$i]['groupid'];
-    echo "filter_specs_ids[".$all_specs[$i]['groupid']."]={";
-  }
+for ($i = 0; $i < sizeof($all_specs); ++$i) {
+    if ($all_specs[$i]['groupid'] != $spec_now) {
+        $spec_now = $all_specs[$i]['groupid'];
+        echo 'filter_specs_ids['.$all_specs[$i]['groupid'].']={';
+    }
 
-  
-  echo "".$all_specs[$i]['id'].":1";
+    echo ''.$all_specs[$i]['id'].':1';
 
-  if ($all_specs[$i+1]['groupid'] != $spec_now) {echo "};";}
-  else {echo ",";}
+    if ($all_specs[$i + 1]['groupid'] != $spec_now) {
+        echo '};';
+    } else {
+        echo ',';
+    }
 }
 
-$cost_type = array(1 => "За месяц", 2 => "За 1000 знаков", 3 => "За Проект", 4 => "За час");
+$cost_type = array(1 => 'За месяц', 2 => 'За 1000 знаков', 3 => 'За Проект', 4 => 'За час');
 //$curr_type = array("Руб", "USD", "Euro");
 $curr_type = array(
     array('name' => 'Руб', 'value' => 2),
@@ -112,45 +122,45 @@ $curr_type = array(
     array('name' => 'Euro', 'value' => 1),
 );
 ?>
-<?php require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/freelancers_filter.php";?>
+<?php require_once $_SERVER['DOCUMENT_ROOT'].'/classes/freelancers_filter.php';?>
 var filter_mirror_specs = <?=freelancers_filters::getMirroredSpecsJsObject($all_mirrored_specs); ?>;
 var filter_bullets = [[],[]];
 
-<? 
-if (sizeof($gFilter)) {	
-  for ($ci=0; $ci<2; $ci++) {
-    $ph_categories[$ci] = array();
-    if (sizeof($gFilter[$ci])) {
-      foreach ($gFilter[$ci] as $fkey => $fvalue) {
-       if ($fkey) {
-        if (!freelancers_filters::mirrorExistsInArray($fkey, $ph_categories[$ci], $mirrored_specs))
-        {
-          if (!$fvalue)
-          {
-            $proftitle = professions::GetGroup($fkey, $error);
-            $proftitle = $proftitle['name'];
-          } else {
-            $proftitle = professions::GetProfName($fkey);
-            $prof_group = professions::GetProfField($fkey, 'prof_group');
-          }
+<?php 
+if (sizeof($gFilter)) {
+    for ($ci = 0; $ci < 2; ++$ci) {
+        $ph_categories[$ci] = array();
+        if (sizeof($gFilter[$ci])) {
+            foreach ($gFilter[$ci] as $fkey => $fvalue) {
+                if ($fkey) {
+                    if (!freelancers_filters::mirrorExistsInArray($fkey, $ph_categories[$ci], $mirrored_specs)) {
+                        if (!$fvalue) {
+                            $proftitle = professions::GetGroup($fkey, $error);
+                            $proftitle = $proftitle['name'];
+                        } else {
+                            $proftitle = professions::GetProfName($fkey);
+                            $prof_group = professions::GetProfField($fkey, 'prof_group');
+                        }
 
-?>
+                        ?>
 filter_bullets[<?=$fvalue?>][<?=$fkey?>] = new Array();
 filter_bullets[<?=$fvalue?>][<?=$fkey?>]['type'] = <?=$fvalue?>;
 filter_bullets[<?=$fvalue?>][<?=$fkey?>]['title'] = '<?=$proftitle?>';
-filter_bullets[<?=$fvalue?>][<?=$fkey?>]['parentid'] = '<?=(!($fvalue)?0:$prof_group)?>';
-<?
+filter_bullets[<?=$fvalue?>][<?=$fkey?>]['parentid'] = '<?=(!($fvalue) ? 0 : $prof_group)?>';
+<?php
           if ($mirrored_specs[$fkey]) {
-            ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['mirror'] = <?=$mirrored_specs[$fkey]?>;<?
+              ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['mirror'] = <?=$mirrored_specs[$fkey]?>;<?php
+
           } else {
-            ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['mirror'] = 0;<?
+              ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['mirror'] = 0;<?php
+
           }
+                    }
+                    $ph_categories[$ci][] = $fkey;
+                }
+            }
         }
-        $ph_categories[$ci][] = $fkey;
-       }
-      }
     }
-  }
 }
 ?>
 
@@ -222,18 +232,20 @@ function addCost(o, inp, def) {
     mSpan.className = "flt-prm8";
     
     hBox = '<span class="flt-prm9"> <select name="cost_type[]">';
-    <? foreach($cost_type as $k=>$v): ?>
+    <?php foreach ($cost_type as $k => $v): ?>
     if(<?=$k?> == inp.ct) { var s = 'selected';}
     else {var s = '';}
     hBox += '<option value="<?=$k?>" '+s+'><?=$v?></option>';
-    <? endforeach; ?>
+    <?php endforeach; ?>
     hBox += '</select> <input type="text" size="10" maxlength="6" name="from_cost[]" class="" value="'+inp.fc+'"/></span>&nbsp;&mdash;&nbsp; ';
     hBox += '<span class="flt-prm10"><input type="text" maxlength="6" name="to_cost[]" size="10" class="" value="'+inp.tc+'" />&nbsp;';
     hBox += '<select name="curr_type[]">';
-    <? foreach ($curr_type as $k=>$v) { ?>
+    <?php foreach ($curr_type as $k => $v) {
+    ?>
         var s = <?=$v['value']?> == inp.cut ? 'selected' : '';
         hBox += '<option value="<?=$v['value']?>" '+s+'><?=$v['name']?></option>';
-    <? } ?>
+    <?php 
+} ?>
     hBox += '</select></span></span>';
     
     mSpan.innerHTML = hBox;
@@ -293,32 +305,32 @@ window.addEvent('domready', function() {
 </script>
 
 <?php
-$filter_action = '/freelancers/'.($prof_link? "{$prof_link}/": ($prof_id? '?prof='.$prof_id: ''));
+$filter_action = '/freelancers/'.($prof_link ? "{$prof_link}/" : ($prof_id ? '?prof='.$prof_id : ''));
 
 if ($show_all_freelancers) {
-  $filter_action .= strpos($filter_action, '?') !== FALSE?'&show=all':'?show=all';
+    $filter_action .= strpos($filter_action, '?') !== false ? '&show=all' : '?show=all';
 }
 ?>
 
 <form id="frm" onsubmit="return false;" name="f_filter" action="<?=$filter_action?>" method="POST">
-        <div class="flt-out <?=(($filter_show)?"flt-show":"flt-hide")?>" id="flt-cat" page="<?=$filter_page?>">
+        <div class="flt-out <?=(($filter_show) ? 'flt-show' : 'flt-hide')?>" id="flt-cat" page="<?=$filter_page?>">
             <input type="hidden" name="action" value="postfilter" />
             <b class="b1"></b>
             <b class="b2"></b>
             <div class="flt-bar">
-                 <a href="javascript: void(0);" class="flt-tgl-lnk"><?=(($filter_show)?"Свернуть":"Развернуть")?></a>
+                 <a href="javascript: void(0);" class="flt-tgl-lnk"><?=(($filter_show) ? 'Свернуть' : 'Развернуть')?></a>
                  <h3>Фильтр 
-                 <? if($filter_apply): ?>
+                 <?php if ($filter_apply): ?>
                     <span class="flt-stat flt-on">включен&nbsp;&nbsp;&nbsp;<a href="<?=$frm_action?><?=$prmd?>action=deletefilter<?=$filter_query?>" onClick="_gaq.push(['_trackEvent', 'User', '<?=(is_emp() ? 'Employer' : (get_uid(false) ? 'Freelance' : 'Unauthorized'))?>', 'button_filter_delete_catalog']); ga('send', 'event', '<?=(is_emp() ? 'Employer' : (get_uid(false) ? 'Freelance' : 'Unauthorized'))?>', 'button_filter_delete_catalog');" class="flt-lnk">отключить</a></span>
-                 <? else: ?>
+                 <?php else: ?>
                     <span class="flt-stat flt-off">отключен&nbsp;&nbsp;&nbsp;<a href="<?=$frm_action?><?=$prmd?>action=activatefilter<?=$filter_query?>" onClick="_gaq.push(['_trackEvent', 'User', '<?=(is_emp() ? 'Employer' : (get_uid(false) ? 'Freelance' : 'Unauthorized'))?>', 'button_filter_include_catalog']); ga('send', 'event', '<?=(is_emp() ? 'Employer' : (get_uid(false) ? 'Freelance' : 'Unauthorized'))?>', 'button_filter_include_catalog');" class="flt-lnk">включить</a></span>
-                 <? endif; ?>
+                 <?php endif; ?>
 								 </h3>
                  <?/* <span class="flt-stat flt-off">отключен&nbsp;&nbsp;&nbsp;<a href="" class="flt-lnk">включить</a></span> <!-- <span class="flt-stat flt-on">включен&nbsp;&nbsp;&nbsp;<a href="" class="flt-lnk">отключить</a></span> --> */ ?>
             </div>
             <div class="flt-cnt">
 
-<? if (!$prof_id &&!$prof_group_id): ?>
+<?php if (!$prof_id && !$prof_group_id): ?>
                <div class="flt-block flt-b-fc">
                     <label class="flt-lbl">Специализации:</label>
                     <div class="flt-b-in">
@@ -327,26 +339,35 @@ if ($show_all_freelancers) {
                              <span class="flt-prm">
                                <select class="flt-p-sel" name="pf_category" id="pf_category" onChange="FilterSubCategory(this.value)">
                                    <option value="0">Все разделы</option>
-                                 <? foreach($filter_categories as $cat) { if($cat['id']<=0) continue; ?>
+                                 <?php foreach ($filter_categories as $cat) {
+    if ($cat['id'] <= 0) {
+        continue;
+    }
+    ?>
                                  <option value="<?=$cat['id']?>"><?=$cat['name']?></option>
-                                 <? } ?>
+                                 <?php 
+} ?>
                                </select>
                              </span>
                              <span class="flt-prm" id="frm_subcategory">
                                <select class="flt-p-sel" name="pf_subcategory" id="pf_subcategory" disabled="disabled">
                                  <option value="0">Все подкатегории</option>
-                                 <? if(false) for ($i=0; $i<sizeof($filter_subcategories); $i++) { ?>
+                                 <?php if (false) {
+    for ($i = 0; $i < sizeof($filter_subcategories); ++$i) {
+        ?>
                                  <option value="<?=$filter_subcategories[$i]['id']?>"><?=$filter_subcategories[$i]['profname']?></option>
-                                 <? } ?>
+                                 <?php 
+    }
+} ?>
                                </select>
                              </span>
                          </div>
                          <div class="flt-spec-list " id="pf_specs"></div>
                     </div>
                   </div>
-<? else: ?>
+<?php else: ?>
 <div class="flt-spec-list " id="pf_specs" style="display:none"></div>
-<? endif; ?>
+<?php endif; ?>
                   <div class="flt-block<?=(!$prof_id ? '' : ' flt-b-fc')?>">
                        <label class="flt-lbl">Ключевые слова:</label>
                        <div class="flt-b-in">
@@ -371,31 +392,31 @@ if ($show_all_freelancers) {
                        <div class="flt-b-in" id="cost_box"></div>
                        
                        <script type="text/javascript"> 
-                           <? if($cFilter): ?>
-                           <? foreach($cFilter as $c=>$v): ?>
+                           <?php if ($cFilter): ?>
+                           <?php foreach ($cFilter as $c => $v): ?>
                            <?if($c==0):?>
-                           var b = addCost(undefined, {ct:<?=$v['type_date']?>, fc:<?=($v['cost_from']==0?"''":$v['cost_from'])?>, tc:<?=($v['cost_to']==0?"''":$v['cost_to'])?>, cut:<?=$v['cost_type']?>}, <?=count($cFilter)>1?1:0?>);
+                           var b = addCost(undefined, {ct:<?=$v['type_date']?>, fc:<?=($v['cost_from'] == 0 ? "''" : $v['cost_from'])?>, tc:<?=($v['cost_to'] == 0 ? "''" : $v['cost_to'])?>, cut:<?=$v['cost_type']?>}, <?=count($cFilter) > 1 ? 1 : 0?>);
                            <?else:?>
-                           var m = addCost(b, {ct:<?=$v['type_date']?>, fc:<?=($v['cost_from']==0?"''":$v['cost_from'])?>, tc:<?=($v['cost_to']==0?"''":$v['cost_to'])?>, cut:<?=$v['cost_type']?>});
+                           var m = addCost(b, {ct:<?=$v['type_date']?>, fc:<?=($v['cost_from'] == 0 ? "''" : $v['cost_from'])?>, tc:<?=($v['cost_to'] == 0 ? "''" : $v['cost_to'])?>, cut:<?=$v['cost_type']?>});
                            <?endif;?>
                            <?if(count($cFilter)>1):?>b = m;<?endif;?>
-                           <? endforeach; ?>
-                           <? else: ?>
+                           <?php endforeach; ?>
+                           <?php else: ?>
                            addCost(); 
-                           <? endif; ?>
+                           <?php endif; ?>
                        </script>
                   </div>
                   <div class="flt-block">
                         <label class="flt-lbl">Опыт работы:</label>
                         <div class="flt-b-in">
-                            <span class="flt-prm"><input class="flt-prm3" type="text" size="10" name="exp[]" value="<?=$mFilter['exp_from']==0?'':$mFilter['exp_from']?>" maxlength="3" /> &mdash; <input class="flt-prm3" type="text" size="10" maxlength="3" name="exp[]" value="<?=$mFilter['exp_to']==0?'':$mFilter['exp_to']?>" />&nbsp; лет</span>
+                            <span class="flt-prm"><input class="flt-prm3" type="text" size="10" name="exp[]" value="<?=$mFilter['exp_from'] == 0 ? '' : $mFilter['exp_from']?>" maxlength="3" /> &mdash; <input class="flt-prm3" type="text" size="10" maxlength="3" name="exp[]" value="<?=$mFilter['exp_to'] == 0 ? '' : $mFilter['exp_to']?>" />&nbsp; лет</span>
                        </div>
                   </div>
                   <div class="flt-block">
                         <label class="flt-lbl">Имя или логин:</label>
                         <div class="flt-b-in">
                             <span class="flt-prm11">
-                                <span class="flt-prm">Возраст: <input type="text" size="10" maxlength="3" name="age[]" value="<?=$mFilter['age_from']==0?'':$mFilter['age_from']?>" class="flt-prm3" /> &mdash; <input type="text" size="10" maxlength="3" name="age[]" value="<?=$mFilter['age_to']==0?'':$mFilter['age_to']?>" class="flt-prm3" />&nbsp; лет</span>
+                                <span class="flt-prm">Возраст: <input type="text" size="10" maxlength="3" name="age[]" value="<?=$mFilter['age_from'] == 0 ? '' : $mFilter['age_from']?>" class="flt-prm3" /> &mdash; <input type="text" size="10" maxlength="3" name="age[]" value="<?=$mFilter['age_to'] == 0 ? '' : $mFilter['age_to']?>" class="flt-prm3" />&nbsp; лет</span>
                                 <input class="flt-prm4" type="text" size="10" name="login" value="<?=htmlspecialchars(stripslashes($mFilter['login']))?>" />
                             </span>
                         </div>
@@ -414,7 +435,7 @@ if ($show_all_freelancers) {
                                  </span>
                             </div>
                             <div class="flt-b-row flt-b-row-mb">
-                                <label><input class="i-chk" type="checkbox" name="in_office" value="1" <?=($mFilter['in_office']=='t'?'checked="checked"':'')?>/> Ищет работу в офисе</label>
+                                <label><input class="i-chk" type="checkbox" name="in_office" value="1" <?=($mFilter['in_office'] == 't' ? 'checked="checked"' : '')?>/> Ищет работу в офисе</label>
                             </div>
                        </div>
                   </div>
@@ -422,18 +443,20 @@ if ($show_all_freelancers) {
                        <label class="flt-lbl">Дополнительно:</label>
                        <div class="flt-b-in">
                             <ul class="flt-more c">
-                                <li><div class="b-check"><input class="b-check__input" type="checkbox" name="only_tu" value="1" <?=($mFilter['only_tu']=="t"?'checked="checked"':'')?>/> <label class="b-check__label b-check__label_bold">С Типовыми услугами</label></div></li>
-                                 <? if(get_uid(false)) { ?>
-                                 <li><div class="b-check"><input class="b-check__input" type="checkbox" name="in_fav" value="1" <?=($mFilter['in_fav']=="t"?'checked="checked"':'')?>/> <label class="b-check__label">У меня в избранных</label></div></li>
-                                 <? } ?>
-                                 <li><div class="b-check"><input class="b-check__input" type="checkbox" name="only_free" value="1" <?=($mFilter['only_free']=="t"?'checked="checked"':'')?>/> <label class="b-check__label">Только свободные</label></div></li>
-                                 <li><div class="b-check"><input class="b-check__input" type="checkbox" name="is_pro" value="1" <?=($mFilter['is_pro']=="t"?'checked="checked"':'')?>/> <label class="b-check__label">С <?= view_pro('', false, true, 'платным аккаунтом')?> аккаунтом</label></div></li>
-                                 <?/*<li class="flt-more-b"><div class="b-check"><input class="b-check__input" type="checkbox" name="only_online" value="1" <?=($mFilter['only_online']=="t"?'checked="checked"':'')?>/> <label class="b-check__label">Сейчас на сайте</label></div></li> */?>
-                                 <li><div class="b-check"><input class="b-check__input" type="checkbox" name="is_preview" value="1" <?=($mFilter['is_preview']=="t"?'checked="checked"':'')?>/> <label class="b-check__label">Только с примерами работ</label></div></li>
-                                 <li><div class="b-check"><input class="b-check__input" type="checkbox" name="is_verify" value="1" <?=($mFilter['is_verify']=="t"?'checked="checked"':'')?> /> <label class="b-check__label">С <?= view_verify('подтвержденными паспортными данными', '')?> аккаунтом</label></div></li>
+                                <li><div class="b-check"><input class="b-check__input" type="checkbox" name="only_tu" value="1" <?=($mFilter['only_tu'] == 't' ? 'checked="checked"' : '')?>/> <label class="b-check__label b-check__label_bold">С Типовыми услугами</label></div></li>
+                                 <?php if (get_uid(false)) {
+    ?>
+                                 <li><div class="b-check"><input class="b-check__input" type="checkbox" name="in_fav" value="1" <?=($mFilter['in_fav'] == 't' ? 'checked="checked"' : '')?>/> <label class="b-check__label">У меня в избранных</label></div></li>
+                                 <?php 
+} ?>
+                                 <li><div class="b-check"><input class="b-check__input" type="checkbox" name="only_free" value="1" <?=($mFilter['only_free'] == 't' ? 'checked="checked"' : '')?>/> <label class="b-check__label">Только свободные</label></div></li>
+                                 <li><div class="b-check"><input class="b-check__input" type="checkbox" name="is_pro" value="1" <?=($mFilter['is_pro'] == 't' ? 'checked="checked"' : '')?>/> <label class="b-check__label">С <?= view_pro('', false, true, 'платным аккаунтом')?> аккаунтом</label></div></li>
+                                 <?/*<li class="flt-more-b"><div class="b-check"><input class="b-check__input" type="checkbox" name="only_online" value="1" <?=($mFilter['only_online'] == 't' ? 'checked="checked"' : '')?>/> <label class="b-check__label">Сейчас на сайте</label></div></li> */?>
+                                 <li><div class="b-check"><input class="b-check__input" type="checkbox" name="is_preview" value="1" <?=($mFilter['is_preview'] == 't' ? 'checked="checked"' : '')?>/> <label class="b-check__label">Только с примерами работ</label></div></li>
+                                 <li><div class="b-check"><input class="b-check__input" type="checkbox" name="is_verify" value="1" <?=($mFilter['is_verify'] == 't' ? 'checked="checked"' : '')?> /> <label class="b-check__label">С <?= view_verify('подтвержденными паспортными данными', '')?> аккаунтом</label></div></li>
                                  
-                                 <li><div class="b-check"><input class="b-check__input" type="checkbox" name="sbr_is_positive" value="1" <?=($mFilter['sbr_is_positive']=="t"?'checked="checked"':'')?>/> <label class="b-check__label">С положительными рекомендациями</label></div></li>
-                                <li><div class="b-check"><input class="b-check__input" type="checkbox" name="sbr_not_negative" value="1" <?=($mFilter['sbr_not_negative']=="t"?'checked="checked"':'')?>/> <label class="b-check__label">Без отрицательных рекомендаций</label></div></li>
+                                 <li><div class="b-check"><input class="b-check__input" type="checkbox" name="sbr_is_positive" value="1" <?=($mFilter['sbr_is_positive'] == 't' ? 'checked="checked"' : '')?>/> <label class="b-check__label">С положительными рекомендациями</label></div></li>
+                                <li><div class="b-check"><input class="b-check__input" type="checkbox" name="sbr_not_negative" value="1" <?=($mFilter['sbr_not_negative'] == 't' ? 'checked="checked"' : '')?>/> <label class="b-check__label">Без отрицательных рекомендаций</label></div></li>
                             </ul>
                            
                        </div>
@@ -450,24 +473,27 @@ if ($show_all_freelancers) {
         </div>
      </form>   
      <!-- Фильтр по ключевому слову --> 
-     <? if($key_word) { ?>
+     <?php if ($key_word) {
+    ?>
 	 <div class="cat-flt-key"> 
 	    Просмотр результатов по ключевому слову: <strong><?=stripslashes(htmlspecialchars($key_word))?></strong><br /> 
 	    <a href="/freelancers_new" class="lnk-dot-blue">Сбросить фильтр по ключевому слову</a> 
 	 </div>
-	 <? } ?> 
+	 <?php 
+} ?> 
 	 <!-- Конец фильтра по ключевому слову --> 
-     <? if($hhf) { ?>
+     <?php if ($hhf) {
+    ?>
 	 <div class="cat-flt-key"> 
 	    Просмотр результатов по параметрам поиска HH.RU<br /> 
 	    <a href="/freelancers_new" class="lnk-dot-blue">Сбросить</a> 
 	 </div>
-	 <? } ?> 
+	 <?php 
+} ?> 
 <script language="javascript">
 FilterAddBullet(0,0,0,0);
 </script>    
-<?
-
+<?php
 
 
 ?>

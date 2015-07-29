@@ -8,14 +8,16 @@ window.addEvent('domready',
         setMinAvgMaxBudgetPrice();
         changeBudgetSlider();
         
-        <?php if($data['kind'] == 7) { ?>
+        <?php if ($data['kind'] == 7) {
+    ?>
         setTypeProject(1);
-        <?php }//if?>
+        <?php 
+}//if?>
     }
 ); 
   
-var pTopPrice = <?= round($pTopPrice,2)?>;
-var cTopPrice = <?= round($cTopPrice,2);?>;
+var pTopPrice = <?= round($pTopPrice, 2)?>;
+var cTopPrice = <?= round($cTopPrice, 2);?>;
   
 var fRUB = <?=$prj_exrates['41']?>;
 var fEUR = <?=$prj_exrates['31']?>;
@@ -34,14 +36,15 @@ budget_price['prj']['max'] = new Array();
 budget_price['hour']['min'] = new Array();
 budget_price['hour']['avg'] = new Array();
 budget_price['hour']['max'] = new Array();
-<? foreach ($categories as $cat) { ?>
+<?php foreach ($categories as $cat) {
+    ?>
     budget_price['prj']['min'][<?=$cat['id']?>] = new Array();
     budget_price['prj']['avg'][<?=$cat['id']?>] = new Array();
     budget_price['prj']['max'][<?=$cat['id']?>] = new Array();
     budget_price['hour']['min'][<?=$cat['id']?>] = new Array();
     budget_price['hour']['avg'][<?=$cat['id']?>] = new Array();
     budget_price['hour']['max'][<?=$cat['id']?>] = new Array();
-    <?
+    <?php
     $ncount_prj = 0;
     $ncount_hour = 0;  
     $nsum_min_prj = 0;
@@ -51,39 +54,53 @@ budget_price['hour']['max'] = new Array();
     $nsum_max_hour = 0;
     $nsum_avg_hour = 0;
     ?>
-    <? if(is_array($professions[$cat['id']])) foreach ($professions[$cat['id']] as $subcat) { ?>
+    <?php if (is_array($professions[$cat['id']])) {
+    foreach ($professions[$cat['id']] as $subcat) {
+        ?>
         budget_price['hour']['min'][<?=$cat['id']?>][<?=$subcat['id']?>] = <?=$subcat['min_cost_hour']?>;
         budget_price['hour']['avg'][<?=$cat['id']?>][<?=$subcat['id']?>] = <?=$subcat['avg_cost_hour']?>;
         budget_price['hour']['max'][<?=$cat['id']?>][<?=$subcat['id']?>] = <?=$subcat['max_cost_hour']?>;
         budget_price['prj']['min'][<?=$cat['id']?>][<?=$subcat['id']?>] = <?=$subcat['min_cost_prj']?>;
         budget_price['prj']['avg'][<?=$cat['id']?>][<?=$subcat['id']?>] = <?=$subcat['avg_cost_prj']?>;
         budget_price['prj']['max'][<?=$cat['id']?>][<?=$subcat['id']?>] = <?=$subcat['max_cost_prj']?>;
-        <?
+        <?php
         $nsum_min_prj = $nsum_min_prj + $subcat['min_cost_prj'];
         $nsum_max_prj = $nsum_max_prj + $subcat['max_cost_prj'];
         $nsum_avg_prj = $nsum_avg_prj + $subcat['avg_cost_prj'];
         $nsum_min_hour = $nsum_min_hour + $subcat['min_cost_hour'];
         $nsum_max_hour = $nsum_max_hour + $subcat['max_cost_hour'];
         $nsum_avg_hour = $nsum_avg_hour + $subcat['avg_cost_hour'];
-        if($subcat['avg_cost_prj']!=0) $ncount_prj++;
-        if($subcat['avg_cost_hour']!=0) $ncount_hour++;
+        if ($subcat['avg_cost_prj'] != 0) {
+            $ncount_prj++;
+        }
+        if ($subcat['avg_cost_hour'] != 0) {
+            $ncount_hour++;
+        }
         ?>
-    <? } ?>
-    <?
-    if($ncount_prj==0) $ncount_prj = 1;
-    if($ncount_hour==0) $ncount_hour = 1;
+    <?php 
+    }
+}
     ?>
-    budget_price['prj']['min'][<?=$cat['id']?>][0] = <?=round(($nsum_min_prj/$ncount_prj),0)?>;
-    budget_price['prj']['avg'][<?=$cat['id']?>][0] = <?=round(($nsum_avg_prj/$ncount_prj),0)?>;
-    budget_price['prj']['max'][<?=$cat['id']?>][0] = <?=round(($nsum_max_prj/$ncount_prj),0)?>;
-    budget_price['hour']['min'][<?=$cat['id']?>][0] = <?=round(($nsum_min_hour/$ncount_hour),0)?>;
-    budget_price['hour']['avg'][<?=$cat['id']?>][0] = <?=round(($nsum_avg_hour/$ncount_hour),0)?>;
-    budget_price['hour']['max'][<?=$cat['id']?>][0] = <?=round(($nsum_max_hour/$ncount_hour),0)?>;
-<? } ?>
+    <?php
+    if ($ncount_prj == 0) {
+        $ncount_prj = 1;
+    }
+    if ($ncount_hour == 0) {
+        $ncount_hour = 1;
+    }
+    ?>
+    budget_price['prj']['min'][<?=$cat['id']?>][0] = <?=round(($nsum_min_prj / $ncount_prj), 0)?>;
+    budget_price['prj']['avg'][<?=$cat['id']?>][0] = <?=round(($nsum_avg_prj / $ncount_prj), 0)?>;
+    budget_price['prj']['max'][<?=$cat['id']?>][0] = <?=round(($nsum_max_prj / $ncount_prj), 0)?>;
+    budget_price['hour']['min'][<?=$cat['id']?>][0] = <?=round(($nsum_min_hour / $ncount_hour), 0)?>;
+    budget_price['hour']['avg'][<?=$cat['id']?>][0] = <?=round(($nsum_avg_hour / $ncount_hour), 0)?>;
+    budget_price['hour']['max'][<?=$cat['id']?>][0] = <?=round(($nsum_max_hour / $ncount_hour), 0)?>;
+<?php 
+} ?>
 
 </script>
 
-<?
+<?php
 if ($error['name']) {
     $el = 'prj-name-hashtag';
 } elseif ($error['descr']) {
@@ -123,24 +140,26 @@ window.addEvent('domready', function(){
 <div class="b-layout__right b-layout__right_width_72ps b-layout__right_float_right ">
     <form method="post" enctype="multipart/form-data" id="frm" name="frm">
         <input type="hidden" name="action" value="create_project"/>
-        <input type="hidden" name="kind" id="kind" value="<?= $data['kind'] == 7 ? "contest" : "project"; ?>">
+        <input type="hidden" name="kind" id="kind" value="<?= $data['kind'] == 7 ? 'contest' : 'project'; ?>">
         <input type="hidden" name="r_category" value="<?= $category; ?>" id="h_category">
         <input type="hidden" name="r_subcategory" value="<?= $subcategory; ?>" id="h_subcategory">
         <input type="hidden" name="r_priceby" value="<?= $data['priceby'] !== null ? $data['priceby'] : -1?>" id="r_priceby">
         <input type="hidden" name="r_currency" value="<?= $data['currency'] !== null ? $data['currency'] : -1?>" id="r_currency">
-        <?php if($data['logo_id']) { ?>
+        <?php if ($data['logo_id']) {
+    ?>
         <input type="hidden" name="logo_id" value="<?= $data['logo_id']?>" id="logo_id">
-        <?php }//if?>
+        <?php 
+}//if?>
     <div class="b-layout__txt b-layout__txt_padbot_40">Самый простой способ найти исполнителя – опубликовать проект. Проекты бывают трех типов: фри-ланс-проект, конкурс и вакансия в офис.</div>
     <div class="b-buttons b-buttons_margleft_-4 b-buttons_padbot_20">
-        <a href="javascript:void(0)" class="b-button b-button_rectangle_color_transparent b-button_toggle <?= $data['kind'] != 7 ? "b-button_active" : ""; ?> " onclick="setTypeProject(0)">
+        <a href="javascript:void(0)" class="b-button b-button_rectangle_color_transparent b-button_toggle <?= $data['kind'] != 7 ? 'b-button_active' : ''; ?> " onclick="setTypeProject(0)">
             <span class="b-button__b1">
                 <span class="b-button__b2 b-button__b2_padlr_10">
                     <span class="b-button__txt">Добавить проект</span>
                 </span>
             </span>
         </a>&#160;&#160;
-        <a href="javascript:void(0)" class="b-button b-button_rectangle_color_transparent b-button_toggle  <?= $data['kind'] == 7 ? "b-button_active" : ""; ?>" onclick="setTypeProject(1)">
+        <a href="javascript:void(0)" class="b-button b-button_rectangle_color_transparent b-button_toggle  <?= $data['kind'] == 7 ? 'b-button_active' : ''; ?>" onclick="setTypeProject(1)">
             <span class="b-button__b1">
                 <span class="b-button__b2 b-button__b2_padlr_10">
                     <span class="b-button__txt">Добавить конкурс</span>
@@ -152,14 +171,16 @@ window.addEvent('domready', function(){
     <div class="b-layout__txt b-layout__txt_padbot_15 b-layout_hide contest-elm">Создайте <span class="b-layout__bold">конкурс</span>, если хотите выбрать лучшего исполнителя по результатам выполнения тестового задания. В описании конкурса нужно указать суть тестовой задачи, условия проведения конкурса и критерии выбора победителя.</div>
     <div class="b-layout__txt b-layout__txt_padbot_10 b-layout_hide contest-elm">Публикация конкурса платная &mdash; <span class="b-layout__txt b-layout__txt_bold b-layout__txt_color_fd6c30"><?= new_projects::getKonkursPrice();?> рублей</span></div>
     <div class="b-check b-check_padtop_3 b-check_padbot_20 project-elm">
-        <input id="in_office" class="b-check__input" name="in_office" type="checkbox" value="1" <?= $data['kind'] == 4 ? "checked='checked'" : ""?>/>
+        <input id="in_office" class="b-check__input" name="in_office" type="checkbox" value="1" <?= $data['kind'] == 4 ? "checked='checked'" : ''?>/>
         <label for="in_office" class="b-check__label b-check__label_fontsize_13">Исполнитель нужен для работы в офисе</label>
     </div>
-    <? if ( $error['project'] ) { ?>
+    <?php if ($error['project']) {
+    ?>
     <div class="b-layout__txt b-layout__txt_color_c4271f b-layout__txt_padbot_10">
         <span class="b-form__error"></span> <?= $error['project']?>
     </div>
-    <? } ?>
+    <?php 
+} ?>
     <div class="b-layout b-layout_margleft_-80">
         <table class="b-layout__table b-layout__table_width_full" border="0" cellpadding="0" cellspacing="0">
             <tr class="b-layout__tr">
@@ -172,7 +193,8 @@ window.addEvent('domready', function(){
                     </div>
                 </td>
             </tr>
-            <? if ( $error['name'] ) { ?>
+            <?php if ($error['name']) {
+    ?>
             <tr id="errPrjField_name" class="b-layout__tr">
                 <td class="b-layout__left b-layout__left_width_55"></td>
                 <td class="">
@@ -181,7 +203,8 @@ window.addEvent('domready', function(){
                     </div>
                 </td>
             </tr>
-            <? } ?>
+            <?php 
+} ?>
             <tr class="b-layout__tr">
                 <td class="b-layout__left b-layout__left_width_80 b-layout__left_padbot_15"><div class="b-layout__txt b-layout__txt_padtop_1" id="condition_descr">Задание</div></td>
                 <td class="b-layout__right b-layout__right_padbot_15">
@@ -190,7 +213,8 @@ window.addEvent('domready', function(){
                     </div>
                 </td>
             </tr>
-            <? if ( $error['descr'] ) { ?>
+            <?php if ($error['descr']) {
+    ?>
             <tr id="errPrjField_descr" class="b-layout__tr">
                 <td class="b-layout__left b-layout__left_width_55"></td>
                 <td class="">
@@ -199,7 +223,8 @@ window.addEvent('domready', function(){
                     </div>
                 </td>
             </tr>
-            <? } ?>
+            <?php 
+} ?>
             <tr class="b-layout__tr">
                 <td class="b-layout__left b-layout__left_width_80">&#160;</td>
                 <td class="b-layout__right b-layout__right_padbot_15">
@@ -319,16 +344,16 @@ window.addEvent('domready', function(){
                                 $attachedfiles_files = $attachedfiles->getFilesForWizard($existPrjID);
                             }
 
-                            if($attachedfiles_files) {
+                            if ($attachedfiles_files) {
                                 $n = 0;
-                                foreach($attachedfiles_files as $attachedfiles_file) {
+                                foreach ($attachedfiles_files as $attachedfiles_file) {
                                     echo "attachedfiles_list[{$n}] = new Object;\n";
                                     echo "attachedfiles_list[{$n}].id = '".md5($attachedfiles_file['id'])."';\n";
                                     echo "attachedfiles_list[{$n}].name = '{$attachedfiles_file['orig_name']}';\n";
                                     echo "attachedfiles_list[{$n}].path = '".WDCPREFIX."/{$attachedfiles_file['path']}{$attachedfiles_file['name']}';\n";
                                     echo "attachedfiles_list[{$n}].size = '".ConvertBtoMB($attachedfiles_file['size'])."';\n";
                                     echo "attachedfiles_list[{$n}].type = '{$attachedfiles_file['type']}';\n";
-                                    $n++;
+                                    ++$n;
                                 }
                             }
                             ?>
@@ -357,15 +382,16 @@ window.addEvent('domready', function(){
                 <td class="b-layout__left b-layout__left_width_80"><div class="b-layout__txt b-layout__txt_padtop_4">Разделы</div></td>
                 <td class="b-layout__right b-layout__right_padbot_20">
                     <div class="b-combo" id="prj-category-hashtag">
-                        <div class="b-combo__input b-combo__input_width_150 b-combo__input_multi_dropdown b-combo__input_resize b-combo__input_arrow_yes b-combo__input_init_professionsList drop_down_default_<?= $subcategory ? (int)$subcategory : (int)$category?> multi_drop_down_default_column_<?= $subcategory ? "1" : "0"?> <?=($error['category'] ? 'b-combo__input_error' : '')?>">
-                            <input type="text" value="<?= $data['categories'] ? $category_name : "Выберите раздел";?>" size="80" name="category" class="b-combo__input-text b-combo__input-text_fontsize_15" id="category" onchange="saveCatValue(); setMinAvgMaxBudgetPrice(); changeBudgetSlider();" onfocus="clearErrorPrjBlock(this)">
+                        <div class="b-combo__input b-combo__input_width_150 b-combo__input_multi_dropdown b-combo__input_resize b-combo__input_arrow_yes b-combo__input_init_professionsList drop_down_default_<?= $subcategory ? (int) $subcategory : (int) $category?> multi_drop_down_default_column_<?= $subcategory ? '1' : '0'?> <?=($error['category'] ? 'b-combo__input_error' : '')?>">
+                            <input type="text" value="<?= $data['categories'] ? $category_name : 'Выберите раздел';?>" size="80" name="category" class="b-combo__input-text b-combo__input-text_fontsize_15" id="category" onchange="saveCatValue(); setMinAvgMaxBudgetPrice(); changeBudgetSlider();" onfocus="clearErrorPrjBlock(this)">
                             <label for="category" class="b-combo__label b-combo__label_fontsize_15"></label>
                             <span id="category_arrow" class="b-combo__arrow"></span>
                         </div>
                     </div>
                 </td>
             </tr>
-            <? if ( $error['category'] ) { ?>
+            <?php if ($error['category']) {
+    ?>
             <tr id="errPrjField_category"  class="b-layout__tr">
                 <td class="b-layout__left b-layout__left_width_55"></td>
                 <td class="">
@@ -374,7 +400,8 @@ window.addEvent('domready', function(){
                     </div>
                 </td>
             </tr>
-            <? } ?>
+            <?php 
+} ?>
             <tr class="b-layout__tr">
                 <td class="b-layout__left b-layout__left_width_80 b-layout__left_padbot_20"><div class="b-layout__txt" id="name_of_payment">Бюджет</div></td>
                 <td class="b-layout__right b-layout__right_padbot_20">
@@ -390,14 +417,14 @@ window.addEvent('domready', function(){
 
                     <div id="prj-currency-hashtag" class="b-combo b-combo_inline-block b-combo_margright_10 b-combo_zindex_2">
                         <div class="b-combo__input b-combo__input_multi_dropdown b-combo__input_width_125 b-combo__input_resize b-combo__input_min-width_40 b-combo__input_arrow_yes b-combo__input_init_currency_data drop_down_default_<?= isset($data['currency']) ? (int) $data['currency'] : '-1';?> multi_drop_down_default_column_0 <?=($error['currency'] ? 'b-combo__input_error' : '')?>" readonly="readonly">
-                            <input type="text" readonly="readonly" value="<?= $currency_name ? $currency_name : "Выберите валюту"?>" size="80" name="currency" class="b-combo__input-text b-combo__input-text_fontsize_15" id="currency" onchange="setMinAvgMaxBudgetPrice(); changeBudgetSlider(); saveChangeSingleValue('currency');" onfocus="clearErrorBlock(this, 'b-layout__right')">
+                            <input type="text" readonly="readonly" value="<?= $currency_name ? $currency_name : 'Выберите валюту'?>" size="80" name="currency" class="b-combo__input-text b-combo__input-text_fontsize_15" id="currency" onchange="setMinAvgMaxBudgetPrice(); changeBudgetSlider(); saveChangeSingleValue('currency');" onfocus="clearErrorBlock(this, 'b-layout__right')">
                             <label for="currency" class="b-combo__label"></label>
                             <span id="currency_arrow" class="b-combo__arrow"></span>
                         </div>
                     </div>							
                     <div class="b-combo b-combo_inline-block b-combo_margright_10 b-combo_zindex_2">
                         <div class="b-combo__input b-combo__input_multi_dropdown b-combo__input_width_140 b-combo__input_arrow_yes b-combo__input_resize b-combo__input_init_cost_data drop_down_default_<?= isset($data['priceby']) ? (int) $data['priceby'] : '-1';?> multi_drop_down_default_column_0 <?=($error['priceby'] ? 'b-combo__input_error' : '')?> ">
-                            <input readonly="readonly" type="text" value="<?= $priceby_name ? $priceby_name : "Выберите из списка"?>" size="80" name="priceby" class="b-combo__input-text b-combo__input-text_fontsize_15" id="priceby" onchange="setMinAvgMaxBudgetPrice(); changeBudgetSlider(); saveChangeSingleValue('priceby');" onfocus="clearErrorPrjBlock(this, 'budget')">
+                            <input readonly="readonly" type="text" value="<?= $priceby_name ? $priceby_name : 'Выберите из списка'?>" size="80" name="priceby" class="b-combo__input-text b-combo__input-text_fontsize_15" id="priceby" onchange="setMinAvgMaxBudgetPrice(); changeBudgetSlider(); saveChangeSingleValue('priceby');" onfocus="clearErrorPrjBlock(this, 'budget')">
                             <label for="priceby" class="b-combo__label"></label>
                             <span id="cost_arrow" class="b-combo__arrow"></span>
                         </div>
@@ -406,29 +433,32 @@ window.addEvent('domready', function(){
                     <input type="hidden" name="budget_type" id="fbudget_type" value="<?= intval($project['budget_type']) ?>" onfocus="clearErrorPrjBlock(this, 'budget')">
                 </td>
             </tr>
-            <? if ( $error['cost'] || $error['currency'] || $error['priceby'] ) { ?>
+            <?php if ($error['cost'] || $error['currency'] || $error['priceby']) {
+    ?>
             <tr  id="errPrjField_budget" class="b-layout__tr">
                 <td class="b-layout__left b-layout__left_width_55"></td>
                 <td class="">
                     <div class="b-layout__txt b-layout__txt_color_c4271f b-layout__txt_padbot_10">
-                        <span class="b-form__error"></span> <?=($error['cost']? $error['cost']: ($error['currency']? $error['currency']: ($error['priceby'])))?>
+                        <span class="b-form__error"></span> <?=($error['cost'] ? $error['cost'] : ($error['currency'] ? $error['currency'] : ($error['priceby'])))?>
                     </div>
                 </td>
             </tr>
-            <? } ?>
+            <?php 
+} ?>
             <tr class="b-layout__tr b-layout_hide contest-elm">
                 <td class="b-layout__left b-layout__left_width_80"><div class="b-layout__txt b-layout__txt_padtop_4">Окончание</div></td>
                 <td class="b-layout__right b-layout__right_padbot_20">
                     <div id="prj-enddate-hashtag" class="b-combo">
-                        <div class="b-combo__input b-combo__input_width_150 b-combo__input_calendar b-combo__input_resize b-combo__input_arrow_yes date_format_use_text date_min_limit_<?=date('Y_m_d', strtotime("+1 day"))?> <?=($error['end_date'] ? 'b-combo__input_error' : '')?>">
-                            <input type="text" value="<?= $data['end_date'] ? date('d.m.Y', strtotime($data['end_date'])) : date('d.m.Y', strtotime("+1 day"))?>" size="80" name="end_date" class="b-combo__input-text b-combo__input-text_fontsize_15" id="end_date" onfocus="clearErrorPrjBlock(this)">
+                        <div class="b-combo__input b-combo__input_width_150 b-combo__input_calendar b-combo__input_resize b-combo__input_arrow_yes date_format_use_text date_min_limit_<?=date('Y_m_d', strtotime('+1 day'))?> <?=($error['end_date'] ? 'b-combo__input_error' : '')?>">
+                            <input type="text" value="<?= $data['end_date'] ? date('d.m.Y', strtotime($data['end_date'])) : date('d.m.Y', strtotime('+1 day'))?>" size="80" name="end_date" class="b-combo__input-text b-combo__input-text_fontsize_15" id="end_date" onfocus="clearErrorPrjBlock(this)">
                             <label for="end_date" class="b-combo__label"></label>
                             <span id="end_date_arrow" class="b-combo__arrow-date"></span>
                         </div>
                     </div>
                 </td>
             </tr>
-            <? if ( $error['end_date'] ) { ?>
+            <?php if ($error['end_date']) {
+    ?>
             <tr  id="errPrjField_end_date" class="b-layout__tr">
                 <td class="b-layout__left b-layout__left_width_55"></td>
                 <td class="">
@@ -437,20 +467,22 @@ window.addEvent('domready', function(){
                     </div>
                 </td>
             </tr>
-            <? } ?>
+            <?php 
+} ?>
             <tr class="b-layout__tr b-layout_hide contest-elm">
                 <td class="b-layout__left b-layout__left_width_80"><div class="b-layout__txt b-layout__txt_padtop_4">Подведение итогов</div></td>
                 <td class="b-layout__right b-layout__right_padbot_20">
                     <div id="prj-windate-hashtag" class="b-combo">
-                        <div class="b-combo__input b-combo__input_width_150 b-combo__input_calendar b-combo__input_resize b-combo__input_arrow_yes date_format_use_text date_min_limit_<?=date('Y_m_d', strtotime("+2 day"))?> <?=($error['win_date'] ? 'b-combo__input_error' : '')?>">
-                            <input type="text" value="<?= $data['win_date'] ? date('d.m.Y', strtotime($data['win_date'])) : date('d.m.Y', strtotime("+2 day"))?>" size="80" name="win_date" class="b-combo__input-text b-combo__input-text_fontsize_15" id="win_date" onfocus="clearErrorPrjBlock(this)">
+                        <div class="b-combo__input b-combo__input_width_150 b-combo__input_calendar b-combo__input_resize b-combo__input_arrow_yes date_format_use_text date_min_limit_<?=date('Y_m_d', strtotime('+2 day'))?> <?=($error['win_date'] ? 'b-combo__input_error' : '')?>">
+                            <input type="text" value="<?= $data['win_date'] ? date('d.m.Y', strtotime($data['win_date'])) : date('d.m.Y', strtotime('+2 day'))?>" size="80" name="win_date" class="b-combo__input-text b-combo__input-text_fontsize_15" id="win_date" onfocus="clearErrorPrjBlock(this)">
                             <label for="win_date" class="b-combo__label"></label>
                             <span id="win_date_arrow" class="b-combo__arrow-date"></span>
                         </div>
                     </div>
                 </td>
             </tr>
-            <? if ( $error['win_date'] ) { ?>
+            <?php if ($error['win_date']) {
+    ?>
             <tr  id="errPrjField_win_date" class="b-layout__tr">
                 <td class="b-layout__left b-layout__left_width_55"></td>
                 <td class="">
@@ -459,30 +491,36 @@ window.addEvent('domready', function(){
                     </div>
                 </td>
             </tr>
-            <? } ?>
-            <tr class="b-layout__tr <?= $data['kind'] == 4 ? "" : "b-layout_hide"?>" id="block_location">
-                <td class="b-layout__left b-layout__left_width_80 location-title"><?= $data['kind'] == 4 ? "<div class='b-layout__txt b-layout__txt_lineheight_1'>Офис находится в</div>" : ""?></td>
+            <?php 
+} ?>
+            <tr class="b-layout__tr <?= $data['kind'] == 4 ? '' : 'b-layout_hide'?>" id="block_location">
+                <td class="b-layout__left b-layout__left_width_80 location-title"><?= $data['kind'] == 4 ? "<div class='b-layout__txt b-layout__txt_lineheight_1'>Офис находится в</div>" : ''?></td>
                 <td class="b-layout__right b-layout__right_padbot_15 location-content">
-                    <?php if($data['kind'] == 4) { ?>
+                    <?php if ($data['kind'] == 4) {
+    ?>
                     <div class="b-combo">
-                        <div class="b-combo__input b-combo__input_multi_dropdown b-combo__input_width_150 b-combo__input_arrow_yes b-combo__input_resize b-combo__input_on_load_request_id_getcountries b-combo__input_on_click_request_id_getcities drop_down_default_<?= ($location == 1 ? $data['city'] : $data['country']) ?> multi_drop_down_default_column_<?= $location; ?>">
+                        <div class="b-combo__input b-combo__input_multi_dropdown b-combo__input_width_150 b-combo__input_arrow_yes b-combo__input_resize b-combo__input_on_load_request_id_getcountries b-combo__input_on_click_request_id_getcities drop_down_default_<?= ($location == 1 ? $data['city'] : $data['country']) ?> multi_drop_down_default_column_<?= $location;
+    ?>">
                             <input type="text" value="<?= $location_name?>" size="80" name="location" class="b-combo__input-text b-combo__input-text_fontsize_15" id="location">
                             <label for="location" class="b-combo__label"></label>
                             <span id="cost_arrow" class="b-combo__arrow"></span>
                         </div>
                     </div>
-                    <?php } else {?>
+                    <?php 
+} else {
+    ?>
                     <div class="b-layout__txt b-layout__txt_padbot_20 i-button">
                         <a class="b-button b-button_poll_plus location-addbtn" href="javascript:void(0)"></a>&#160;<a class="b-layout__link b-layout__link_bordbot_dot_0f71c8 b-layout__link_inline-block b-layout__link_valign_middle b-layout__link_lineheight_15 location-addbtn" href="javascript:void(0)">Месторасположение офиса</a><span class="b-layout__txt b-layout__txt_valign_middle">: страна и город</span>
                     </div>
-                    <?php }?>
+                    <?php 
+}?>
                 </td>
             </tr>
             <tr class="b-layout__tr">
                 <td class="b-layout__left b-layout__left_width_80"></td>
                 <td class="b-layout__right b-layout__right_padbot_15">
                     <div class="b-check b-check_padbot_15">
-                        <input id="b-check2" class="b-check__input" name="pro_only" type="checkbox" value="1" <?= $data['pro_only'] ? "checked='checked'" : ""?> />
+                        <input id="b-check2" class="b-check__input" name="pro_only" type="checkbox" value="1" <?= $data['pro_only'] ? "checked='checked'" : ''?> />
                         <label for="b-check2" class="b-check__label b-check__label_fontsize_13">Только для <span class="b-icon b-icon__pro b-icon__pro_f" title="PRO"></span></label>
                     </div>
                     <div class="b-layout__txt b-layout__txt_fontsize_11">Отвечать на проект cмогут только фрилансеры с профессиональным<br />аккаунтом &mdash; наиболее серьезная и активная часть аудитории сайта.</div>
@@ -492,7 +530,7 @@ window.addEvent('domready', function(){
     </div>
     	
 	<div class="i-shadow i-shadow_width_100">
-                    <div class="b-shadow b-shadow_m b-shadow_inline-block b-shadow_left_550" id="screen_shot" style="top:<?= $price>0?"30px":"-110px"?>">
+                    <div class="b-shadow b-shadow_m b-shadow_inline-block b-shadow_left_550" id="screen_shot" style="top:<?= $price > 0 ? '30px' : '-110px'?>">
                                     <div class="b-shadow__right">
                                                     <div class="b-shadow__left">
                                                                     <div class="b-shadow__top">
@@ -523,43 +561,45 @@ window.addEvent('domready', function(){
         
     
     
-    <div class="b-layout b-layout_padleft_30 b-layout_margleft_-30 b-layout_overflow_hidden" id="paid_option" style=" height:<?= $price>0?"auto":"0px"?>">
+    <div class="b-layout b-layout_padleft_30 b-layout_margleft_-30 b-layout_overflow_hidden" id="paid_option" style=" height:<?= $price > 0 ? 'auto' : '0px'?>">
     <div id="paid_option_inner"> 
         <div class="b-check b-check_relative b-check_padbot_10">
             <span id="option_top_pin" class="b-check__pin2" style="display: none"></span>
-            <input id="ntop1" class="b-check__input scalc-click count-change" name="option_top" type="checkbox" value="1" <?= $option['top'] == 1 ? "checked='checked'" : ""?> price="<?= $pTopPrice;?>" />
+            <input id="ntop1" class="b-check__input scalc-click count-change" name="option_top" type="checkbox" value="1" <?= $option['top'] == 1 ? "checked='checked'" : ''?> price="<?= $pTopPrice;?>" />
             <label id="option_top_label_off" class="b-check__label  b-check__label_fontsize_13" for="ntop1">Закрепить наверху ленты</label>
             <label id="option_top_label_on" class="b-check__label  b-check__label_fontsize_13" for="ntop1" style="display:none">Закреплен наверху ленты</label>
             <div id="option_top_count_block" class="b-form b-form_padtop_5 b-form_padleft_20 b-form_hide">
                 <label class="b-form__name b-form__name_fontsize_13 b-form__name_padtop_5">на&#160;</label>
                 <div class="b-combo b-combo_inline-block">
                     <div class="b-combo__input b-combo__input_width_40">
-                        <input class="b-combo__input-text scalc-change" id="ntop2" name="option_top_count" maxlength="3" type="text" size="80" value="<?= $option['top'] == 1 ? $option['top_count'] : "1"?>" price="<?= $pTopPrice;?>" maxlength="4" change1="день" change2="дня" change3="дней"/>
+                        <input class="b-combo__input-text scalc-change" id="ntop2" name="option_top_count" maxlength="3" type="text" size="80" value="<?= $option['top'] == 1 ? $option['top_count'] : '1'?>" price="<?= $pTopPrice;?>" maxlength="4" change1="день" change2="дня" change3="дней"/>
                     </div>
                 </div>
                 <label class="b-form__name b-form__name_fontsize_13 b-form__name_padtop_5">&#160;<span class="scalc-change-name">день</span> за <span class="b-form__txt b-form__txt_bold b-form__txt_inline b-form__text_color_fd6c30"><span class="scalc-change-result" id="ntopresult"><?= $pTopPrice;?></span> руб.</span></label>
             </div>
         </div>
         <div class="b-check b-check_padbot_20">
-            <input id="option_logo" class="b-check__input scalc-click" name="option_logo" type="checkbox" value="1" price="<?= $logoPrc;?>" onclick="setLogo(this)" <?= $option['logo'] == 1 ? "checked='checked'" : ""?> />
+            <input id="option_logo" class="b-check__input scalc-click" name="option_logo" type="checkbox" value="1" price="<?= $logoPrc;?>" onclick="setLogo(this)" <?= $option['logo'] == 1 ? "checked='checked'" : ''?> />
             <label id="option_logo_label_off" class="b-check__label b-check__label_fontsize_13" for="option_logo">Добавить логотип со ссылкой за</label>
             <label id="option_logo_label_on" class="b-check__label b-check__label_fontsize_13" for="option_logo">Добавлен логотип со ссылкой за  <span class="b-layout__txt b-layout__txt_lineheight_1 b-layout__txt_bold b-layout__txt_color_fd6c30"><?= $logoPrc;?> руб.</span></label>
             
             <span id="logo_block" class="logo-element">
-            <?php if($data['logo_id'] > 0) { ?>
+            <?php if ($data['logo_id'] > 0) {
+    ?>
                 <div class="b-layout__txt b-layout__txt_padtop_5 b-layout__txt_padleft_18 logo-img">
                     <div class="b-layout__txt b-layout__txt_relative b-layout__txt_inline-block">
-                        <a class="b-button b-button_bgcolor_fff b-button_bord_solid_3_fff b-button_admin_del b-button_right_-4 b-button_top_-6" href="javascript:void(0)" onclick="deleteLogo('<?= (int)$data['logo_id']?>');"></a>
+                        <a class="b-button b-button_bgcolor_fff b-button_bord_solid_3_fff b-button_admin_del b-button_right_-4 b-button_top_-6" href="javascript:void(0)" onclick="deleteLogo('<?= (int) $data['logo_id']?>');"></a>
                         <a class="b-layout__link" href="<?= $logo_path?>">					
                             <img class="b-layout__pic b-layout__pic_bord_ece9e9" src="<?= $logo_path?>" alt="" />
                         </a>
                     </div>						
                 </div>
-            <?php }//if?>
+            <?php 
+}//if?>
             </span>
-            <? /* предзагрузка спинера */ ?>
+            <?php /* предзагрузка спинера */ ?>
             <img src="/images/loader-2.gif" style="display:none">
-            <div id="prj-logoimage-hashtag" class="b-file b-file_margleft_18 b-file_margtop_5 b-file__fon-m logo-element b-file__input_loading logo-add-element<?=($error['logo_image'] ? ' b-file_error_border' : '')?>" <?= ($data['logo_id'] > 0)? 'style="display:none"' : ($option['logo'] == 1 ? '' : 'style="display:none"'); ?>>
+            <div id="prj-logoimage-hashtag" class="b-file b-file_margleft_18 b-file_margtop_5 b-file__fon-m logo-element b-file__input_loading logo-add-element<?=($error['logo_image'] ? ' b-file_error_border' : '')?>" <?= ($data['logo_id'] > 0) ? 'style="display:none"' : ($option['logo'] == 1 ? '' : 'style="display:none"'); ?>>
                 <div class="b-file__wrap b-file__wrap_margtop_50">
                     <input class="b-file__input" type="file" name="logo_attach" onchange="uploadLogoFile();"/>
                     <a id="prj-logoimage-block" class="b-button b-button_rectangle_color_transparent b-button_block"  href="javascript:void(0)">
@@ -579,18 +619,20 @@ window.addEvent('domready', function(){
                     <div class="b-combo__input b-combo__input_width_138 <?=($error['logo_link'] ? 'b-combo__input_error' : '')?>">
                         <input class="b-combo__input-text <?= ($option['logo'] && $data['logo_link']) ? '' : 'b-combo__input-text_color_a7'; ?>" name="logo_link" type="text" size="80" 
                                onfocus="clearErrorPrjBlock(this); if(this.value == 'Адрес сайта') this.value = ''" onblur="if(this.value != 'Адрес сайта' && this.value.length == 0) { $(this).addClass('b-combo__input-text_color_a7'); this.value = 'Адрес сайта' }" 
-                               value="<?= ($option['logo'] && $data['logo_link']) ? $data['logo_link'] : "Адрес сайта"?>" />
+                               value="<?= ($option['logo'] && $data['logo_link']) ? $data['logo_link'] : 'Адрес сайта'?>" />
                     </div>
-                <? if ( $error['logo_link'] ) { ?>
+                <?php if ($error['logo_link']) {
+    ?>
                 <div  id="errPrjField_logo_link" class="b-layout__txt b-layout__txt_color_c4271f b-layout__txt_padbot_10 b-shadow__margtop_10">
                     <span class="b-form__error"></span> <?= $error['logo_link']?>
                 </div>
-                <? } ?>
+                <?php 
+} ?>
                 </div>
             </div>
         </div>
         
-        <div class="b-layout__txt b-layout__txt_padbot_5 b-layout__txt_bold">Выбранные услуги будут стоить <span class="b-layout__txt b-layout__txt_color_fd6c30"><span id="scalc_result"><?= ($price>0?$price:0)?></span> <?= ending($price>0?$price:0, 'рубль', 'рубля', 'рублeй');?></span></div>
+        <div class="b-layout__txt b-layout__txt_padbot_5 b-layout__txt_bold">Выбранные услуги будут стоить <span class="b-layout__txt b-layout__txt_color_fd6c30"><span id="scalc_result"><?= ($price > 0 ? $price : 0)?></span> <?= ending($price > 0 ? $price : 0, 'рубль', 'рубля', 'рублeй');?></span></div>
         <div class="b-layout__txt b-layout__txt_padbot_20 b-layout__txt_fontsize_11">Оплатить услуги можно на последнем шаге мастера</div>
     </div>		
     </div>

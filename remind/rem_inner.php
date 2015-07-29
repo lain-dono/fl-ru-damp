@@ -1,15 +1,14 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/remind.common.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/remind.common.php';
 $xajax->printJavascript('/xajax/');
 
-
-$captchanum = uniqid('',true);
+$captchanum = uniqid('', true);
 
 if ($_SESSION) {
-    foreach ($_SESSION as $k => $v) { 
-        if (strpos("image_number", $k) === 0) {
-            unset($_SESSION[$k]); 
+    foreach ($_SESSION as $k => $v) {
+        if (strpos('image_number', $k) === 0) {
+            unset($_SESSION[$k]);
         }
     }
 }

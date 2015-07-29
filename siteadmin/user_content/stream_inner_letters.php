@@ -8,12 +8,15 @@
 <div id="my_div_all">
 
 <?php
-if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/xajax/user_content.common.php' );
-$xajax->printJavascript( '/xajax/' );
+if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/user_content.common.php';
+$xajax->printJavascript('/xajax/');
 ?>
 
-<?php if( $sStreamId ) { /*?>
+<?php if ($sStreamId) { /*?>
 <a href="javascript:void(0);" id="my_close" class="b-button b-button_rectangle_color_green b-button_float_right">
     <span class="b-button__b1">
         <span class="b-button__b2">
@@ -24,17 +27,18 @@ $xajax->printJavascript( '/xajax/' );
 */ ?>
 
 <div class="b-layout__txt"><a class="b-layout__link" href="/siteadmin/user_content/?site=stream&cid=1&sid=<?=$aStream['stream_id']?>">Личные сообщения, поток <?=$aStream['title_num']?></a> &rarr;</div>
-<?php } ?>
+<?php 
+} ?>
 
 <h2 class="b-layout__title">Переписка</h2>
 
 <?php
-if ( $oFromUser->login && $oToUser->login ) {
-    require_once( $_SERVER['DOCUMENT_ROOT'] . '/classes/stop_words.php' );
-    
-    $stop_words = new stop_words( true );
-    
-?>
+if ($oFromUser->login && $oToUser->login) {
+    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stop_words.php';
+
+    $stop_words = new stop_words(true);
+
+    ?>
 <script type="text/javascript">
     banned.addContext( 'user_from', 2, '', 'Личное сообщение для <?=$oToUser->uname?> <?=$oToUser->usurname?> [<?=$oToUser->login?>]' );
     banned.addContext( 'user_to', 2, '', 'Личное сообщение для <?=$oFromUser->uname?> <?=$oFromUser->usurname?> [<?=$oFromUser->login?>]' );
@@ -71,33 +75,31 @@ window.addEvent('domready', function() {
     user_content.spinner        = new Spinner('my_div_all', {style: {'padding': 0}});
     user_content.status         = 0;
     <?php 
-    if( $sStreamId ) { 
-    ?>
+    if ($sStreamId) {
+        ?>
     user_content.scrollFunction = 'getLetters';
     user_content.getLetters();
     //$('my_close').addEvent('click', function(){user_content.releaseStream();});
     <?php 
-    } 
-    else {
-    ?>
+    } else {
+        ?>
     user_content.scrollFunction = 'getBlockedLetters';
     user_content.getBlockedLetters();
     <?php
+
     }
     ?>
 });
 </script>
 <?php
 
-}
-else {
-    
-?>
+} else {
+    ?>
 <div class="b-post b-post_padtop_15">
     <div class="b-post__txt">Нет диалога</div>
 </div>
 <?php
-    
+
 }
 ?>
 

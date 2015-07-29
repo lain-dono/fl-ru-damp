@@ -8,15 +8,18 @@
 <div id="my_div_all">
 
 <?php
-if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/xajax/user_content.common.php' );
-$xajax->printJavascript( '/xajax/' );
+if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/user_content.common.php';
+$xajax->printJavascript('/xajax/');
 
 $sTitle = '';
 
-foreach ( $aContents as $key => $aOne ) {
-    if ( $nCid == $key ) {
-        $sTitle = ' / ' . $aOne['name'];
+foreach ($aContents as $key => $aOne) {
+    if ($nCid == $key) {
+        $sTitle = ' / '.$aOne['name'];
     }
 }
 ?>
@@ -120,4 +123,4 @@ window.addEvent('domready', function() {
 
 </div>
 
-<?php include_once( $_SERVER['DOCUMENT_ROOT'] . '/user/adm_edit_overlay.php' ); ?>
+<?php include_once $_SERVER['DOCUMENT_ROOT'].'/user/adm_edit_overlay.php'; ?>

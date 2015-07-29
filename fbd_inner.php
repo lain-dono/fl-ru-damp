@@ -1,5 +1,5 @@
 
-<? /*!--
+<?php /*!--
 <script type="text/javascript">
 var alowLogin = function(){
     if($('login_fbd').get('value') != '' && $('pass_fbd').get('value') != ''){

@@ -4,19 +4,19 @@
 
 require_once '../classes/stdf.php';
 
-$r = pg_query(DBConnect(), "SELECT MAX(id) AS max_id FROM opros");
+$r = pg_query(DBConnect(), 'SELECT MAX(id) AS max_id FROM opros');
 $m = pg_fetch_array($r);
-pg_query(DBConnect(),"ALTER SEQUENCE opros_id_seq RESTART WITH ".($m['max_id']+1));
+pg_query(DBConnect(), 'ALTER SEQUENCE opros_id_seq RESTART WITH '.($m['max_id'] + 1));
 
-$r = pg_query(DBConnect(), "SELECT MAX(id) AS max_id FROM opros_questions");
+$r = pg_query(DBConnect(), 'SELECT MAX(id) AS max_id FROM opros_questions');
 $m = pg_fetch_array($r);
-pg_query(DBConnect(),"ALTER SEQUENCE opros_questions_id_seq RESTART WITH ".($m['max_id']+1));
+pg_query(DBConnect(), 'ALTER SEQUENCE opros_questions_id_seq RESTART WITH '.($m['max_id'] + 1));
 
-$r = pg_query(DBConnect(), "SELECT MAX(id) AS max_id FROM opros_answers");
+$r = pg_query(DBConnect(), 'SELECT MAX(id) AS max_id FROM opros_answers');
 $m = pg_fetch_array($r);
-pg_query(DBConnect(),"ALTER SEQUENCE opros_answers_id_seq RESTART WITH ".($m['max_id']+1));
+pg_query(DBConnect(), 'ALTER SEQUENCE opros_answers_id_seq RESTART WITH '.($m['max_id'] + 1));
 
-pg_query(DBConnect(), "START TRANSACTION");
+pg_query(DBConnect(), 'START TRANSACTION');
 
 $res = pg_query(DBConnect(), "INSERT INTO opros (name, descr, flags, is_active, is_multi_page, content) VALUES (
 'Qiwi 1',
@@ -53,10 +53,6 @@ $res = pg_query(DBConnect(), "INSERT INTO opros_questions (name, opros_id, max_a
 RETURNING id");
 list($question_5) = pg_fetch_row($res);
 
-
-
-
-
 $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, value, num, is_m_other, move_question_id, orig_answer_id, is_m_block, block_questions, is_m_number, block_answer) VALUES
 ('Да, очень удобно', $question_1, 1, 1, FALSE, NULL, NULL, FALSE, NULL, NULL, NULL)
 RETURNING id");
@@ -76,8 +72,6 @@ $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, valu
 ('А что такое QIWI Кошелек?', $question_1, 1, 4, FALSE, NULL, NULL, FALSE, NULL, NULL, NULL)
 RETURNING id");
 list($answer_4) = pg_fetch_row($res);
-
-
 
 $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, value, num, is_m_other, move_question_id, orig_answer_id, is_m_block, block_questions, is_m_number, block_answer) VALUES
 ('Покупка билетов', $question_2, 1, 1, FALSE, NULL, NULL, FALSE, NULL, NULL, NULL)
@@ -99,8 +93,6 @@ $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, valu
 RETURNING id");
 list($answer_4) = pg_fetch_row($res);
 
-
-
 $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, value, num, is_m_other, move_question_id, orig_answer_id, is_m_block, block_questions, is_m_number, block_answer) VALUES
 ('Оплата поступает мгновенно', $question_3, 1, 1, FALSE, NULL, NULL, FALSE, NULL, NULL, NULL)
 RETURNING id");
@@ -120,9 +112,6 @@ $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, valu
 ('Ничего не знаю о QIWI Кошельке', $question_3, 1, 4, FALSE, NULL, NULL, FALSE, NULL, NULL, NULL)
 RETURNING id");
 list($answer_4) = pg_fetch_row($res);
-
-
-
 
 $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, value, num, is_m_other, move_question_id, orig_answer_id, is_m_block, block_questions, is_m_number, block_answer) VALUES
 ('Ежедневно', $question_4, 1, 1, FALSE, NULL, NULL, FALSE, NULL, NULL, NULL)
@@ -144,8 +133,6 @@ $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, valu
 RETURNING id");
 list($answer_4) = pg_fetch_row($res);
 
-
-
 $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, value, num, is_m_other, move_question_id, orig_answer_id, is_m_block, block_questions, is_m_number, block_answer) VALUES
 ('Есть, и я использую его как для получения денег, так и для оплаты', $question_5, 1, 1, FALSE, NULL, NULL, FALSE, NULL, NULL, NULL)
 RETURNING id");
@@ -166,10 +153,7 @@ $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, valu
 RETURNING id");
 list($answer_4) = pg_fetch_row($res);
 
-
-
 ///////////////////////////////////////////////
-
 
 
 $res = pg_query(DBConnect(), "INSERT INTO opros (name, descr, flags, is_active, is_multi_page, content) VALUES (
@@ -212,9 +196,6 @@ $res = pg_query(DBConnect(), "INSERT INTO opros_questions (name, opros_id, max_a
 RETURNING id");
 list($question_6) = pg_fetch_row($res);
 
-
-
-
 $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, value, num, is_m_other, move_question_id, orig_answer_id, is_m_block, block_questions, is_m_number, block_answer) VALUES
 ('Да, конечно', $question_1, 1, 1, FALSE, NULL, NULL, FALSE, NULL, NULL, NULL)
 RETURNING id");
@@ -234,8 +215,6 @@ $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, valu
 ('Ой, я даже и не знаю...', $question_1, 1, 4, FALSE, NULL, NULL, FALSE, NULL, NULL, NULL)
 RETURNING id");
 list($answer_4) = pg_fetch_row($res);
-
-
 
 $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, value, num, is_m_other, move_question_id, orig_answer_id, is_m_block, block_questions, is_m_number, block_answer) VALUES
 ('Крем для обуви', $question_2, 1, 1, FALSE, NULL, NULL, FALSE, NULL, NULL, NULL)
@@ -257,8 +236,6 @@ $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, valu
 RETURNING id");
 list($answer_4) = pg_fetch_row($res);
 
-
-
 $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, value, num, is_m_other, move_question_id, orig_answer_id, is_m_block, block_questions, is_m_number, block_answer) VALUES
 ('Нанокошелек', $question_3, 1, 1, FALSE, NULL, NULL, FALSE, NULL, NULL, NULL)
 RETURNING id");
@@ -278,9 +255,6 @@ $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, valu
 ('Космический кошелек', $question_3, 1, 4, FALSE, NULL, NULL, FALSE, NULL, NULL, NULL)
 RETURNING id");
 list($answer_4) = pg_fetch_row($res);
-
-
-
 
 $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, value, num, is_m_other, move_question_id, orig_answer_id, is_m_block, block_questions, is_m_number, block_answer) VALUES
 ('Средство хранения электронных денег', $question_4, 1, 1, FALSE, NULL, NULL, FALSE, NULL, NULL, NULL)
@@ -302,8 +276,6 @@ $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, valu
 RETURNING id");
 list($answer_4) = pg_fetch_row($res);
 
-
-
 $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, value, num, is_m_other, move_question_id, orig_answer_id, is_m_block, block_questions, is_m_number, block_answer) VALUES
 ('Все: постоянно использую', $question_5, 1, 1, FALSE, NULL, NULL, FALSE, NULL, NULL, NULL)
 RETURNING id");
@@ -323,7 +295,6 @@ $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, valu
 ('Хочу узнать больше!', $question_5, 1, 4, FALSE, NULL, NULL, FALSE, NULL, NULL, NULL)
 RETURNING id");
 list($answer_4) = pg_fetch_row($res);
-
 
 $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, value, num, is_m_other, move_question_id, orig_answer_id, is_m_block, block_questions, is_m_number, block_answer) VALUES
 ('Наше все!', $question_6, 1, 1, FALSE, NULL, NULL, FALSE, NULL, NULL, NULL)
@@ -345,6 +316,6 @@ $res = pg_query(DBConnect(), "INSERT INTO opros_answers (name, question_id, valu
 RETURNING id");
 list($answer_4) = pg_fetch_row($res);
 
-pg_query(DBConnect(), "COMMIT");
+pg_query(DBConnect(), 'COMMIT');
 
-echo "Done";
+echo 'Done';

@@ -8,17 +8,17 @@ if (isset($_SESSION['specs']) && count($_SESSION['specs'])) {
     $groups = array_unique(professions::GetGroupIdsByProfs($_SESSION['specs']));
     foreach ($groups as $group) {
         if ($group > 0) {
-            $dimension4[] = '[g' . $group . ']';
+            $dimension4[] = '[g'.$group.']';
         }
     }
     foreach ($_SESSION['specs'] as $prof) {
         if ($prof > 0) {
-            $dimension4[] = '[p' . $prof . ']';
+            $dimension4[] = '[p'.$prof.']';
         }
     }
-    
+
     GaJsHelper::getInstance()->gaSet('dimension4', implode(',', $dimension4));
-}    
+}
 
 ?>
 <script type='text/javascript'>

@@ -2,8 +2,6 @@
 
 namespace YandexMoney3\Response;
 
-
-
 interface ResponseInterface
 {
     /**
@@ -12,7 +10,7 @@ interface ResponseInterface
     public function getError();
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isSuccess();
 }

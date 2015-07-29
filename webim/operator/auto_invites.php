@@ -13,20 +13,18 @@
 <?php
 $TITLE_KEY = 'leftMenu.auto_invites';
 
-require_once(dirname(__FILE__).'/inc/admin_prolog.php');
+require_once dirname(__FILE__).'/inc/admin_prolog.php';
 
-
-require_once('../classes/functions.php');
-require_once('../classes/class.operator.php');
-require_once('../classes/class.smartyclass.php');
-require_once('../classes/models/generic/class.mapperfactory.php');
-
+require_once '../classes/functions.php';
+require_once '../classes/class.operator.php';
+require_once '../classes/class.smartyclass.php';
+require_once '../classes/models/generic/class.mapperfactory.php';
 
 Operator::getInstance()->IsCurrentUserAdminOrRedirect();
 
 $TML = new SmartyClass($TITLE_KEY);
 
-$TML->assign('invites', MapperFactory::getMapper("AutoInvite")->getAll());
+$TML->assign('invites', MapperFactory::getMapper('AutoInvite')->getAll());
 
 $TML->display('auto_invites.tpl');
 ?>

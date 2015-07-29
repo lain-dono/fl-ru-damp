@@ -1,38 +1,38 @@
-<div class="b-layout b-layout_pad_10 b-layout_bord_e6 b-layout_relative b-layout_margbot_10 b-promo__servis <?= $service['option'] == 'contest' ? "b-promo__servis_cont" : "b-promo__servis_prj"?> service" data-name="projects_<?= $service['id']?>" pro-discount="1" data-cost-pro="<?= round($service['pro_ammount'])?>" data-cost="<?= $service['ammount']?>">
+<div class="b-layout b-layout_pad_10 b-layout_bord_e6 b-layout_relative b-layout_margbot_10 b-promo__servis <?= $service['option'] == 'contest' ? 'b-promo__servis_cont' : 'b-promo__servis_prj'?> service" data-name="projects_<?= $service['id']?>" pro-discount="1" data-cost-pro="<?= round($service['pro_ammount'])?>" data-cost="<?= $service['ammount']?>">
     <a href="javascript:void(0)" class="b-button b-button_admin_del b-button_float_right service-remove"></a>
     <input type="hidden" name="opcode" value="<?= $service['op_code']; ?>" />
     <h3 class="b-layout__h3 b-layout__h3_padleft_70 b-layout__txt_padleft_null_iphone">
-        <? 
-        switch($service['option']) {
+        <?php 
+        switch ($service['option']) {
             case 'contest':
                 ?>
                 Публикация конкурса &nbsp;&nbsp; 
-                <span class="b-layout__txt b-layout__txt_fontsize_11 b-layouyt__txt_weight_normal"><a href="http://feedback.fl.ru/topic/397521-publikatsiya-konkursa-opisanie-instruktsiya-stoimost-perepiska-po-konkursu-obyavlenie-pobeditelej/" class="b-layout__link">Подробнее об услуге</a></span><input type="hidden" id="ammount_<?= $service['id']?>" name="ammount" value="<?= round(($bill->pro_exists_in_list_service? $service['pro_ammount']: $service['ammount'])/$service['op_count'])?>" /><input type="hidden" id="no_pro_ammount_<?= $service['id']?>" value="<?= $service['ammount'] ?>" />
-                <?
+                <span class="b-layout__txt b-layout__txt_fontsize_11 b-layouyt__txt_weight_normal"><a href="http://feedback.fl.ru/topic/397521-publikatsiya-konkursa-opisanie-instruktsiya-stoimost-perepiska-po-konkursu-obyavlenie-pobeditelej/" class="b-layout__link">Подробнее об услуге</a></span><input type="hidden" id="ammount_<?= $service['id']?>" name="ammount" value="<?= round(($bill->pro_exists_in_list_service ? $service['pro_ammount'] : $service['ammount']) / $service['op_count'])?>" /><input type="hidden" id="no_pro_ammount_<?= $service['id']?>" value="<?= $service['ammount'] ?>" />
+                <?php
                 break;
             case 'office':
                 ?>
                 Публикация вакансии &nbsp;&nbsp; 
-                <span class="b-layout__txt b-layout__txt_fontsize_11 b-layouyt__txt_weight_normal"><a href="https://feedback.free-lance.ru/article/details/id/133" class="b-layout__link">Подробнее об услуге</a></span><input type="hidden" id="ammount_<?= $service['id']?>" name="ammount" value="<?= round(($bill->pro_exists_in_list_service? $service['pro_ammount']: $service['ammount'])/$service['op_count'])?>" /><input type="hidden" id="no_pro_ammount_<?= $service['id']?>" value="<?= $service['ammount'] ?>" />
-                <?
+                <span class="b-layout__txt b-layout__txt_fontsize_11 b-layouyt__txt_weight_normal"><a href="https://feedback.free-lance.ru/article/details/id/133" class="b-layout__link">Подробнее об услуге</a></span><input type="hidden" id="ammount_<?= $service['id']?>" name="ammount" value="<?= round(($bill->pro_exists_in_list_service ? $service['pro_ammount'] : $service['ammount']) / $service['op_count'])?>" /><input type="hidden" id="no_pro_ammount_<?= $service['id']?>" value="<?= $service['ammount'] ?>" />
+                <?php
                 break;
             case 'logo':
                 ?>
                 Загрузка логотипа в проект или конкурс &nbsp;&nbsp;
-                <span class="b-layout__txt b-layout__txt_fontsize_11 b-layouyt__txt_weight_normal"><a href="https://feedback.free-lance.ru/article/details/id/133" class="b-layout__link">Подробнее об услуге</a></span><input type="hidden" id="ammount_<?= $service['id']?>" name="ammount" value="<?= round(($bill->pro_exists_in_list_service? $service['pro_ammount']: $service['ammount'])/$service['op_count'])?>" /><input type="hidden" id="no_pro_ammount_<?= $service['id']?>" value="<?= $service['ammount'] ?>" />
-                <?
+                <span class="b-layout__txt b-layout__txt_fontsize_11 b-layouyt__txt_weight_normal"><a href="https://feedback.free-lance.ru/article/details/id/133" class="b-layout__link">Подробнее об услуге</a></span><input type="hidden" id="ammount_<?= $service['id']?>" name="ammount" value="<?= round(($bill->pro_exists_in_list_service ? $service['pro_ammount'] : $service['ammount']) / $service['op_count'])?>" /><input type="hidden" id="no_pro_ammount_<?= $service['id']?>" value="<?= $service['ammount'] ?>" />
+                <?php
                 break;
             case 'urgent':
                 ?>
                 Срочный проект &nbsp;&nbsp;
-                <span class="b-layout__txt b-layout__txt_fontsize_11 b-layouyt__txt_weight_normal"><a href="https://feedback.free-lance.ru/article/details/id/133" class="b-layout__link">Подробнее об услуге</a></span><input type="hidden" id="ammount_<?= $service['id']?>" name="ammount" value="<?= round(($bill->pro_exists_in_list_service? $service['pro_ammount']: $service['ammount'])/$service['op_count'])?>" /><input type="hidden" id="no_pro_ammount_<?= $service['id']?>" value="<?= $service['ammount'] ?>" />
-                <?
+                <span class="b-layout__txt b-layout__txt_fontsize_11 b-layouyt__txt_weight_normal"><a href="https://feedback.free-lance.ru/article/details/id/133" class="b-layout__link">Подробнее об услуге</a></span><input type="hidden" id="ammount_<?= $service['id']?>" name="ammount" value="<?= round(($bill->pro_exists_in_list_service ? $service['pro_ammount'] : $service['ammount']) / $service['op_count'])?>" /><input type="hidden" id="no_pro_ammount_<?= $service['id']?>" value="<?= $service['ammount'] ?>" />
+                <?php
                 break;
             case 'hide':
                 ?>
                 Скрытый проект &nbsp;&nbsp;
-                <span class="b-layout__txt b-layout__txt_fontsize_11 b-layouyt__txt_weight_normal"><a href="https://feedback.free-lance.ru/article/details/id/133" class="b-layout__link">Подробнее об услуге</a></span><input type="hidden" id="ammount_<?= $service['id']?>" name="ammount" value="<?= round(($bill->pro_exists_in_list_service? $service['pro_ammount']: $service['ammount'])/$service['op_count'])?>" /><input type="hidden" id="no_pro_ammount_<?= $service['id']?>" value="<?= $service['ammount'] ?>" />
-                <?
+                <span class="b-layout__txt b-layout__txt_fontsize_11 b-layouyt__txt_weight_normal"><a href="https://feedback.free-lance.ru/article/details/id/133" class="b-layout__link">Подробнее об услуге</a></span><input type="hidden" id="ammount_<?= $service['id']?>" name="ammount" value="<?= round(($bill->pro_exists_in_list_service ? $service['pro_ammount'] : $service['ammount']) / $service['op_count'])?>" /><input type="hidden" id="no_pro_ammount_<?= $service['id']?>" value="<?= $service['ammount'] ?>" />
+                <?php
                 break;
             case 'top':
                 ?>
@@ -50,16 +50,16 @@
                                                     <a class="b-button b-button_poll_plus b-button_absolute b-button_z-index_3 b-button_top_8 b-button_right_5 pay_place_item_plus" href="javascript:void(0)" onclick="getUpDay(<?= $service['id']?>, 1, this)"></a>
                                                     <a class="b-button b-button_poll_minus b-button_absolute b-button_z-index_3 b-button_top_8 b-button_left_5 pay_place_item_minus" href="javascript:void(0)" onclick="getDownDay(<?= $service['id']?>, 1, this)"></a>
                                                     <div class="b-combo__input b-combo__input_width_80 numeric">
-                                                        <input type="hidden" id="ammount_<?= $service['id']?>" name="ammount" value="<?= round($service['ammount']/$service['op_count'])?>" />
+                                                        <input type="hidden" id="ammount_<?= $service['id']?>" name="ammount" value="<?= round($service['ammount'] / $service['op_count'])?>" />
 
-                                                        <input type="hidden" id="pro_ammount_<?= $service['id']?>" name="pro_ammount" value="<?= round($service['pro_ammount']/$service['op_count'])?>" />
-                                                        <input type="hidden" id="no_pro_ammount_<?= $service['id']?>" value="<?= round($service['ammount']/$service['op_count']) ?>" />
+                                                        <input type="hidden" id="pro_ammount_<?= $service['id']?>" name="pro_ammount" value="<?= round($service['pro_ammount'] / $service['op_count'])?>" />
+                                                        <input type="hidden" id="no_pro_ammount_<?= $service['id']?>" value="<?= round($service['ammount'] / $service['op_count']) ?>" />
                                                         <input type="text" id="day_<?= $service['id']?>" value="<?= $service['op_count']?>" size="80" maxlength="2" onchange="recalc_projects(<?= $service['id']?>, this);" onkeyup="recalc_projects(<?= $service['id']?>, this);" class="b-combo__input-text b-combo__input-text_center b-combo__input-text_bold js-not_zero_numeric_input" name="days" data-input-type="projects">
                                                     </div>
                                                 </div>
                                                 <div class="b-layout__txt b-layout__txt_inline-block b-layout__txt_width_60 pay_place_item_day"><?= ending($service['op_count'], 'день', 'дня', 'дней')?></div>
                                                 <div class="b-layout__txt b-layout__txt_inline-block b-layout__txt_color_fd6c30 b-layout__txt_fontsize_15 b-layout__txt_bold">
-                                                    <span class="pay_place_item_price" id="sum<?= $service['id']?>"><?= to_money(($bill->pro_exists_in_list_service? $service['pro_ammount']: $service['ammount']))?></span> руб
+                                                    <span class="pay_place_item_price" id="sum<?= $service['id']?>"><?= to_money(($bill->pro_exists_in_list_service ? $service['pro_ammount'] : $service['ammount']))?></span> руб
                                                 </div>
 
                                                 <div class="b-buttons b-buttons_padtop_15">
@@ -82,42 +82,42 @@
                     </div>
                 </span> &nbsp;&nbsp;
                 <span class="b-layout__txt b-layout__txt_fontsize_11 b-layouyt__txt_weight_normal"><a href="https://feedback.free-lance.ru/article/details/id/133" class="b-layout__link">Подробнее об услуге</a></span>
-                <?
+                <?php
             default:
                 break;
         }
         ?>
     </h3>
     <div class="b-layout__txt b-layout__txt_fontsize_15 b-layout__txt_padbot_15 b-layout__txt_padleft_70 b-layout__txt_padleft_null_iphone">
-        <a class="b-layout__link" href="/public/?step=1&kind=<?= $service['info']['kind'];?>&<?= $service['parent_table'] == 'draft_projects' ? "draft_id=" : "public="?><?= $service['parent_id']?>&red="><?= $service['info']['name']?></a>
+        <a class="b-layout__link" href="/public/?step=1&kind=<?= $service['info']['kind'];?>&<?= $service['parent_table'] == 'draft_projects' ? 'draft_id=' : 'public='?><?= $service['parent_id']?>&red="><?= $service['info']['name']?></a>
         
     </div>
     <div class="b-layout__txt b-layout__txt_fontsize_11 b-layout__txt_padbot_20 b-layout__txt_padleft_70 b-layout__txt_padleft_null_iphone">
-        <? 
-        switch($service['option']) {
+        <?php 
+        switch ($service['option']) {
             case 'contest':
                 ?>
                 Конкурс позволяет собрать не просто много, а очень много креативных и необычных решений вашей задачи. Вы публикуете конкурс и получаете свежие идеи и яркие предложения.
-                <?
+                <?php
                 break;
             case 'office':
                 ?>
                 Отличный способ найти сотрудника на постоянную работу. Опишите условия сотрудничества, размер заработной платы, функциональные обязанности. И все — остается только ждать откликов от кандидатов.
-                <?
+                <?php
                 break;
             case 'logo':
                 ?>
                 Если вам нужен настоящий мастер своего дела, будьте готовы к прозрачному сотрудничеству. Чем больше данных о своей компании вы разместите, тем выше шансы найти опытного специалиста.
-                <?
+                <?php
                 break;
             case 'top':
                 ?>
                 Если вам нужно привлечь внимание опытных фрилансеров к своему проекту или конкурсу и получить большое количество креативных идей и решений, закрепите его на главной странице сайта – там он получит тысячи просмотров.
-                <?
+                <?php
             default:
                 break;
         }
         ?>
     </div>
-    <div class="b-layout__txt b-layout__txt_padleft_70 b-layout__txt_fontsize_22 b-layout__txt_color_fd6c30 b-layout__txt_padleft_null_iphone"><span class="upd-cost-sum"><?= $bill->pro_exists_in_list_service ? ( $service['pro_ammount'] <=0 ? "Бесплатно (для пользователя аккаунта PRO)" : to_money($service['pro_ammount']) ): to_money($service['ammount'])?></span> <span class="sum-currency"><?= $bill->pro_exists_in_list_service && $service['pro_ammount'] <=0 ? "" : "руб."?></span></div>
+    <div class="b-layout__txt b-layout__txt_padleft_70 b-layout__txt_fontsize_22 b-layout__txt_color_fd6c30 b-layout__txt_padleft_null_iphone"><span class="upd-cost-sum"><?= $bill->pro_exists_in_list_service ? ($service['pro_ammount'] <= 0 ? 'Бесплатно (для пользователя аккаунта PRO)' : to_money($service['pro_ammount'])) : to_money($service['ammount'])?></span> <span class="sum-currency"><?= $bill->pro_exists_in_list_service && $service['pro_ammount'] <= 0 ? '' : 'руб.'?></span></div>
 </div>

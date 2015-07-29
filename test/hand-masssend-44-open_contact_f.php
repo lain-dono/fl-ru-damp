@@ -1,6 +1,6 @@
 <?php
 /**
- * Уведомление у которых еще не было никогда про, даже тестового
+ * Уведомление у которых еще не было никогда про, даже тестового.
  * */
 ini_set('max_execution_time', '0');
 ini_set('memory_limit', '512M');
@@ -10,7 +10,7 @@ require_once '../classes/memBuff.php';
 require_once '../classes/smtp2.php';
 require_once '../classes/users.php';
 
-/**
+/*
  * Логин пользователя от кого осуществляется рассылка
  * 
  */
@@ -26,23 +26,23 @@ WHERE substring(subscr from 8 for 1)::integer = 1 AND is_banned = B'0' AND is_pr
 
 $eHost = $GLOBALS['host'];
 
-$eSubject = "Free-lance.ru: у нас можно обмениваться контактами";
+$eSubject = 'Free-lance.ru: у нас можно обмениваться контактами';
 
-$mail = new smtp2;
+$mail = new smtp2();
 
-$img1  = $mail->cid();
-$img2  = $mail->cid();
-$img3  = $mail->cid();
-$img4  = $mail->cid();
-$img5  = $mail->cid();
-$img30  = $mail->cid();
+$img1 = $mail->cid();
+$img2 = $mail->cid();
+$img3 = $mail->cid();
+$img4 = $mail->cid();
+$img5 = $mail->cid();
+$img30 = $mail->cid();
 
-$mail->attach(ABS_PATH . '/images/letter/1.png', $img1);
-$mail->attach(ABS_PATH . '/images/letter/2.png', $img2);
-$mail->attach(ABS_PATH . '/images/letter/3.png', $img3);
-$mail->attach(ABS_PATH . '/images/letter/4.png', $img4);
-$mail->attach(ABS_PATH . '/images/letter/5.png', $img5);
-$mail->attach(ABS_PATH . '/images/letter/30.png', $img30);
+$mail->attach(ABS_PATH.'/images/letter/1.png', $img1);
+$mail->attach(ABS_PATH.'/images/letter/2.png', $img2);
+$mail->attach(ABS_PATH.'/images/letter/3.png', $img3);
+$mail->attach(ABS_PATH.'/images/letter/4.png', $img4);
+$mail->attach(ABS_PATH.'/images/letter/5.png', $img5);
+$mail->attach(ABS_PATH.'/images/letter/30.png', $img30);
 
 $link = "$eHost/gift_pro.php?utm_source=newsletter4&utm_medium=email&utm_campaign=podarok_emp&uid=%%%UID%%%";
 ob_start(); ?><html>
@@ -291,14 +291,14 @@ ob_start(); ?><html>
 
 </body>
 </html>
-<? $eMessage = ob_get_clean();
+<?php $eMessage = ob_get_clean();
 // ----------------------------------------------------------------------------------------------------------------
 // -- Рассылка ----------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------------
 $DB = new DB('master');
 $cnt = 0;
 
-$sender = $DB->row("SELECT * FROM users WHERE login = ?", $sender);
+$sender = $DB->row('SELECT * FROM users WHERE login = ?', $sender);
 if (empty($sender)) {
     die("Unknown Sender\n");
 }
@@ -317,20 +317,20 @@ $mail->recipient = array();
 $DB->query("DELETE FROM week_pro_action WHERE is_emp = 't'"); //очистить таблицу логирования обращений за подарком (по идее только на бете нужно, но кто его знает)
 $res = $DB->query($sql);
 while ($row = pg_fetch_assoc($res)) {
-    if ( strlen($row['ukey']) == 0 ) {
+    if (strlen($row['ukey']) == 0) {
         $row['ukey'] = users :: writeUnsubscribeKey($row['uid']);
     }
     $mail->recipient[] = array(
         'email' => "{$row['uname']} {$row['usurname']} [{$row['login']}] <{$row['email']}>",
-        'extra' => array('USER_LOGIN' => $row['login'], 'UID' => $row['uid'], 'UNSUBSCRIBE_KEY' => $row["ukey"])
+        'extra' => array('USER_LOGIN' => $row['login'], 'UID' => $row['uid'], 'UNSUBSCRIBE_KEY' => $row['ukey']),
     );
     if (++$i >= 30000) {
         $mail->bind($spamid);
         $mail->recipient = array();
         $i = 0;
     }
-    $DB->insert("week_pro_action", array("uid"=>$row['uid'], "is_emp"=>'t'));
-    $cnt++;
+    $DB->insert('week_pro_action', array('uid' => $row['uid'], 'is_emp' => 't'));
+    ++$cnt;
 }
 if ($i) {
     $mail->bind($spamid);

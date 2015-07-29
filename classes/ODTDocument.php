@@ -1,161 +1,173 @@
 <?php
 
 /**
- * Класс для работы с документами ODT
+ * Класс для работы с документами ODT.
  */
-class ODTDocument extends odt2pdf 
+class ODTDocument extends odt2pdf
 {
     /**
-     * Адаптер для работы с данными шаблона
+     * Адаптер для работы с данными шаблона.
      * 
-     * @var type 
+     * @var type
      */
     protected $_adapter;
-    
+
     /**
-     * Устанавливаем адаптер
+     * Устанавливаем адаптер.
      * 
      * @param ODTDocumentAdapter $adapter
      */
-    public function setAdapter(ODTDocumentAdapter $adapter) {
+    public function setAdapter(ODTDocumentAdapter $adapter)
+    {
         $this->_adapter = $adapter;
     }
-    
+
     /**
-     * Возвращает адаптер
+     * Возвращает адаптер.
      * 
      * @return ODTDocumentAdapter
      */
-    public function getAdapter() {
+    public function getAdapter()
+    {
         return $this->_adapter;
     }
-    
+
     /**
-     * Возвращает данные документа
+     * Возвращает данные документа.
      * 
      * @return type
      */
-    public function getOutput() {
+    public function getOutput()
+    {
         $content = file_get_contents($this->file_path);
+
         return $content;
     }
-    
+
     /**
-     * Генерируем новый документ
+     * Генерируем новый документ.
      * 
-     * @param boolean $save    Сохарнить документ на сайте или нет
-     * @return boolean
+     * @param bool $save Сохарнить документ на сайте или нет
+     *
+     * @return bool
      */
-    public function generateDocument($save = false) {
-        if($this->_adapter == null) return false;
-        
-        if($this->prepareFile()) {
-            
-            if($this->initZipOpenFile()) {
+    public function generateDocument($save = false)
+    {
+        if ($this->_adapter == null) {
+            return false;
+        }
+
+        if ($this->prepareFile()) {
+            if ($this->initZipOpenFile()) {
                 $this->getContentFile();
                 $this->setContentFile($this->getAdapter()->parseContent($this->getContent()));
                 $this->zip->close();
-                
-                if($save) {
+
+                if ($save) {
                     return $this->saveFile();
                 }
             }
         }
     }
-    
+
     /**
-     * Сохраняем документ на сайте 
+     * Сохраняем документ на сайте.
      * 
      * @return \CFile
      */
-    public function saveFile() {
+    public function saveFile()
+    {
         $login = 'admin';
         $content = $this->getOutput();
 
         $file = new CFile();
-        $file->path = "users/" . substr($login, 0, 2) . "/{$login}/upload/";
+        $file->path = 'users/'.substr($login, 0, 2)."/{$login}/upload/";
         $file->name = basename($file->secure_tmpname($file->path, '.odt'));
         $file->size = strlen($content);
-        if ($file->putContent($file->path . $file->name, $content)) {
+        if ($file->putContent($file->path.$file->name, $content)) {
             return $file;
         }
     }
 }
 
 /**
- * Интерфейсе адаптера документов
+ * Интерфейсе адаптера документов.
  */
-interface ODTDocumentAdapter 
+interface ODTDocumentAdapter
 {
-    function parseContent($content);
+    public function parseContent($content);
 }
 
 /**
- * Класс для генерации файлов ИТО
+ * Класс для генерации файлов ИТО.
  */
 class ODTDocument_ITO implements ODTDocumentAdapter
 {
     public $dom;
     public $xpath;
-    
+
     /**
-     * Задаем период поиска данных для генерации документа
+     * Задаем период поиска данных для генерации документа.
      * 
      * @param array $period (01-01-2012,30-01-2012)
      */
-    function setPeriod($period) {
+    public function setPeriod($period)
+    {
         $this->period = $period;
     }
-    
+
     /**
-     * Кодируем текст в UTF8
+     * Кодируем текст в UTF8.
      * 
      * @param string $val
+     *
      * @return type
      */
-    private function _enc($val) {
+    private function _enc($val)
+    {
         return iconv('cp1251', 'utf8', $val);
     }
-    
+
     /**
-     * Парсим данные документа и изменяем их если нужно
+     * Парсим данные документа и изменяем их если нужно.
      * 
-     * @param string $content   Данные документа (обычно это content.xml из шаблона документа ODT)
+     * @param string $content Данные документа (обычно это content.xml из шаблона документа ODT)
      * 
      * @return type
      */
-    function parseContent($content) {
+    public function parseContent($content)
+    {
         $this->dom = new DOMDocument('1.0');
         $this->dom->loadXML($content);
         $this->xpath = new DOMXPath($this->dom);
-        
+
         $this->setStyleTable();
-        
+
         $period = $this->xpath->query('//text:p[@text:style-name= "period"]', $this->dom->documentElement)->item(0);
-        
-        if($period) {
+
+        if ($period) {
             $from_date = date('d.m.Y', strtotime($this->period[0]));
-            $to_date   = date('d.m.Y', strtotime($this->period[1]));
-            
-            $new_period = $this->dom->createElement('text:p', iconv("windows-1251", "utf-8", "за период с {$from_date} по {$to_date}") );
+            $to_date = date('d.m.Y', strtotime($this->period[1]));
+
+            $new_period = $this->dom->createElement('text:p', iconv('windows-1251', 'utf-8', "за период с {$from_date} по {$to_date}"));
             $new_period->setAttribute('text:style-name', 'period');
             $period->parentNode->replaceChild($new_period, $period);
         }
-        
-        $table  = $this->xpath->query('//table:table[@table:name= "table_test"]', $this->dom->documentElement)->item(0);
-        
+
+        $table = $this->xpath->query('//table:table[@table:name= "table_test"]', $this->dom->documentElement)->item(0);
+
         $pskb = sbr_meta::getReservedSbr($this->period);
-        $i    = 1;
-        $sum  = 0;
-        
-        if($pskb) {
-            foreach($pskb as $data) {
+        $i = 1;
+        $sum = 0;
+
+        if ($pskb) {
+            foreach ($pskb as $data) {
                 $table_row = $this->dom->createElement('table:table-row');
 
                 $name_emp = $this->_enc($data['nameCust']);
-                $sbr_id   = $this->_enc("№ {$data['sbr_id']}, ".date('d.m.Y H:i', strtotime($data['covered'])));
-                $lc_id    = $this->_enc("№ {$data['lc_id']}");
-                $cost     = $this->_enc(number_format($data['cost'], 2, ',', ' '));
+                $sbr_id = $this->_enc("№ {$data['sbr_id']}, ".date('d.m.Y H:i', strtotime($data['covered'])));
+                $lc_id = $this->_enc("№ {$data['lc_id']}");
+                $cost = $this->_enc(number_format($data['cost'], 2, ',', ' '));
 
                 $table_row->appendChild($this->createTableCell($i)); // п/п
                 $table_row->appendChild($this->createTableCell($name_emp)); // Наименование Заказчика
@@ -163,14 +175,14 @@ class ODTDocument_ITO implements ODTDocumentAdapter
                 $table_row->appendChild($this->createTableCell($lc_id)); // Идентификатор аккредитива
                 $table_row->appendChild($this->createTableCell($cost)); // Сумма резервирования
 
-                $i++;
+                ++$i;
 
                 $sum += $data['cost'];
 
                 $table->appendChild($table_row);
             }
         }
-        
+
         // Добавляем Итого
         $table_row = $this->dom->createElement('table:table-row');
         $table_row->appendChild($this->createTableCell($this->_enc('Итого за отчетный период:'), 4, 'p_1'));
@@ -182,35 +194,38 @@ class ODTDocument_ITO implements ODTDocumentAdapter
 
         return $this->dom->saveXML();
     }
-    
+
     /**
-     * Создаем ячейку таблицы
+     * Создаем ячейку таблицы.
      * 
-     * @param string  $content     Данные ячейки
-     * @param integer $col         Объединение колонок (1 -- нет объединения)      
-     * @param string  $text_style  Название стиля данных
+     * @param string $content    Данные ячейки
+     * @param int    $col        Объединение колонок (1 -- нет объединения)      
+     * @param string $text_style Название стиля данных
+     *
      * @return DOMNode
      */
-    public function createTableCell($content, $col=1, $text_style = 'P1') {
+    public function createTableCell($content, $col = 1, $text_style = 'P1')
+    {
         $table_cell = $this->dom->createElement('table:table-cell');
 
         $table_cell->setAttribute('table:style-name', 'table_5f_test.A2');
         $table_cell->setAttribute('office:value-type', 'string');
-        if($col>0) {
+        if ($col > 0) {
             $table_cell->setAttribute('table:number-columns-spanned', $col);
         }
         $text = $this->dom->createElement('text:p', $content);
         $text->setAttribute('text:style-name', $text_style);
 
         $table_cell->appendChild($text);
-        
+
         return $table_cell;
     }
-    
+
     /**
-     * Задаем стили для ячеек таблицы
+     * Задаем стили для ячеек таблицы.
      */
-    public function setStyleTable() {
+    public function setStyleTable()
+    {
         $styles = $this->xpath->query('//office:automatic-styles', $this->dom->documentElement)->item(0);
 
         $new_style = $this->dom->createElement('style:style');
@@ -228,5 +243,3 @@ class ODTDocument_ITO implements ODTDocumentAdapter
         $styles->appendChild($new_style);
     }
 }
-
-?>

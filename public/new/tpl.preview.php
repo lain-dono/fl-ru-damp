@@ -1,4 +1,4 @@
-<? include($_SERVER['DOCUMENT_ROOT'] . '/projects/tpl.lenta-item.php'); ?>
+<?php include $_SERVER['DOCUMENT_ROOT'].'/projects/tpl.lenta-item.php'; ?>
 <div class="b-prompt b-prompt_absolute b-prompt_left_-200 b-prompt_top_15">
     <div class="b-prompt__txt b-prompt__txt_color_6db335 b-prompt__txt_italic">Ваш проект на<br>главной странице</div>
     <div class="b-prompt__arrow b-prompt__arrow_1 b-prompt__arrow_left_30"></div>
@@ -19,7 +19,7 @@
 </div>
 <div class="b-post__preview-full">
     <link href="/css/projects3.css" rel="stylesheet" type="text/css">
-    <? include($_SERVER['DOCUMENT_ROOT'] . '/projects/tpl.prj-main-info.php'); ?>
+    <?php include $_SERVER['DOCUMENT_ROOT'].'/projects/tpl.prj-main-info.php'; ?>
     <div class="b-prompt b-prompt_absolute b-prompt_left_-200 b-prompt_top_-10">
         <div class="b-prompt__txt b-prompt__txt_color_6db335 b-prompt__txt_italic">Внутри проект<br>будет выглядеть так</div>
         <div class="b-prompt__arrow b-prompt__arrow_1 b-prompt__arrow_left_30"></div>

@@ -20,30 +20,30 @@ $dir_col = $form->getElement('dir_col')->getValue();
             <col style="width:100px" />
             <col style="width:120px" />
         </colgroup>
-        <?php if($form_elements): ?>
+        <?php if ($form_elements): ?>
         <thead>
             <tr>
                 <?php 
-                      foreach($form_elements as $form_element): 
-                        if($form_element->getAttrib('data_hide')): 
-                            continue; 
+                      foreach ($form_elements as $form_element):
+                        if ($form_element->getAttrib('data_hide')):
+                            continue;
                         endif;
                         $idx = $form_element->getName();
                 ?>
                 <th>
                     <?=$label = $form_element->getLabel()?>
-                    <?php if(!empty($label) && !$form_element->getAttrib('data_stop_order')): ?>
-                    <a onclick="reserves_admin.changeDir('<?=$idx?>','desc');" href="javascript:void(0);"><img width="11" height="11" alt="v" src="/images/arrow-bottom<?=($dir_col==$idx && $dir=='desc' ? '-a' : '')?>.png" /></a> 
-                    <a onclick="reserves_admin.changeDir('<?=$idx?>','asc');" href="javascript:void(0);"><img width="11" height="11" alt="v" src="/images/arrow-top<?=($dir_col==$idx && $dir=='asc' ? '-a' : '')?>.png" /></a>
+                    <?php if (!empty($label) && !$form_element->getAttrib('data_stop_order')): ?>
+                    <a onclick="reserves_admin.changeDir('<?=$idx?>','desc');" href="javascript:void(0);"><img width="11" height="11" alt="v" src="/images/arrow-bottom<?=($dir_col == $idx && $dir == 'desc' ? '-a' : '')?>.png" /></a> 
+                    <a onclick="reserves_admin.changeDir('<?=$idx?>','asc');" href="javascript:void(0);"><img width="11" height="11" alt="v" src="/images/arrow-top<?=($dir_col == $idx && $dir == 'asc' ? '-a' : '')?>.png" /></a>
                     <?php endif; ?>
                 </th>
                 <?php endforeach; ?>
             </tr>
             <tr class="pd">
                 <?php 
-                      foreach($form_elements as $form_element): 
-                        if($form_element->getAttrib('data_hide')): 
-                            continue; 
+                      foreach ($form_elements as $form_element):
+                        if ($form_element->getAttrib('data_hide')):
+                            continue;
                         endif;
                 ?>
                 <td><?=$form_element->render(); ?></td>
@@ -51,15 +51,15 @@ $dir_col = $form->getElement('dir_col')->getValue();
             </tr>
         </thead>
         <?php endif; ?>
-        <?php if(!empty($reserves)): ?>
+        <?php if (!empty($reserves)): ?>
         <tfoot>
             <tr>
                 <td colspan="11">
                     <div class="pager">
                         <?=new_paginator(
-                                $page, 
-                                ceil($page_count / $limit), 
-                                10, 
+                                $page,
+                                ceil($page_count / $limit),
+                                10,
                                 "%s?action=index{$params}&page=%d%s") ?>
                     </div>
                 </td>
@@ -74,7 +74,7 @@ $dir_col = $form->getElement('dir_col')->getValue();
         </tfoot>
         
         <tbody>
-                <?php foreach($reserves as $reserve): ?>
+                <?php foreach ($reserves as $reserve): ?>
             <tr class="nr-a-tbl_tr">
                 <td><?=$reserve->getSrcDate()?></td>
                 <td><?=$reserve->getReserveDate()?></td>
@@ -87,22 +87,22 @@ $dir_col = $form->getElement('dir_col')->getValue();
                 </td>
                 <td class="nr-a-td-sum"><?=$reserve->getSrcPrice()?></td>
                 <td class="nr-a-td-val" style="text-align: center;">
-                    <?php if($reserve->isStatusReserved() || $reserve->isInvoice()): ?>
-                        <?php if(!$reserve->isReserveByService()): ?>БН<?php else: ?>ЯК<?php endif; ?>
+                    <?php if ($reserve->isStatusReserved() || $reserve->isInvoice()): ?>
+                        <?php if (!$reserve->isReserveByService()): ?>БН<?php else: ?>ЯК<?php endif; ?>
                     <?php else: ?>
                         &mdash; 
                     <?php endif; ?>
                 </td>
                 <td class="nr-a-td-val" style="text-align: center;">
-                    <?php if($reserve->isStatusPayPayed()): ?>
-                        <?php if(!$reserve->isPayoutByService()): ?>БН<?php else: ?>ЯК<?php endif; ?>
+                    <?php if ($reserve->isStatusPayPayed()): ?>
+                        <?php if (!$reserve->isPayoutByService()): ?>БН<?php else: ?>ЯК<?php endif; ?>
                     <?php else: ?>
                         &mdash; 
                     <?php endif; ?>
                 </td>
                 <td class="nr-a-td-val" style="text-align: center;">
-                    <?php if($reserve->isStatusBackPayed()): ?>
-                        <?php if(!$reserve->isReserveByService() && $reserve->isInvoice()): ?>БН<?php else: ?>ЯК<?php endif; ?>
+                    <?php if ($reserve->isStatusBackPayed()): ?>
+                        <?php if (!$reserve->isReserveByService() && $reserve->isInvoice()): ?>БН<?php else: ?>ЯК<?php endif; ?>
                     <?php else: ?>
                         &mdash; 
                     <?php endif; ?>                    
@@ -115,10 +115,10 @@ $dir_col = $form->getElement('dir_col')->getValue();
         <?php endif; ?>
     </table>
 <?php 
-    foreach($form_elements as $form_element):
-        if($form_element->getAttrib('data_hide')):
+    foreach ($form_elements as $form_element):
+        if ($form_element->getAttrib('data_hide')):
             echo $form_element->render();
         endif;
-    endforeach; 
+    endforeach;
 ?>
 </form>

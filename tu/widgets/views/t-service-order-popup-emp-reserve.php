@@ -1,13 +1,12 @@
 <?php
 
 /**
- * Попап при заказе ТУ для заказчика c интерфейсом резерва по "новой БС"
+ * Попап при заказе ТУ для заказчика c интерфейсом резерва по "новой БС".
  */
-
 $title = reformat($title, 30, 0, 1);
-$days = $days . ' ' . ending($days, 'день', 'дня', 'дней');
-$priceFormated = tservices_helper::cost_format($price,true, false, false);
-$priceWithTaxFormated = tservices_helper::cost_format($priceWithTax,true, false, false);
+$days = $days.' '.ending($days, 'день', 'дня', 'дней');
+$priceFormated = tservices_helper::cost_format($price, true, false, false);
+$priceWithTaxFormated = tservices_helper::cost_format($priceWithTax, true, false, false);
 
 $show_popup = (isset($_POST['popup']));
 
@@ -15,7 +14,9 @@ $show_popup = (isset($_POST['popup']));
 <script type="text/javascript">
     var RESERVE_ALL_TAX = <?=$reserveAllTaxJSON?>;
 </script>
-<div id="tservices_orders_status_popup" class="b-shadow b-shadow_center b-shadow_width_520 <?php if(!$show_popup){ ?>b-shadow_hide <?php } ?>b-shadow__quick" style="display:block;">
+<div id="tservices_orders_status_popup" class="b-shadow b-shadow_center b-shadow_width_520 <?php if (!$show_popup) {
+    ?>b-shadow_hide <?php 
+} ?>b-shadow__quick" style="display:block;">
     <div class="b-shadow__body b-shadow__body_pad_20">
         <h2 class="b-layout__title">
             Заказ услуги

@@ -17,11 +17,15 @@
 			</td>
 			<td class="b-layout__right">
 				<div class="b-layout__txt">
-					<?php if($letter['is_company']=='t') { ?>
+					<?php if ($letter['is_company'] == 't') {
+    ?>
 					<?=$letter['company']['name']?>
-					<?php } else { ?>
-					<?=($letter['recipient']['form_type']==1 ? $letter['recipient'][1]['fio'] : $letter['recipient'][2]['full_name'])?>
-					<?php } ?>
+					<?php 
+} else {
+    ?>
+					<?=($letter['recipient']['form_type'] == 1 ? $letter['recipient'][1]['fio'] : $letter['recipient'][2]['full_name'])?>
+					<?php 
+} ?>
 				</div>
 			</td>
 		</tr>
@@ -31,14 +35,18 @@
 			</td>
 			<td class="b-layout__right">
 				<div class="b-layout__txt">
-					<?php if($letter['is_company']=='t') { ?>
+					<?php if ($letter['is_company'] == 't') {
+    ?>
 					<?=$letter['company']['index']?>,
 					<?=$letter['company']['country_title']?>,
 					<?=$letter['company']['city_title']?>,
 					<?=$letter['company']['address']?>
-					<?php } else { ?>
-					<?=($letter['recipient']['form_type']==1 ? $letter['recipient'][1]['address'] : $letter['recipient'][2]['address'])?>
-					<?php } ?>
+					<?php 
+} else {
+    ?>
+					<?=($letter['recipient']['form_type'] == 1 ? $letter['recipient'][1]['address'] : $letter['recipient'][2]['address'])?>
+					<?php 
+} ?>
 				</div>
 			</td>
 		</tr>

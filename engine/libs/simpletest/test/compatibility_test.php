@@ -1,12 +1,15 @@
 <?php
-// $Id: compatibility_test.php 1505 2007-04-30 23:39:59Z lastcraft $
-require_once(dirname(__FILE__) . '/../autorun.php');
-require_once(dirname(__FILE__) . '/../compatibility.php');
 
-class ComparisonClass {
+// $Id: compatibility_test.php 1505 2007-04-30 23:39:59Z lastcraft $
+require_once dirname(__FILE__).'/../autorun.php';
+require_once dirname(__FILE__).'/../compatibility.php';
+
+class ComparisonClass
+{
 }
 
-class ComparisonSubclass extends ComparisonClass {
+class ComparisonSubclass extends ComparisonClass
+{
 }
 
 if (version_compare(phpversion(), '5') >= 0) {
@@ -14,9 +17,10 @@ if (version_compare(phpversion(), '5') >= 0) {
     eval('class ComparisonClassWithInterface implements ComparisonInterface { }');
 }
 
-class TestOfCompatibility extends UnitTestCase {
-    
-    function testIsA() {
+class TestOfCompatibility extends UnitTestCase
+{
+    public function testIsA()
+    {
         $this->assertTrue(SimpleTestCompatibility::isA(
                 new ComparisonClass(),
                 'ComparisonClass'));
@@ -27,21 +31,24 @@ class TestOfCompatibility extends UnitTestCase {
                 new ComparisonSubclass(),
                 'ComparisonClass'));
     }
-    
-    function testIdentityOfNumericStrings() {
-        $numericString1 = "123";
-        $numericString2 = "00123";
+
+    public function testIdentityOfNumericStrings()
+    {
+        $numericString1 = '123';
+        $numericString2 = '00123';
         $this->assertNotIdentical($numericString1, $numericString2);
     }
-    
-    function testIdentityOfObjects() {
+
+    public function testIdentityOfObjects()
+    {
         $object1 = new ComparisonClass();
         $object2 = new ComparisonClass();
         $this->assertIdentical($object1, $object2);
     }
-    
-    function testReferences () {
-        $thing = "Hello";
+
+    public function testReferences()
+    {
+        $thing = 'Hello';
         $thing_reference = &$thing;
         $thing_copy = $thing;
         $this->assertTrue(SimpleTestCompatibility::isReference(
@@ -54,8 +61,9 @@ class TestOfCompatibility extends UnitTestCase {
                 $thing,
                 $thing_copy));
     }
-    
-    function testObjectReferences () {
+
+    public function testObjectReferences()
+    {
         $object = &new ComparisonClass();
         $object_reference = &$object;
         $object_copy = new ComparisonClass();
@@ -79,12 +87,13 @@ class TestOfCompatibility extends UnitTestCase {
                     $object_assignment));
         }
     }
-    
-    function testInteraceComparison() {
+
+    public function testInteraceComparison()
+    {
         if (version_compare(phpversion(), '5', '<')) {
             return;
         }
-        
+
         $object = new ComparisonClassWithInterface();
         $this->assertFalse(SimpleTestCompatibility::isA(
                 new ComparisonClass(),
@@ -94,4 +103,3 @@ class TestOfCompatibility extends UnitTestCase {
                 'ComparisonInterface'));
     }
 }
-?>

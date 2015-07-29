@@ -15,7 +15,7 @@
                         <a class="b-layout__link b-layout__link_bordbot_dot_0f71c8" href="javascript:void(0)" onclick="xajax_unactivateAuth('<?=$_SESSION['uid']?>', 'resend')" id="a_sms_resend">СМС не пришло</a>
                     </div>
                     <div class="b-buttons b-buttons_padtop_20 b-buttons_padbot_10">
-                        <a href="javascript:void(0)" onclick="<?= ( $callback_js ? $callback_js : 'a_sms_act' ); ?>(this);" class="b-button b-button_flat b-button_flat_green <?= $code_debug ? '' : 'b-button_disabled'?>" id="a_sms_act">Отвязать
+                        <a href="javascript:void(0)" onclick="<?= ($callback_js ? $callback_js : 'a_sms_act'); ?>(this);" class="b-button b-button_flat b-button_flat_green <?= $code_debug ? '' : 'b-button_disabled'?>" id="a_sms_act">Отвязать
                                     <img class="b-button__load" width="26" height="6" alt="" src="/css/block/b-button/b-button__load.gif" style="display:none" /></a>&#160;
                         <span class="b-buttons__txt">или</span>
                         <a href="javascript:void(0)" onclick="$('sms_is_load').getParent().addClass('b-shadow_hide');" class="b-buttons__link b-buttons__link_dot_c10601">закрыть</a>

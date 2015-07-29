@@ -6,21 +6,20 @@
 //$g_page_id    = "0|27";
 //$new_site_css = true;
 //$print        = false;
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/billing.php");
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/bar_notify.php");
 
 //$main_path = $_SERVER['DOCUMENT_ROOT'];
 
-if(!get_uid(false)) {
-    header('Location: /fbd.php'); 
+if (!get_uid(false)) {
+    header('Location: /fbd.php');
     exit;
 }
 
 //Редиректим на историю заказов
-header('Location: /bill/history/?period=3'); 
+header('Location: /bill/history/?period=3');
 exit;
-
 
 /*
 $content = "{$main_path}/bill/payment/content.php";

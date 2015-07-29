@@ -11,39 +11,42 @@
  */
 ?>
 <?php
-require_once (dirname(__FILE__) . '/class.basemapper.php');
+require_once dirname(__FILE__).'/class.basemapper.php';
 
-class DepartmentMapper extends BaseMapper {
-  public function enumDepartments($locale) {
-    $sql = '
+class DepartmentMapper extends BaseMapper
+{
+    public function enumDepartments($locale)
+    {
+        $sql = '
     	SELECT * 
-    	FROM "{' . $this->getTableName() . '}" d 
+    	FROM "{'.$this->getTableName().'}" d 
         INNER JOIN "{departmentlocale}" dl 
         ON d."departmentid"=dl."departmentid" 
         WHERE "locale"=:locale';
-    try {
-        $this->db->Query($sql, array('locale'=>$locale));
-         return $this->db->getArrayOfRows(); 
-    } catch (Exception $e) {
+        try {
+            $this->db->Query($sql, array('locale' => $locale));
 
-        return array();
+            return $this->db->getArrayOfRows();
+        } catch (Exception $e) {
+            return array();
+        }
     }
-  }
-  
-  public function getByDepartmentKey($key) {
-      return array_shift($r = $this->makeSearch('"departmentkey" = :key', array("key" => $key), null, 1));  
-  }
-  
-  public function departmentsExist() {
-    $sql = 'SELECT * FROM "{'.$this->getTableName().'}"'; //  WHERE ROWNUM = 0
+
+    public function getByDepartmentKey($key)
+    {
+        return array_shift($r = $this->makeSearch('"departmentkey" = :key', array('key' => $key), null, 1));
+    }
+
+    public function departmentsExist()
+    {
+        $sql = 'SELECT * FROM "{'.$this->getTableName().'}"'; //  WHERE ROWNUM = 0
     try {
         $this->db->Query($sql);
-         return $this->db->getNumRows() > 0; 
-    } catch (Exception $e) {
 
+        return $this->db->getNumRows() > 0;
+    } catch (Exception $e) {
         return false;
     }
-  }
-  
+    }
 }
 ?>

@@ -1,9 +1,9 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/wizard.common.php");
-$xajax->printJavascript('/xajax/'); 
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/wizard.common.php';
+$xajax->printJavascript('/xajax/');
 
-$action = !isset($action)?registration::ACTION_STEP1 : $action;
+$action = !isset($action) ? registration::ACTION_STEP1 : $action;
 
 ?>
 <div class="b-layout g-txt_center">
@@ -14,7 +14,7 @@ $action = !isset($action)?registration::ACTION_STEP1 : $action;
         <input type="hidden" name="redirect" value="<?=$redirectUri?>" />
 
         
-        <?php if($action == registration::ACTION_REGISTRATION): ?>
+        <?php if ($action == registration::ACTION_REGISTRATION) : ?>
         
         <div class="b-layout b-layout_padtop_45 b-layout_padleft_20 b-layout_padright_20">
             
@@ -28,8 +28,8 @@ $action = !isset($action)?registration::ACTION_STEP1 : $action;
                         <tr class="b-layout__tr">
                             <td class="b-layout__td b-layout__td_padbot_30 b-layout__td_relative b-layout__td_width_full_ipad">
                                 <div class="b-combo b-combo_large">
-                                    <div class="b-combo__input <?= $registration->error['login']?"b-combo__input_error":""?>">
-                                        <input data-ga-el="<?=$registration->role == registration::ROLE_EMPLOYER?'customer':'freelancer'?>"
+                                    <div class="b-combo__input <?= $registration->error['login'] ? 'b-combo__input_error' : ''?>">
+                                        <input data-ga-el="<?=$registration->role == registration::ROLE_EMPLOYER ? 'customer' : 'freelancer'?>"
                                                data-ga-event="{ec: 'user', ea: 'registration_login_edited',el: ''}" 
                                                type="text" 
                                                maxlength="15" 
@@ -46,7 +46,7 @@ $action = !isset($action)?registration::ACTION_STEP1 : $action;
                                     </div>
                                 </div>
 
-                                <?php if(false): ?>
+                                <?php if (false): ?>
                                 <div class="b-layout__txt b-layout__txt_fontsize_11 b-layout__txt_padtop_5">3—15 символов: латинские буквы, цифры,<br>знак подчёркивания (_) и дефис (-)</div>
                                 <?php endif; ?>
 
@@ -91,7 +91,7 @@ $action = !isset($action)?registration::ACTION_STEP1 : $action;
         
         <div class="b-layout b-layout_gradpane">
             
-            <?php if(!$from_welcome_wizard): ?>
+            <?php if (!$from_welcome_wizard): ?>
             <h1 class="b-layout__title b-layout__title_lh_1 b-layout__title_fs25 b-layout__title_color_333 b-layout__title_padbot_28">
                 Регистрация
             </h1>
@@ -161,7 +161,7 @@ $action = !isset($action)?registration::ACTION_STEP1 : $action;
                         <tr class="b-layout__tr">
                             <td class="b-layout__td b-layout__td_padbot_30 b-layout__td_relative b-layout__td_width_full_ipad">
                                 <div class="b-combo b-combo_large">
-                                    <div class="b-combo__input <?= $registration->error['email']?"b-combo__input_error":""?>">
+                                    <div class="b-combo__input <?= $registration->error['email'] ? 'b-combo__input_error' : ''?>">
                                         <input data-ga-event="{ec: 'user', ea: 'registration_form_edited',el: ''}" 
                                                type="text" 
                                                onblur="registration_value_check('email')" 
@@ -194,7 +194,7 @@ $action = !isset($action)?registration::ACTION_STEP1 : $action;
                         <tr class="b-layout__tr">
                             <td class="b-layout__td b-layout__td_padbot_30 b-layout__td_relative b-layout__td_width_full_ipad">
                                 <div class="b-combo b-combo_large">
-                                    <div class="b-combo__input b-eye <?= $registration->error['password']?"b-combo__input_error":""?>"> 
+                                    <div class="b-combo__input b-eye <?= $registration->error['password'] ? 'b-combo__input_error' : ''?>"> 
                                         <a onclick="show_password()" href="javascript:void(0)" class="b-eye__link b-eye__link_right_null " tabindex="10000"><span class="b-eye__icon b-eye__icon_close"></span></a>
                                         <input type="password" 
                                                onblur="registration_value_check('password');" 
@@ -243,9 +243,9 @@ $action = !isset($action)?registration::ACTION_STEP1 : $action;
                                             </td>
                                             <td>
                                                 <div class="b-combo b-combo_inline-block b-combo_large">
-                                                    <div class="b-combo__input <?= $registration->error['captcha']?"b-combo__input_error":""?>" id="error_captchanum">
+                                                    <div class="b-combo__input <?= $registration->error['captcha'] ? 'b-combo__input_error' : ''?>" id="error_captchanum">
                                                         <input id="captchanum" name="captchanum" type="hidden" value="<?=$registration->captchanum?>" />
-                                                        <input <?= ($registration->error['captcha']?'title="'. $registration->error['captcha'] .'"':"")?> 
+                                                        <input <?= ($registration->error['captcha'] ? 'title="'.$registration->error['captcha'].'"' : '')?> 
                                                             data-ga-event="{ec: 'user', ea: 'registration_captcha_edited',el: ''}" 
                                                             class="b-combo__input-text b-combo__input-text_center" 
                                                             id="reg_rndnum" 
@@ -293,12 +293,12 @@ $action = !isset($action)?registration::ACTION_STEP1 : $action;
                                                    b-button_flat_green 
                                                    b-button_flat_large 
                                                    b-button_flat_width_full 
-                                                   b-button_disabled <?php if($customer_wizard): ?>b-button_flat_normal<?php endif; ?>" 
+                                                   b-button_disabled <?php if ($customer_wizard): ?>b-button_flat_normal<?php endif; ?>" 
                                             id="send_btn" 
                                             data-ga-event="{ec: 'user', ea: 'registration_regbutton1_clicked',el: ''}" 
                                             onclick="formSubmit(); return false;">
                                         Зарегистрироваться
-                                        <?php if($customer_wizard): ?>
+                                        <?php if ($customer_wizard): ?>
                                         <br/>и опубликовать проект    
                                         <?php endif; ?>
                                     </button>
@@ -336,7 +336,7 @@ $action = !isset($action)?registration::ACTION_STEP1 : $action;
                     view_social_buttons(false, array(
                         'vkontakte' => 'data-ga-event="{ec: \'user\', ea: \'registration_socialnet_clicked\',el: \'vk\'}"',
                         'facebook' => 'data-ga-event="{ec: \'user\', ea: \'registration_socialnet_clicked\',el: \'fb\'}"',
-                        'odnoklassniki' => 'data-ga-event="{ec: \'user\', ea: \'registration_socialnet_clicked\',el: \'od\'}"'
+                        'odnoklassniki' => 'data-ga-event="{ec: \'user\', ea: \'registration_socialnet_clicked\',el: \'od\'}"',
                     ));
                 ?>
                 <?php if (isset($_SESSION['opauth_error']) && $_SESSION['opauth_error']): ?>

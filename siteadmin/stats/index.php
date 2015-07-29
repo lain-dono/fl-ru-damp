@@ -1,24 +1,26 @@
-<?
-define( 'IS_SITE_ADMIN', 1 );
+<?php
+
+define('IS_SITE_ADMIN', 1);
 $no_banner = 1;
-	$rpath = "../../";
-	require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/users.php");
+	$rpath = '../../';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/users.php';
 	session_start();
 	get_uid();
-	
-	if (!(hasPermissions('adm') && (hasPermissions('stats') || hasPermissions('tmppayments')) ))
-		{header ("Location: /404.php"); exit;}
-	
-$content = "../content.php";
 
+	if (!(hasPermissions('adm') && (hasPermissions('stats') || hasPermissions('tmppayments')))) {
+	    header ('Location: /404.php');
+	    exit;
+	}
+
+$content = '../content.php';
 
 $inner_page = trim($_GET['page']);
-if ( !in_array($inner_page, array('charts', 'charts2', 'charts3', 'charts4', 'geo')) ) {
-    $inner_page = "index";
+if (!in_array($inner_page, array('charts', 'charts2', 'charts3', 'charts4', 'geo'))) {
+    $inner_page = 'index';
 }
 
-if($inner_page=='index') {
-    switch($_GET['t']) {
+if ($inner_page == 'index') {
+    switch ($_GET['t']) {
         case 'd':
             $inner_page = $inner_page.'_d';
             break;
@@ -35,7 +37,7 @@ if($inner_page=='index') {
             $inner_page = $inner_page.'_u';
             break;
         case 'v':
-            require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/Verification.php");
+            require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Verification.php';
             $inner_page = $inner_page.'_v';
             break;
         default:
@@ -44,15 +46,15 @@ if($inner_page=='index') {
     }
 }
 
-$inner_page = "inner_".$inner_page.".php";
+$inner_page = 'inner_'.$inner_page.'.php';
 $css_file = array(
     'moderation.css',
     'new-admin.css',
-    'nav.css');
+    'nav.css', );
 
-$header = $rpath."header.php";
-$footer = $rpath."footer.html";
+$header = $rpath.'header.php';
+$footer = $rpath.'footer.html';
 
-include ($rpath."template.php");
+include $rpath.'template.php';
 
 ?>

@@ -11,11 +11,13 @@
  */
 ?>
 <?php
-require_once (dirname(__FILE__) . '/class.basemapper.php');
+require_once dirname(__FILE__).'/class.basemapper.php';
 
-class DepartmentLocaleMapper extends BaseMapper {
-  function getDepartmentLocale($departmentid, $locale) {
-      return array_shift($r = $this->makeSearch('"departmentid" = :id AND "locale" = :locale', array("id" => $departmentid, "locale" => $locale), null, 1));  
-  }
+class DepartmentLocaleMapper extends BaseMapper
+{
+    public function getDepartmentLocale($departmentid, $locale)
+    {
+        return array_shift($r = $this->makeSearch('"departmentid" = :id AND "locale" = :locale', array('id' => $departmentid, 'locale' => $locale), null, 1));
+    }
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
 /**
- * Уведомление у которых еще не было никогда про, даже тестового
+ * Уведомление у которых еще не было никогда про, даже тестового.
  * */
 ini_set('max_execution_time', '0');
 ini_set('memory_limit', '512M');
@@ -9,14 +9,14 @@ require_once '../classes/stdf.php';
 require_once '../classes/memBuff.php';
 require_once '../classes/smtp2.php';
 
-/**
+/*
  * Логин пользователя от кого осуществляется рассылка
  * 
  */
 $sender = 'admin';
 
 // ищем фрилансеров у которых не было никогда ПРО
-$sql = 
+$sql =
    "SELECT f.uid, f.login, f.uname, f.usurname, f.email
     FROM freelancer f
     LEFT JOIN orders o
@@ -32,25 +32,25 @@ $sql =
 
 $eHost = $GLOBALS['host'];
 
-$eSubject = "Free-lance.ru: попробуйте аккаунт PRO";
+$eSubject = 'Free-lance.ru: попробуйте аккаунт PRO';
 
-$mail = new smtp2;
+$mail = new smtp2();
 
-$imgPro  = $mail->cid();
-$imgFPro  = $mail->cid();
-$img7  = $mail->cid();
-$img20  = $mail->cid();
-$img21  = $mail->cid();
-$img22  = $mail->cid();
-$img18  = $mail->cid();
+$imgPro = $mail->cid();
+$imgFPro = $mail->cid();
+$img7 = $mail->cid();
+$img20 = $mail->cid();
+$img21 = $mail->cid();
+$img22 = $mail->cid();
+$img18 = $mail->cid();
 
-$mail->attach(ABS_PATH . '/images/letter/pro.png', $imgPro);
-$mail->attach(ABS_PATH . '/images/pro/fpro.gif', $imgFPro);
-$mail->attach(ABS_PATH . '/images/letter/7.png', $img7);
-$mail->attach(ABS_PATH . '/images/letter/20.png', $img20);
-$mail->attach(ABS_PATH . '/images/letter/21.png', $img21);
-$mail->attach(ABS_PATH . '/images/icons/del.gif', $img22);
-$mail->attach(ABS_PATH . '/images/promo-icons/big/18.png', $img18);
+$mail->attach(ABS_PATH.'/images/letter/pro.png', $imgPro);
+$mail->attach(ABS_PATH.'/images/pro/fpro.gif', $imgFPro);
+$mail->attach(ABS_PATH.'/images/letter/7.png', $img7);
+$mail->attach(ABS_PATH.'/images/letter/20.png', $img20);
+$mail->attach(ABS_PATH.'/images/letter/21.png', $img21);
+$mail->attach(ABS_PATH.'/images/icons/del.gif', $img22);
+$mail->attach(ABS_PATH.'/images/promo-icons/big/18.png', $img18);
 
 ob_start(); ?>
 <html>
@@ -237,7 +237,7 @@ ob_start(); ?>
     </body>
 </html>
 
-<? $eMessage = ob_get_clean();
+<?php $eMessage = ob_get_clean();
 
 // ----------------------------------------------------------------------------------------------------------------
 // -- Рассылка ----------------------------------------------------------------------------------------------------
@@ -245,7 +245,7 @@ ob_start(); ?>
 $master = new DB('master');
 $cnt = 0;
 
-$sender = $master->row("SELECT * FROM users WHERE login = ?", $sender);
+$sender = $master->row('SELECT * FROM users WHERE login = ?', $sender);
 if (empty($sender)) {
     die("Unknown Sender\n");
 }
@@ -265,14 +265,14 @@ $res = $master->query($sql);
 while ($row = pg_fetch_assoc($res)) {
     $mail->recipient[] = array(
         'email' => "{$row['uname']} {$row['usurname']} [{$row['login']}] <{$row['email']}>",
-        'extra' => array('USER_LOGIN' => $row['login'])
+        'extra' => array('USER_LOGIN' => $row['login']),
     );
     if (++$i >= 30000) {
         $mail->bind($spamid);
         $mail->recipient = array();
         $i = 0;
     }
-    $cnt++;
+    ++$cnt;
 }
 if ($i) {
     $mail->bind($spamid);

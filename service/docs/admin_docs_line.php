@@ -8,7 +8,7 @@
     <a href="/service/docs/section/?id=<?= $doc['docs_sections_id']; ?>" name="section_name_<?= $doc['docs_sections_id']; ?>"><?= htmlspecialchars(hyphen_words($doc['section_name'])); ?></a>
 </td>
 <td class="d">
-    <?= date("d.m.Y", strtotime($doc['date_create'])); ?>
+    <?= date('d.m.Y', strtotime($doc['date_create'])); ?>
 </td>
 <td class="ops">
     <a href="#" onclick="xajax_EditDocFormPrepare(<?= $doc['id']; ?>); return false;"><img src="/images/ico-e-u.png" alt="Редактировать"></a>&nbsp;&nbsp; <a href=""><img src="/images/btn-remove2.png" alt="Удалить" onclick="xajax_DeleteDocHTML(<?= $doc['id']; ?>); return false;"></a>&nbsp;

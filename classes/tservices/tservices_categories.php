@@ -1,78 +1,68 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/tservices/atservices_model.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/tservices/atservices_model.php';
 
 /**
- * Категории ТУ
- *
+ * Категории ТУ.
  */
 class tservices_categories extends atservices_model
 {
-    
     private $TABLE = 'tservices_categories';
-    
-    
+
     protected $_cache = array();
 
-
-    
     /**
-     * Получить ID категории ТУ по связной из каталога фрилансеров
+     * Получить ID категории ТУ по связной из каталога фрилансеров.
      * 
      * @param type $prof_group_id
      * @param type $prof_id
-     * @return boolean
+     *
+     * @return bool
      */
     public function getCategoryByFreelancersCatalog($prof_group_id, $prof_id)
     {
         if ($prof_id > 0) {
             $where = $this->db()->parse('pid = ?i', $prof_id);
         }
-        
+
         if ($prof_group_id > 0) {
             $where = $this->db()->parse('gid = ?i', $prof_group_id);
         }
-        
+
         if (isset($where)) {
             return $this->db()->cache(3600)->row("SELECT id, title, link FROM {$this->TABLE} WHERE {$where} LIMIT 1");
         }
-        
+
         return false;
     }
 
-    
-
-
-
-    /**
-    * Вернуть ID родителя категории
+   /**
+    * Вернуть ID родителя категории.
     * 
     * @param type $category_id
-    * @return boolean / int
+    *
+    * @return bool / int
     */
-   public function getCategoryParentId($category_id) 
+   public function getCategoryParentId($category_id)
    {
-        $result = $this->db()->row("
+       $result = $this->db()->row("
             SELECT parent_id 
             FROM {$this->TABLE} 
-            WHERE id = ?i AND active > 0", 
+            WHERE id = ?i AND active > 0",
             $category_id);
-            
-        if (isset($result['parent_id']) && is_numeric($result['parent_id'])) 
-        {
-            return (int)$result['parent_id'];
-        }
 
-        return false;
-    }
-    
-    
-    
-    
+       if (isset($result['parent_id']) && is_numeric($result['parent_id'])) {
+           return (int) $result['parent_id'];
+       }
+
+       return false;
+   }
+
     /**
      * Получаем заголовок категории и его родителя если есть.
      * 
      * @param int $category_id
+     *
      * @return row
      */
     public function getTitleAndSubtitle($category_id)
@@ -91,10 +81,6 @@ class tservices_categories extends atservices_model
             ", $category_id);
     }
 
-    
-    
-    
-    
     /**
      * @deprecated не использовать дубликат getCategoriesByParent(0) 
      * 
@@ -118,20 +104,17 @@ class tservices_categories extends atservices_model
         ");
     }
 
-    
-
-
-
     /**
-	 * Возвращает список всех категорий
-	 *
-	 * @param bool $collectParentChild false = вернуть плоский список категорий, true = вернуть дерево категорий с учётом отношений parent/child
-	 * @param bool $nocache false = прямой запрос в БД, true = кэширование результата
-	 * @return array
-	 */
-	public function getAllCategories($collectParentChild = false, $nocache = false)
-	{
-		$sql = <<<SQL
+     * Возвращает список всех категорий.
+     *
+     * @param bool $collectParentChild false = вернуть плоский список категорий, true = вернуть дерево категорий с учётом отношений parent/child
+     * @param bool $nocache            false = прямой запрос в БД, true = кэширование результата
+     *
+     * @return array
+     */
+    public function getAllCategories($collectParentChild = false, $nocache = false)
+    {
+        $sql = <<<SQL
 select
   ts_cat.id category_id,
   ts_cat.title category_title,
@@ -147,42 +130,41 @@ where ts_cat.active > 0
 order by ts_parent_cat.n_order asc nulls first, ts_cat.n_order asc
 SQL;
 
-		$result = ( $nocache ? $this->db()->rows($sql) : $this->db()->cache(60)->rows($sql) );
+        $result = ($nocache ? $this->db()->rows($sql) : $this->db()->cache(60)->rows($sql));
 
-		$result = $result ? $result : array();
-		if (!$collectParentChild) {
-			return $result;
-		}
+        $result = $result ? $result : array();
+        if (!$collectParentChild) {
+            return $result;
+        }
 
-		$tree = array();
-		foreach($result as $row) {
-			$parent = array(
-				'category_id' => $row['category_parent_id'],
-				'category_title' => $row['category_parent_title'],
-				'category_link' => $row['category_parent_link'],
-				'category_count' => 0,
-				'children' => array(),
-			);
-			$parentCategoryId = +$row['category_parent_id'];
-			if (!isset($tree[$parentCategoryId])) {
-				$tree[$parentCategoryId] = $parent;
-			}
-			$tree[$parentCategoryId]['children'][] = array(
-				'category_id' => $row['category_id'],
-				'category_title' => $row['category_title'],
-				'category_link' => $row['category_link'],
-				'category_count' => $row['category_count'],
-			);
-			$tree[$parentCategoryId]['category_count'] += $row['category_count'];
-		}
+        $tree = array();
+        foreach ($result as $row) {
+            $parent = array(
+                'category_id' => $row['category_parent_id'],
+                'category_title' => $row['category_parent_title'],
+                'category_link' => $row['category_parent_link'],
+                'category_count' => 0,
+                'children' => array(),
+            );
+            $parentCategoryId = +$row['category_parent_id'];
+            if (!isset($tree[$parentCategoryId])) {
+                $tree[$parentCategoryId] = $parent;
+            }
+            $tree[$parentCategoryId]['children'][] = array(
+                'category_id' => $row['category_id'],
+                'category_title' => $row['category_title'],
+                'category_link' => $row['category_link'],
+                'category_count' => $row['category_count'],
+            );
+            $tree[$parentCategoryId]['category_count'] += $row['category_count'];
+        }
 
-		return $tree;
-	}
-    
-    
+        return $tree;
+    }
+
     /**
      * Список вложенных подкатегорий
-     * кешируется на 15 минут
+     * кешируется на 15 минут.
      * 
      * @return array
      */
@@ -201,20 +183,19 @@ SQL;
         ", $category_id);
     }
 
-    
-    
-	/**
-	 * Получаем информацию о категории по её ID
-	 *
-	 * @param int $category_id
-	 * @return row
-	 */
-	public function getCategoryById($category_id)
-	{
-        if(isset($this->_cache[$category_id])) {
+    /**
+     * Получаем информацию о категории по её ID.
+     *
+     * @param int $category_id
+     *
+     * @return row
+     */
+    public function getCategoryById($category_id)
+    {
+        if (isset($this->_cache[$category_id])) {
             return $this->_cache[$category_id];
         }
-        
+
         $this->_cache[$category_id] = $this->db()->row(<<<SQL
 SELECT c.*
 FROM {$this->TABLE} AS c
@@ -224,72 +205,73 @@ SQL
 , $category_id);
 
         return $this->_cache[$category_id];
-	}
+    }
 
-    
-    
-	/**
-	 * Получаем информацию о категории по её символьному алиасу (link)
-	 *
-	 * @param string $category_link
-	 * @return row
-	 */
-	public function getCategoryByLink($category_link)
-	{
-		return $this->db()->row(<<<SQL
+    /**
+     * Получаем информацию о категории по её символьному алиасу (link).
+     *
+     * @param string $category_link
+     *
+     * @return row
+     */
+    public function getCategoryByLink($category_link)
+    {
+        return $this->db()->row(<<<SQL
 SELECT c.*
 FROM {$this->TABLE} AS c
 WHERE c.link = ?
 LIMIT 1
 SQL
-			, $category_link);
-	}
-        
-        /**
-        * Вернуть ID категории по группе
+            , $category_link);
+    }
+
+       /**
+        * Вернуть ID категории по группе.
         * 
         * @param type $gid
-        * @return boolean / int
+        *
+        * @return bool / int
         */
-       public function getIdByGid($gid) 
+       public function getIdByGid($gid)
        {
-            $id = $this->db()->val("
+           $id = $this->db()->val("
                 SELECT id 
                 FROM {$this->TABLE} 
-                WHERE gid = ?i AND active > 0", 
+                WHERE gid = ?i AND active > 0",
                 $gid);
 
-            return (int)$id;
-        }
-        
-        /**
-        * Вернуть ID категории по pid 
+           return (int) $id;
+       }
+
+       /**
+        * Вернуть ID категории по pid.
         * 
         * @param type $pid
-        * @return boolean / int
+        *
+        * @return bool / int
         */
-       public function getIdByPid($pid) 
+       public function getIdByPid($pid)
        {
-            $id = $this->db()->val("
+           $id = $this->db()->val("
                 SELECT id 
                 FROM {$this->TABLE} 
-                WHERE pid = ?i AND active > 0", 
+                WHERE pid = ?i AND active > 0",
                 $pid);
 
-            return (int)$id;
-        }
-        
-        
+           return (int) $id;
+       }
+
         /**
-         * Пересчет количества пользователей ТУ в данной категории
+         * Пересчет количества пользователей ТУ в данной категории.
          * 
          * @global type $DB
+         *
          * @return type
          */
-        public static function ReCalcCategoriesCount() 
+        public static function ReCalcCategoriesCount()
         {
             global $DB;
-            return (int) $DB->mquery("SELECT recalc_tservices_categories_count()");
+
+            return (int) $DB->mquery('SELECT recalc_tservices_categories_count()');
         }
 }
-

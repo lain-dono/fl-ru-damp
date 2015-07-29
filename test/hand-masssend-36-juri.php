@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Уведомление работодателям
+ * Уведомление работодателям.
  * */
 ini_set('max_execution_time', '0');
 ini_set('memory_limit', '512M');
@@ -9,7 +10,7 @@ require_once '../classes/stdf.php';
 require_once '../classes/memBuff.php';
 require_once '../classes/smtp.php';
 
-/**
+/*
  * Логин пользователя от кого осуществляется рассылка
  * 
  */
@@ -28,11 +29,11 @@ AND (
   (SELECT id FROM sbr s WHERE s.emp_id = r.user_id AND s.scheme_type = 4 LIMIT 1) IS NOT NULL 
     OR
   (SELECT id FROM sbr s WHERE s.frl_id = r.user_id AND s.scheme_type = 4 LIMIT 1) IS NOT NULL 
-)"; 
+)";
 
 $eHost = $GLOBALS['host'];
 
-$eSubject = "Free-lance.ru: Вы не указали обязательную информацию на странице «Финансы»";
+$eSubject = 'Free-lance.ru: Вы не указали обязательную информацию на странице «Финансы»';
 
 $eMessage = "<p>Здравствуйте!</p>
 
@@ -52,19 +53,21 @@ $eMessage = "<p>Здравствуйте!</p>
 $master = new DB('master');
 $cnt = 0;
 
-$sender = $master->row("SELECT * FROM users WHERE login = ?", $sender);
+$sender = $master->row('SELECT * FROM users WHERE login = ?', $sender);
 if (empty($sender)) {
     die("Unknown Sender\n");
 }
 
 echo "Send email messages\n";
 
-$mail = new smtp;
+$mail = new smtp();
 $mail->subject = $eSubject;  // заголовок письма
 $mail->message = $eMessage; // текст письма
 $mail->recipient = ''; // свойство 'получатель' оставляем пустым
 $spamid = $mail->send('text/html');
-if (!$spamid) die('Failed!');
+if (!$spamid) {
+    die('Failed!');
+}
 // с этого момента рассылка создана, но еще никому не отправлена!
 // допустим нам нужно получить список получателей с какого-либо запроса
 $i = 0;
@@ -73,14 +76,14 @@ $res = $master->query($sql);
 while ($row = pg_fetch_assoc($res)) {
     $mail->recipient[] = array(
         'email' => $row['email'],
-        'extra' => array('first_name' => $row['uname'], 'last_name' => $row['usurname'], 'USER_LOGIN' => $row['login'])
+        'extra' => array('first_name' => $row['uname'], 'last_name' => $row['usurname'], 'USER_LOGIN' => $row['login']),
     );
     if (++$i >= 30000) {
         $mail->bind($spamid);
         $mail->recipient = array();
         $i = 0;
     }
-    $cnt++;
+    ++$cnt;
 }
 if ($i) {
     $mail->bind($spamid);

@@ -21,7 +21,7 @@ Sbr.prototype.ERRORS=<?=sbr_meta::jsInputErrors($stage->error['arbitrage'])?>;
             <div class="nr-arb-send-prj">
                 <h4>Задача:</h4>
                 <div>
-                    <a href="?site=Stage&id=<?=$stage->id?>"><?=reformat($stage->name,55,0,1)?></a><br/>
+                    <a href="?site=Stage&id=<?=$stage->id?>"><?=reformat($stage->name, 55, 0, 1)?></a><br/>
                     <span><strong>#<?=$stage->id?></strong></span>
                 </div>
             </div>
@@ -35,7 +35,7 @@ Sbr.prototype.ERRORS=<?=sbr_meta::jsInputErrors($stage->error['arbitrage'])?>;
                 <div class="cl-form-files" id="arb_files_box">
                     <ul class="form-files-list" id="arb_files_list"><li class="c"><input type="file" size="23" class="i-file" name="attach[]" /></li></ul>
                     <div class="form-files-inf">
-                        <strong class="form-files-max">Максимальный размер файла: <?=sbr_stages::ARB_FILE_MAX_SIZE/1024/1024?> Мб</strong><br/>
+                        <strong class="form-files-max">Максимальный размер файла: <?=sbr_stages::ARB_FILE_MAX_SIZE / 1024 / 1024?> Мб</strong><br/>
                         Файлы следующих форматов запрещены к загрузке: <?=implode(', ', $GLOBALS['disallowed_array'])?>
                     </div>
                     <div style="clear:both;"></div>

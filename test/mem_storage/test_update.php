@@ -1,25 +1,21 @@
 <?php
 
 
-ini_set('display_errors',1);
+ini_set('display_errors', 1);
 error_reporting(E_ALL ^ E_NOTICE);
-
 
 ini_set('max_execution_time', 0);
 ini_set('memory_limit', '512M');
 
-if(!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT']))
-{    
-    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME) . '/../../'), '/');
-} 
+if (!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT'])) {
+    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME).'/../../'), '/');
+}
 
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/config.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/profiler.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/freelancer.php';
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/config.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/profiler.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/freelancer.php");
-
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/mem_storage.php");
-
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/mem_storage.php';
 
 //------------------------------------------------------------------------------
 
@@ -42,12 +38,10 @@ $results = array();
 $profiler = new profiler();
 $profiler->start('update_frl_mem');
 
-
 //------------------------------------------------------------------------------
 
 
 $ms = new MemStorage('newsletter_freelancer');
-
 
 //$results['ID found in mem page'] = $ms->isExistItem(333);
 
@@ -71,7 +65,6 @@ $results['updateItem'] = (int)$ms->updateItem($uid, $item);
 $results['getItem'] = $ms->getItem($uid);
 */
 
-
 //------------------------------------------------------------------------------
 
 //insert
@@ -92,7 +85,7 @@ $results['getItem'] = $ms->getItem($item['uid']);
 //delete
 $uid = 333333333;
 
-$results['deleteItem'] = (int)$ms->deleteItem($uid);
+$results['deleteItem'] = (int) $ms->deleteItem($uid);
 $results['getItem'] = $ms->getItem($uid);
 
 //------------------------------------------------------------------------------
@@ -122,16 +115,15 @@ while ( $users = freelancer::GetPrjRecps($error, ++$page, 200) ) {
 
 $profiler->stop('update_frl_mem');
 
-
 //------------------------------------------------------------------------------
 
 $results += array(
-    'update_frl_mem execution_time (sec)' => number_format($profiler->get('read_frl_mem'),5)
+    'update_frl_mem execution_time (sec)' => number_format($profiler->get('read_frl_mem'), 5),
 );
 
 //------------------------------------------------------------------------------
 
-array_walk($results, function(&$value, $key){
+array_walk($results, function (&$value, $key) {
     $value = sprintf('%s = %s'.PHP_EOL, $key, $value);
 });
 

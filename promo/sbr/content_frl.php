@@ -1,8 +1,8 @@
-<?
+<?php
 if ($uid) {
-    $calcHref = "/bezopasnaya-sdelka/?site=calc";
+    $calcHref = '/bezopasnaya-sdelka/?site=calc';
 } else {
-    $calcHref = "/login/?ref_uri=" . urlencode("/bezopasnaya-sdelka/?site=calc");
+    $calcHref = '/login/?ref_uri='.urlencode('/bezopasnaya-sdelka/?site=calc');
 }
 ?>
 <table class="b-layout__table b-layout__table_width_full" cellpadding="0" cellspacing="0" border="0">
@@ -71,7 +71,8 @@ if ($uid) {
 </table>
 
 
-<? if (!(bool)$_COOKIE['sbr-help-block-closed']) { ?>
+<?php if (!(bool) $_COOKIE['sbr-help-block-closed']) {
+    ?>
 <script type="text/javascript">
  	// действия при закрытии оранжевой плашки с кнопками помощи внизу страницы
  	(function(){
@@ -108,4 +109,5 @@ if ($uid) {
         </div>
         <span id="close-sbr-help-block" class="b-fon__close b-fon__close_top_5 b-fon__close_right_5"></span>
 </div>
-<? } ?>
+<?php 
+} ?>

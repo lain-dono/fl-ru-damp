@@ -18,8 +18,8 @@
                 <div class="b-layout__txt b-layout__txt_padbot_5">Объявление стоило <span class="b-layout__txt b-layout__txt_bold b-layout__txt_color_fd6c30">1 FM</span></div>
 
 
-                <?
-                include($abs_path . '/teasers/include-teaser.php');
+                <?php
+                include $abs_path.'/teasers/include-teaser.php';
                 ?>
 
             </td>							

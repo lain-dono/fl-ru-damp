@@ -1,8 +1,8 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/Form/View.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/Form/Element/Spinner.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/pay_place.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Form/View.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Form/Element/Spinner.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/pay_place.php';
 
 class CaruselForm extends Form_View
 {
@@ -11,24 +11,23 @@ class CaruselForm extends Form_View
         'StripSlashes',
         //'StripTags',
         //'Htmlspecialchars',
-        'Carusel'
+        'Carusel',
     );
-    
+
     //Путь к вьюшкам элементов
     protected $viewScriptPrefixPath = 'classes/Form/Templates/Horizontal';
     //Путь вьюшкам форм
     protected $viewScriptFormPrefixPath = 'templates/quick_payment/forms';
-    
+
     public function loadDefaultDecorators()
     {
         $this->setDecorators(array(
             //'PrepareElements',
-            array('ViewScript', array('viewScript' => 
-                $this->viewScriptFormPrefixPath . 
-                '/carusel_form.phtml'))
+            array('ViewScript', array('viewScript' => $this->viewScriptFormPrefixPath.
+                '/carusel_form.phtml', )),
         ));
-    }    
-    
+    }
+
     public function init()
     {
         $this->addElement(
@@ -39,10 +38,10 @@ class CaruselForm extends Form_View
                'maxlength' => pay_place::MAX_HEADER_SIZE,
                'filters' => $this->filters,
                'validators' => array(
-                   array('StringLength',true,array('max' => pay_place::MAX_HEADER_SIZE,'min' => 4))
-                )
-        )));       
-        
+                   array('StringLength', true, array('max' => pay_place::MAX_HEADER_SIZE, 'min' => 4)),
+                ),
+        )));
+
         $this->addElement(
           new Zend_Form_Element_Textarea('description', array(
               'placeholder' => 'Текст объявления',
@@ -50,10 +49,10 @@ class CaruselForm extends Form_View
               //'padbot' => 20, // отступ снизу
               'filters' => $this->filters,
               'validators' => array(
-                  array('StringLength', true, array('max' => pay_place::MAX_TEXT_SIZE, 'min' => 4))
-               )
-        )));        
-        
+                  array('StringLength', true, array('max' => pay_place::MAX_TEXT_SIZE, 'min' => 4)),
+               ),
+        )));
+
         $this->addElement(
           new Zend_Form_Element_Spinner('num', array(
               'required' => true,
@@ -61,10 +60,10 @@ class CaruselForm extends Form_View
               'value' => 1,
               'max' => 99,
               'min' => 1,
-              'suffix' => array('размещение','размещения','размещений')
+              'suffix' => array('размещение', 'размещения', 'размещений'),
           ))
         );
-        
+
         $this->addElement(
           new Zend_Form_Element_Spinner('hours', array(
               'required' => true,
@@ -72,10 +71,8 @@ class CaruselForm extends Form_View
               'value' => 1,
               'max' => 99,
               'min' => 1,
-              'suffix' => array('час','часа','часов')
+              'suffix' => array('час', 'часа', 'часов'),
           ))
-        );        
+        );
     }
-    
-
 }

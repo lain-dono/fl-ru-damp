@@ -2,7 +2,7 @@
     <div class="norisk-in">
         <form action="." method="get" id="adminFrm">
             <div>
-                <h1 class="b-layout__title"><?= date('j') . ' ' . monthtostr(date('m'), true) . ' ' . date('H:i') ?></h1>
+                <h1 class="b-layout__title"><?= date('j').' '.monthtostr(date('m'), true).' '.date('H:i') ?></h1>
 
                 <table class="nr-a-tbl nr-a-tbl_adm" cellspacing="5" style="table-layout:fixed">
                     <colgroup>
@@ -58,13 +58,13 @@
                         <tr>
                             <td colspan="6">
                                 <div class="pager">
-                                    <?=new_paginator($page, ceil($page_count/sbr_adm::PAGE_SIZE), 10, "%s?site=admin&mode=arbitrage{$filter_prms}&dir_col={$dir_col}&dir={$dir}&page=%d%s")?>
+                                    <?=new_paginator($page, ceil($page_count / sbr_adm::PAGE_SIZE), 10, "%s?site=admin&mode=arbitrage{$filter_prms}&dir_col={$dir_col}&dir={$dir}&page=%d%s")?>
                                 </div>
                             </td>
                         </tr>
                     </tfoot>
                     <tbody>
-                        <?
+                        <?php
                         require_once $_SERVER['DOCUMENT_ROOT'].'/classes/LocalDateTime.php';
                         foreach ($sbr_all['data'] as $sbr_data) {
                             // в какой цвет покрасить строку таблицы
@@ -76,7 +76,7 @@
                                 $color = ''; // черный
                             }
                             ?>
-                            <tr class="<?= (++$i%2==0 ? 'even' : 'odd')?> <?= $color ?>">
+                            <tr class="<?= (++$i % 2 == 0 ? 'even' : 'odd')?> <?= $color ?>">
                                 <td class="adm-center"><?= $sbr_data['arbitrage_alert'] === 't' ? '!' : '' ?></td>
                                 <td class="adm-center"><?=$sbr->getContractNum($sbr_data['sbr_id'], $sbr_data['scheme_type'], $sbr_data['posted'])?></td>
                                 <td class="adm-prj">
@@ -85,9 +85,10 @@
                                 <td class="adm-center"><?= $sbr_data['last_msg_post_date'] ? ago_arbitrage_answered(strtotime($sbr_data['last_msg_post_date'])) : 'Нет комментариев' ?></td>
                                 <td class="adm-center"><?= date('d.m.Y', strtotime($sbr_data['date_to_answer_'])) ?></td>
                                 <td class="adm-center"><?= $sbr_data['arbitr_name'] ?></td>
-                                <td class="adm-center"><?= $sbr_data['days_to_end'] . ' ' . ending($sbr_data['days_to_end'], 'день', 'дня', 'дней') ?></td>
+                                <td class="adm-center"><?= $sbr_data['days_to_end'].' '.ending($sbr_data['days_to_end'], 'день', 'дня', 'дней') ?></td>
                             </tr>
-                        <? } ?>
+                        <?php 
+                        } ?>
                     </tbody>
                 </table>
             </div>

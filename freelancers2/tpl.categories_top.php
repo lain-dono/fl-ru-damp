@@ -1,7 +1,7 @@
 <?php 
-$groups_repeat = array(); 
+$groups_repeat = array();
 if (isset($query_string_cat) && $query_string_cat) {
-    $prof_suffix_url = '?'.$query_string_cat;   
+    $prof_suffix_url = '?'.$query_string_cat;
 }
 ?>
 
@@ -18,7 +18,7 @@ if (isset($query_string_cat) && $query_string_cat) {
                     </div>
                 <?php endif; ?>
             <?php endforeach; ?>
-        <?php elseif($promo_profs): ?>
+        <?php elseif ($promo_profs): ?>
             <?php foreach ($promo_profs as $prof): ?>
                 <div class="b-cat__item">
                     <a class="b-cat__link" 

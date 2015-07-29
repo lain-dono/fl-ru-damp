@@ -3,101 +3,102 @@
 /**
  * поверка на пользуется ли юзер сервисами, которые предоставляют адреса электронной почты временно. 
  */
-class temp_email {
+class temp_email
+{
     /**
-     * список сервисов, которые предоставляют адреса электронной почты временно
+     * список сервисов, которые предоставляют адреса электронной почты временно.
      *
      * @var array
      */
-    static $aServices = array(
-        '10minutemail.com', 
-        '2prong.com', 
+    public static $aServices = array(
+        '10minutemail.com',
+        '2prong.com',
         'abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijk.com',
-        'animail.su', 
-        'antireg.ru', 
-        'asdasd.ru', 
+        'animail.su',
+        'antireg.ru',
+        'asdasd.ru',
         'disposableinbox.com',
-        'dodgit.com', 
+        'dodgit.com',
         'donemail.ru',
-        'fakedemail.com', 
-        'fakeinbox.com', 
+        'fakedemail.com',
+        'fakeinbox.com',
         'hmamail.com',
-        'guerrillamail.com', 
-        'guerrillamailblock.com', 
-        'insorg-mail.info', 
+        'guerrillamail.com',
+        'guerrillamailblock.com',
+        'insorg-mail.info',
         'incognitomail.com',
         'incognitomail.org',
         'jetable.org',
         'key-mail.net',
-        'klzlk.com', 
-        'kurzepost.de', 
-        'kurzepost.de', 
-        'lawlita.com', 
-        'mail4trash.com', 
-        'mailblock.com', 
-        'maileater.com', 
+        'klzlk.com',
+        'kurzepost.de',
+        'kurzepost.de',
+        'lawlita.com',
+        'mail4trash.com',
+        'mailblock.com',
+        'maileater.com',
         'mailexpire.com',
-        'mailforspam.com', 
-        'mailin8r.com', 
-        'mailinator.com', 
-        'mailinator.net', 
-        'mailinator2.com', 
-        'mailmetrash.com', 
+        'mailforspam.com',
+        'mailin8r.com',
+        'mailinator.com',
+        'mailinator.net',
+        'mailinator2.com',
+        'mailmetrash.com',
         'mailcatch.com',
         'mail-it24.com',
         'meltmail.com',
         'mbx.cc',
-        'mintemail.com', 
-        'mt2009.com', 
+        'mintemail.com',
+        'mt2009.com',
         'mytempemail.com',
-        'mytrashmail.com', 
-        'no-spam.ws', 
-        'objectmail.com', 
-        'odnorazovoe.ru', 
-        'oneoffmail.com', 
-        'otherinbox.com', 
-        'owlpic.com', 
-        'pjjkp.com', 
-        'pookmail.com', 
-        'privy-mail.com', 
-        'proxymail.eu', 
+        'mytrashmail.com',
+        'no-spam.ws',
+        'objectmail.com',
+        'odnorazovoe.ru',
+        'oneoffmail.com',
+        'otherinbox.com',
+        'owlpic.com',
+        'pjjkp.com',
+        'pookmail.com',
+        'privy-mail.com',
+        'proxymail.eu',
         'rapidmailbox.com',
-        'rcpt.at', 
-        'shitmail.me', 
-        'slopsbox.com', 
-        'sogetthis.com', 
-        'spam.la', 
-        'spam.su', 
-        'spamavert.com', 
+        'rcpt.at',
+        'shitmail.me',
+        'slopsbox.com',
+        'sogetthis.com',
+        'spam.la',
+        'spam.su',
+        'spamavert.com',
         'spamfree24.org',
-        'spambog.com', 
+        'spambog.com',
         'spambog.ru',
         'spamobox.com',
-        'spambox.us', 
-        'spamgourmet.com', 
-        'spamherelots.com', 
-        'spamhole.com', 
-        'spaml.com', 
-        'tempemail.net', 
-        'tempinbox.com', 
-        'tempomail.fr', 
-        'temporaryinbox.com', 
-        'thankyou2010.com', 
-        'thisisnotmyrealemail.com', 
-        'thisisnotmyrealemail.com', 
-        'thismail.ru', 
-        'trash2009.com', 
-        'trashmail.at', 
-        'trash-mail.at', 
-        'trash-mail.com', 
-        'trashmail.me', 
-        'trashmail.net', 
-        'trashymail.com', 
+        'spambox.us',
+        'spamgourmet.com',
+        'spamherelots.com',
+        'spamhole.com',
+        'spaml.com',
+        'tempemail.net',
+        'tempinbox.com',
+        'tempomail.fr',
+        'temporaryinbox.com',
+        'thankyou2010.com',
+        'thisisnotmyrealemail.com',
+        'thisisnotmyrealemail.com',
+        'thismail.ru',
+        'trash2009.com',
+        'trashmail.at',
+        'trash-mail.at',
+        'trash-mail.com',
+        'trashmail.me',
+        'trashmail.net',
+        'trashymail.com',
         'wegwerfmail.com',
-        'wegwerfmail.de', 
-        'wegwerfmail.net', 
-        'wegwerfmail.org', 
-        'wh4f.org', 
+        'wegwerfmail.de',
+        'wegwerfmail.net',
+        'wegwerfmail.org',
+        'wh4f.org',
         'wwwnew.eu',
         'yopmail.com',
         'sharklasers.com',
@@ -195,19 +196,20 @@ class temp_email {
         'autostop71.ru',
         'nemigaexport.com',
         'blizzardrc.org',
-        'zonby.if.ua'
+        'zonby.if.ua',
     );
-    
+
     /**
      * проверяет не является ли электронной почты предоставленным временно.
      *
-     * @param  string $sEmail адрес электронной почты для проверки
+     * @param string $sEmail адрес электронной почты для проверки
+     *
      * @return bool true если адрес временный, иначе false
      */
-    function isTempEmail( $sEmail = '' ) {
-        $aPart = explode( '@', $sEmail );
-        return ( (isset($aPart[1]) && in_array(strtolower($aPart[1]), temp_email::$aServices)) ? true : false );
+    public function isTempEmail($sEmail = '')
+    {
+        $aPart = explode('@', $sEmail);
+
+        return ((isset($aPart[1]) && in_array(strtolower($aPart[1]), self::$aServices)) ? true : false);
     }
 }
-
-?>

@@ -1,19 +1,17 @@
 <?php
 
 
-ini_set('display_errors',1);
+ini_set('display_errors', 1);
 error_reporting(E_ALL ^ E_NOTICE);
-
 
 ini_set('max_execution_time', 0);
 ini_set('memory_limit', '512M');
 
-if(!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT']))
-{    
-    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME) . '/../../'), '/');
-} 
+if (!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT'])) {
+    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME).'/../../'), '/');
+}
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/config.php");
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/profiler.php");
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/billing.php");
@@ -71,7 +69,6 @@ print_r($converter->saveXml());
 exit;
 */
 
-
 /*
 $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><testDepositionRequest/>');
 $xml->addAttribute('agentId', 200385);
@@ -80,12 +77,7 @@ var_dump($xml->asXML());
 exit;
 */
 
-
-
-
-
 $url = 'https://bo-demo02.yamoney.ru:9094/webservice/deposition/api/testDeposition';
-
 
 $xml_str = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -115,7 +107,6 @@ XML;
 
 $xml_str = iconv('CP1251', 'UTF-8', $xml_str);
 
-
 /*
 file_put_contents("msg.txt", $xml_str);
 
@@ -136,27 +127,25 @@ $parts = explode("\n\n", $data, 2);
 //tkaevient2014
 
 $descriptorspec = array(
-            0 => array("pipe", "r"), // stdin is a pipe that the child will read from
-            1 => array("pipe", "w"), // stdout is a pipe that the child will write to
-            2 => array("pipe", "w")); // stderr is a file to write to
+            0 => array('pipe', 'r'), // stdin is a pipe that the child will read from
+            1 => array('pipe', 'w'), // stdout is a pipe that the child will write to
+            2 => array('pipe', 'w'), ); // stderr is a file to write to
 
-$process = proc_open('openssl smime -sign -signer certnew_Vaan.cer -inkey private.key -nochain -nocerts -outform PEM -nodetach',$descriptorspec, $pipes);
+$process = proc_open('openssl smime -sign -signer certnew_Vaan.cer -inkey private.key -nochain -nocerts -outform PEM -nodetach', $descriptorspec, $pipes);
 
 if (is_resource($process)) {
-    
     fwrite($pipes[0], 'tkaevient2014');
     fwrite($pipes[0], "\n");
     fwrite($pipes[0], $xml_str);
     fclose($pipes[0]);
-    
+
     $execResult = stream_get_contents($pipes[1]);
-    $execErrors =  stream_get_contents($pipes[2]);
+    $execErrors = stream_get_contents($pipes[2]);
     fclose($pipes[1]);
 
     $return_value = proc_close($process);
-    
+
     var_dump($execResult);
-    
 }
 
 exit;
@@ -169,18 +158,13 @@ exit;
             $descriptorspec, $pipes);
 */
 
-
 //openssl smime -sign -signer certnew_Vaan.cer -nochain -nocerts -outform PEM -nodetach
 //openssl.exe smime -sign -signer public.pem -inkey private.pem -nochain -nocerts -outform PEM -nodetach
-
-
-
 
 
 $request = new HTTP_Request2($url);
 
 //$request->setMethod(HTTP_Request2::METHOD_POST);
-
 
 
 /*
@@ -196,7 +180,6 @@ $request->setConfig(array(
 $request->setHeader($parts[0]);
 $request->setBody($parts[1]);
 
-
 //$request->addUpload($url, $headers_msg, $sendFilename, $contentType);
 
 //$request->s
@@ -205,9 +188,7 @@ $request->setBody($parts[1]);
 
 $response = $request->send();
 
-
 var_dump($response->getStatus());
-
 
 /*
 $request->setMethod(HTTP_Request2::METHOD_POST)
@@ -219,7 +200,6 @@ $request->setMethod(HTTP_Request2::METHOD_POST)
     ->addUpload('avatar', './exploit.exe', 'me_and_my_cat.jpg', 'image/jpeg');
 
 */
-
 
 //$test = new COM();
 
@@ -234,13 +214,7 @@ $request->setMethod(HTTP_Request2::METHOD_POST)
 //$outfile = tempnam(b"/tmp", b"ssl");
 
 
-
-
 //var_dump(function_exists('openssl_pkcs7_decrypt'));
-
-
-
-
 
 
 /*
@@ -261,15 +235,11 @@ $reqv['price'] = $sum;
 $reserveInstance->getReservesBank()->generateInvoice($reqv);
 */
 
-
-
 //------------------------------------------------------------------------------
 
 //$profiler->start('fill_frl_mem');
 
 //------------------------------------------------------------------------------
-
-
 
 
 //------------------------------------------------------------------------------
@@ -281,7 +251,7 @@ $reserveInstance->getReservesBank()->generateInvoice($reqv);
 
 //------------------------------------------------------------------------------
 
-array_walk($results, function(&$value, $key){
+array_walk($results, function (&$value, $key) {
     $value = sprintf('%s = %s'.PHP_EOL, $key, $value);
 });
 

@@ -1,5 +1,8 @@
-<?
-if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
+<?php
+if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
 
 ?>
 
@@ -7,23 +10,29 @@ if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
 			
 <div class="b-layout b-layout_padtop_10 b-layout_padbot_10">
     <p class="b-layout b-layout__txt_fontsize_15">
-        <? if ($moder) { ?>
+        <?php if ($moder) {
+    ?>
         <b>Жалобы модератору</b>
         <a href="?mode=complain_types&moder=0" class="b-layout b-layout__link b-layout__link_bordbot_dot_000 b-layout_marglr_30">Жалобы работодателю</a>
-        <? } else { ?>
+        <?php 
+} else {
+    ?>
         <a href="?mode=complain_types&moder=1" class="b-layout b-layout__link b-layout__link_bordbot_dot_000 b-layout_marglr_30">Жалобы модератору</a>
         <b>Жалобы работодателю</b>
-        <? } ?>
+        <?php 
+} ?>
     </p>
 </div>
-<? $complainsExists = $complainTypes && is_array($complainTypes) && count($complainTypes); ?>
+<?php $complainsExists = $complainTypes && is_array($complainTypes) && count($complainTypes); ?>
 <form method="post" id="complain_types_form">
     <div id="complain_types">
         <input type="hidden" name="action" value="save" />
         <input type="hidden" name="u_token_key" value="<?= $_SESSION['rand'] ?>" />
         <input type="hidden" name="moder" value="<?= $moder ?>" />
-        <? if ($complainsExists) { ?>
-            <? foreach($complainTypes as $cType) { ?>
+        <?php if ($complainsExists) {
+    ?>
+            <?php foreach ($complainTypes as $cType) {
+    ?>
 
                 <div class="b-layout b-layout_pad_20 b-layout_bord_e6 b-layout_margbot_10 b-layout__table_margtop_10 complain-type">
                     <input type="hidden" name="id[]" value="<?= $cType['id'] ?>" />
@@ -54,8 +63,11 @@ if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
                     </div>
                 </div>
 
-            <? } ?>
-        <? } ?>
+            <?php 
+}
+    ?>
+        <?php 
+} ?>
     </div>
 </form>
 <div id="no_complains" <?= $complainsExists ? 'style="display:none;"' : '' ?>>

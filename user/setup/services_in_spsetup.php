@@ -1,28 +1,35 @@
 <?php
 
-if (!$_in_setup) {header ("HTTP/1.0 403 Forbidden"); exit;}
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/professions.php");
+if (!$_in_setup) {
+    header('HTTP/1.0 403 Forbidden');
+    exit;
+}
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/professions.php';
 $prfs = new professions();
 $profs = $prfs->GetAllProfessionsSpec($user->uid);
 
 $main_spec = null;
 foreach ($profs as $p) {
-    if($p['checked']) $main_spec = $p['id'];
+    if ($p['checked']) {
+        $main_spec = $p['id'];
+    }
 }
 
 $specs_add = array();
-if(is_pro()) {
+if (is_pro()) {
     $specs_add = $prfs->GetProfsAddSpec($uid);
 }
 
 $mirr_specs = array();
 $all_checked = $specs_add;
-if(count($all_checked)) {
-    $mirr_specs = $prfs->GetMirroredProfs(implode(",", $all_checked));
-    if(count($mirr_specs)) $mirr_specs = array_diff($mirr_specs, $all_checked);
+if (count($all_checked)) {
+    $mirr_specs = $prfs->GetMirroredProfs(implode(',', $all_checked));
+    if (count($mirr_specs)) {
+        $mirr_specs = array_diff($mirr_specs, $all_checked);
+    }
 }
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/quickpro.common.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/quickpro.common.php';
 $xajax->printJavascript('/xajax/');
 
 ?>
@@ -31,7 +38,9 @@ $xajax->printJavascript('/xajax/');
 <h3 class="b-layout__h3">Выберите вашу специализацию:</h3>
 
 <div class="b-radio b-radio__item_padbot_20">
-  <input class="b-radio__input" type="radio" id="lb000" name="spec" value="0" <? if (0 == $user->spec) print("checked='checked'")?>  />
+  <input class="b-radio__input" type="radio" id="lb000" name="spec" value="0" <?php if (0 == $user->spec) {
+    print("checked='checked'");
+}?>  />
   <label class="b-radio__label" for="lb000">Нет специализации</label>
 </div>
 
@@ -39,31 +48,30 @@ $xajax->printJavascript('/xajax/');
       <table class="b-layout__table b-layout__table_width_full">
         <tr class="b-layout__tr">
           <td class="b-layout__td b-layout__td_padbot_20 b-layout__td_width_33ps b-layout__td_width_full_ipad">
-            <? 
+            <?php 
               $lastgrname = NULL;
-              $j=0;
-              foreach($profs as $prof)
-              { 
-                if($lastgrname != $prof['groupname'])
-                {
-                  if($j) {
-                    print('</td>');
-                    if($j % 3 == 0) {
-                      print('</tr><tr class="b-layout__tr">');
-                    }
-                    print('<td class="b-layout__td b-layout__td_padbot_20 b-layout__td_width_33ps b-layout__td_width_full_ipad">');
-                  }
+              $j = 0;
+              foreach ($profs as $prof) {
+                  if ($lastgrname != $prof['groupname']) {
+                      if ($j) {
+                          print('</td>');
+                          if ($j % 3 == 0) {
+                              print('</tr><tr class="b-layout__tr">');
+                          }
+                          print('<td class="b-layout__td b-layout__td_padbot_20 b-layout__td_width_33ps b-layout__td_width_full_ipad">');
+                      }
 
-                  ?><h4 class="b-layout__txt b-layout__txt_padbot_10"><?=$prof['groupname']?></h4><?
-                  $j++;
-                  $lastgrname = $prof['groupname'];
-                }
-              ?>
+                      ?><h4 class="b-layout__txt b-layout__txt_padbot_10"><?=$prof['groupname']?></h4><?php
+                  ++$j;
+                      $lastgrname = $prof['groupname'];
+                  }
+                  ?>
                    <div class="b-radio b-radio__item_padbot_10">
                       <input class="b-radio__input" <?=in_array($prof['id'], $specs_add) || in_array($prof['id'], $mirr_specs) ? 'disabled="disabled"' : ''?>  type="radio" name='spec' value="<?=$prof['id']?>" id="lb<?=$prof['id']?>"<?=($prof['checked'] ? ' checked="checked"' : '')?> />
                       <label class="b-radio__label" for="lb<?=$prof['id']?>"><?=$prof['profname']?></label>
                    </div>
-           <? } ?>
+           <?php 
+              } ?>
           </td>
         </tr>
       </table>

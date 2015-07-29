@@ -1,4 +1,4 @@
-<? return; // #0019588 ?>
+<?php return; // #0019588 ?>
 <div class="b-fon b-fon_width_full b-fon_padbot_10" id="safety-phone-block">
 	<span class="b-fon__bord-attent"></span>
  <div class="b-fon__body b-fon__body_pad_15 b-fon__body_padleft_30 b-fon__body_fontsize_13 b-fon__body_bg_ffe679">

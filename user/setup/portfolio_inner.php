@@ -1,38 +1,59 @@
-<?
-if (!$_in_setup) {header ("HTTP/1.0 403 Forbidden"); exit;}
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/portfolio.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/professions.php");
+<?php
+if (!$_in_setup) {
+    header ('HTTP/1.0 403 Forbidden');
+    exit;
+}
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/portfolio.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/professions.php';
 $prfs = new professions();
 $profs = $prfs->GetSpecs($user->login);
 $size = sizeof($profs);
 $portf = new portfolio();
-$prjs = $portf->GetPortf($user->uid, "NULL", true);
-if (!$prjs) include("portfolio_in_setup.php");
-	else {
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/portfoliopos.common.php");
-?>
-<? $xajax->printJavascript('/xajax/'); ?>
+$prjs = $portf->GetPortf($user->uid, 'NULL', true);
+if (!$prjs) {
+    include 'portfolio_in_setup.php';
+} else {
+	    require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/portfoliopos.common.php';
+	    ?>
+<?php $xajax->printJavascript('/xajax/');
+	    ?>
 <script language="JavaScript1.2" type="text/javascript">
 <!--
 
 errmsg1 = errmsg2 = errmsg3 = errmsg4 = errmsg5 = errmsg6 = '';
 can_move = 1;
 
-<? if ($error_flag) {
-	if ($alert[1]) print("errmsg1=\"".ref_scr(view_error($alert[1]))."\";");
-	if ($alert[2]) print("errmsg3=errmsg2=\"".ref_scr(view_error($alert[2]))."\";");
-	if ($alert[3]) print("errmsg3=\"".ref_scr(view_error($alert[3]))."\";");
-	if ($alert[4]) print("errmsg4=\"".ref_scr(view_error($alert[4]))."\";");
-	if ($alert[5]) print("errmsg5=\"".ref_scr(view_error($alert[5]))."\";");
-	if ($alert[6]) print("errmsg5=\"".ref_scr(view_error($alert[6]))."\";");
-	if ($alert[7]) print("errmsg6=\"".ref_scr(view_error($alert[7]))."\";");
-?>
+<?php if ($error_flag) {
+    if ($alert[1]) {
+        print('errmsg1="'.ref_scr(view_error($alert[1])).'";');
+    }
+    if ($alert[2]) {
+        print('errmsg3=errmsg2="'.ref_scr(view_error($alert[2])).'";');
+    }
+    if ($alert[3]) {
+        print('errmsg3="'.ref_scr(view_error($alert[3])).'";');
+    }
+    if ($alert[4]) {
+        print('errmsg4="'.ref_scr(view_error($alert[4])).'";');
+    }
+    if ($alert[5]) {
+        print('errmsg5="'.ref_scr(view_error($alert[5])).'";');
+    }
+    if ($alert[6]) {
+        print('errmsg5="'.ref_scr(view_error($alert[6])).'";');
+    }
+    if ($alert[7]) {
+        print('errmsg6="'.ref_scr(view_error($alert[7])).'";');
+    }
+    ?>
 window.addEvent('domready', function() {
     if($$('div.errorBox')) {
         new Fx.Scroll(window).toElement($$('div.errorBox')[0].getPrevious());
     }
 });
-<? } ?>
+<?php 
+}
+	    ?>
 
 function setform(){
 errmsg3 = errmsg3;
@@ -115,35 +136,43 @@ profnames = new Array();
 prjinprof = new Array();
 
 
-<?
+<?php
 	$ilast = $i = 0;
-	$lastprof = -1;
-	$j = 0;
-	if ($prjs) foreach($prjs as $ikey=>$prj){
-	 if ($prj['id']){
-		print ("prjn[".$prj['id']."] = '".$i."';\nprjid[$i] = '".$prj['id']."';\nprjname[$i] = '".input_ref_scr($prj['name'])."';\nprjlink[$i] = '".input_ref_scr($prj['link'])."';\nprjdescr[$i] = '".input_ref_scr($prj['descr'])."';\nprjprevtype[$i] = '".$prj['prj_prev_type']."';\n\n");
-		$i++;
-	 }
-	 $curprof = $prj['prof_id'];
-	 if ($lastprof != $curprof) {
-	 		if ($lastprof != -1 && $i-$ilast > 1) print("prjinprof[".($j-1)."] = '".($i-$ilast)."';\n");
-			print ("prof_ids[$j] = '".$prof['prof_id']."';\nprofnames[$j] = '".$prof['name']."';\n\n");
-			$j++;
-			$ilast = $i;
-			$lastprof = $curprof;
-		}
-	}
-	if ($i-$ilast > 0) print("prjinprof[".($j-1)."] = '".($i-$ilast+1)."';\n");
-		?>
+	    $lastprof = -1;
+	    $j = 0;
+	    if ($prjs) {
+	        foreach ($prjs as $ikey => $prj) {
+	            if ($prj['id']) {
+	                print ('prjn['.$prj['id']."] = '".$i."';\nprjid[$i] = '".$prj['id']."';\nprjname[$i] = '".input_ref_scr($prj['name'])."';\nprjlink[$i] = '".input_ref_scr($prj['link'])."';\nprjdescr[$i] = '".input_ref_scr($prj['descr'])."';\nprjprevtype[$i] = '".$prj['prj_prev_type']."';\n\n");
+	                ++$i;
+	            }
+	            $curprof = $prj['prof_id'];
+	            if ($lastprof != $curprof) {
+	                if ($lastprof != -1 && $i - $ilast > 1) {
+	                    print('prjinprof['.($j - 1)."] = '".($i - $ilast)."';\n");
+	                }
+	                print ("prof_ids[$j] = '".$prof['prof_id']."';\nprofnames[$j] = '".$prof['name']."';\n\n");
+	                ++$j;
+	                $ilast = $i;
+	                $lastprof = $curprof;
+	            }
+	        }
+	    }
+	    if ($i - $ilast > 0) {
+	        print('prjinprof['.($j - 1)."] = '".($i - $ilast + 1)."';\n");
+	    }
+	    ?>
 
 var prjnum = <?=$i?>;
 var profnum = <?=$j?>;
 var lastobj = 0;
-<?
-	if ($action == "portf_change" || $error_flag || $error){
- ?>
+<?php
+	if ($action == 'portf_change' || $error_flag || $error) {
+	    ?>
 	//window.navigate("#prof<?=$prof?>");
-<? } ?>
+<?php 
+	}
+	    ?>
 
 	function editprj(num, profid)
 	{
@@ -245,37 +274,46 @@ var lastobj = 0;
 </script>
 <form action="." method="post" enctype="multipart/form-data" name="frm" id="frm" onSubmit="if(allowedExt(this['logo'].value)) {this.btn.value='Подождите'; this.btn.disabled=true; this.btn1.value='Подождите'; this.btn1.disabled=true;} return false;">
 <input type="hidden" name="action" value="portf_change">
-<? if ($error) print(view_error($error));?>
+<?php if ($error) {
+    print(view_error($error));
+}
+	    ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
 	<td width="19" height="40">&nbsp;</td>
 	<td><img src="/images/ico_setup.gif" alt="" width="6" height="9" border="0">&nbsp;&nbsp;<a href="/users/<?=$user->login?>/setup/portfsetup/">Изменить разделы</a></td>
 	<td width="19" rowspan="2">&nbsp;</td>
-	<td valign="bottom"><? if ($info) { ?><br><?=view_info($info)?><br><? } ?><strong>Специализация:</strong>&nbsp;&nbsp;<?=professions::GetProfNameWP($user->spec, ' / ',  'Нет специализации')?>&nbsp;&nbsp;&nbsp;<a href="/users/<?=$user->login?>/setup/specsetup/" id="ap11"><img src="/images/ico_setup.gif" alt="" width="6" height="9" border="0"> Изменить</a></td>
-<? /*
+	<td valign="bottom"><?php if ($info) {
+    ?><br><?=view_info($info)?><br><?php 
+}
+	    ?><strong>Специализация:</strong>&nbsp;&nbsp;<?=professions::GetProfNameWP($user->spec, ' / ',  'Нет специализации')?>&nbsp;&nbsp;&nbsp;<a href="/users/<?=$user->login?>/setup/specsetup/" id="ap11"><img src="/images/ico_setup.gif" alt="" width="6" height="9" border="0"> Изменить</a></td>
+<?php /*
 	<td align="right"><input type="checkbox" name="show" value="1" onClick="submit_ch(this.value);" <? if ($user->portf_comments == 't') print "checked"?>> Разрешить оставлять комментарии к работам</td>
 */ ?>
 	<td width="19">&nbsp;</td>
 </tr>
 </table>
-<?
+<?php
 			$lastprof = -1;
-			$j = 0;
-			$k = -1;
-			if ($prjs) foreach($prjs as $ikey=>$prj){
-			$curprof = $prj['prof_id'];
-			if ($lastprof != $curprof) {
-				$i = 1;
-				$k++;
-				if ($lastprof != -1) {
-				?>
+	    $j = 0;
+	    $k = -1;
+	    if ($prjs) {
+	        foreach ($prjs as $ikey => $prj) {
+	            $curprof = $prj['prof_id'];
+	            if ($lastprof != $curprof) {
+	                $i = 1;
+	                ++$k;
+	                if ($lastprof != -1) {
+	                    ?>
 		</table>
 	</td>
 	<td width="14">&nbsp;</td>
 </tr>
 <tr><td height="10" colspan="3">&nbsp;</td></tr>
 </table></div>
-				<? } ?>
+				<?php 
+	                }
+	                ?>
 <a name="prof<?=$curprof?>" id="prof<?=$curprof?>"></a>
 <div class="sprof<?=$prj['prof_id']?>">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" >
@@ -294,11 +332,13 @@ var lastobj = 0;
 	<td>
 		<table width="100%" border="0" cellspacing="0" cellpadding="3">
 		
-<?		$lastprof = $curprof;
-			}
-			if ($prj['id']) {
-				if ($error_flag && $prj_id == $prj['id']) $errprjnum = $j;
-		?>
+<?php		$lastprof = $curprof;
+	            }
+	            if ($prj['id']) {
+	                if ($error_flag && $prj_id == $prj['id']) {
+	                    $errprjnum = $j;
+	                }
+	                ?>
 		<tr>
 			<td id="sproj<?=$prj['id']?>a" width="6" height="20"><img src="/images/ico_setup.gif" alt="" name="pi<?=$j?>" id="pi<?=$j?>" width="6" height="9" border="0"></td>
 			<td id="sproj<?=$prj['id']?>b" width="50"><a href="#prof<?=$curprof?>" name="ap1<?=$j?>" id="ap1<?=$j?>" onClick="editprj(<?=$j?>,<?=$curprof?>);">Изменить</a></td>
@@ -306,36 +346,47 @@ var lastobj = 0;
 			<td id="sproj<?=$prj['id']?>d" width="15"><img src="/images/ico_down1.gif" alt="" width="9" height="9" border="0" onClick="changePos(<?=$prj['id']?>, '-1');"></td>
 			<td id="sproj<?=$prj['id']?>e" width="15" align="right" id="num"><?=$i?>.</td>
 			<td id="sproj<?=$prj['id']?>f"><a href="/users/<?=$user->login?>/viewproj.php?prjid=<?=$prj['id']?>" target="_blank" class="blue"><?=hyphen_words($prj['name'])?></a>
-<? /*
+<?php /*
 				<? if ($prj['show_comms'] == 't') {?> | <a href="/users/<?=$user->login?>/comments/?tr=<?=$prj['id']?>" style="color: #666666;">Комментарии (<?=zin($prj['comms'])?>)</a><? } ?>
 */ ?>
 				<input type="hidden" name="pos[]" value="<?=$prj['id']?>"><input type="hidden" name="profid[]" value="<?=$prj['id']?>">
 			</td>
 		</tr>
-		<? $i++; $j++;}
-		 else { ?>
+		<?php ++$i;
+	                ++$j;
+	            } else {
+	                ?>
 		<tr>
 			<td height="20" colspan="6" align="center">Нет работ в этом разделе</td>
 		</tr>
-		<?
-		}
-		 } ?>
+		<?php
+
+	            }
+	        }
+	    }
+	    ?>
 		</table>
 	</td>
 	<td width="14">&nbsp;</td>
 </tr>
 </table>
 </form>
-<?
-if ($error_flag) { ?>
+<?php
+if ($error_flag) {
+    ?>
 
 	<script type="text/javascript">
 <!--
-	<? if ($prj_id) { ?>
+	<?php if ($prj_id) {
+    ?>
 	editprj(<?=$errprjnum?>,<?=$prof?>);
-	<? } else { ?>
+	<?php 
+} else {
+    ?>
 	addprj(<?=$prof?>);
-	<? } ?>
+	<?php 
+}
+    ?>
 	document.getElementById('frm').pname.value = "<?=$name?>";
 	document.getElementById('frm').pcost.value = "<?=$pcost?>";
 	document.getElementById('frm').ptime.value = "<?=$ptime?>";
@@ -347,7 +398,9 @@ if ($error_flag) { ?>
 	setform();
 //-->
 </script>
-<? } ?>
+<?php 
+}
+	    ?>
 	<script language="JavaScript" type="text/javascript">
 <!--
 
@@ -360,9 +413,11 @@ if ($error_flag) { ?>
   	if(area.value.length > 300)
   	{
   		area.value = area.value.substr(0, 300);
-    	msg.innerHTML = '<? print(ref_scr(view_error('Исчерпан лимит символов для поля (300 символов)'))); ?>';
+    	msg.innerHTML = '<?php print(ref_scr(view_error('Исчерпан лимит символов для поля (300 символов)')));
+	    ?>';
   	}
   }
 //-->
 </script>
-<? } ?>
+<?php 
+	} ?>

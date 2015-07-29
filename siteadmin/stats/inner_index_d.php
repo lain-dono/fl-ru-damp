@@ -1,8 +1,11 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/payed.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/account.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/Verification.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stats.php");
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/payed.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/account.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/Verification.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stats.php';
 $DB = new DB('master');
 ?>
 
@@ -15,38 +18,42 @@ $DB = new DB('master');
 
 <br><br>
 
-<?php $mIndex = true; require_once ("top_menu.php"); ?>
+<?php $mIndex = true; require_once 'top_menu.php'; ?>
 <br><br>
 
 
-<?
+<?php
 $action = trim($_GET['action']);
-if (!$action) $action = trim($_POST['action']);
+if (!$action) {
+    $action = trim($_POST['action']);
+}
 
 $forms_cnt = intval(trim($_POST['forms_cnt']));
-if (!$forms_cnt) $forms_cnt = 1;
+if (!$forms_cnt) {
+    $forms_cnt = 1;
+}
 
-switch ($action){
-	case "inc_forms":
+switch ($action) {
+	case 'inc_forms':
 		$forms_cnt++;
 		break;
 }
 
-for ($i = 0; $i < $forms_cnt; $i++){
-	$fmnth[$i] = intval(trim($_POST['fmnth'][$i]));
-	$fday[$i] = intval(trim($_POST['fday'][$i]));
-	$fyear[$i] = intval(trim($_POST['fyear'][$i]));
-	$tmnth[$i] = intval(trim($_POST['tmnth'][$i]));
-	$tday[$i] = intval(trim($_POST['tday'][$i]));
-	$tyear[$i] = intval(trim($_POST['tyear'][$i]));
-	if (!checkdate($fmnth[$i], $fday[$i] , $fyear[$i]) || !checkdate($tmnth[$i], $tday[$i] , $tyear[$i])){
-		$fday[$i] = $tday[$i] = date("d");
-		$fmnth[$i] = $tmnth[$i] = date("m");
-		$fyear[$i] = $tyear[$i] = date("Y");
-	}
+for ($i = 0; $i < $forms_cnt; ++$i) {
+    $fmnth[$i] = intval(trim($_POST['fmnth'][$i]));
+    $fday[$i] = intval(trim($_POST['fday'][$i]));
+    $fyear[$i] = intval(trim($_POST['fyear'][$i]));
+    $tmnth[$i] = intval(trim($_POST['tmnth'][$i]));
+    $tday[$i] = intval(trim($_POST['tday'][$i]));
+    $tyear[$i] = intval(trim($_POST['tyear'][$i]));
+    if (!checkdate($fmnth[$i], $fday[$i], $fyear[$i]) || !checkdate($tmnth[$i], $tday[$i], $tyear[$i])) {
+        $fday[$i] = $tday[$i] = date('d');
+        $fmnth[$i] = $tmnth[$i] = date('m');
+        $fyear[$i] = $tyear[$i] = date('Y');
+    }
 
-	$fdate = $fyear[$i] . "-". $fmnth[$i] ."-" .$fday[$i];
-	$tdate = $tyear[$i] . "-". $tmnth[$i] ."-" .$tday[$i];
+    $fdate = $fyear[$i].'-'.$fmnth[$i].'-'.$fday[$i];
+    $tdate = $tyear[$i].'-'.$tmnth[$i].'-'.$tday[$i];
 
     // -----
 }
@@ -55,51 +62,126 @@ for ($i = 0; $i < $forms_cnt; $i++){
 <form action="?t=<?=htmlspecialchars($_GET['t'])?>" method="post" name="frm" id="frm">
 <input type="hidden" name="action" value="">
 <input type="hidden" name="forms_cnt" value="<?=$forms_cnt?>">
-	<? if ($error) print(view_error($error));?>
+	<?php if ($error) {
+    print(view_error($error));
+}?>
 
-<? for ($i = 0; $i < $forms_cnt; $i++) {
-	$fdate = $fyear[$i] . "-". $fmnth[$i] ."-" .$fday[$i];
-	$tdate = $tyear[$i] . "-". $tmnth[$i] ."-" .$tday[$i];
-?>
+<?php for ($i = 0; $i < $forms_cnt; ++$i) {
+    $fdate = $fyear[$i].'-'.$fmnth[$i].'-'.$fday[$i];
+    $tdate = $tyear[$i].'-'.$tmnth[$i].'-'.$tday[$i];
+    ?>
 с&nbsp;&nbsp;
 <input type="text" name="fday[]" size="2" maxlength="2" value="<?=$fday[$i]?>">
 <select name="fmnth[]">
-	<option value="1" <? if ($fmnth[$i] == 1) print "SELECTED"?>>января</option>
-	<option value="2" <? if ($fmnth[$i] == 2) print "SELECTED"?>>февраля</option>
-	<option value="3" <? if ($fmnth[$i] == 3) print "SELECTED"?>>марта</option>
-	<option value="4" <? if ($fmnth[$i] == 4) print "SELECTED"?>>апреля</option>
-	<option value="5" <? if ($fmnth[$i] == 5) print "SELECTED"?>>мая</option>
-	<option value="6" <? if ($fmnth[$i] == 6) print "SELECTED"?>>июня</option>
-	<option value="7" <? if ($fmnth[$i] == 7) print "SELECTED"?>>июля</option>
-	<option value="8" <? if ($fmnth[$i] == 8) print "SELECTED"?>>августа</option>
-	<option value="9" <? if ($fmnth[$i] == 9) print "SELECTED"?>>сентября</option>
-	<option value="10" <? if ($fmnth[$i] == 10) print "SELECTED"?>>октября</option>
-	<option value="11" <? if ($fmnth[$i] == 11) print "SELECTED"?>>ноября</option>
-	<option value="12" <? if ($fmnth[$i] == 12) print "SELECTED"?>>декабря</option>
+	<option value="1" <?php if ($fmnth[$i] == 1) {
+    print 'SELECTED';
+}
+    ?>>января</option>
+	<option value="2" <?php if ($fmnth[$i] == 2) {
+    print 'SELECTED';
+}
+    ?>>февраля</option>
+	<option value="3" <?php if ($fmnth[$i] == 3) {
+    print 'SELECTED';
+}
+    ?>>марта</option>
+	<option value="4" <?php if ($fmnth[$i] == 4) {
+    print 'SELECTED';
+}
+    ?>>апреля</option>
+	<option value="5" <?php if ($fmnth[$i] == 5) {
+    print 'SELECTED';
+}
+    ?>>мая</option>
+	<option value="6" <?php if ($fmnth[$i] == 6) {
+    print 'SELECTED';
+}
+    ?>>июня</option>
+	<option value="7" <?php if ($fmnth[$i] == 7) {
+    print 'SELECTED';
+}
+    ?>>июля</option>
+	<option value="8" <?php if ($fmnth[$i] == 8) {
+    print 'SELECTED';
+}
+    ?>>августа</option>
+	<option value="9" <?php if ($fmnth[$i] == 9) {
+    print 'SELECTED';
+}
+    ?>>сентября</option>
+	<option value="10" <?php if ($fmnth[$i] == 10) {
+    print 'SELECTED';
+}
+    ?>>октября</option>
+	<option value="11" <?php if ($fmnth[$i] == 11) {
+    print 'SELECTED';
+}
+    ?>>ноября</option>
+	<option value="12" <?php if ($fmnth[$i] == 12) {
+    print 'SELECTED';
+}
+    ?>>декабря</option>
 </select>
 <input type="text" name="fyear[]" size="4" maxlength="4" value="<?=$fyear[$i]?>">&nbsp;&nbsp;
 по&nbsp;&nbsp;
 <input type="text" name="tday[]" size="2" maxlength="2" value="<?=$tday[$i]?>">
 <select name="tmnth[]">
-	<option value="1" <? if ($tmnth[$i] == 1) print "SELECTED"?>>января</option>
-	<option value="2" <? if ($tmnth[$i] == 2) print "SELECTED"?>>февраля</option>
-	<option value="3" <? if ($tmnth[$i] == 3) print "SELECTED"?>>марта</option>
-	<option value="4" <? if ($tmnth[$i] == 4) print "SELECTED"?>>апреля</option>
-	<option value="5" <? if ($tmnth[$i] == 5) print "SELECTED"?>>мая</option>
-	<option value="6" <? if ($tmnth[$i] == 6) print "SELECTED"?>>июня</option>
-	<option value="7" <? if ($tmnth[$i] == 7) print "SELECTED"?>>июля</option>
-	<option value="8" <? if ($tmnth[$i] == 8) print "SELECTED"?>>августа</option>
-	<option value="9" <? if ($tmnth[$i] == 9) print "SELECTED"?>>сентября</option>
-	<option value="10" <? if ($tmnth[$i] == 10) print "SELECTED"?>>октября</option>
-	<option value="11" <? if ($tmnth[$i] == 11) print "SELECTED"?>>ноября</option>
-	<option value="12" <? if ($tmnth[$i] == 12) print "SELECTED"?>>декабря</option>
+	<option value="1" <?php if ($tmnth[$i] == 1) {
+    print 'SELECTED';
+}
+    ?>>января</option>
+	<option value="2" <?php if ($tmnth[$i] == 2) {
+    print 'SELECTED';
+}
+    ?>>февраля</option>
+	<option value="3" <?php if ($tmnth[$i] == 3) {
+    print 'SELECTED';
+}
+    ?>>марта</option>
+	<option value="4" <?php if ($tmnth[$i] == 4) {
+    print 'SELECTED';
+}
+    ?>>апреля</option>
+	<option value="5" <?php if ($tmnth[$i] == 5) {
+    print 'SELECTED';
+}
+    ?>>мая</option>
+	<option value="6" <?php if ($tmnth[$i] == 6) {
+    print 'SELECTED';
+}
+    ?>>июня</option>
+	<option value="7" <?php if ($tmnth[$i] == 7) {
+    print 'SELECTED';
+}
+    ?>>июля</option>
+	<option value="8" <?php if ($tmnth[$i] == 8) {
+    print 'SELECTED';
+}
+    ?>>августа</option>
+	<option value="9" <?php if ($tmnth[$i] == 9) {
+    print 'SELECTED';
+}
+    ?>>сентября</option>
+	<option value="10" <?php if ($tmnth[$i] == 10) {
+    print 'SELECTED';
+}
+    ?>>октября</option>
+	<option value="11" <?php if ($tmnth[$i] == 11) {
+    print 'SELECTED';
+}
+    ?>>ноября</option>
+	<option value="12" <?php if ($tmnth[$i] == 12) {
+    print 'SELECTED';
+}
+    ?>>декабря</option>
 </select>
 <input type="text" name="tyear[]" size="4" maxlength="4" value="<?=$tyear[$i]?>">
 <input type="submit" value="Ага!"><br><br>
 
 
 
-<? } ?>
+<?php 
+} ?>
 
 
 </form>
@@ -111,8 +193,8 @@ $prop[$i] = account::GetPROStat($fdate, $tdate, 0);
 $testpro[$i] = account::GetStatOP(47, $fdate, $tdate);
 $prop2[$i] = account::GetPROStat($fdate, $tdate);
 $ppp[$i] = account::GetStatOP(array(8), $fdate, $tdate);
-$gpp[$i] = account::GetStatOP(array(16,17,18,34,35), $fdate, $tdate, "", "RIGHT JOIN present ON billing_from_id = account_operations.id");
-$fpp[$i] = account::GetStatOP(array(10,11), $fdate, $tdate);
+$gpp[$i] = account::GetStatOP(array(16, 17, 18, 34, 35), $fdate, $tdate, '', 'RIGHT JOIN present ON billing_from_id = account_operations.id');
+$fpp[$i] = account::GetStatOP(array(10, 11), $fdate, $tdate);
 $fppc[$i] = account::GetStatOP(array(19), $fdate, $tdate);
 $fppci[$i] = account::GetStatOP(array(20), $fdate, $tdate);
 $cho[$i] = account::GetStatOP(array(21), $fdate, $tdate);
@@ -122,8 +204,8 @@ $konk[$i] = account::GetStatOP($konkCodes, $fdate, $tdate);
 
 $upproj[$i] = account::GetStatOP(array(7), $fdate, $tdate);
 $transf[$i] = account::GetStatOP(array(23), $fdate, $tdate);
-$testbuypro[$i] = account::GetStatTestBuyPro($fdate,$tdate);
-$bonuses[$i] = account::GetStatBonuses($fdate,$tdate);
+$testbuypro[$i] = account::GetStatTestBuyPro($fdate, $tdate);
+$bonuses[$i] = account::GetStatBonuses($fdate, $tdate);
 
 // Статистика по регистрациям и привязке мобильных телефонов
 $regs = stats::getRegStats($fdate, $tdate);
@@ -168,8 +250,8 @@ $regs = stats::getRegStats($fdate, $tdate);
         $c_projectoffers = 0;
         $sql = "SELECT COUNT(*) as cnt FROM projects_offers po INNER JOIN projects p ON p.id=po.project_id AND p.pro_only='t' WHERE p.post_date >= ? AND p.post_date - '1 day'::interval < ?";
         $s_project_offers = $DB->rows($sql, $fdate, $tdate);
-        if($s_pproject[0]['cnt']>0) {
-        	$c_projectoffers = round($s_project_offers[0]['cnt']/$s_pproject[0]['cnt'],2);
+        if ($s_pproject[0]['cnt'] > 0) {
+            $c_projectoffers = round($s_project_offers[0]['cnt'] / $s_pproject[0]['cnt'], 2);
         }
         ?>
         <?=$c_projectoffers?>
@@ -188,11 +270,11 @@ $regs = stats::getRegStats($fdate, $tdate);
 <tr>
 	<td width=200><strong>Среднее кол-во проектов:</strong></td>
 	<td>
-        <?
-        list($fyd, $fmd, $fdd) = preg_split("/-/",$fdate);
-        list($tyd, $tmd, $tdd) = preg_split("/-/",$tdate);
-        $daysd = 1+(mktime(0,0,0,$tmd,$tdd,$tyd)-mktime(0,0,0,$fmd,$fdd,$fyd))/60/60/24;
-        echo round($s_project[0]['cnt']/$daysd,2);
+        <?php
+        list($fyd, $fmd, $fdd) = preg_split('/-/', $fdate);
+        list($tyd, $tmd, $tdd) = preg_split('/-/', $tdate);
+        $daysd = 1 + (mktime(0, 0, 0, $tmd, $tdd, $tyd) - mktime(0, 0, 0, $fmd, $fdd, $fyd)) / 60 / 60 / 24;
+        echo round($s_project[0]['cnt'] / $daysd, 2);
         ?>
     </td>
 </tr>
@@ -204,7 +286,11 @@ $regs = stats::getRegStats($fdate, $tdate);
         $s_project_offers = $DB->rows($sql, $fdate, $tdate, $fdate, $tdate);
 
         ?>
-        <?php if($s_project[0]['cnt']==0) { echo '0'; } else { echo round($s_project_offers[0]['cnt']/$s_project[0]['cnt'],2); } ?>
+        <?php if ($s_project[0]['cnt'] == 0) {
+    echo '0';
+} else {
+    echo round($s_project_offers[0]['cnt'] / $s_project[0]['cnt'], 2);
+} ?>
     </td>
 </tr>
 <tr>
@@ -227,7 +313,11 @@ $regs = stats::getRegStats($fdate, $tdate);
                 WHERE p.verify_only = true AND p.post_date >= ? AND p.post_date - '1 day'::interval < ?";
         $s_project_offers_only_verify = $DB->row($sql, $fdate, $tdate, $fdate, $tdate);
         ?>
-        <?php if($s_project_only_verify['cnt']==0) { echo '0'; } else { echo round($s_project_offers_only_verify['cnt']/$s_project_only_verify['cnt'],2); } ?>
+        <?php if ($s_project_only_verify['cnt'] == 0) {
+    echo '0';
+} else {
+    echo round($s_project_offers_only_verify['cnt'] / $s_project_only_verify['cnt'], 2);
+} ?>
     </td>
 </tr>
 <tr>
@@ -250,7 +340,11 @@ $regs = stats::getRegStats($fdate, $tdate);
                 WHERE ( p.verify_only = true AND p.pro_only = true ) AND p.post_date >= ? AND p.post_date - '1 day'::interval < ?";
         $s_project_offers_only_verify = $DB->row($sql, $fdate, $tdate, $fdate, $tdate);
         ?>
-        <?php if($s_project_only_verify['cnt']==0) { echo '0'; } else { echo round($s_project_offers_only_verify['cnt']/$s_project_only_verify['cnt'],2); } ?>
+        <?php if ($s_project_only_verify['cnt'] == 0) {
+    echo '0';
+} else {
+    echo round($s_project_offers_only_verify['cnt'] / $s_project_only_verify['cnt'], 2);
+} ?>
     </td>
 </tr>
 <tr>

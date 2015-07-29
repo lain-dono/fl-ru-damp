@@ -11,50 +11,52 @@
  */
 ?>
 <?php
-require_once (dirname(__FILE__) . '/class.basemapper.php');
+require_once dirname(__FILE__).'/class.basemapper.php';
 
-class OperatorLastAccessMapper extends BaseMapper {
-	
-	public function __construct(DBDriver $db, $model_name) {
- 		parent::__construct($db, $model_name, array("lastvisited"), false, "operatorid");	 	
-  	}
-  	  	
-  	public function countOnlineOperators($departmentkey = null, $locale = null) {
-      $hash = array('status' => OPERATOR_STATUS_ONLINE, 'delta' => ONLINE_TIMEOUT);
-      
-      if (!empty($departmentkey)) {
-        $departmentsql = " AND (NOT EXISTS (SELECT * FROM {department}) OR EXISTS (SELECT * FROM {operatordepartment} od INNER JOIN {department} d ON d.departmentid=od.departmentid WHERE od.operatorid=la.operatorid AND d.departmentkey=:departmentkey))";
-        $hash['departmentkey'] = $departmentkey;
-      } else {
-        $departmentsql = '';
-      }
-      
-      if (!empty($locale) && preg_match('/^\w+$/', $locale)) {
-        $localesql = " AND EXISTS (SELECT * FROM {operator} o WHERE o.operatorid=la.operatorid AND (locales IS NULL OR locales LIKE '%".$locale."%'))";
-      } else {
-        $localesql = '';
-      }
-      
+class OperatorLastAccessMapper extends BaseMapper
+{
+    public function __construct(DBDriver $db, $model_name)
+    {
+        parent::__construct($db, $model_name, array('lastvisited'), false, 'operatorid');
+    }
+
+    public function countOnlineOperators($departmentkey = null, $locale = null)
+    {
+        $hash = array('status' => OPERATOR_STATUS_ONLINE, 'delta' => ONLINE_TIMEOUT);
+
+        if (!empty($departmentkey)) {
+            $departmentsql = ' AND (NOT EXISTS (SELECT * FROM {department}) OR EXISTS (SELECT * FROM {operatordepartment} od INNER JOIN {department} d ON d.departmentid=od.departmentid WHERE od.operatorid=la.operatorid AND d.departmentkey=:departmentkey))';
+            $hash['departmentkey'] = $departmentkey;
+        } else {
+            $departmentsql = '';
+        }
+
+        if (!empty($locale) && preg_match('/^\w+$/', $locale)) {
+            $localesql = " AND EXISTS (SELECT * FROM {operator} o WHERE o.operatorid=la.operatorid AND (locales IS NULL OR locales LIKE '%".$locale."%'))";
+        } else {
+            $localesql = '';
+        }
+
       // TODO make it work for bitrix
-      $sql = "SELECT COUNT(*) as cnt FROM {".$this->getTableName()."} la 
+      $sql = 'SELECT COUNT(*) as cnt FROM {'.$this->getTableName().'} la 
               WHERE status = :status 
-              AND (WM_UNIX_TIMESTAMP(CURRENT_TIMESTAMP) - WM_UNIX_TIMESTAMP(lastvisited)) < :delta ".$localesql.$departmentsql;
-      
-      try {        
-        $this->db->Query($sql, $hash);
-        $this->db->nextRecord();
-        $cnt = $this->db->getRow('cnt');
-        
-        return $cnt;
-      } catch (Exception $e) {
+              AND (WM_UNIX_TIMESTAMP(CURRENT_TIMESTAMP) - WM_UNIX_TIMESTAMP(lastvisited)) < :delta '.$localesql.$departmentsql;
 
-        return array();
-      }  
-  	}
-    
-    public function getOnlineOperatorIdsWithDepartments($locale) {
-      // TODO won't work for bitrrix
-      $sql = "SELECT o.operatorid, d.*, dl.*   
+        try {
+            $this->db->Query($sql, $hash);
+            $this->db->nextRecord();
+            $cnt = $this->db->getRow('cnt');
+
+            return $cnt;
+        } catch (Exception $e) {
+            return array();
+        }
+    }
+
+    public function getOnlineOperatorIdsWithDepartments($locale)
+    {
+        // TODO won't work for bitrrix
+      $sql = 'SELECT o.operatorid, d.*, dl.*   
             FROM {operatorlastaccess} as la
             INNER JOIN {operator} o
             ON la.operatorid = o.operatorid
@@ -69,49 +71,48 @@ class OperatorLastAccessMapper extends BaseMapper {
             dl.locale=:locale
             AND la.status = :status 
             AND (WM_UNIX_TIMESTAMP(CURRENT_TIMESTAMP) - WM_UNIX_TIMESTAMP(la.lastvisited)) < :delta
-          ORDER BY d.departmentid, o.operatorid";
-          
-      try {
-        $this->db->Query($sql, 
-        array('status' => OPERATOR_STATUS_ONLINE, 
-              'delta' => ONLINE_TIMEOUT, 
-              'locale' => $locale));
-              
-        $arr = $this->db->getArrayOfRows();
-        
+          ORDER BY d.departmentid, o.operatorid';
 
-        return $arr;
-      } catch (Exception $e) {
+        try {
+            $this->db->Query($sql,
+        array('status' => OPERATOR_STATUS_ONLINE,
+              'delta' => ONLINE_TIMEOUT,
+              'locale' => $locale, ));
 
-        return array();
-      }  
+            $arr = $this->db->getArrayOfRows();
+
+            return $arr;
+        } catch (Exception $e) {
+            return array();
+        }
     }
-  	
-  	public function getOnlineOperatorIds($operatorIdToSkip = null) {
-  	  $query = 'SELECT "operatorid"   
+
+    public function getOnlineOperatorIds($operatorIdToSkip = null)
+    {
+        $query = 'SELECT "operatorid"   
     			FROM "{operatorlastaccess}" la 
     			WHERE
     			la."status" = :status 
           AND (WM_UNIX_TIMESTAMP(SYSDATE) - WM_UNIX_TIMESTAMP(la."lastvisited")) < :delta';
 
-      $query .= ' AND (la."operatorid" <> :operatorid OR :operatorid IS NULL)'; 
+        $query .= ' AND (la."operatorid" <> :operatorid OR :operatorid IS NULL)';
 
-      try {
-        $this->db->Query($query, 
-        array('status' => OPERATOR_STATUS_ONLINE, 
-              'delta' => ONLINE_TIMEOUT, 
-              'operatorid' => $operatorIdToSkip));
-              
-        $arr = $this->db->getArrayOfRows();
-        $ids = array();
-        foreach ($arr as $r) {
-          $ids[] = $r['operatorid'];
+        try {
+            $this->db->Query($query,
+        array('status' => OPERATOR_STATUS_ONLINE,
+              'delta' => ONLINE_TIMEOUT,
+              'operatorid' => $operatorIdToSkip, ));
+
+            $arr = $this->db->getArrayOfRows();
+            $ids = array();
+            foreach ($arr as $r) {
+                $ids[] = $r['operatorid'];
+            }
+
+            return $ids;
+        } catch (Exception $e) {
+            return array();
         }
-        return $ids;
-      } catch (Exception $e) {
-
-        return array();
-      }	
-  	}
+    }
 }
 ?>

@@ -1,5 +1,10 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
-if(!hasPermissions('changelogin')) { exit; }
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
+if (!hasPermissions('changelogin')) {
+    exit;
+}
 
 ?>
 <style type="text/css">
@@ -7,10 +12,12 @@ if(!hasPermissions('changelogin')) { exit; }
 </style>
 
 <form action="./" name="daterange" id="goaction" method="POST">
-<? if ($error) print view_error($error); ?>
+<?php if ($error) {
+    print view_error($error);
+} ?>
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 <tr>
-    <td align="left" style="font-size: 14px; font-weight: bold">Изменения логинов за <?=(($ds == $de)? $ds: $ds.' &ndash; '.$de)?></td>
+    <td align="left" style="font-size: 14px; font-weight: bold">Изменения логинов за <?=(($ds == $de) ? $ds : $ds.' &ndash; '.$de)?></td>
         <td align="right" style="text-align:right; padding-right:20px">
         с: <input class="plain" name="ds" value="<?=$ds?>" size="12" style="border: 1px solid #DFDFDF; height: 21px"><a href="javascript:void(0)" onclick="if(self.gfPop)gfPop.fStartPop(document.daterange.ds,document.daterange.de);return false;"><img class="PopcalTrigger" align="absmiddle" src="/scripts/DateRange/calbtn.gif" width="34" height="22" border="0" alt=""></a>
         по: <input class="plain" name="de" value="<?=$de?>" size="12" style="border: 1px solid #DFDFDF; height: 21px"><a href="javascript:void(0)" onclick="if(self.gfPop)gfPop.fEndPop(document.daterange.ds,document.daterange.de);return false;"><img class="PopcalTrigger" align="absmiddle" src="/scripts/DateRange/calbtn.gif" width="34" height="22" border="0" alt=""></a>
@@ -21,7 +28,9 @@ if(!hasPermissions('changelogin')) { exit; }
 
 <br/>
 
-<? if ($_GET['filter']) { ?><input type="hidden" name="filter" value="<?=htmlspecialchars($_GET['filter'])?>"><? } ?>
+<?php if ($_GET['filter']) {
+    ?><input type="hidden" name="filter" value="<?=htmlspecialchars($_GET['filter'])?>"><?php 
+} ?>
 <table width="50%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 4px">
 <tr>
     <td align="left" style="padding-bottom:10px">
@@ -49,7 +58,7 @@ if(!hasPermissions('changelogin')) { exit; }
 </tr>
 <tr>
     <td align="left" rowspan="2">
-    	<input type="hidden" value="<?=$_SESSION["rand"] ?>" name="u_token_key">
+    	<input type="hidden" value="<?=$_SESSION['rand'] ?>" name="u_token_key">
     	<input type="submit" value="Изменить" style="height: 21px">
     </td>
 </tr>
@@ -63,20 +72,36 @@ if(!hasPermissions('changelogin')) { exit; }
 		<td style="background:#e6fdb7;text-align:center;"><strong>Новый логин</strong></td>
 		<td style="background:#e6fdb7;text-align:center;"><strong>Сохранение логина</strong></td>
 	</tr>
-	<? if($data) { ?>
-    <? foreach($data as $k=>$val) { ?>
+	<?php if ($data) {
+    ?>
+    <?php foreach ($data as $k => $val) {
+    ?>
     <tr style="background:white;text-align:center;">
-        <td><? if ($val['operation_id']) { ?><a href="/siteadmin/bill/?login=<?=$val['new_login']?>#<?=$val['operation_id']?>" class="blue"><? } ?><?=date("d.m.Y H:i:s", strtotime($val['cdate']))?><? if ($val['save_old']) { ?></a><? } ?></td>
+        <td><?php if ($val['operation_id']) {
+    ?><a href="/siteadmin/bill/?login=<?=$val['new_login']?>#<?=$val['operation_id']?>" class="blue"><?php 
+}
+    ?><?=date('d.m.Y H:i:s', strtotime($val['cdate']))?><?php if ($val['save_old']) {
+    ?></a><?php 
+}
+    ?></td>
 		<td><?=$val['old_login']?></td>
 		<td><a href="/users/<?=$val['new_login']?>" class="blue"><?=$val['new_login']?></a> [<a href="./?login=<?=$val['new_login']?>&date=<?=strtotime($val['cdate'])?>">?</a>]</td>
-		<td><? if ($val['save_old'] == 't') { ?><input type="checkbox" disabled checked/><? } ?></td>
+		<td><?php if ($val['save_old'] == 't') {
+    ?><input type="checkbox" disabled checked/><?php 
+}
+    ?></td>
 	</tr>
-    <? } ?>
-    <? } else { ?>
+    <?php 
+}
+    ?>
+    <?php 
+} else {
+    ?>
     <tr style="background:white;">
         <td colspan="4" align="center" style="text-align:center">Нет изменений</td>
     </tr>
-    <? } ?>
+    <?php 
+} ?>
 </table>
 
 <iframe width=132 height=142 name="gToday:contrast" id="gToday:contrast" src="/scripts/DateRange/ipopeng.htm" scrolling="no" frameborder="0" style="visibility:visible; z-index:999; position:absolute; top:-500px; left:-500px;">

@@ -25,8 +25,8 @@
                 <div class="b-layout__txt b-layout__txt_padbot_5">Тестовый аккаунт PRO на <span class="b-layout__txt b-layout__txt_bold">1 неделю</span> стоил <span class="b-layout__txt b-layout__txt_bold b-layout__txt_color_fd6c30"><?= ($price = payed::GetProPrice(false, payed::get_opcode_action_test_pro())); ?> <?= ending($price, 'рубль', 'рубля', 'рублей')?></span></div>
 
 
-                <?
-                include($abs_path . '/teasers/include-teaser.php');
+                <?php
+                include $abs_path.'/teasers/include-teaser.php';
                 ?>
 
             </td>							

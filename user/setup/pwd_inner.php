@@ -1,5 +1,8 @@
-<?
-if (!$_in_setup) {header ("HTTP/1.0 403 Forbidden"); exit;}
+<?php
+if (!$_in_setup) {
+    header ('HTTP/1.0 403 Forbidden');
+    exit;
+}
 ?>
 <script>
 checkLngPass = function(v) {
@@ -19,12 +22,20 @@ checkLngPass = function(v) {
 <div class="b-layout b-layout_padtop_20">
 <h2 class="b-layout__title">Изменить пароль</h2>
 <div class="b-layout__txt b-layout__txt_fontsize_11 b-layout__txt_padbot_20">От 6 до 24 символов. Допустимы латинские буквы, цифры и следующие спецсимволы: !@#$%^&*()_+-=;,./?[]{}</div>
-<? if ($info || $error) { ?>
+<?php if ($info || $error) {
+    ?>
    <div class="b-layout__txt">
-	<? if ($info) { print(view_info($info)); } ?>
-	<? if ($error) { print(view_error($error)); } ?>
+	<?php if ($info) {
+    print(view_info($info));
+}
+    ?>
+	<?php if ($error) {
+    print(view_error($error));
+}
+    ?>
    </div>
-<? } ?>
+<?php 
+} ?>
 <table cellspacing="0" cellpadding="0" class="b-layout__table">
 <tr class="b-layout__tr">
 	<td class="b-layout__td b-layout__td_padbot_20"><div class="b-layout__txt b-layout__txt_padtop_5">Старый пароль:&#160;</div></td>
@@ -35,7 +46,9 @@ checkLngPass = function(v) {
 		</div>
 	</div>
 	
-	<? if ($alert[1]) print(view_error($alert[1])) ?>
+	<?php if ($alert[1]) {
+    print(view_error($alert[1]));
+} ?>
     </td>
 </tr>
 <tr class="b-layout__tr">
@@ -47,7 +60,9 @@ checkLngPass = function(v) {
 		</div>
 	</div>
 	<div class="errorBox" id="error_box" style="display:none"><img src="/images/ico_error.gif" alt="" width="22" height="18" /> &nbsp; <span id="error_text"></span></div>
-	<? if ($alert[2]) print(view_error($alert[2])) ?>
+	<?php if ($alert[2]) {
+    print(view_error($alert[2]));
+} ?>
     </td>
 </tr>
 <tr class="b-layout__tr">
@@ -58,7 +73,9 @@ checkLngPass = function(v) {
 			<input class="b-combo__input-text" type="password" name="pwd2">
 		</div>
 	</div>
-	<? if ($alert[3]) print(view_error($alert[3])) ?>
+	<?php if ($alert[3]) {
+    print(view_error($alert[3]));
+} ?>
     </td>
 </tr>
 <tr class="b-layout__tr">

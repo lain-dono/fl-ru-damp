@@ -11,24 +11,24 @@
  */
 ?>
 <?php
-require_once (dirname(__FILE__) . '/class.basemapper.php');
+require_once dirname(__FILE__).'/class.basemapper.php';
 
-class ConfigMapper extends BaseMapper {
-	
-	public function __construct(DBDriver $db, $model_name) {
- 		parent::__construct($db, $model_name, array(), false, "configkey");	 	
-  	}
-  	
-  	public function enumPairs() {
-  	  $r = $this->getAll();
-  	  $result = array();
-  	  foreach($r as $v) {
-  	    $result[$v['configkey']] = $v['configvalue'];
-  	  }
-  	  
-  	  return $result;
-  	}
-  	
-  	
+class ConfigMapper extends BaseMapper
+{
+    public function __construct(DBDriver $db, $model_name)
+    {
+        parent::__construct($db, $model_name, array(), false, 'configkey');
+    }
+
+    public function enumPairs()
+    {
+        $r = $this->getAll();
+        $result = array();
+        foreach ($r as $v) {
+            $result[$v['configkey']] = $v['configvalue'];
+        }
+
+        return $result;
+    }
 }
 ?>

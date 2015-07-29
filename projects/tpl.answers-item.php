@@ -1,13 +1,15 @@
 <script type="text/javascript">
-var ac_sum = <?= round($_SESSION['ac_sum'],2);?>;
+var ac_sum = <?= round($_SESSION['ac_sum'], 2);?>;
 var op = [];
-<? foreach ($op_codes as $ammount=>$sum) { ?>
-op[<?=$ammount?>] = <?=round($sum,2)?>;
-<? } ?>
-<? 
+<?php foreach ($op_codes as $ammount => $sum) {
+    ?>
+op[<?=$ammount?>] = <?=round($sum, 2)?>;
+<?php 
+} ?>
+<?php 
 /** 
  * в IE меняются стили отображения при disabled = true, это костыль для данной ситуации - 
- * задача  http://beta.free-lance.ru/mantis/view.php?id=12554, вопрос 5 по ней
+ * задача  http://beta.free-lance.ru/mantis/view.php?id=12554, вопрос 5 по ней.
  */?>
 var is_disabled_button = -1;
 </script>
@@ -16,7 +18,7 @@ var is_disabled_button = -1;
         <div class="b-pay-answer__txt">
             <?php 
                 //@todo: https://beta.free-lance.ru/mantis/view.php?id=29326
-                if(isset($isShowFreeAnswersTxt)): 
+                if (isset($isShowFreeAnswersTxt)):
             ?>                
                 <span class="b-layout__txt b-layout__txt_bold">
                     <?= $user_answers->getFreeAnswersTxt() ?>
@@ -24,7 +26,7 @@ var is_disabled_button = -1;
             <?php
                 endif;
             ?>
-                <?php if(isAllowTestPro()): ?>
+                <?php if (isAllowTestPro()): ?>
                     <a class="b-layout__link b-layout__link_inline-block b-layout__link_lineheight_1" href="/payed/">Купите</a> 
                     <a class="b-layout__link  b-layout__link_inline-block b-layout__link_lineheight_1" href="/payed/"><span title="PRO" class="b-icon b-icon__pro b-icon__pro_f"></span></a> 
                     <a class="b-layout__link  b-layout__link_inline-block b-layout__link_lineheight_1" href="/payed/">на 1 месяц за <span class="b-layout__txt_through b-layout__txt_color_99"><?=payed::getPriceByOpCode(48)?></span> <?=payed::getPriceByOpCode(163)?> рублей и отвечайте на проекты!</a>

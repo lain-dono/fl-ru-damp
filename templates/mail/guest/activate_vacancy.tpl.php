@@ -1,18 +1,18 @@
 <?php
 
 /**
- * П-3 (При подтверждении регистрации нового пользователя и публикации вакансии)
+ * П-3 (При подтверждении регистрации нового пользователя и публикации вакансии).
  */
 
 /**
- * Тема письма
+ * Тема письма.
  */
-$smail->subject = "Подтверждение публикации вакансии на сайте FL.ru";
+$smail->subject = 'Подтверждение публикации вакансии на сайте FL.ru';
 
-$activate_url = sprintf("%s/guest/activate/%s/", $GLOBALS['host'], $code);
-$pro_url = $GLOBALS['host'] . '/payed-emp/';
+$activate_url = sprintf('%s/guest/activate/%s/', $GLOBALS['host'], $code);
+$pro_url = $GLOBALS['host'].'/payed-emp/';
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/projects.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/projects.php';
 $vacancy_price = new_projects::getProjectInOfficePrice(false);
 $vacancy_price_pro = new_projects::getProjectInOfficePrice(true);
 ?>

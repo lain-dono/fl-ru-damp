@@ -8,7 +8,7 @@
 			if (frm.elements[i].name == "selected[]" && frm.elements[i].checked == 1)
 			chc = true;
 		}
-		if (!chc) document.getElementById('submenu').innerHTML = "<?=ref_scr(view_error("Необходимо выбрать хотя бы один контакт"))?>";
+		if (!chc) document.getElementById('submenu').innerHTML = "<?=ref_scr(view_error('Необходимо выбрать хотя бы один контакт'))?>";
 		return (chc);
 	}
 //-->
@@ -19,13 +19,24 @@
 	<td valign="top">
 		Действия с отмеченными: 
 		 <a href="#" class="blue" onClick="if (CheckSelected() && warning(3)) {frm.action.value='delete'; frm.submit();} else return(false);">Удалить</a> |
-		 <? if ($page != "team") { ?>
-		 <a href="#" class="blue" onClick="if (CheckSelected()) {frm.action.value='team'; frm.submit();}"><? if ((substr($_SESSION['role'], 0, 1)  == '0')) { ?>Рекомендовать фрилансера<? } else { ?>Добавить в команду<? } ?></a> | <? } ?>
-		 <? if ($page == "ignor") { ?>
+		 <?php if ($page != 'team') {
+    ?>
+		 <a href="#" class="blue" onClick="if (CheckSelected()) {frm.action.value='team'; frm.submit();}"><?php if ((substr($_SESSION['role'], 0, 1)  == '0')) {
+    ?>Рекомендовать фрилансера<?php 
+} else {
+    ?>Добавить в команду<?php 
+}
+    ?></a> | <?php 
+} ?>
+		 <?php if ($page == 'ignor') {
+    ?>
 		 <a href="#" class="blue"onClick="if (CheckSelected()) {frm.action.value='unignor'; frm.submit();}">Снять Игнорирование</a>
-		 <? } else {?>
+		 <?php 
+} else {
+    ?>
 		 <a href="#" class="blue" onClick="if (CheckSelected()) {frm.action.value='ignor'; frm.submit();}">Игнорировать</a>
-		<? } ?>
+		<?php 
+} ?>
 			
 	</td>
 </tr>

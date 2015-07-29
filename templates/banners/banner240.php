@@ -1,5 +1,5 @@
 <?php seo_start();?>
-<?php if($show_facebook): ?>
+<?php if ($show_facebook): ?>
     <div class="b-social b-social_padbot_30">
         <div id="fb_soc" class="b-social__fb">
             <div id="fb-root"></div>
@@ -11,7 +11,7 @@
                 fjs.parentNode.insertBefore(js, fjs);
             }(document, 'script', 'facebook-jssdk'));</script>
             </script>
-            <?php if(getOS()=='Macintosh'): ?>
+            <?php if (getOS() == 'Macintosh'): ?>
                 <div class="b-social__fb-inner"><div class="fb-like-box" data-href="http://www.facebook.com/freelanceru" data-width="250" data-show-faces="true" data-stream="false" data-border-color="#ffffff" data-header="false"></div></div>
                 <div style="border-top: 1px solid #D8DEE5;margin: 10px 5px 0;padding: 5px;">
                      <a href="https://www.facebook.com/help/?page=209089222464503" target="_blank" style="color: gray;cursor: pointer;text-decoration: none; font-size:9px;"><i style="background-image: url('https://fbstatic-a.akamaihd.net/rsrc.php/v2/yI/x/1dQf_ATK831.png');background-repeat: no-repeat;  height: 14px;width: 14px; margin-right:5px; float:left"></i>Социальный плагин Facebook</a>

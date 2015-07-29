@@ -6,7 +6,7 @@
 </table>
 <br>
 
-<?
+<?php
 //вычисляем в каких месяцах была активность начиная с 2006 года
 $aMonthes[1] = 'январь';
 $aMonthes[2] = 'февраль';
@@ -21,33 +21,32 @@ $aMonthes[10] = 'октябрь';
 $aMonthes[11] = 'ноябрь';
 $aMonthes[12] = 'декабрь';
 $aData = array();
-for ($i=2006; $i<=date('Y'); $i++) {
-	for ($j=1; $j<=12;$j++) {
-		$aData[$i][$j]['data'] = 0;
-		$aData[$i][$j]['date_m'] = 0;
-		$aData[$i][$j]['date_y'] = 0;
-	}
-
+for ($i = 2006; $i <= date('Y'); ++$i) {
+    for ($j = 1; $j <= 12;++$j) {
+        $aData[$i][$j]['data'] = 0;
+        $aData[$i][$j]['date_m'] = 0;
+        $aData[$i][$j]['date_y'] = 0;
+    }
 }
 $DB = new DB('master');
 
-for ($i=2006,$Y=date('Y'); $i<=$Y; $i++) {
-	$date_from = $i.'-01-01';
-	$date_to = ($i+1).'-01-01';
-	$sql = "SELECT SUM(trs_sum) as ammount, to_char(op_date,'MM') as _day FROM
+for ($i = 2006, $Y = date('Y'); $i <= $Y; ++$i) {
+    $date_from = $i.'-01-01';
+    $date_to = ($i + 1).'-01-01';
+    $sql = "SELECT SUM(trs_sum) as ammount, to_char(op_date,'MM') as _day FROM
 			account_operations WHERE op_date >= ? AND op_date < ? GROUP BY to_char(op_date,'MM') ORDER BY to_char(op_date,'MM')";
-    if($i < $Y) {
-    	$aTemp = $DB->cache(0)->rows($sql, $date_from, $date_to);
-	} else {
-    	$aTemp = $DB->rows($sql, $date_from, $date_to);
-	}
-	$aTemp = $DB->rows($sql, $date_from, $date_to);
-	for ($j=0; $j<count($aTemp); $j++) {
-		$iMonth = intval($aTemp[$j]['_day']);
-		$aData[$i][$iMonth]['data'] = true;
-		$aData[$i][$iMonth]['date_m'] = $aTemp[$j]['_day'];
-		$aData[$i][$iMonth]['date_y'] = $i;
-	}
+    if ($i < $Y) {
+        $aTemp = $DB->cache(0)->rows($sql, $date_from, $date_to);
+    } else {
+        $aTemp = $DB->rows($sql, $date_from, $date_to);
+    }
+    $aTemp = $DB->rows($sql, $date_from, $date_to);
+    for ($j = 0; $j < count($aTemp); ++$j) {
+        $iMonth = intval($aTemp[$j]['_day']);
+        $aData[$i][$iMonth]['data'] = true;
+        $aData[$i][$iMonth]['date_m'] = $aTemp[$j]['_day'];
+        $aData[$i][$iMonth]['date_y'] = $i;
+    }
 }
 ?>
 
@@ -148,20 +147,22 @@ function showStats(y, m, ids) {
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 <?php
 if (count($aData)) {
-	foreach ($aData as $k => $v) {
-		echo '<tr>
+    foreach ($aData as $k => $v) {
+        echo '<tr>
 				<td style="padding-left: 100px">';
-		echo '<strong>'.$k.'</strong>:';
-		for ($i=1; $i<=12; $i++) {
+        echo '<strong>'.$k.'</strong>:';
+        for ($i = 1; $i <= 12; ++$i) {
             $im = $i;
-            if($i<10) $im = '0'.$i;
-			echo '&nbsp;&nbsp;<a class="dotted_" href="javascript: showStats('.$k.',\''.$im.'\', \''.'\'); void(0);" id="g_country_'.$k.'_'.$im.'">'.$aMonthes[$i].'</a>';
-		}
-		echo '</td>
+            if ($i < 10) {
+                $im = '0'.$i;
+            }
+            echo '&nbsp;&nbsp;<a class="dotted_" href="javascript: showStats('.$k.',\''.$im.'\', \''.'\'); void(0);" id="g_country_'.$k.'_'.$im.'">'.$aMonthes[$i].'</a>';
+        }
+        echo '</td>
 				</tr>';
-	}
-	echo '<tr><td></td></tr>';
- } ?>
+    }
+    echo '<tr><td></td></tr>';
+} ?>
 <tr>
 	<td><br><img src="g_country.php" id='g_country'></td>
 </tr>
@@ -170,20 +171,22 @@ if (count($aData)) {
 </tr>
 <?php
 if (count($aData)) {
-	foreach ($aData as $k => $v) {
-		echo '<tr>
+    foreach ($aData as $k => $v) {
+        echo '<tr>
 				<td style="padding-left: 100px">';
-		echo '<strong>'.$k.'</strong>:';
-		for ($i=1; $i<=12; $i++) {
+        echo '<strong>'.$k.'</strong>:';
+        for ($i = 1; $i <= 12; ++$i) {
             $im = $i;
-            if($i<10) $im = '0'.$i;
-			echo '&nbsp;&nbsp;<a class="dotted_" href="javascript: showStats('.$k.',\''.$im.'\', \''.'\'); void(0);" id="g_city_'.$k.'_'.$im.'">'.$aMonthes[$i].'</a>';
-		}
-		echo '</td>
+            if ($i < 10) {
+                $im = '0'.$i;
+            }
+            echo '&nbsp;&nbsp;<a class="dotted_" href="javascript: showStats('.$k.',\''.$im.'\', \''.'\'); void(0);" id="g_city_'.$k.'_'.$im.'">'.$aMonthes[$i].'</a>';
+        }
+        echo '</td>
 				</tr>';
-	}
-	echo '<tr><td></td></tr>';
- } ?>
+    }
+    echo '<tr><td></td></tr>';
+} ?>
 <tr>
 	<td><br><img src="g_city.php" id='g_city'></td>
 </tr>
@@ -192,20 +195,22 @@ if (count($aData)) {
 </tr>
 <?php
 if (count($aData)) {
-	foreach ($aData as $k => $v) {
-		echo '<tr>
+    foreach ($aData as $k => $v) {
+        echo '<tr>
 				<td style="padding-left: 100px">';
-		echo '<strong>'.$k.'</strong>:';
-		for ($i=1; $i<=12; $i++) {
+        echo '<strong>'.$k.'</strong>:';
+        for ($i = 1; $i <= 12; ++$i) {
             $im = $i;
-            if($i<10) $im = '0'.$i;
-			echo '&nbsp;&nbsp;<a class="dotted_" href="javascript: showStats('.$k.',\''.$im.'\', \''.'\'); void(0);" id="g_project_'.$k.'_'.$im.'">'.$aMonthes[$i].'</a>';
-		}
-		echo '</td>
+            if ($i < 10) {
+                $im = '0'.$i;
+            }
+            echo '&nbsp;&nbsp;<a class="dotted_" href="javascript: showStats('.$k.',\''.$im.'\', \''.'\'); void(0);" id="g_project_'.$k.'_'.$im.'">'.$aMonthes[$i].'</a>';
+        }
+        echo '</td>
 				</tr>';
-	}
-	echo '<tr><td></td></tr>';
- } ?>
+    }
+    echo '<tr><td></td></tr>';
+} ?>
 <tr>
 	<td><br><img src="g_project.php" id='g_project'></td>
 </tr>
@@ -214,20 +219,22 @@ if (count($aData)) {
 </tr>
 <?php
 if (count($aData)) {
-	foreach ($aData as $k => $v) {
-		echo '<tr>
+    foreach ($aData as $k => $v) {
+        echo '<tr>
 				<td style="padding-left: 100px">';
-		echo '<strong>'.$k.'</strong>:';
-		for ($i=1; $i<=12; $i++) {
+        echo '<strong>'.$k.'</strong>:';
+        for ($i = 1; $i <= 12; ++$i) {
             $im = $i;
-            if($i<10) $im = '0'.$i;
-			echo '&nbsp;&nbsp;<a class="dotted_" href="javascript: showStats('.$k.',\''.$im.'\', \''.'\'); void(0);" id="g_reg_'.$k.'_'.$im.'">'.$aMonthes[$i].'</a>';
-		}
-		echo '</td>
+            if ($i < 10) {
+                $im = '0'.$i;
+            }
+            echo '&nbsp;&nbsp;<a class="dotted_" href="javascript: showStats('.$k.',\''.$im.'\', \''.'\'); void(0);" id="g_reg_'.$k.'_'.$im.'">'.$aMonthes[$i].'</a>';
+        }
+        echo '</td>
 				</tr>';
-	}
-	echo '<tr><td></td></tr>';
- } ?>
+    }
+    echo '<tr><td></td></tr>';
+} ?>
 <tr>
 	<td><br><img src="g_reg.php" id='g_reg'></td>
 </tr>
@@ -236,20 +243,22 @@ if (count($aData)) {
 </tr>
 <?php
 if (count($aData)) {
-	foreach ($aData as $k => $v) {
-		echo '<tr>
+    foreach ($aData as $k => $v) {
+        echo '<tr>
 				<td style="padding-left: 100px">';
-		echo '<strong>'.$k.'</strong>:';
-		for ($i=1; $i<=12; $i++) {
+        echo '<strong>'.$k.'</strong>:';
+        for ($i = 1; $i <= 12; ++$i) {
             $im = $i;
-            if($i<10) $im = '0'.$i;
-			echo '&nbsp;&nbsp;<a class="dotted_" href="javascript: showStats('.$k.',\''.$im.'\', \''.'\'); void(0);" id="g_service_'.$k.'_'.$im.'">'.$aMonthes[$i].'</a>';
-		}
-		echo '</td>
+            if ($i < 10) {
+                $im = '0'.$i;
+            }
+            echo '&nbsp;&nbsp;<a class="dotted_" href="javascript: showStats('.$k.',\''.$im.'\', \''.'\'); void(0);" id="g_service_'.$k.'_'.$im.'">'.$aMonthes[$i].'</a>';
+        }
+        echo '</td>
 				</tr>';
-	}
-	echo '<tr><td></td></tr>';
- } ?>
+    }
+    echo '<tr><td></td></tr>';
+} ?>
 <tr>
 	<td><br><img src="g_service.php" id='g_service'></td>
 </tr>
@@ -258,20 +267,22 @@ if (count($aData)) {
 </tr>
 <?php
 if (count($aData)) {
-	foreach ($aData as $k => $v) {
-		echo '<tr>
+    foreach ($aData as $k => $v) {
+        echo '<tr>
 				<td style="padding-left: 100px">';
-		echo '<strong>'.$k.'</strong>:';
-		for ($i=1; $i<=12; $i++) {
+        echo '<strong>'.$k.'</strong>:';
+        for ($i = 1; $i <= 12; ++$i) {
             $im = $i;
-            if($i<10) $im = '0'.$i;
-			echo '&nbsp;&nbsp;<a class="dotted_" href="javascript: showStats('.$k.',\''.$im.'\', \''.'\'); void(0);" id="g_pro_'.$k.'_'.$im.'">'.$aMonthes[$i].'</a>';
-		}
-		echo '</td>
+            if ($i < 10) {
+                $im = '0'.$i;
+            }
+            echo '&nbsp;&nbsp;<a class="dotted_" href="javascript: showStats('.$k.',\''.$im.'\', \''.'\'); void(0);" id="g_pro_'.$k.'_'.$im.'">'.$aMonthes[$i].'</a>';
+        }
+        echo '</td>
 				</tr>';
-	}
-	echo '<tr><td></td></tr>';
- } ?>
+    }
+    echo '<tr><td></td></tr>';
+} ?>
 <tr>
 	<td><br><img src="g_pro.php" id='g_pro'></td>
 </tr>
@@ -280,20 +291,22 @@ if (count($aData)) {
 </tr>
 <?php
 if (count($aData)) {
-	foreach ($aData as $k => $v) {
-		echo '<tr>
+    foreach ($aData as $k => $v) {
+        echo '<tr>
 				<td style="padding-left: 100px">';
-		echo '<strong>'.$k.'</strong>:';
-		for ($i=1; $i<=12; $i++) {
+        echo '<strong>'.$k.'</strong>:';
+        for ($i = 1; $i <= 12; ++$i) {
             $im = $i;
-            if($i<10) $im = '0'.$i;
-			echo '&nbsp;&nbsp;<a class="dotted_" href="javascript: showStats('.$k.',\''.$im.'\', \''.'\'); void(0);" id="g_live_'.$k.'_'.$im.'">'.$aMonthes[$i].'</a>';
-		}
-		echo '</td>
+            if ($i < 10) {
+                $im = '0'.$i;
+            }
+            echo '&nbsp;&nbsp;<a class="dotted_" href="javascript: showStats('.$k.',\''.$im.'\', \''.'\'); void(0);" id="g_live_'.$k.'_'.$im.'">'.$aMonthes[$i].'</a>';
+        }
+        echo '</td>
 				</tr>';
-	}
-	echo '<tr><td></td></tr>';
- } ?>
+    }
+    echo '<tr><td></td></tr>';
+} ?>
 <tr>
 	<td><br><img src="g_live.php" id='g_live'></td>
 </tr>
@@ -302,20 +315,22 @@ if (count($aData)) {
 </tr>
 <?php
 if (count($aData)) {
-	foreach ($aData as $k => $v) {
-		echo '<tr>
+    foreach ($aData as $k => $v) {
+        echo '<tr>
 				<td style="padding-left: 100px">';
-		echo '<strong>'.$k.'</strong>:';
-		for ($i=1; $i<=12; $i++) {
+        echo '<strong>'.$k.'</strong>:';
+        for ($i = 1; $i <= 12; ++$i) {
             $im = $i;
-            if($i<10) $im = '0'.$i;
-			echo '&nbsp;&nbsp;<a class="dotted_" href="javascript: showStats('.$k.',\''.$im.'\', \''.'\'); void(0);" id="g_feedback_'.$k.'_'.$im.'">'.$aMonthes[$i].'</a>';
-		}
-		echo '</td>
+            if ($i < 10) {
+                $im = '0'.$i;
+            }
+            echo '&nbsp;&nbsp;<a class="dotted_" href="javascript: showStats('.$k.',\''.$im.'\', \''.'\'); void(0);" id="g_feedback_'.$k.'_'.$im.'">'.$aMonthes[$i].'</a>';
+        }
+        echo '</td>
 				</tr>';
-	}
-	echo '<tr><td></td></tr>';
- } ?>
+    }
+    echo '<tr><td></td></tr>';
+} ?>
 <tr>
 	<td><br><img src="g_feedback.php" id='g_feedback'></td>
 </tr>
@@ -324,20 +339,22 @@ if (count($aData)) {
 </tr>
 <?php
 if (count($aData)) {
-	foreach ($aData as $k => $v) {
-		echo '<tr>
+    foreach ($aData as $k => $v) {
+        echo '<tr>
 				<td style="padding-left: 100px">';
-		echo '<strong>'.$k.'</strong>:';
-		for ($i=1; $i<=12; $i++) {
+        echo '<strong>'.$k.'</strong>:';
+        for ($i = 1; $i <= 12; ++$i) {
             $im = $i;
-            if($i<10) $im = '0'.$i;
-			echo '&nbsp;&nbsp;<a class="dotted_" href="javascript: showStats('.$k.',\''.$im.'\', \''.'\'); void(0);" id="g_feedbackh_'.$k.'_'.$im.'">'.$aMonthes[$i].'</a>';
-		}
-		echo '</td>
+            if ($i < 10) {
+                $im = '0'.$i;
+            }
+            echo '&nbsp;&nbsp;<a class="dotted_" href="javascript: showStats('.$k.',\''.$im.'\', \''.'\'); void(0);" id="g_feedbackh_'.$k.'_'.$im.'">'.$aMonthes[$i].'</a>';
+        }
+        echo '</td>
 				</tr>';
-	}
-	echo '<tr><td></td></tr>';
- } ?>
+    }
+    echo '<tr><td></td></tr>';
+} ?>
 <tr>
 	<td><br><img src="g_feedback_hours.php" id='g_feedbackh'></td>
 </tr>
@@ -346,20 +363,22 @@ if (count($aData)) {
 </tr>
 <?php
 if (count($aData)) {
-	foreach ($aData as $k => $v) {
-		echo '<tr>
+    foreach ($aData as $k => $v) {
+        echo '<tr>
 				<td style="padding-left: 100px">';
-		echo '<strong>'.$k.'</strong>:';
-		for ($i=1; $i<=12; $i++) {
+        echo '<strong>'.$k.'</strong>:';
+        for ($i = 1; $i <= 12; ++$i) {
             $im = $i;
-            if($i<10) $im = '0'.$i;
-			echo '&nbsp;&nbsp;<a class="dotted_" href="javascript: showStats('.$k.',\''.$im.'\', \''.'\'); void(0);" id="g_bonuses_'.$k.'_'.$im.'">'.$aMonthes[$i].'</a>';
-		}
-		echo '</td>
+            if ($i < 10) {
+                $im = '0'.$i;
+            }
+            echo '&nbsp;&nbsp;<a class="dotted_" href="javascript: showStats('.$k.',\''.$im.'\', \''.'\'); void(0);" id="g_bonuses_'.$k.'_'.$im.'">'.$aMonthes[$i].'</a>';
+        }
+        echo '</td>
 				</tr>';
-	}
-	echo '<tr><td></td></tr>';
- } ?>
+    }
+    echo '<tr><td></td></tr>';
+} ?>
 <tr>
 	<td><br><img src="g_bonuses.php" id='g_bonuses'></td>
 </tr>

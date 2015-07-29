@@ -16,7 +16,7 @@
         </tr>
     </table>
 </div>
-<?php if($is_project):?>
+<?php if ($is_project):?>
 <div class="b-layout">
     <table class="b-layout__table b-layout__table_width_full">
         <tbody><tr class="b-layout__tr">

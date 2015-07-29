@@ -1,23 +1,24 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/commune.common.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/commune.common.php';
 $xajax->printJavascript('/xajax/');
 
 global $id, $comm, $site, $alert, $action, $request;
 
 if (!$action) {
-    if ($site == 'Create')
+    if ($site == 'Create') {
         $action = 'Create';
-    else
+    } else {
         $action = 'Edit';
+    }
 }
 
 $name = '';
 $descr = '';
 $image = '';
-$group_id = NULL;
+$group_id = null;
 $restrict_type = 0;
-$author_id = NULL;    // Создатель сообщества.
-$author_login = NULL; // Чтоб в него загрузить картинку.
+$author_id = null;    // Создатель сообщества.
+$author_login = null; // Чтоб в него загрузить картинку.
 
 if (isset($request)) {        // do...
     $name = stripslashes($request['name']);
@@ -27,7 +28,7 @@ if (isset($request)) {        // do...
     $restrict_type = $request['restrict_type'];
     $author_id = $request['author_id'];
     $author_login = $request['author_login'];
-} else if ($id) { // edit
+} elseif ($id) { // edit
     $name = $comm['name'];
     $descr = $comm['descr'];
     $image = $comm['image'];
@@ -37,17 +38,18 @@ if (isset($request)) {        // do...
     $author_login = $comm['author_login'];
 }
 
-if (!($commune_groups = commune::GetGroups()))
+if (!($commune_groups = commune::GetGroups())) {
     $commune_groups = array();
+}
 
 $action = str_replace('do.', '', $action);
 $limit = commune::GetUserCommunesLimits(get_uid());
 $count = $limit['user_communes_count'] ? "(у вас уже есть {$limit['user_communes_count']})" : '';
 
-$header = $action == 'Create' ? 'Создание вашего сообщества' : '<a style="color:#666" href="?id=' . $comm['id'] . '">Сообщество &laquo;' . $comm['name'] . '&raquo;</a>';
+$header = $action == 'Create' ? 'Создание вашего сообщества' : '<a style="color:#666" href="?id='.$comm['id'].'">Сообщество &laquo;'.$comm['name'].'&raquo;</a>';
 
-$aCommExts = explode( ',', commune::IMAGE_EXTENSIONS );
-$sCommExts = "var aCommExts = ['". implode("','", $aCommExts) ."'];";
+$aCommExts = explode(',', commune::IMAGE_EXTENSIONS);
+$sCommExts = "var aCommExts = ['".implode("','", $aCommExts)."'];";
 ?>
 <script type="text/javascript">
 function commCreate( frm ) {
@@ -62,7 +64,8 @@ function commCreate( frm ) {
     }
 }
 </script>
-<? if (false) { ?>
+<?php if (false) {
+    ?>
     <table border="0" width="100%" cellpadding="0" cellspacing="0">
         <tr valign="middle">
             <td align="left">
@@ -122,11 +125,14 @@ function commCreate( frm ) {
                         </td>
                         <td style="padding-top:40px">
                             <select style="height:17px;" name="group_id">
-<? foreach ($commune_groups as $grp) { ?>
+<?php foreach ($commune_groups as $grp) {
+    ?>
                                 <option value="<?= $grp['id'] ?>" <?= ($grp['id'] == $group_id ? ' selected' : '') ?>>
 <?= $grp['name'] ?>
                                 </option>
-                                <? } ?>
+                                <?php 
+}
+    ?>
                             </select>
                         </td>
                     </tr>
@@ -136,7 +142,8 @@ function commCreate( frm ) {
                         </td>
                         <td style="padding-top:40px">
 
-<? if ($image) { ?>
+<?php if ($image) {
+    ?>
                             <div id="idImage_<?= $id ?>">
                                 <input type="hidden" name="ext_file" id="ext_file" value="1">
                                 <a href="<?= WDCPREFIX ?>/users/<?= $author_login ?>/upload/<?= $image ?>" target="_blank">Присоединенный файл</a>
@@ -145,11 +152,12 @@ function commCreate( frm ) {
                                                         '<?= $id ?>', '<?= $image ?>',
                                                         '<?= $author_login ?>', '__commPrntCommImgBox');">удалить</a>)
                                 </div>
-<?
-                            } else {
-                                print(__commPrntCommImgBox($alert['image']));
-                            }
-?>
+<?php
+
+} else {
+    print(__commPrntCommImgBox($alert['image']));
+}
+    ?>
                         </td>
                     </tr>
                     <tr valign="baseline">
@@ -191,7 +199,8 @@ function commCreate( frm ) {
                     </tr>
                 </table>
             </form>
-<? if ($action == 'Edit' && hasPermissions('communes')) { ?>
+<?php if ($action == 'Edit' && hasPermissions('communes')) {
+    ?>
             <div style="padding-top:50px">
                 <form action="/commune/" method="POST" onsubmit="if(!warning(14)) return false;">
                     <input type="hidden" name="id" value="<?= $id ?>"/>
@@ -200,14 +209,18 @@ function commCreate( frm ) {
                                         <input style="width:150px" type="submit" value="Удалить сообщество"/>
                                     </form>
                                 </div>
-<? } ?>
+<?php 
+}
+    ?>
                         </td>
                     </tr>
                 </table>
 
 
 
-<? } else { ?>
+<?php 
+} else {
+    ?>
                 <form id="form_add_comm" action=".?site=<?= $site ?>#new" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="id" value="<?= $id ?>"/>
                     <input type="hidden" name="author_login" value="<?= $author_login ?>"/>
@@ -223,7 +236,8 @@ function commCreate( frm ) {
                                 <div class="form-in">
                                     <ul>
                                         <li>- <strong>Сообщества могут создавать только пользователи с аккаунтом  <?= view_pro() ?></strong></li>
-                                        <li>- <strong>Можно создать не более 5-ти сообществ</strong> <?= $count;?></li>
+                                        <li>- <strong>Можно создать не более 5-ти сообществ</strong> <?= $count;
+    ?></li>
                                         <li>- <strong>Созданное сообщество невозможно удалить</strong></li>
                                         <li>- <strong><a href="<?=WDCPREFIX?>/about/documents/appendix_2_regulations.pdf">Правила поведения в сообществах</a></strong></li>
                                     </ul>
@@ -259,7 +273,8 @@ function commCreate( frm ) {
                                         <div class="form-el">
                                             <label class="form-label">Картинка</label>
                                             <div class="form-cntrl">
- <? if ($image) { ?>
+ <?php if ($image) {
+    ?>
                             <div id="idImage_<?= $id ?>">
                                 <input type="hidden" name="ext_file" id="ext_file" value="1">
                                 <a href="<?= WDCPREFIX ?>/users/<?= $author_login ?>/upload/<?= $image ?>" target="_blank">Присоединенный файл</a>
@@ -268,11 +283,12 @@ function commCreate( frm ) {
                                                         '<?= $id ?>', '<?= $image ?>',
                                                         '<?= $author_login ?>', '__commPrntCommImgBox');">удалить</a>)
                                 </div>
-<?
-                            } else {
-                                print(__commPrntCommImgBox($alert['image']));
-                            }
-?>
+<?php
+
+} else {
+    print(__commPrntCommImgBox($alert['image']));
+}
+    ?>
                                             </div>
                                             <div class="form-hint">
          												<?=implode(', ', $aCommExts)?>. 200x400 пикселей
@@ -283,9 +299,12 @@ function commCreate( frm ) {
                                             <div class="form-cntrl">
                                                 <ul class="form-list">
 
-                                                    <? foreach ($commune_groups as $grp) { ?>
+                                                    <?php foreach ($commune_groups as $grp) {
+    ?>
                                <li><label><span class="i-radio"><input name="group_id" type="radio" value="<?= $grp['id'] ?>" <?= ($grp['id'] == $group_id ? ' checked' : '') ?>></span> <?= $grp['name'] ?></label></li>
-                                                    <? } ?>
+                                                    <?php 
+}
+    ?>
                                                 </ul>
                                                 <?= (isset($alert['group_id']) ? view_error($alert['group_id']) : '') ?>
                                             </div>
@@ -319,7 +338,8 @@ function commCreate( frm ) {
                                     </div>
                                     <div class="form-block last">
                                         <div class="form-el form-btns">
-                                            <a href="#" onclick="commCreate($('form_add_comm')); return false;" class="b-button b-button_flat b-button_flat_green"><?= $action == 'Edit' ? 'Изменить' : 'Создать';?> сообщество</a>
+                                            <a href="#" onclick="commCreate($('form_add_comm')); return false;" class="b-button b-button_flat b-button_flat_green"><?= $action == 'Edit' ? 'Изменить' : 'Создать';
+    ?> сообщество</a>
                                         </div>
                                     </div>
                                 </div>
@@ -329,4 +349,5 @@ function commCreate( frm ) {
                         </div>
                     </div>
                 </form>                
-<? } ?>
+<?php 
+} ?>

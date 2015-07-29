@@ -7,33 +7,55 @@ $type = $pro_type[$service['op_code']];
     <span class="b-page__desktop b-page__ipad"><span class="b-icon b-icon__spro b-icon__spro_f b-icon_absolute b-icon_left_10" title="PRO"></span></span>
     <h3 class="b-layout__h3 b-layout__h3_padleft_70">Профессиональный аккаунт  на 
         <span class="i-shadow">
-            <a class="b-layout__link b-layout__link_inline-block b-layout__link_bold b-layout__link_fontsize_15 b-layout__link_ygol popup-top-mini-open upd-auto-period-data" href="javascript:void(0)"><?= $type['month']?> <? if($type['day']) { ?><?= ending($type['day'], 'день', 'дня', 'дней')?><? } elseif($type['week']) { ?><?= ending($type['week'], 'неделя', 'недели', 'недель')?><? } else { ?><?= ending($type['month'], 'месяц', 'месяца', 'месяцев')?><? } ?></a>
+            <a class="b-layout__link b-layout__link_inline-block b-layout__link_bold b-layout__link_fontsize_15 b-layout__link_ygol popup-top-mini-open upd-auto-period-data" href="javascript:void(0)"><?= $type['month']?> <?php if ($type['day']) {
+    ?><?= ending($type['day'], 'день', 'дня', 'дней')?><?php 
+} elseif ($type['week']) {
+    ?><?= ending($type['week'], 'неделя', 'недели', 'недель')?><?php 
+} else {
+    ?><?= ending($type['month'], 'месяц', 'месяца', 'месяцев')?><?php 
+} ?></a>
             <div class="b-shadow b-shadow_m b-shadow_left_-11 b-shadow_top_25 b-shadow_hide b-shadow_width_335 popup-mini body-shadow-close change-select-period">
                 <div class="b-shadow__right">
                     <div class="b-shadow__left">
                         <div class="b-shadow__top">
                             <div class="b-shadow__bottom">
                                 <div class="b-shadow__body b-shadow__body_bg_fff b-shadow__body_pad_10">
-                                <?php foreach($pro_type as $opcode => $data) { $eco   = ( $data['month'] * payed::PRICE_FRL_PRO - $data['cost'] ); ?>
+                                <?php foreach ($pro_type as $opcode => $data) {
+    $eco = ($data['month'] * payed::PRICE_FRL_PRO - $data['cost']);
+    ?>
                                 <div class="b-layout__txt b-layouyt__txt_weight_normal">
                                     <a class="b-layout__link b-layout__link_no-decorat select-auto-type" href="javascript:void(0)"
                                        data-opcode="<?= $data['opcode']?>"
                                        data-cost="<?= $data['cost']?>" 
-                                       data-period="<?= $data['month']?> <? if($data['day']) { ?><?= ending($data['day'], 'день', 'дня', 'дней')?><? } elseif($data['week']) { ?><?= ending($data['week'], 'неделя', 'недели', 'недель')?><? } else { ?><?= ending($data['month'], 'месяц', 'месяца', 'месяцев')?><? } ?>">
-                                        <span class="b-layout__txt b-layout__txt_inline-block b-layout__txt_width_90 <?= $opcode == $service['op_code'] ? "b-layout__txt_color_808080" : ""?> b-layout__txt_fontsize_15 select-name">
-                                            <? if($data['day']) { ?>
+                                       data-period="<?= $data['month']?> <?php if ($data['day']) {
+    ?><?= ending($data['day'], 'день', 'дня', 'дней')?><?php 
+} elseif ($data['week']) {
+    ?><?= ending($data['week'], 'неделя', 'недели', 'недель')?><?php 
+} else {
+    ?><?= ending($data['month'], 'месяц', 'месяца', 'месяцев')?><?php 
+}
+    ?>">
+                                        <span class="b-layout__txt b-layout__txt_inline-block b-layout__txt_width_90 <?= $opcode == $service['op_code'] ? 'b-layout__txt_color_808080' : ''?> b-layout__txt_fontsize_15 select-name">
+                                            <?php if ($data['day']) {
+    ?>
                                                 <?= $data['day']?> <?= ending($data['day'], 'день', 'дня', 'дня')?>
-                                            <? } elseif ($data['week']) { ?>
+                                            <?php 
+} elseif ($data['week']) {
+    ?>
                                                 <?= $data['week']?> <?= ending($data['week'], 'неделю', 'недели', 'недель')?>
-                                            <? } else { ?>
+                                            <?php 
+} else {
+    ?>
                                                 <?= $data['month']?> <?= ending($data['month'], 'месяц', 'месяца', 'месяцев')?>
-                                            <? } ?>
+                                            <?php 
+}
+    ?>
                                         </span>
                                         <span class="b-layout__txt b-layout__txt_inline-block b-layout__txt_width_90 b-layout__txt_fontsize_15 b-layout__txt_color_fd6c30 b-layout__txt_nowrap"><?= to_money($data['cost'])?> рублей</span>
                                     </a>
                                 </div>
                                 <?php 
-                                }//foreach?>
+}//foreach?>
                                 </div>
                             </div>
                         </div>

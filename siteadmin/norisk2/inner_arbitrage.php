@@ -1,6 +1,9 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
 $sStartVal = ($_GET['sdate']) ? $_GET['sdate'] : date('d-m-Y');
-$sEndVal   = ($_GET['edate']) ? $_GET['edate'] : date('d-m-Y');
+$sEndVal = ($_GET['edate']) ? $_GET['edate'] : date('d-m-Y');
 ?>
 
 

@@ -3,31 +3,27 @@
 //!!!!!!!
 $where_document_root = '/../../';
 
-
-ini_set('display_errors',1);
+ini_set('display_errors', 1);
 error_reporting(E_ALL ^ E_NOTICE);
-
 
 ini_set('max_execution_time', 0);
 ini_set('memory_limit', '512M');
 
-define('LIB_PATH', dirname(__FILE__) . '/ga_libs/' );
+define('LIB_PATH', dirname(__FILE__).'/ga_libs/');
 
 spl_autoload_register(function ($class) {
-    
-    
-    $class =  LIB_PATH . str_replace('\\', '/', $class) . '.php';
-    
+
+    $class = LIB_PATH.str_replace('\\', '/', $class).'.php';
+
     //print_r($class);
     //print_r("\n");
-    
-    require_once $class; 
+
+    require_once $class;
 });
 
-if(!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT']))
-{    
-    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME) . $where_document_root), '/');
-} 
+if (!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT'])) {
+    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME).$where_document_root), '/');
+}
 
 $path = $_SERVER['DOCUMENT_ROOT'];
 
@@ -49,16 +45,12 @@ print_r($result);
 exit;
 */
 
-
 //print_r(uniqid());
 //exit;
 
 
-
 $user_id = rand(2005, 2014);
-$value = rand(10000,50000);
-
-
+$value = rand(10000, 50000);
 
 $years = array(
     '2005 год',
@@ -71,40 +63,27 @@ $years = array(
     '2012 год',
     '2013 год',
     '2014 год',
-    'менее недели назад'
+    'менее недели назад',
 );
-
-
-
-
-
-
-
-
-
 
 $ua = new \UniversalAnalytics\UA(array(
     'v' => 1,
-    'tid' => 'UA-49048745-1',//'UA-49016158-1',
-    'cid' => '35009a79-1a05-49d7-b876-2b884d0f825b'//md5($user_id),
+    'tid' => 'UA-49048745-1', //'UA-49016158-1',
+    'cid' => '35009a79-1a05-49d7-b876-2b884d0f825b', //md5($user_id),
 ));
 
+foreach ($years as $year) {
+    $label = iconv('cp1251', 'utf-8', $year);
 
-foreach($years as $year)
-{
-
-$label = iconv('cp1251', 'utf-8', $year);
-
-$request = $ua->event(array(
-    'category' => iconv('cp1251', 'utf-8','Ежедневная рассылка проектов по фрилансерам 2'),//'email',
-    'action' => iconv('cp1251', 'utf-8','Отправлено'),//'sended',//'open',
+    $request = $ua->event(array(
+    'category' => iconv('cp1251', 'utf-8', 'Ежедневная рассылка проектов по фрилансерам 2'), //'email',
+    'action' => iconv('cp1251', 'utf-8', 'Отправлено'), //'sended',//'open',
     'label' => $label,
-    'value' => rand(10000,50000)
+    'value' => rand(10000, 50000),
 ))
 ->track();
 
-$response = $request->send();
-
+    $response = $request->send();
 }
 
 //var_dump($response);
@@ -113,7 +92,6 @@ $response = $request->send();
 //var_dump($request->attributes);
 
 exit;
-
 
 /*
 

@@ -1,6 +1,6 @@
 <?php
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/xajax/sbr.common.php' );
-$xajax->printJavascript( '/xajax/' );
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/sbr.common.php';
+$xajax->printJavascript('/xajax/');
 ?>
 <h3>Документы ИТО</h3>
 <!-- Фильтр старт -->
@@ -17,14 +17,18 @@ $xajax->printJavascript( '/xajax/' );
                         <label class="form-l"><b>Период</b></label>
                         <div class="form-value fvs">
                             <select name="month">
-                            <? foreach($months as $n=>$m) { ?>
-                                <option value="<?=$n?>" <?= ( $n == date('n') ? 'selected="selected"' : '' )?>><?=$m?></option>
-                            <? } ?>
+                            <?php foreach ($months as $n => $m) {
+    ?>
+                                <option value="<?=$n?>" <?= ($n == date('n') ? 'selected="selected"' : '')?>><?=$m?></option>
+                            <?php 
+} ?>
                             </select>
                             <select name="year">
-                            <? for($y=2012;$y<=date('Y');$y++) { ?>
-                                <option value="<?=$y?>"  <?= ( $y == date('Y') ? 'selected="selected"' : '' )?>><?=$y?></option>
-                              <? } ?>
+                            <?php for ($y = 2012;$y <= date('Y');++$y) {
+    ?>
+                                <option value="<?=$y?>"  <?= ($y == date('Y') ? 'selected="selected"' : '')?>><?=$y?></option>
+                              <?php 
+} ?>
                             </select>
                         </div>
                     </div>
@@ -48,7 +52,8 @@ $xajax->printJavascript( '/xajax/' );
 
 <div class="search-lenta">
 
-<? if ($docs_ito) { ?>
+<?php if ($docs_ito) {
+    ?>
     <iframe src="about:blank" name="formframe" style="width:1px;height:1px;visibility:hidden;"></iframe>
     
     <div class="search-item c">
@@ -66,23 +71,31 @@ $xajax->printJavascript( '/xajax/' );
         </span>
     </div>
     
-    <? foreach ($docs_ito as $doc) { $ext = substr(strrchr($doc['fname'], "."), 1); ?>
+    <?php foreach ($docs_ito as $doc) {
+    $ext = substr(strrchr($doc['fname'], '.'), 1);
+    ?>
         <div class="search-item c">
             <span style="display:inline-block;text-align:center;width:100px;">
                 <?= $months[date('n', strtotime($doc['date_period']))]?> <?= date('Y', strtotime($doc['date_period']))?>
             </span>
-            <span style="display:inline-block;text-align:center;width:150px" id="date_create_<?=date('Yn', strtotime($doc['date_period']));?>">
-                <?= date("d.m.Y H:i", strtotime($doc['date_create']));?>
+            <span style="display:inline-block;text-align:center;width:150px" id="date_create_<?=date('Yn', strtotime($doc['date_period']));
+    ?>">
+                <?= date('d.m.Y H:i', strtotime($doc['date_create']));
+    ?>
             </span>
             <span style="display:inline-block;text-align:left;width:200px;">
-                <a href="<?= WDCPREFIX?>/<?=$doc['path'].$doc['fname']?>" target="_blank" id="file_name_<?=date('Yn', strtotime($doc['date_period']));?>">Скачать ИТО за <?= $months[date('n', strtotime($doc['date_period']))]?> <?= date('Y', strtotime($doc['date_period']))?>.<?= $ext;?></a>
+                <a href="<?= WDCPREFIX?>/<?=$doc['path'].$doc['fname']?>" target="_blank" id="file_name_<?=date('Yn', strtotime($doc['date_period']));
+    ?>">Скачать ИТО за <?= $months[date('n', strtotime($doc['date_period']))]?> <?= date('Y', strtotime($doc['date_period']))?>.<?= $ext;
+    ?></a>
             </span>
             <span style="display:inline-block;text-align:center;width:100px;padding-bottom:5px;">
-                <input type="button" value="переформировать" onclick="xajax_aCreateDocITO('<?=$doc['date_period']?>', '<?=$ext;?>')"/>
+                <input type="button" value="переформировать" onclick="xajax_aCreateDocITO('<?=$doc['date_period']?>', '<?=$ext;
+    ?>')"/>
             </span>
             <span style="display:inline-block;text-align:center;width:150px;">
                 <form action="" method="POST" enctype="multipart/form-data" target="formframe" id="upload_form_<?=$doc['id']?>">
-                    <input type="hidden" name="doc_id" value="<?= $doc['id'];?>">
+                    <input type="hidden" name="doc_id" value="<?= $doc['id'];
+    ?>">
                     <input type="hidden" id="cmd" name="cmd" value="upload">
                     <span class="b-post__txt b-post__txt_relative b-post__txt_overflow_hidden b-post__txt_zoom_1">
                         <input class='b-file__input b-file__input_size_auto' type='file' id='attachedfiles_file_<?=$doc['id']?>' name='attachedfiles_file' onchange="$('upload_form_<?=$doc['id']?>').submit(); window.document.body.style.cursor = 'wait';">
@@ -91,11 +104,16 @@ $xajax->printJavascript( '/xajax/' );
                 </form>
             </span>
         </div>
-    <? } ?>
+    <?php 
+}
+    ?>
     
-<? } else {?>
+<?php 
+} else {
+    ?>
     Документов ИТО нет.
-<? } ?>
+<?php 
+} ?>
 
 </div>
 
@@ -106,8 +124,8 @@ $xajax->printJavascript( '/xajax/' );
         $(fid).set('html', name);
     }
 window.addEvent('domready', function() {
-    <?
-    if ( $sZeroClipboard ) {
+    <?php
+    if ($sZeroClipboard) {
         echo 'ZeroClipboard.setMoviePath("'.$GLOBALS['host'].'/scripts/zeroclipboard/ZeroClipboard.swf");';
         echo $sZeroClipboard;
     }

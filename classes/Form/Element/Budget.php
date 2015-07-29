@@ -12,7 +12,7 @@ class Form_Element_Budget extends Zend_Form_Element
         $value = parent::getValue();
 
         if ($name) {
-            $value = isset($value[$name])?$value[$name]:'';
+            $value = isset($value[$name]) ? $value[$name] : '';
         }
 
         return $value;

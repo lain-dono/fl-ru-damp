@@ -1,17 +1,17 @@
 <?php
-if(!defined('IN_STDF')) { 
-    header("HTTP/1.0 404 Not Found");
+if (!defined('IN_STDF')) {
+    header('HTTP/1.0 404 Not Found');
     exit();
 }
 if (!$xajax) {
     if ($_GET['p'] == 'opinions') {
         if ($ops_type == 'norisk') {
-            require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/sbr.common.php");
+            require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/sbr.common.php';
         } else {
-            require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/opinions.common.php");
+            require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/opinions.common.php';
         }
     } else {
-        require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/commune.common.php");
+        require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/commune.common.php';
     }
     $xajax->printJavascript('/xajax/');
 }
@@ -23,10 +23,14 @@ if (!$xajax) {
         </div>
         <? } */ ?>
         <div class="page-profile">
-            <?php include ($fpath . "header.php") ?>
-            <?php include ($fpath . "usermenu.php") ?>
+            <?php include($fpath.'header.php') ?>
+            <?php include($fpath.'usermenu.php') ?>
             <div class="page-ops">
-                <?php include ($_SERVER['DOCUMENT_ROOT'] . '/user/tpl.op_header.php') ?>
-                <?php if ($inner) include ($fpath . $inner); else print('&nbsp;') ?>
+                <?php include($_SERVER['DOCUMENT_ROOT'].'/user/tpl.op_header.php') ?>
+                <?php if ($inner) {
+    include $fpath.$inner;
+} else {
+    print('&nbsp;');
+} ?>
             </div>
         </div>

@@ -1,5 +1,7 @@
-<?                                                                              
-require_once("stdf.php");
+<?php
+
+                                                                             
+require_once 'stdf.php';
 
 $cfile = new CFile();
 
@@ -53,13 +55,17 @@ WHERE (file_name, dir) NOT IN (SELECT fname, path FROM file)
 
 $res = pg_query(DBConnect(), $sql);
 $all = pg_num_rows($res);
-print "Всего строк = ".$all."\n";
+print 'Всего строк = '.$all."\n";
 $i = 0;
-if ($all) while ($row = pg_fetch_assoc($res)){
-    $i++;
-    if ($row['file_name'] && !$cfile->DBImport($row['dir'].$row['file_name'])){ //файл не существует, но в базе есть ссылка
-        $sql = "UPDATE ".$row['tbl']." SET ".$row['rw']." = NULL WHERE ".$row['idstr']."=".$row['id'];
-        pg_query(DBConnect(), $sql);
+if ($all) {
+    while ($row = pg_fetch_assoc($res)) {
+        ++$i;
+        if ($row['file_name'] && !$cfile->DBImport($row['dir'].$row['file_name'])) { //файл не существует, но в базе есть ссылка
+        $sql = 'UPDATE '.$row['tbl'].' SET '.$row['rw'].' = NULL WHERE '.$row['idstr'].'='.$row['id'];
+            pg_query(DBConnect(), $sql);
+        }
+        if ($i % 1000 == 0) {
+            print 'Строка = '.$i."\n";
+        }
     }
-if ($i % 1000 == 0) print "Строка = ". $i."\n";        
 }

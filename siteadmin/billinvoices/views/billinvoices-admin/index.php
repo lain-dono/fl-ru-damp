@@ -38,7 +38,7 @@
 	<b class="b1"></b>
 </div>
 
-<?php if($list): ?>
+<?php if ($list): ?>
 <div class="admin-lenta">
     <table>
         <colgroup>
@@ -60,30 +60,30 @@
             </tr>
         </thead>
         <tbody>
-            <?php foreach($list as $el): ?>
+            <?php foreach ($list as $el): ?>
             <tr>
                 <td><?=date('d.m.Y H:i', strtotime($el['date']))?></td>
                 <td>
-                    <a target="_blank" href="<?=WDCPREFIX . '/' . $el['file']?>">
+                    <a target="_blank" href="<?=WDCPREFIX.'/'.$el['file']?>">
                         <?=$el['name']?>
                     </a>
                 </td>
                 <td>
-                    <a target="_blank" href="<?=sprintf("/users/%s/", $el['login'])?>">
+                    <a target="_blank" href="<?=sprintf('/users/%s/', $el['login'])?>">
                         <?=$el['login']?>
                     </a>
                 </td>
                 <td>
                     <?=view_cost_format($el['price'], false)?>
                 </td>
-                <?php if($el['acc_op_id'] > 0): ?>
+                <?php if ($el['acc_op_id'] > 0): ?>
                 <td>
-                    <a target="_blank" href="<?=sprintf("/siteadmin/bill/?login=%s", $el['login'])?>" class="color-45a300">Зачислено</a>
+                    <a target="_blank" href="<?=sprintf('/siteadmin/bill/?login=%s', $el['login'])?>" class="color-45a300">Зачислено</a>
                 </td>
                 <td>
                     <form action="." method="post" enctype="application/x-www-form-urlencoded">
-                        <?php if($el['file_factura_id'] > 0): ?>
-                        <a target="_blank" href="<?=WDCPREFIX . '/' . $el['file_factura']?>"><?=$el['name_factura']?></a>&nbsp;&nbsp;
+                        <?php if ($el['file_factura_id'] > 0): ?>
+                        <a target="_blank" href="<?=WDCPREFIX.'/'.$el['file_factura']?>"><?=$el['name_factura']?></a>&nbsp;&nbsp;
                         <input type="hidden" name="num[<?=$el['uid']?>][<?=$el['invoice_id']?>]" value="<?=$el['file_factura_id']?>" />
                         <button type="submit">Удалить</button>
                         <input type="hidden" name="do" value="factura_delete" /> 
@@ -95,7 +95,7 @@
                         <?php endif; ?>
                         <input type="hidden" name="u_token_key" value="<?=$_SESSION['rand']?>" />
                     </form>
-                    <?php if($el['file_factura_id'] > 0): ?>
+                    <?php if ($el['file_factura_id'] > 0): ?>
                     <form action="." method="post" enctype="multipart/form-data" class="b-layout_padtop_10">
                         <input type="hidden" name="invoice_id" value="<?=$el['invoice_id']?>" />
                         <input type="file" name="new_file" />
@@ -120,14 +120,14 @@
             <?php endforeach; ?>
         </tbody>
         <tfoot>
-            <?php if($page_count > $limit): ?>
+            <?php if ($page_count > $limit): ?>
             <tr>
                 <td colspan="6">
                     <div class="pager">
                         <?=new_paginator(
-                                $page, 
-                                ceil($page_count / $limit), 
-                                10, 
+                                $page,
+                                ceil($page_count / $limit),
+                                10,
                                 "%s?{$filter_query}page=%d%s") ?>
                     </div>
                 </td>

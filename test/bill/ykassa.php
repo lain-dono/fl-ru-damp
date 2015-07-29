@@ -1,10 +1,6 @@
 <?php
 /**
-scid:52128
-ShopID:17004
-Sum:780
-customerNumber:481255
-paymentType:WM
+ paymentType:WM
  */
 
 /*
@@ -16,9 +12,8 @@ paymentType:WM
 
 //$_GET['test'] = 1;
 
-$url = isset($_GET['test'])?'https://demomoney.yandex.ru/eshop.xml':
+$url = isset($_GET['test']) ? 'https://demomoney.yandex.ru/eshop.xml' :
                             'https://money.yandex.ru/eshop.xml';
-
 
 ?>
 <form method="post" action="<?=$url?>">

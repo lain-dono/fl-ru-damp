@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Уведомление работодателям
+ * Уведомление работодателям.
  * */
 ini_set('max_execution_time', '0');
 ini_set('memory_limit', '512M');
@@ -9,8 +10,7 @@ require_once '../classes/stdf.php';
 require_once '../classes/memBuff.php';
 require_once '../classes/smtp2.php';
 
-
-/**
+/*
  * Логин пользователя от кого осуществляется рассылка
  * 
  */
@@ -23,12 +23,12 @@ $sql = "SELECT uid, email, login, uname, usurname, subscr FROM employer
 
 //$sql = "SELECT uid, email, login, uname, usurname FROM users WHERE email IN('jusoft@yandex.ru', 'lamzin80@mail.ru')"; // !! 
 
-if ( defined('HTTP_PREFIX') ) {
-    $pHttp = str_replace("://", "", HTTP_PREFIX); // Введено с учетом того планируется включение HTTPS на серверах (для писем в ЛС)
+if (defined('HTTP_PREFIX')) {
+    $pHttp = str_replace('://', '', HTTP_PREFIX); // Введено с учетом того планируется включение HTTPS на серверах (для писем в ЛС)
 } else {
     $pHttp = 'http';
 }
-$pHost = str_replace("$pHttp://", "", $GLOBALS['host']);
+$pHost = str_replace("$pHttp://", '', $GLOBALS['host']);
 $eHost = $GLOBALS['host'];
 
 $pMessage = "Здравствуйте!
@@ -48,17 +48,17 @@ $pMessage = "Здравствуйте!
 Команда {$pHttp}:/{Free-lance.ru}/{$pHost}/
 ";
 
-$eSubject = "Free-lance.ru: мы открыли контакты пользователей PRO";
+$eSubject = 'Free-lance.ru: мы открыли контакты пользователей PRO';
 
-$mail = new smtp2;
+$mail = new smtp2();
 
-$cid1  = $mail->cid();
-$cid2  = $mail->cid();
-$cid3  = $mail->cid();
+$cid1 = $mail->cid();
+$cid2 = $mail->cid();
+$cid3 = $mail->cid();
 
-$mail->attach(ABS_PATH . '/images/letter/11.png', $cid1);
-$mail->attach(ABS_PATH . '/images/letter/14.png', $cid2);
-$mail->attach(ABS_PATH . '/images/letter/15.png', $cid3);
+$mail->attach(ABS_PATH.'/images/letter/11.png', $cid1);
+$mail->attach(ABS_PATH.'/images/letter/14.png', $cid2);
+$mail->attach(ABS_PATH.'/images/letter/15.png', $cid3);
 
 $eMessage = '
 <html>
@@ -244,8 +244,7 @@ $DB = new DB('plproxy');
 $master = new DB('master');
 $cnt = 0;
 
-
-$sender = $master->row("SELECT * FROM users WHERE login = ?", $sender);
+$sender = $master->row('SELECT * FROM users WHERE login = ?', $sender);
 if (empty($sender)) {
     die("Unknown Sender\n");
 }
@@ -254,7 +253,9 @@ echo "Send personal messages\n";
 
 // подготавливаем рассылку
 $msgid = $DB->val("SELECT masssend(?, ?, '{}', '')", $sender['uid'], $pMessage);
-if (!$msgid) die('Failed!');
+if (!$msgid) {
+    die('Failed!');
+}
 
 // допустим, мы получаем адресатов с какого-то запроса
 $i = 0;
@@ -263,14 +264,16 @@ while ($users = $master->col("{$sql} LIMIT 30000 OFFSET ?", $i)) {
     $i = $i + 30000;
 }
 // Стартуем рассылку в личку
-$DB->query("SELECT masssend_commit(?, ?)", $msgid, $sender['uid']); 
+$DB->query('SELECT masssend_commit(?, ?)', $msgid, $sender['uid']);
 echo "Send email messages\n";
 
 $mail->subject = $eSubject;  // заголовок письма
 $mail->message = $eMessage; // текст письма
 $mail->recipient = ''; // свойство 'получатель' оставляем пустым
 $spamid = $mail->masssend();
-if (!$spamid) die('Failed!');
+if (!$spamid) {
+    die('Failed!');
+}
 // с этого момента рассылка создана, но еще никому не отправлена!
 // допустим нам нужно получить список получателей с какого-либо запроса
 $i = 0;
@@ -279,14 +282,14 @@ $res = $master->query($sql);
 while ($row = pg_fetch_assoc($res)) {
     $mail->recipient[] = array(
         'email' => "{$row['uname']} {$row['usurname']} [{$row['login']}] <{$row['email']}>",
-        'extra' => array('USER_LOGIN' => $row['login'])
+        'extra' => array('USER_LOGIN' => $row['login']),
     );
     if (++$i >= 30000) {
         $mail->bind($spamid);
         $mail->recipient = array();
         $i = 0;
     }
-    $cnt++;
+    ++$cnt;
 }
 if ($i) {
     $mail->bind($spamid);

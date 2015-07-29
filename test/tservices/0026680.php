@@ -1,20 +1,17 @@
 <?php
 
 
-ini_set('display_errors',1);
+ini_set('display_errors', 1);
 error_reporting(E_ALL ^ E_NOTICE);
-
 
 ini_set('max_execution_time', 0);
 ini_set('memory_limit', '512M');
 
-if(!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT']))
-{    
-    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME) . '/../../'), '/');
-} 
+if (!isset($_SERVER['DOCUMENT_ROOT']) || !strlen($_SERVER['DOCUMENT_ROOT'])) {
+    $_SERVER['DOCUMENT_ROOT'] = rtrim(realpath(pathinfo(__FILE__, PATHINFO_DIRNAME).'/../../'), '/');
+}
 
-
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/config.php");
 //require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/profiler.php");
 
@@ -42,20 +39,16 @@ $results = array();
 //$results['locale'] = setlocale(LC_ALL, NULL);
 
 
-
 $string = 'неужели? эта хуйня НЕРАБОТАЕТ на бете из-за кодировки? сука? БЛЯТЬ!';
 
-
-
-$string = sentence_case($string); 
+$string = sentence_case($string);
 
 //$results['test'] = $string;
 
 //$string = iconv('utf-8','cp1251',$string);
-$string = iconv('cp1251','utf-8',$string);
+$string = iconv('cp1251', 'utf-8', $string);
 
 $results['test'] = $string;
-
 
 /*
 $results['test1'] = iconv('cp1251','utf8',sentence_case($string)); 
@@ -75,16 +68,12 @@ $results['test5'] = iconv('cp1251','utf-8', ucfirst(mb_strtolower(trim($string))
 //------------------------------------------------------------------------------
 
 
-
+//------------------------------------------------------------------------------
 
 
 //------------------------------------------------------------------------------
 
-
-
-//------------------------------------------------------------------------------
-
-array_walk($results, function(&$value, $key){
+array_walk($results, function (&$value, $key) {
     $value = sprintf('%s = %s'.PHP_EOL, $key, $value);
 });
 

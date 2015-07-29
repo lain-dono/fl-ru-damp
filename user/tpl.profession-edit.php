@@ -8,7 +8,7 @@
                     <div class="b-shadow__bottom">
                         <div class="b-shadow__body b-shadow__body_bg_fff b-shadow__body_pad_20">
                             <div class="b-shadow__title b-shadow__title_padbot_15">
-                                <?= ( $category['prof_id'] > 0 ? $category['group_name'] . ' / ' : '' );?><?= $category['prof_name']?>
+                                <?= ($category['prof_id'] > 0 ? $category['group_name'].' / ' : '');?><?= $category['prof_name']?>
                             </div>
                             <table class="b-layout__table b-layout__table_width_full">
                                 <tr class="b-layout__tr">
@@ -16,14 +16,14 @@
                                     <td class="b-layout__one b-layout__one_padbot_20">
                                         <div class="b-radio b-radio_layout_horizontal">
                                             <div class="b-radio__item b-radio__item_padright_20">
-                                                <input id="cat_r_pos1" class="b-radio__input" name="position" type="radio" value="1" <?= $category['ordering'] == 1 || ( $category['ordering'] == 2 && !is_pro() ) ? 'checked="checked"' : '' ?>/>
+                                                <input id="cat_r_pos1" class="b-radio__input" name="position" type="radio" value="1" <?= $category['ordering'] == 1 || ($category['ordering'] == 2 && !is_pro()) ? 'checked="checked"' : '' ?>/>
                                                 <label class="b-radio__label b-radio__label_fontsize_13" for="cat_r_pos1">Первый по счету</label>
                                             </div>
                                             <div class="b-radio__item">
-                                                <input id="cat_r_pos2" class="b-radio__input" name="position" type="radio" value="2" <?= ( $category['ordering'] != 1 && is_pro() ) || ( $category['ordering'] > 2 && !is_pro() ) ? 'checked="checked"' : '' ?> />
+                                                <input id="cat_r_pos2" class="b-radio__input" name="position" type="radio" value="2" <?= ($category['ordering'] != 1 && is_pro()) || ($category['ordering'] > 2 && !is_pro()) ? 'checked="checked"' : '' ?> />
                                                 <label class="b-radio__label b-radio__label_fontsize_13" for="cat_r_pos2">После
                                                     <div class="b-combo b-combo_margtop_-6 b-combo_inline-block">
-                                                        <div class="b-combo__input b-combo__input_width_370 b-combo__input_multi_dropdown b-combo__input_arrow_yes b-combo__input_init_categoryList <?= $category['prev_prof_id'] ? "drop_down_default_{$category['prev_prof_id']}" : ""?> exclude_value_0_<?= $category['prof_id']?>">
+                                                        <div class="b-combo__input b-combo__input_width_370 b-combo__input_multi_dropdown b-combo__input_arrow_yes b-combo__input_init_categoryList <?= $category['prev_prof_id'] ? "drop_down_default_{$category['prev_prof_id']}" : ''?> exclude_value_0_<?= $category['prof_id']?>">
                                                             <input class="b-combo__input-text" name="position_category" type="text" size="80" value="Выберите раздел" onchange="$('cat_r_pos2').set('checked', true);" one_result_suffix="категорий;профессий" less_five_suffix="категории;профессии" great_than_five_suffix="категорий;профессий"/>
                                                         </div>
                                                     </div>
@@ -46,12 +46,13 @@
                                     <td class="b-layout__one b-layout__one_padbot_20 b-layout__one_width_90"><div class="b-layout__txt b-layout__txt_lineheight_1">Ключевые слова</div></td>
                                     <td class="b-layout__one b-layout__one_padbot_20">
                                         <div class="b-textarea">
-                                            <textarea class="b-textarea__textarea " name="user_keys" cols="80" rows="5"><?= stripcslashes(implode(", ", $user_keys))?></textarea>
+                                            <textarea class="b-textarea__textarea " name="user_keys" cols="80" rows="5"><?= stripcslashes(implode(', ', $user_keys))?></textarea>
                                         </div>
                                         <div class="b-layout__txt b-layout__txt_padtop_5 b-layout__txt_fontsize_11">Через запятую. Например: дизайн, верстка, программирование, рерайт.</div>
                                     </td>
                                 </tr>
-                                <? if ($category['proftext'] == 't') { ?>
+                                <?php if ($category['proftext'] == 't') {
+    ?>
                                 <tr class="b-layout__tr">
                                     <td class="b-layout__one b-layout__one_padbot_20 b-layout__one_width_90"><div class="b-layout__txt b-layout__txt_lineheight_1">Стоимость тысячи знаков</div></td>
                                     <td class="b-layout__one b-layout__one_padbot_20">
@@ -82,7 +83,8 @@
                                         </div>                   
                                     </td>
                                 </tr>
-                                <? } else { //if?>
+                                <?php 
+} else { //if?>
                                 <tr class="b-layout__tr">
                                     <td class="b-layout__one b-layout__one_padbot_20 b-layout__one_width_90"><div class="b-layout__txt b-layout__txt_lineheight_1">Стоимость работ</div></td>
                                     <td class="b-layout__one b-layout__one_padbot_20">
@@ -142,28 +144,32 @@
                                         </div>                   
                                     </td>
                                 </tr>
-                                <? }//else?>
+                                <?php 
+}//else?>
                                 
-                                <? if (is_pro()) { ?>
+                                <?php if (is_pro()) {
+    ?>
                                 <tr class="b-layout__tr">
                                     <td class="b-layout__one b-layout__one_padbot_30 b-layout__one_width_90">&#160;</td>
                                     <td class="b-layout__one b-layout__one_padbot_30">
                                         <div class="b-check">
-                                            <input name="on_preview_default" type="hidden" value="<?= ($category['show_preview'] == 't') ? "1" : "0" ?>"/>
-                                            <input id="gr_prev" class="b-check__input" name="on_preview" type="checkbox" value="1" <?= ($category['show_preview'] == 't') ? "checked='checked'" : "" ?>/>
+                                            <input name="on_preview_default" type="hidden" value="<?= ($category['show_preview'] == 't') ? '1' : '0' ?>"/>
+                                            <input id="gr_prev" class="b-check__input" name="on_preview" type="checkbox" value="1" <?= ($category['show_preview'] == 't') ? "checked='checked'" : '' ?>/>
                                             <label for="gr_prev" class="b-check__label b-check__label_fontsize_13">Включить превью работ</label>
                                         </div>
                                     </td>
                                 </tr>
-                                <? } ?>
+                                <?php 
+} ?>
                             </table>
                             <span class="block_errors"></span>
                             <div class="b-buttons b-buttons_padleft_87">
                                 <a class="b-button b-button_flat b-button_flat_green" href="javascript:void(0)" onclick="xajax_editProfession('<?= get_uid(false)?>', $('profession_edit_popup').toQueryString())">Сохранить изменения</a>
                                 &#160;&#160;&#160;
-                                <?php if($category['prof_id'] > 0 && (int) $category['is_work'] == 0) { // Удалять можно только пустые категории ?>
+                                <?php if ($category['prof_id'] > 0 && (int) $category['is_work'] == 0) { // Удалять можно только пустые категории ?>
                                 <a class="b-buttons__link b-buttons__link_dot_c10601" href="javascript:void(0)" onclick="if(confirm('Удалить раздел?')) xajax_removeProfession('<?= get_uid(false)?>', {prof_id: '<?= $category['prof_id']?>'})">удалить раздел</a>
-                                <?php }//if?>
+                                <?php 
+}//if?>
                                 <span class="b-buttons__txt">или</span>
                                 <a class="b-buttons__link b-buttons__link_dot_0f71c8 b-buttons__link_close cls-close_popup" href="javascript:void(0)">отменить</a>
                             </div>

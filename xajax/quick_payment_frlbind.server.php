@@ -4,22 +4,22 @@
  * Закрепление / продление закрепления в каталоге фрилансеров.
  * Оплата услуги.
  */
-
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/billing.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/yandex_kassa.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/platipotom.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/quick_payment/quickPaymentPopup.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/quick_payment/quickPaymentPopupFactory.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/freelancer_binds.php");
-
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/billing.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/yandex_kassa.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/platipotom.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/quick_payment/quickPaymentPopup.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/quick_payment/quickPaymentPopupFactory.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/freelancer_binds.php';
 
 //------------------------------------------------------------------------------
 
 
 /**
- * Оплата с личного счета
- * @param type $type
+ * Оплата с личного счета.
+ *
+ * @param type  $type
  * @param array $data (weeks, prof_id, is_spec)
+ *
  * @return type
  */
 function quickPaymentFrlbindAccount($type, $data)
@@ -30,44 +30,42 @@ function quickPaymentFrlbindAccount($type, $data)
 
     $objResponse = &new xajaxResponse();
 
-    $prof_id = (int)@$data['prof_id'];
-    $is_spec = (bool)@$data['is_spec'];
-    $is_prolong = (bool)@$data['is_prolong'];
-    $promo_code = (string)@$data['promo'];
-    
+    $prof_id = (int) @$data['prof_id'];
+    $is_spec = (bool) @$data['is_spec'];
+    $is_prolong = (bool) @$data['is_prolong'];
+    $promo_code = (string) @$data['promo'];
+
     $freelancer_binds = new freelancer_binds();
-    
-    
-    $valid = $is_prolong 
+
+    $valid = $is_prolong
             ? $freelancer_binds->isUserBinded($uid, $prof_id, $is_spec)
             : $freelancer_binds->isAllowBind($uid, $prof_id, $is_spec);
 
     if ($valid) {
-        
         $bill = new billing($uid);
         //Допустимо использование промокодов
-        $bill->setPromoCodes('SERVICE_FRLBIND', $promo_code);         
+        $bill->setPromoCodes('SERVICE_FRLBIND', $promo_code);
 
         $op_code = $freelancer_binds->getOpCode($prof_id, $is_spec, $is_prolong);
         $option = array(
-            'weeks' => (int)@$data['weeks'],
-            'prof_id' => $prof_id
+            'weeks' => (int) @$data['weeks'],
+            'prof_id' => $prof_id,
         );
-        
+
         $ok = $bill->addServiceAndPayFromAccount($op_code, $option);
 
         if ($ok) {
             $is_error = false;
-            $link = '/freelancers/';        
+            $link = '/freelancers/';
             if ($prof_id) {
                 if ($is_spec) {
-                    $link .= professions::GetProfLink($prof_id) . '/';
+                    $link .= professions::GetProfLink($prof_id).'/';
                 } else {
                     $group = professions::GetGroup($prof_id, $error);
-                    $link .= $group['link'] . '/';
+                    $link .= $group['link'].'/';
                 }
             }
-            
+
             $objResponse->script("window.location.href = '{$link}';");
         }
     }
@@ -80,16 +78,15 @@ function quickPaymentFrlbindAccount($type, $data)
             if(qp) qp.show_error('Возникла ошибка при {$action} в каталоге!');
         ");
     }
-        
+
     return $objResponse;
 }
-
 
 //------------------------------------------------------------------------------
 
 
 /**
- * Это методы для разных видов оплаты но сгруппированные в яндекс кассе
+ * Это методы для разных видов оплаты но сгруппированные в яндекс кассе.
  * 
  * @param type $type
  * @param type $data
@@ -119,15 +116,15 @@ function quickPaymentFrlbindSberbank($type, $data)
     return quickPaymentFrlbindYandexKassa($type, $data);
 }
 
-
 //------------------------------------------------------------------------------
 
 
 /**
- * Оплата через яндекс кассу
+ * Оплата через яндекс кассу.
  * 
  * @param type $type - тип оплаты
  * @param type $data - данные по параметрам покупаемой услуги
+ *
  * @return \xajaxResponse
  */
 function quickPaymentFrlbindYandexKassa($type, $data)
@@ -138,50 +135,52 @@ function quickPaymentFrlbindYandexKassa($type, $data)
 
     $objResponse = &new xajaxResponse();
 
-    $prof_id = (int)@$data['prof_id'];
-    $is_spec = (bool)@$data['is_spec'];
-    $is_prolong = (bool)@$data['is_prolong'];
-    $promo_code = (string)@$data['promo'];
-    
+    $prof_id = (int) @$data['prof_id'];
+    $is_spec = (bool) @$data['is_spec'];
+    $is_prolong = (bool) @$data['is_prolong'];
+    $promo_code = (string) @$data['promo'];
+
     $pay_methods = array(
         quickPaymentPopup::PAYMENT_TYPE_CARD => yandex_kassa::PAYMENT_AC,
         quickPaymentPopup::PAYMENT_TYPE_YA => yandex_kassa::PAYMENT_YD,
         quickPaymentPopup::PAYMENT_TYPE_WM => yandex_kassa::PAYMENT_WM,
         quickPaymentPopup::PAYMENT_TYPE_ALFACLICK => yandex_kassa::PAYMENT_AB,
-        quickPaymentPopup::PAYMENT_TYPE_SBERBANK => yandex_kassa::PAYMENT_SB
+        quickPaymentPopup::PAYMENT_TYPE_SBERBANK => yandex_kassa::PAYMENT_SB,
     );
-    
-    if(!isset($pay_methods[$type])) return $objResponse;
-    
+
+    if (!isset($pay_methods[$type])) {
+        return $objResponse;
+    }
+
     $freelancer_binds = new freelancer_binds();
-    
-    $valid = $is_prolong 
+
+    $valid = $is_prolong
             ? $freelancer_binds->isUserBinded($uid, $prof_id, $is_spec)
             : $freelancer_binds->isAllowBind($uid, $prof_id, $is_spec);
-    
+
     if ($valid) {
         $is_error = false;
-        
+
         $bill = new billing($uid);
         //Допустимо использование промокодов
-        $bill->setPromoCodes('SERVICE_FRLBIND', $promo_code);        
+        $bill->setPromoCodes('SERVICE_FRLBIND', $promo_code);
 
         $op_code = $freelancer_binds->getOpCode($prof_id, $is_spec, $is_prolong);
         $option = array(
-            'weeks' => (int)@$data['weeks'],
-            'prof_id' => $prof_id
+            'weeks' => (int) @$data['weeks'],
+            'prof_id' => $prof_id,
         );
-        
+
         //Формируем заказ
         $billReserveId = $bill->addServiceAndCheckout($op_code, $option);
         $payed_sum = $bill->getRealPayedSum();
-        
+
         $payment = $pay_methods[$type];
         $yandex_kassa = new yandex_kassa();
         $html_form = $yandex_kassa->render(
-                $payed_sum, 
-                $bill->account->id, 
-                $payment, 
+                $payed_sum,
+                $bill->account->id,
+                $payment,
                 $billReserveId);
 
         $objResponse->script("
@@ -192,13 +191,13 @@ function quickPaymentFrlbindYandexKassa($type, $data)
             }
         ");
 
-        $link = '/freelancers/';        
+        $link = '/freelancers/';
         if ($prof_id) {
             if ($is_spec) {
-                $link .= professions::GetProfLink($prof_id) . '/';
+                $link .= professions::GetProfLink($prof_id).'/';
             } else {
                 $group = professions::GetGroup($prof_id, $error);
-                $link .= $group['link'] . '/';
+                $link .= $group['link'].'/';
             }
         }
         //сохранаем в сессию куда перейти при успешной покупке        
@@ -213,19 +212,19 @@ function quickPaymentFrlbindYandexKassa($type, $data)
             if(qp) qp.show_error('Возникла ошибка при {$action} в каталоге!');
         ");
     }
-        
+
     return $objResponse;
 }
-
 
 //------------------------------------------------------------------------------
 
 
 /**
- * Оплата через Плати потом
+ * Оплата через Плати потом.
  * 
  * @param type $type - тип оплаты
  * @param type $data - данные по параметрам покупаемой услуги
+ *
  * @return \xajaxResponse
  */
 function quickPaymentFrlbindPlatipotom($type, $data)
@@ -236,42 +235,41 @@ function quickPaymentFrlbindPlatipotom($type, $data)
 
     $objResponse = &new xajaxResponse();
 
-    $prof_id = (int)@$data['prof_id'];
-    $is_spec = (bool)@$data['is_spec'];
-    $is_prolong = (bool)@$data['is_prolong'];
-    $promo_code = (string)@$data['promo'];
-    
+    $prof_id = (int) @$data['prof_id'];
+    $is_spec = (bool) @$data['is_spec'];
+    $is_prolong = (bool) @$data['is_prolong'];
+    $promo_code = (string) @$data['promo'];
+
     $freelancer_binds = new freelancer_binds();
-    
-    $valid = $is_prolong 
+
+    $valid = $is_prolong
             ? $freelancer_binds->isUserBinded($uid, $prof_id, $is_spec)
             : $freelancer_binds->isAllowBind($uid, $prof_id, $is_spec);
-    
+
     if ($valid) {
         $is_error = false;
 
         $bill = new billing($uid);
         //Допустимо использование промокодов
-        $bill->setPromoCodes('SERVICE_FRLBIND', $promo_code); 
-        
+        $bill->setPromoCodes('SERVICE_FRLBIND', $promo_code);
+
         $op_code = $freelancer_binds->getOpCode($prof_id, $is_spec, $is_prolong);
         $option = array(
-            'weeks' => (int)@$data['weeks'],
-            'prof_id' => $prof_id
+            'weeks' => (int) @$data['weeks'],
+            'prof_id' => $prof_id,
         );
-        
+
         //Формируем заказ
         $billReserveId = $bill->addServiceAndCheckout($op_code, $option);
         $payed_sum = $bill->getRealPayedSum();
 
         $platipotom = new platipotom();
         $html_form = $platipotom->render(
-                $payed_sum, 
-                $bill->account->id, 
+                $payed_sum,
+                $bill->account->id,
                 $billReserveId);
 
-        if($html_form) {
-
+        if ($html_form) {
             $objResponse->script("
                 var qp_form_wrapper = $$('#quick_payment_frlbind .__quick_payment_form');
                 if(qp_form_wrapper){    
@@ -280,13 +278,13 @@ function quickPaymentFrlbindPlatipotom($type, $data)
                 }
             ");
 
-            $link = '/freelancers/';        
+            $link = '/freelancers/';
             if ($prof_id) {
                 if ($is_spec) {
-                    $link .= professions::GetProfLink($prof_id) . '/';
+                    $link .= professions::GetProfLink($prof_id).'/';
                 } else {
                     $group = professions::GetGroup($prof_id, $error);
-                    $link .= $group['link'] . '/';
+                    $link .= $group['link'].'/';
                 }
             }
             //сохранаем в сессию куда перейти при успешной покупке        
@@ -302,6 +300,6 @@ function quickPaymentFrlbindPlatipotom($type, $data)
             if(qp) qp.show_error('Возникла ошибка при {$action} в каталоге!');
         ");
     }
-        
+
     return $objResponse;
 }

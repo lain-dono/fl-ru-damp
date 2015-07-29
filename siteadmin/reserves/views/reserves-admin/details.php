@@ -42,14 +42,14 @@
                         <td><b>Статус выплаты:</b></td>
                         <td>
                             <?=$reserveInstance->getStatusPayTxt()?> 
-                            (status_pay: <?=(int)$reserveInstance->getStatusPay()?>)
+                            (status_pay: <?=(int) $reserveInstance->getStatusPay()?>)
                         </td>
                     </tr>
                     <tr class="nr-a-tbl_tr">
                         <td><b>Статус возврата:</b></td>
                         <td>
                             <?=$reserveInstance->getStatusBackTxt()?> 
-                            (status_back: <?=(int)$reserveInstance->getStatusBack()?>)
+                            (status_back: <?=(int) $reserveInstance->getStatusBack()?>)
                         </td>
                     </tr>                    
                     <tr class="nr-a-tbl_tr">
@@ -97,9 +97,9 @@
                             invoice_id: <b><?=$reserveInstance->getInvoiceId()?></b>
                         </td>
                     </tr>
-                    <?php elseif($reserveInstance->isAllowBankReserve()): ?>
+                    <?php elseif ($reserveInstance->isAllowBankReserve()): ?>
                     
-                    <?php if($reserveInstance->getReasonReserve()): ?>
+                    <?php if ($reserveInstance->getReasonReserve()): ?>
                     <tr class="nr-a-tbl_tr">
                         <td><b>Текущая причина<br/>отказа в резерве:</b></td>
                         <td>
@@ -142,7 +142,7 @@
                     <?php endif; ?>
                 </tbody>
             </table>
-            <?php if(false): ?>
+            <?php if (false): ?>
             <br/>
             <table class="nr-a-tbl" cellspacing="5">
                 <thead>
@@ -171,7 +171,7 @@
         </td>
         <td style="vertical-align:top;">
             <?php
-                if($reserveInstance->isArbitrage()):
+                if ($reserveInstance->isArbitrage()):
             ?>
             <table class="nr-a-tbl" cellspacing="5">
                 <thead>
@@ -184,7 +184,7 @@
                 <tbody>
                     <tr class="nr-a-tbl_tr">
                         <td><b>Статус:</b></td>
-                        <td><?=$reserveInstance->isArbitrageClosed()?'закрыт':'открыт'?></td>
+                        <td><?=$reserveInstance->isArbitrageClosed() ? 'закрыт' : 'открыт'?></td>
                     </tr>  
                     
                     <tr class="nr-a-tbl_tr">
@@ -197,18 +197,18 @@
                     </tr>  
                     <tr class="nr-a-tbl_tr">
                         <td><b>Обратился:</b></td>
-                        <td><?=($reserveInstance->getReserveDataByKey('arbitrage_is_emp') == 't')?'заказчик':'исполнитель'?></td>
+                        <td><?=($reserveInstance->getReserveDataByKey('arbitrage_is_emp') == 't') ? 'заказчик' : 'исполнитель'?></td>
                     </tr>
                     <tr class="nr-a-tbl_tr">
                         <td><b>Обращение:</b></td>
                         <td><?=$reserveInstance->getReserveDataByKey('arbitrage_message')?></td>
                     </tr>
-                    <?php if($reserveInstance->isArbitrageClosed()): ?>
+                    <?php if ($reserveInstance->isArbitrageClosed()): ?>
                     <tr class="nr-a-tbl_tr">
                         <td><b>Решение:</b></td>
                         <td>
-                            <?php if($reserveInstance->getArbitragePriceWithOutNDFL() > 0): ?>
-                                <?php if($reserveInstance->getReserveDataByKey('arbitrage_payback') > 0): ?>
+                            <?php if ($reserveInstance->getArbitragePriceWithOutNDFL() > 0): ?>
+                                <?php if ($reserveInstance->getReserveDataByKey('arbitrage_payback') > 0): ?>
                             Выплатить: <b><?=$reserveInstance->getPriceByKey('arbitrage_price', true)?></b> <br/>
                             Вернуть: <b><?=$reserveInstance->getPriceByKey('arbitrage_payback', true)?></b>
                                 <?php else: ?>
@@ -222,8 +222,8 @@
                     <tr class="nr-a-tbl_tr">
                         <td><b>Разрешить написать отзыв:</b></td>
                         <td>
-                            Заказчик: <b><?=$reserveInstance->getReserveDataByKey('arbitrage_allow_fb_emp')?'да':'нет'?></b> <br/>
-                            Исполнитель: <b><?=$reserveInstance->getReserveDataByKey('arbitrage_allow_fb_frl')?'да':'нет'?></b>
+                            Заказчик: <b><?=$reserveInstance->getReserveDataByKey('arbitrage_allow_fb_emp') ? 'да' : 'нет'?></b> <br/>
+                            Исполнитель: <b><?=$reserveInstance->getReserveDataByKey('arbitrage_allow_fb_frl') ? 'да' : 'нет'?></b>
                         </td>
                     </tr>
                     <?php endif; ?>
@@ -232,9 +232,9 @@
             <br/>
 <?php
                 endif;
-                
-                if($reserveInstance->reserveIsPayed()):
-                
+
+                if ($reserveInstance->reserveIsPayed()):
+
                 $files = $reserveInstance->getFiles();
                 $is_close = $reserveInstance->isClosed();
 ?>
@@ -248,8 +248,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if($files): 
-                            foreach($files as $file): 
+                    <?php if ($files):
+                            foreach ($files as $file):
                                 if (in_array($file['doc_type'], array(80))) {
                                     continue;
                                 }
@@ -259,21 +259,21 @@
                             <input type="checkbox" name="docs[]" value="<?=$file['doc_type']?>" checked="checked" />
                         </td>
                         <td>
-                            <?=date('d.m.Y H:i',strtotime($file['modified']))?>
+                            <?=date('d.m.Y H:i', strtotime($file['modified']))?>
                         </td>
                         <td>
-                            <a href="<?=WDCPREFIX .'/'. $file['url']?>"><?=$file['original_name']?></a>
+                            <a href="<?=WDCPREFIX.'/'.$file['url']?>"><?=$file['original_name']?></a>
                         </td>
                     </tr> 
                     <?php 
-                            endforeach; 
-                          endif; 
+                            endforeach;
+                          endif;
                     ?>
                 </tbody>
                 
                 <tfoot>
                     <tr><td colspan="3"><br/></tr>
-                    <?php if($is_close): ?>
+                    <?php if ($is_close): ?>
                     <tr>
                         <td colspan="2">
                             Дата Акта и Отчета
@@ -305,9 +305,9 @@
         <td style="vertical-align:top;">
 <?php
             $payouts = $reserveInstance->getPayoutsInfo();
-            if($payouts):
+            if ($payouts):
                 $payout_reqv = $payouts['reqv'];
-                if($payout_reqv):
+                if ($payout_reqv):
 ?>
             <table class="nr-a-tbl" cellspacing="5">
                 <thead>
@@ -335,8 +335,8 @@
                         <td><?=$payout_reqv['last']?></td>
                     </tr>                     
                     <?php 
-                        if(is_array($payout_reqv['fields'])):
-                            if (isset($payout_reqv['fields']['moderator_login']) && 
+                        if (is_array($payout_reqv['fields'])):
+                            if (isset($payout_reqv['fields']['moderator_login']) &&
                                 !empty($payout_reqv['fields']['moderator_login'])):
                     ?>
                     <tr class="nr-a-tbl_tr" data-reqv="true" style="display: none;">
@@ -345,11 +345,13 @@
                     </tr>                    
                     <?php
                             endif;
-                            
+
                             unset($payout_reqv['fields']['moderator_login'], $payout_reqv['fields']['moderator_uid']);
-                    
-                            foreach($payout_reqv['fields'] as $key => $value):
-                                if(empty($value)) continue;
+
+                            foreach ($payout_reqv['fields'] as $key => $value):
+                                if (empty($value)) {
+                                    continue;
+                                }
                     ?>
                     <tr class="nr-a-tbl_tr" data-reqv="true" style="display: none;">
                         <td><b><?=$key?>:</b></td>
@@ -357,12 +359,12 @@
                     </tr>                     
                     <?php
                             endforeach;
-                        endif; 
+                        endif;
                     ?>
                     
-                    <?php if($payout_reqv['is_allow_change_status']): ?>
+                    <?php if ($payout_reqv['is_allow_change_status']): ?>
                     
-                    <?php if($reserveInstance->getReasonPayout()): ?>
+                    <?php if ($reserveInstance->getReasonPayout()): ?>
                     <tr class="nr-a-tbl_tr">
                         <td><b>Текущая причина<br/>отказа в выплате:</b></td>
                         <td>
@@ -406,15 +408,15 @@
                     
                 </tbody>
             </table>
-<?php            
+<?php 
                 endif;
-                
+
                 $payout_list = $payouts['list'];
-                if($payout_list):
+                if ($payout_list):
 ?>
             <br/>
             <h3><i>Запросы к ЯД на Выплату</i></h3>
-            <?php if(!is_release()): ?>
+            <?php if (!is_release()): ?>
             <p>* на тесте статусы выплат не меняются они всегда "новый"</p>
             <?php endif; ?>
             <table class="nr-a-tbl" cellspacing="5">
@@ -431,7 +433,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($payouts['list'] as $item): ?>
+                    <?php foreach ($payouts['list'] as $item): ?>
                     <tr class="nr-a-tbl_tr">
                         <td><?=$item['id']?></td>
                         <td><?=$item['price']?></td>
@@ -448,7 +450,7 @@
             <?php endif; ?>
             <?php
                 $payout_log = $payouts['log'];
-                if($payout_log):
+                if ($payout_log):
             ?>
             <br/>
             <h3><i>Лог ошибок запросов на Выплату</i></h3>
@@ -460,10 +462,10 @@
                     </tr>
                 </thead>
                 <tbody>   
-                    <?php foreach($payout_log as $log): ?>
+                    <?php foreach ($payout_log as $log): ?>
                     <tr class="nr-a-tbl_tr">
                         <td>
-                            <?=date('d.m.Y H:i',strtotime($log['date']))?>
+                            <?=date('d.m.Y H:i', strtotime($log['date']))?>
                         </td>
                         <td>
                             <?=$log['message']?>
@@ -475,10 +477,9 @@
             <?php endif; ?> 
 <?php
             endif;
-            
-            
+
             $paybackList = $reserveInstance->getPaybackInfo();
-            if($paybackList):
+            if ($paybackList):
 ?>
             <br/>
             <h3><i>Запрос к ЯД на Возврат</i></h3>
@@ -495,7 +496,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($paybackList as $item): ?>
+                    <?php foreach ($paybackList as $item): ?>
                     <tr class="nr-a-tbl_tr">
                         <td><?=$item['id']?></td>
                         <td><?=$item['price']?></td>
@@ -509,7 +510,7 @@
                 </tbody>
             </table>  
             
-            <?php if(!$reserveInstance->isStatusBackPayed()): ?>
+            <?php if (!$reserveInstance->isStatusBackPayed()): ?>
             <br/>
             <form action="" method="POST" enctype="application/x-www-form-urlencoded">
                 <input type="submit" name="submit" value="Подтвердить возврат" />
@@ -518,7 +519,7 @@
             <?php endif; ?>
             
 <?php
-            elseif(!$reserveInstance->isReserveByService() && 
+            elseif (!$reserveInstance->isReserveByService() &&
                     $reserveInstance->isStatusBackAllowChange()):
 ?>
             <br/>
@@ -533,7 +534,7 @@
                 </thead>
                 <tbody>
                     
-                    <?php if($reserveInstance->getReasonPayback()): ?>
+                    <?php if ($reserveInstance->getReasonPayback()): ?>
                     <tr class="nr-a-tbl_tr">
                         <td><b>Текущая причина<br/>отказа возврата:</b></td>
                         <td>
@@ -576,7 +577,7 @@
                     
                 </tbody>
             </table>                      
-<?php            
+<?php 
             endif;
 ?>
         </td>

@@ -1,4 +1,7 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; } ?>
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+} ?>
   <div class="b-shadow b-shadow_pad_20 b-shadow_width_760 b-shadow_zindex_3" id="ov-notice4" style="display: none;">
                 <?php /*
              	<a class="close" href="javascript:void(0);" onclick="adminLogOverlayClose();"><img height="21" width="21" alt="" src="/images/btn-close.png"></a>

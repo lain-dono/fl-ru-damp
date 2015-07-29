@@ -15,9 +15,9 @@
                 </div>
                 
 
-                <?
+                <?php
                 $teasersExclude = array('no-public', 'contest');
-                include($abs_path . '/teasers/include-teaser.php');
+                include $abs_path.'/teasers/include-teaser.php';
                 ?>
 
             </td>							

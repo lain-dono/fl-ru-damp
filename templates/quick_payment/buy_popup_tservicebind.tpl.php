@@ -1,6 +1,6 @@
 <?php
 /**
- * Шаблон поумолчанию popup-окна "быстрой" оплаты
+ * Шаблон поумолчанию popup-окна "быстрой" оплаты.
  */
 ?>
 <div id="<?= @$popup_id ?>" data-quick-payment="<?=$unic_name ?>" class="b-shadow b-shadow_block b-shadow_center b-shadow_width_520 <?= (!@$is_show) ? 'b-shadow_hide' : '' ?> b-shadow__quick quick_payment_tservicebind" style="display:block;">
@@ -17,7 +17,7 @@
             <input type="hidden" value="<?= $ammount ?>" class="input-ammount" disabled="disabled" />
             <input type="hidden" name="kind" value="<?=$kind?>" />
             <input type="hidden" name="prof_id" value="<?=$prof_id?>" />
-            <input type="hidden" name="is_prolong" value="<?=(bool)$date_stop?>" />
+            <input type="hidden" name="is_prolong" value="<?=(bool) $date_stop?>" />
             <input type="hidden" name="redirect" class="input-redirect" value="" />
             <?php if ($disable_tservices): ?>
                 <input type="hidden" name="tservice_text_db_id" value="<?=$tservices_cur?>" />
@@ -103,8 +103,8 @@
                             <?php if (isset($payment['title'])): ?>
                                 <a class="b-button b-button_margbot_5 b-button__pm <?= @$payment['class'] ?>" 
                                    href="javascript:void(0);" 
-                                   <?=(isset($payment['data-maxprice']))?'data-maxprice="'.$payment['data-maxprice'].'"':''?> 
-                                   <?= (isset($payment['wait'])) ? 'data-quick-payment-wait="' . $payment['wait'] . '"' : '' ?> 
+                                   <?=(isset($payment['data-maxprice'])) ? 'data-maxprice="'.$payment['data-maxprice'].'"' : ''?> 
+                                   <?= (isset($payment['wait'])) ? 'data-quick-payment-wait="'.$payment['wait'].'"' : '' ?> 
                                    data-quick-payment-type="<?= $key ?>"><span class="b-button__txt"><?= @$payment['title'] ?></span></a> 
                                 <?php if (isset($payment['content_after'])): ?>
                                 <div class="<?=$key?>_text b-layout__txt b-layout__txt_fontsize_11 b-layout__txt_inline-block b-layout__txt_valign_middle b-layout__txt_width_440">

@@ -1,7 +1,13 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; } 
-  require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/professions.php");
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
+  require_once $_SERVER['DOCUMENT_ROOT'].'/classes/professions.php';
   $profs = professions::GetAllProfessions();
-  if (!(hasPermissions('adm') && hasPermissions('adminspam'))) { header ("Location: /404.php"); exit; }
+  if (!(hasPermissions('adm') && hasPermissions('adminspam'))) {
+      header('Location: /404.php');
+      exit;
+  }
 ?>
 <script type="text/javascript">
 CKEDITOR.config.customConfig = '/scripts/ckedit/config_simple.js';
@@ -25,12 +31,16 @@ function checkexts() {
 
 
 <strong>Администрация</strong><br><br>
-  <? if ($_GET['result']=='success') { ?>
+  <?php if ($_GET['result'] == 'success') {
+    ?>
     <div style="margin:10px 0 20px 0">
       <img src="/images/ico_ok.gif" alt="" border="0" height="18" width="19"/>&nbsp;Сообщение отправлено!
     </div>
-  <? } ?>
-	<? if ($error) print(view_error($error));?>
+  <?php 
+} ?>
+	<?php if ($error) {
+    print(view_error($error));
+}?>
 <form id="idForm" action="/siteadmin/admin/" method="post" enctype="multipart/form-data" onSubmit="if(!checkexts()) return false; if(!warning()) return false; this.btn.value='Подождите'; beforeSubmit(); this.btn.disabled=true;">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr valign="bottom">
@@ -127,53 +137,54 @@ function checkexts() {
                   Отправить сообщение:
                 </td>
                 <td align="right">
-                 <input<?=($toEmail?' checked':'')?> id="idToEmail" name="toEmail" type="checkbox"/>
+                 <input<?=($toEmail ? ' checked' : '')?> id="idToEmail" name="toEmail" type="checkbox"/>
                  <label for="idToEmail">С рассылкой уведомлений?</label>
                 </td>
               </tr>
             </table>
             <br/>
             <div style="padding:6px;">
-              <input<?=(($toWrk || $toFrl)?'':' checked')?> id="idToAll" type="radio" name="toAll" onclick="idToWrk.checked=false;idToFrl.checked=false;idToLogins.checked=false;onOffFrlUI(document.getElementById('idToFrl'));"/><LABEL for="idToAll">&nbsp;Всем</LABEL>
+              <input<?=(($toWrk || $toFrl) ? '' : ' checked')?> id="idToAll" type="radio" name="toAll" onclick="idToWrk.checked=false;idToFrl.checked=false;idToLogins.checked=false;onOffFrlUI(document.getElementById('idToFrl'));"/><LABEL for="idToAll">&nbsp;Всем</LABEL>
             </div>
             <div style="margin:0 6px;border-bottom:1px solid #c0c0c0;"></div>
             <div style="padding:6px;">
-              <input<?=($toWrk?' checked':'')?> id="idToWrk" type="radio" name="toWrk" onclick="idToAll.checked=false;idToFrl.checked=false;idToLogins.checked=false;onOffFrlUI(document.getElementById('idToFrl'));"/><LABEL for="idToWrk">&nbsp;Работодателям</LABEL>
+              <input<?=($toWrk ? ' checked' : '')?> id="idToWrk" type="radio" name="toWrk" onclick="idToAll.checked=false;idToFrl.checked=false;idToLogins.checked=false;onOffFrlUI(document.getElementById('idToFrl'));"/><LABEL for="idToWrk">&nbsp;Работодателям</LABEL>
             </div>
             <div style="margin:0 6px;border-bottom:1px solid #c0c0c0;"></div>
             <div style="padding:6px;">
               <table border="0" cellspacing="0" cellpadding="0" style="width:100%;">
                 <tr valign="baseline">
                   <td>
-                    <input<?=($toFrl?' checked':'')?> id="idToFrl" type="radio" name="toFrl" onclick="onOffFrlUI(this);idToAll.checked=false; idToWrk.checked=false;idToLogins.checked=false;"/><LABEL for="idToFrl">&nbsp;Фрилансерам</LABEL>&nbsp;&nbsp;&nbsp;
+                    <input<?=($toFrl ? ' checked' : '')?> id="idToFrl" type="radio" name="toFrl" onclick="onOffFrlUI(this);idToAll.checked=false; idToWrk.checked=false;idToLogins.checked=false;"/><LABEL for="idToFrl">&nbsp;Фрилансерам</LABEL>&nbsp;&nbsp;&nbsp;
                   </td>
                   <td>
                    <nobr>
-                    <input <?=($toPro?' checked':'')?> <?=($toFrl?'':' disabled')?> id="idToPro" type="checkbox" name="toPro" onclick="if(!idToNotPro.checked) idToNotPro.checked=true;"/><LABEL for="idToPro">&nbsp;PRO</LABEL>&nbsp;&nbsp;
-                    <input<?=($toNotPro?' checked':'')?> <?=($toFrl?'':' disabled')?> id="idToNotPro" type="checkbox" name="toNotPro" onclick="if(!idToPro.checked) idToPro.checked=true;"/><LABEL for="idToNotPro">&nbsp;без&nbsp;PRO</LABEL>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input <?=($toPro ? ' checked' : '')?> <?=($toFrl ? '' : ' disabled')?> id="idToPro" type="checkbox" name="toPro" onclick="if(!idToNotPro.checked) idToNotPro.checked=true;"/><LABEL for="idToPro">&nbsp;PRO</LABEL>&nbsp;&nbsp;
+                    <input<?=($toNotPro ? ' checked' : '')?> <?=($toFrl ? '' : ' disabled')?> id="idToNotPro" type="checkbox" name="toNotPro" onclick="if(!idToPro.checked) idToPro.checked=true;"/><LABEL for="idToNotPro">&nbsp;без&nbsp;PRO</LABEL>&nbsp;&nbsp;&nbsp;&nbsp;
                     </nobr>
                   </td>
                   <td>
-                    <? $i=0; foreach($selectedProfs as $selProf) { ?>
+                    <?php $i = 0; foreach ($selectedProfs as $selProf) {
+     ?>
                     <div <?// Специально ><SELECT, чтобы не было лишнего текстового Child-а ?>
-                      ><select<?=($toFrl?'':' disabled')?> id="idProf" name="prof[]">
-                        <option style='color:black'<?=($selProf=='NULL' || $selProf=='empty'?' selected':'')?> value="<?=($selProf=='empty'?'empty':'NULL')?>">&nbsp;<?=($i?'------------------------':'Все специализации')?></option>
-                        <?
+                      ><select<?=($toFrl ? '' : ' disabled')?> id="idProf" name="prof[]">
+                        <option style='color:black'<?=($selProf == 'NULL' || $selProf == 'empty' ? ' selected' : '')?> value="<?=($selProf == 'empty' ? 'empty' : 'NULL')?>">&nbsp;<?=($i ? '------------------------' : 'Все специализации')?></option>
+                        <?php
                           $curGroup = NULL;
-                          foreach($profs as $prof)
-                          { 
-                            if($prof['groupid']!=$curGroup) {
-                              $curGroup = $prof['groupid'];
-                              print("<option style='color:black'".($selProf=="::{$prof['groupid']}" ? ' selected':'')." value='::{$prof['groupid']}'>&nbsp;{$prof['groupname']}</OPTION>");
-                            }
-                            print("<option".($selProf==$prof['id'] ? ' selected' : '')." value='{$prof['id']}'>&nbsp;{$prof['groupname']}::{$prof['profname']}</option>");
-                          }
-                        ?>
+     foreach ($profs as $prof) {
+         if ($prof['groupid'] != $curGroup) {
+             $curGroup = $prof['groupid'];
+             print("<option style='color:black'".($selProf == "::{$prof['groupid']}" ? ' selected' : '')." value='::{$prof['groupid']}'>&nbsp;{$prof['groupname']}</OPTION>");
+         }
+         print('<option'.($selProf == $prof['id'] ? ' selected' : '')." value='{$prof['id']}'>&nbsp;{$prof['groupname']}::{$prof['profname']}</option>");
+     }
+     ?>
                       </select <?// Специально ><SPAN, чтобы не было лишнего текстового Child-а ?>
-                      ><span style="margin-left:5px;width:24px;<?=($toFrl?'cursor:hand;color:#666':'cursor:default;color:#c0c0c0')?>;font-size:18px;text-align:center; font-weight:bold"
-                             title="<?=($toFrl?($i==0?'Добавить элемент':'Удалить элемент'):'')?>" onclick="addProfElm(this)"><?=($i==0?'+':'&ndash;')?></SPAN>
+                      ><span style="margin-left:5px;width:24px;<?=($toFrl ? 'cursor:hand;color:#666' : 'cursor:default;color:#c0c0c0')?>;font-size:18px;text-align:center; font-weight:bold"
+                             title="<?=($toFrl ? ($i == 0 ? 'Добавить элемент' : 'Удалить элемент') : '')?>" onclick="addProfElm(this)"><?=($i == 0 ? '+' : '&ndash;')?></SPAN>
                     </div>
-                    <? $i++; } ?>
+                    <?php ++$i;
+ } ?>
                   </td>
                   <td align="right" style="width:20px">
                     <a style="cursor:hand;color:#909090;font-size:18px;font-weight:bold" href="javascript:void(0)" onclick="alert(this.getAttribute('titl'))"
@@ -194,7 +205,7 @@ function checkexts() {
             </div>
             <div style="margin:0 6px;border-bottom:1px solid #c0c0c0;"></div>
             <div style="padding:6px;">
-              <input<?=($toLogins?' checked':'')?> id="idToLogins" type="radio" name="toLogins" onclick="idToAll.checked=false;idToFrl.checked=false;idToWrk.checked=false;onOffFrlUI(document.getElementById('idToFrl'));"/><LABEL for="idToLogins" title="Список логинов через запятую">&nbsp;Адресатам:</LABEL>
+              <input<?=($toLogins ? ' checked' : '')?> id="idToLogins" type="radio" name="toLogins" onclick="idToAll.checked=false;idToFrl.checked=false;idToWrk.checked=false;onOffFrlUI(document.getElementById('idToFrl'));"/><LABEL for="idToLogins" title="Список логинов через запятую">&nbsp;Адресатам:</LABEL>
               &nbsp;<input name="logins" style='width: 630px' type="text">
             </div>
           </td>
@@ -204,9 +215,11 @@ function checkexts() {
   </tr>
   <tr valign="top">
     <td style="padding:10px 0 10px 0">
-      <textarea cols="10" rows="8" name="msg" class="ckeditor" id="msg_texarea" conf="admin"><?=($msg ? $msg : ($FROM == 'admin' ? 'Здравствуйте, %USER_NAME%!' : '') )?></textarea>
-      <? if ($alert[2]) print(view_error($alert[2])) ?><br/>
-      <?php if ( $FROM == 'admin' ): ?>
+      <textarea cols="10" rows="8" name="msg" class="ckeditor" id="msg_texarea" conf="admin"><?=($msg ? $msg : ($FROM == 'admin' ? 'Здравствуйте, %USER_NAME%!' : ''))?></textarea>
+      <?php if ($alert[2]) {
+    print(view_error($alert[2]));
+} ?><br/>
+      <?php if ($FROM == 'admin'): ?>
         В тексте письма можно использовать следующие переменные:<br/>
         &#37;USER_NAME&#37; - Имя пользователя<br/>
         &#37;USER_SURNAME&#37; - Фамилия пользователя<br/>
@@ -232,7 +245,9 @@ function checkexts() {
 	<script type="text/javascript">
 		new mAttach(document.getElementById('attaches'), <?=messages::MAX_FILES?>);
 	</script>
-	  <? if ($alert[1]) print(view_error($alert[1])) ?>
+	  <?php if ($alert[1]) {
+    print(view_error($alert[1]));
+} ?>
 	  Файлы следующих форматов запрещены к загрузке: <?=implode(', ', $GLOBALS['disallowed_array'])?>
 	  <?php /*
       С помощью этого поля возможно загрузить:

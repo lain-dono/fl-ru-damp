@@ -16,13 +16,15 @@
                     <td>&mdash;</td>
                     <td class="last"><?=sbr_meta::view_cost($tmp_ts, $curr_sbr->cost_sys, false)?></td>
                 </tr>
-                <? foreach($sh_info as $tid=>$tax) { ?>
+                <?php foreach ($sh_info as $tid => $tax) {
+    ?>
                     <tr>
                         <th><?=$tax['name']?></th>
                         <td><?=$tax['percent']?></td>
                         <td class="last"><?=$tax['cost']?></td>
                     </tr>
-                <? } ?>
+                <?php 
+} ?>
             </tbody>
             <tfoot>
                 <tr>

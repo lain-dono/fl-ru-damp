@@ -1,9 +1,9 @@
 <?php
 
-define( 'IS_SITE_ADMIN', 1 );
+define('IS_SITE_ADMIN', 1);
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once(__DIR__ . '/controllers/BillInvoicesAdminController.php');
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once __DIR__.'/controllers/BillInvoicesAdminController.php';
 
 session_start();
 
@@ -11,8 +11,8 @@ session_start();
 if (!(hasPermissions('bank') && hasPermissions('adm'))) {
     header_location_exit('/404.php');
 }
- 
-$css_file = array('moderation.css','nav.css','new-admin.css' );
+
+$css_file = array('moderation.css','nav.css','new-admin.css');
 $css_file[] = '/scripts/DatePicker/Source/datepicker.css';
 $js_file[] = 'Locale.ru-RU-unicode.Date.js';
 $js_file[] = 'DatePicker/Source/Locale.ru-RU.DatePicker.js';
@@ -29,5 +29,5 @@ $controller = new BillInvoicesAdminController('billinvoices-admin', $module);
 $controller->init($action); // инициализация контролера
 $controller->run($action);
 
-$content = "tpl.index.php";
-include ($_SERVER['DOCUMENT_ROOT'] . "/template.php");
+$content = 'tpl.index.php';
+include $_SERVER['DOCUMENT_ROOT'].'/template.php';

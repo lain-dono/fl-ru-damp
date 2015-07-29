@@ -1,6 +1,6 @@
 <?php
-if(!defined('IN_STDF')) { 
-    header("HTTP/1.0 404 Not Found");
+if (!defined('IN_STDF')) {
+    header('HTTP/1.0 404 Not Found');
     exit();
 }
 ?>
@@ -20,14 +20,18 @@ if(!defined('IN_STDF')) {
 			<td bgcolor="#FAFAFA"><?include ($fpath."usermenu.php")?></td>
 		</tr>
 		<tr valign="top">
-			<td height="247" style="padding-top:20px"><?  if ($inner) include ($fpath.$inner); else print("&nbsp;")?></td>
+			<td height="247" style="padding-top:20px"><?php  if ($inner) {
+     include $fpath.$inner;
+ } else {
+     print('&nbsp;');
+ }?></td>
 		</tr>
 		</table>
 	</td>
-	<? //if (!$is_pro && false) {?>
+	<?php //if (!$is_pro && false) {?>
 	<td>
 	<?= printBanner240(is_pro()); ?>
 	</td>
-	<? //} ?>
+	<?php //} ?>
 </tr>
 </table>

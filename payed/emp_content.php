@@ -1,17 +1,17 @@
-<?
-	require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/employer.php");
+<?php
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/employer.php';
 	$user = new employer();
 
     // Изменяем авто продление PRO, если нужно
-    if(strtolower($_GET['pro_auto_prolong'])=='on') {
-        $user->setPROAutoProlong('on',get_uid());
+    if (strtolower($_GET['pro_auto_prolong']) == 'on') {
+        $user->setPROAutoProlong('on', get_uid());
     }
-    if(strtolower($_GET['pro_auto_prolong'])=='off') {
-        $user->setPROAutoProlong('off',get_uid());
+    if (strtolower($_GET['pro_auto_prolong']) == 'off') {
+        $user->setPROAutoProlong('off', get_uid());
     }
 
 	$user->GetUser($_SESSION['login']);
-	require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/account.php");
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/account.php';
 	$account = new account();
 	$ok = $account->GetInfo($_SESSION['uid'], true);
 
@@ -85,9 +85,11 @@ tr = true;
 							<div class="pay-block">
                                 <form action="./buy.php" method="post" name="frmbuy" id="frmbuy">
                                 <div>
-								<div class="pay-inpt">Количество месяцев: <input type="text" size="3"  name="mnth" id="mnth" value="<?=floor($account->sum/10)?>" onKeyUp="return (chang(this.value));" /></div>
+								<div class="pay-inpt">Количество месяцев: <input type="text" size="3"  name="mnth" id="mnth" value="<?=floor($account->sum / 10)?>" onKeyUp="return (chang(this.value));" /></div>
 								<div class="pay-inpt" id="it">Всего к оплате: <span>10</span> FM</div>
-                                <div id="error" class="error <? if ($error) { ?>vis<? } ?>"><?=view_error3("Недостаточно средств. В данный момент на счету ".$account->sum."&nbsp;FM<br /> <a href=\"/bill/\" class=\"blue\">Пополнить счет</a>")?><br /></div>
+                                <div id="error" class="error <?php if ($error) {
+    ?>vis<?php 
+} ?>"><?=view_error3('Недостаточно средств. В данный момент на счету '.$account->sum.'&nbsp;FM<br /> <a href="/bill/" class="blue">Пополнить счет</a>')?><br /></div>
 								<div>
                                     <a href="javascript:void(0);" class="btn btn-blue" name="buy" id="buy" onClick="$('frmbuy').submit();"><span class="btn-lc"><span class="btn-m"><span class="btn-txt">Оплатить</span></span></span></a>
                                     &nbsp;<a href="/bill/webmoney/" class="btn btn-green"><span class="btn-lc"><span class="btn-m"><span class="btn-txt">Получить бесплатно</span></span></span></a></div>
@@ -98,20 +100,27 @@ tr = true;
                                 </form>
 							</div>
 
-                            <? if($user->is_pro=='t') {?>
+                            <?php if ($user->is_pro == 't') {
+    ?>
 							<div class="pay-block">
                                 <a name="pro_autoprolong"></a>
 								<h4>Автопродление&nbsp;&nbsp;<span class="b-icon b-icon__pro b-icon__pro_e8"></span></h4>
 								<p>Теперь вам не нужно следить за сроком действия<br />аккаунта PRO.<br />Если у вас есть деньги на счету, то включив эту опцию,<br />ежемесячно с вашего счета будет списываться 10FM.</p>
 								<div>
-                                    <? if($u_is_pro_auto_prolong=='t') { ?>
+                                    <?php if ($u_is_pro_auto_prolong == 't') {
+    ?>
                                         <a href="javascript:void(0);" class="btn btn-pink" onClick="location='/payed/?pro_auto_prolong=off#pro_autoprolong';"><span class="btn-lc"><span class="btn-m"><span class="btn-txt">Отключить</span></span></span></a>
-                                    <? } else { ?>
+                                    <?php 
+} else {
+    ?>
                                         <a href="javascript:void(0);" class="btn btn-green" onClick="location='/payed/?pro_auto_prolong=on#pro_autoprolong';"><span class="btn-lc"><span class="btn-m"><span class="btn-txt">Включить</span></span></span></a>
-                                    <? } ?>
+                                    <?php 
+}
+    ?>
                                 </div>
 							</div>
-                            <? } ?>
+                            <?php 
+} ?>
        
 						</div>
 					</div>

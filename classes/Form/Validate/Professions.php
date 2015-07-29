@@ -1,33 +1,29 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/professions.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/professions.php';
 
 /**
- * Class Form_Validate_Professions
+ * Class Form_Validate_Professions.
  * 
  * Валидатор наличия раздела и/или специализации
  */
-class Form_Validate_Professions extends Zend_Validate_Abstract  
+class Form_Validate_Professions extends Zend_Validate_Abstract
 {
     const GROUP_INVALID = 'groupInvalid';
-    const SPEC_INVALID  = 'specInvalid';
-    
+    const SPEC_INVALID = 'specInvalid';
+
     protected $_messageTemplates = array(
         self::GROUP_INVALID => 'Указанный раздел не найден',
-        self::SPEC_INVALID => 'Указанная специализация не найдена'
+        self::SPEC_INVALID => 'Указанная специализация не найдена',
     );
-    
+
     protected $group_idx;
     protected $spec_idx;
 
-
-
-
     /**
-     * Sets validator options
+     * Sets validator options.
      *
-     * @param  integer|array|Zend_Config $options
-     * @return void
+     * @param int|array|Zend_Config $options
      */
     public function __construct($options)
     {
@@ -42,31 +38,32 @@ class Form_Validate_Professions extends Zend_Validate_Abstract
 
         if (array_key_exists('group', $options)) {
             $this->group_idx = $options['group'];
-        }       
-        
+        }
+
         if (array_key_exists('spec', $options)) {
             $this->spec_idx = $options['spec'];
         }
     }
-    
-    
+
     public function isValid($value)
     {
         $group_id = intval(@$value[$this->group_idx]);
         $spec_id = intval(@$value[$this->spec_idx]);
-        
+
         $data = professions::getGroupAndProf($group_id, $spec_id);
-        
+
         if (!isset($data) || $group_id <= 0 || !$data['group_id']) {
             $this->_error(self::GROUP_INVALID);
+
             return false;
         }
-        
+
         if ($spec_id > 0 && !$data['prof_id']) {
             $this->_error(self::SPEC_INVALID);
+
             return false;
         }
-        
+
         return true;
-    }    
+    }
 }

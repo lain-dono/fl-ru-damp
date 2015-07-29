@@ -1,12 +1,13 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/stop_words.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/professions.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/autoresponse.php");
+
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stop_words.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/professions.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/autoresponse.php';
 //require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/quick_payment/quickPaymentPopupAutoresponse.php');
 
 //require_once(dirname(__FILE__).'/autoresponse.form.php');
-        
+
 session_start();
 
 // Раздел доступен только для авторизованных фрилансеров
@@ -16,7 +17,7 @@ if (is_emp() || !get_uid()) {
 }
 
 $stretch_page = true;
-$showMainDiv  = true;
+$showMainDiv = true;
 
 $stop_words = new stop_words();
 
@@ -64,8 +65,8 @@ $autoresponse_list = autoresponse::findForUser(get_uid());
 // Добавляем скрипт для работы с автоответами 
 //$GLOBALS['js_file']['autoresponse'] = 'autoresponse.js';
 
-$content = "content.php";
-$header = "../header.php";
-$footer = "../footer.html";
+$content = 'content.php';
+$header = '../header.php';
+$footer = '../footer.html';
 
-include ("../template3.php");
+include '../template3.php';

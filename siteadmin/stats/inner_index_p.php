@@ -1,6 +1,9 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/payed.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/account.php");
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/payed.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/account.php';
 $DB = new DB('master');
 ?>
 
@@ -14,38 +17,42 @@ $DB = new DB('master');
 
 <br><br>
 
-<?php $mPro = true; require_once ("top_menu.php"); ?>
+<?php $mPro = true; require_once 'top_menu.php'; ?>
 <br><br>
 
 
-<?
+<?php
 $action = trim($_GET['action']);
-if (!$action) $action = trim($_POST['action']);
+if (!$action) {
+    $action = trim($_POST['action']);
+}
 
 $forms_cnt = intval(trim($_POST['forms_cnt']));
-if (!$forms_cnt) $forms_cnt = 1;
+if (!$forms_cnt) {
+    $forms_cnt = 1;
+}
 
-switch ($action){
-	case "inc_forms":
+switch ($action) {
+	case 'inc_forms':
 		$forms_cnt++;
 		break;
 }
 
-for ($i = 0; $i < $forms_cnt; $i++){
-	$fmnth[$i] = intval(trim($_POST['fmnth'][$i]));
-	$fday[$i] = intval(trim($_POST['fday'][$i]));
-	$fyear[$i] = intval(trim($_POST['fyear'][$i]));
-	$tmnth[$i] = intval(trim($_POST['tmnth'][$i]));
-	$tday[$i] = intval(trim($_POST['tday'][$i]));
-	$tyear[$i] = intval(trim($_POST['tyear'][$i]));
-	if (!checkdate($fmnth[$i], $fday[$i] , $fyear[$i]) || !checkdate($tmnth[$i], $tday[$i] , $tyear[$i])){
-		$fday[$i] = $tday[$i] = date("d");
-		$fmnth[$i] = $tmnth[$i] = date("m");
-		$fyear[$i] = $tyear[$i] = date("Y");
-	}
+for ($i = 0; $i < $forms_cnt; ++$i) {
+    $fmnth[$i] = intval(trim($_POST['fmnth'][$i]));
+    $fday[$i] = intval(trim($_POST['fday'][$i]));
+    $fyear[$i] = intval(trim($_POST['fyear'][$i]));
+    $tmnth[$i] = intval(trim($_POST['tmnth'][$i]));
+    $tday[$i] = intval(trim($_POST['tday'][$i]));
+    $tyear[$i] = intval(trim($_POST['tyear'][$i]));
+    if (!checkdate($fmnth[$i], $fday[$i], $fyear[$i]) || !checkdate($tmnth[$i], $tday[$i], $tyear[$i])) {
+        $fday[$i] = $tday[$i] = date('d');
+        $fmnth[$i] = $tmnth[$i] = date('m');
+        $fyear[$i] = $tyear[$i] = date('Y');
+    }
 
-	$fdate = $fyear[$i] . "-". $fmnth[$i] ."-" .$fday[$i];
-	$tdate = $tyear[$i] . "-". $tmnth[$i] ."-" .$tday[$i];
+    $fdate = $fyear[$i].'-'.$fmnth[$i].'-'.$fday[$i];
+    $tdate = $tyear[$i].'-'.$tmnth[$i].'-'.$tday[$i];
 
     // -----
 }
@@ -55,51 +62,126 @@ list($frlpp, $emppp) = account::getStatsPRO($fdate, $tdate);
 <form action="?t=<?=htmlspecialchars($_GET['t'])?>" method="post" name="frm" id="frm">
 <input type="hidden" name="action" value="">
 <input type="hidden" name="forms_cnt" value="<?=$forms_cnt?>">
-	<? if ($error) print(view_error($error));?>
+	<?php if ($error) {
+    print(view_error($error));
+}?>
 
-<? for ($i = 0; $i < $forms_cnt; $i++) {
-	$fdate = $fyear[$i] . "-". $fmnth[$i] ."-" .$fday[$i];
-	$tdate = $tyear[$i] . "-". $tmnth[$i] ."-" .$tday[$i];
-?>
+<?php for ($i = 0; $i < $forms_cnt; ++$i) {
+    $fdate = $fyear[$i].'-'.$fmnth[$i].'-'.$fday[$i];
+    $tdate = $tyear[$i].'-'.$tmnth[$i].'-'.$tday[$i];
+    ?>
 с&nbsp;&nbsp;
 <input type="text" name="fday[]" size="2" maxlength="2" value="<?=$fday[$i]?>">
 <select name="fmnth[]">
-	<option value="1" <? if ($fmnth[$i] == 1) print "SELECTED"?>>января</option>
-	<option value="2" <? if ($fmnth[$i] == 2) print "SELECTED"?>>февраля</option>
-	<option value="3" <? if ($fmnth[$i] == 3) print "SELECTED"?>>марта</option>
-	<option value="4" <? if ($fmnth[$i] == 4) print "SELECTED"?>>апреля</option>
-	<option value="5" <? if ($fmnth[$i] == 5) print "SELECTED"?>>мая</option>
-	<option value="6" <? if ($fmnth[$i] == 6) print "SELECTED"?>>июня</option>
-	<option value="7" <? if ($fmnth[$i] == 7) print "SELECTED"?>>июля</option>
-	<option value="8" <? if ($fmnth[$i] == 8) print "SELECTED"?>>августа</option>
-	<option value="9" <? if ($fmnth[$i] == 9) print "SELECTED"?>>сентября</option>
-	<option value="10" <? if ($fmnth[$i] == 10) print "SELECTED"?>>октября</option>
-	<option value="11" <? if ($fmnth[$i] == 11) print "SELECTED"?>>ноября</option>
-	<option value="12" <? if ($fmnth[$i] == 12) print "SELECTED"?>>декабря</option>
+	<option value="1" <?php if ($fmnth[$i] == 1) {
+    print 'SELECTED';
+}
+    ?>>января</option>
+	<option value="2" <?php if ($fmnth[$i] == 2) {
+    print 'SELECTED';
+}
+    ?>>февраля</option>
+	<option value="3" <?php if ($fmnth[$i] == 3) {
+    print 'SELECTED';
+}
+    ?>>марта</option>
+	<option value="4" <?php if ($fmnth[$i] == 4) {
+    print 'SELECTED';
+}
+    ?>>апреля</option>
+	<option value="5" <?php if ($fmnth[$i] == 5) {
+    print 'SELECTED';
+}
+    ?>>мая</option>
+	<option value="6" <?php if ($fmnth[$i] == 6) {
+    print 'SELECTED';
+}
+    ?>>июня</option>
+	<option value="7" <?php if ($fmnth[$i] == 7) {
+    print 'SELECTED';
+}
+    ?>>июля</option>
+	<option value="8" <?php if ($fmnth[$i] == 8) {
+    print 'SELECTED';
+}
+    ?>>августа</option>
+	<option value="9" <?php if ($fmnth[$i] == 9) {
+    print 'SELECTED';
+}
+    ?>>сентября</option>
+	<option value="10" <?php if ($fmnth[$i] == 10) {
+    print 'SELECTED';
+}
+    ?>>октября</option>
+	<option value="11" <?php if ($fmnth[$i] == 11) {
+    print 'SELECTED';
+}
+    ?>>ноября</option>
+	<option value="12" <?php if ($fmnth[$i] == 12) {
+    print 'SELECTED';
+}
+    ?>>декабря</option>
 </select>
 <input type="text" name="fyear[]" size="4" maxlength="4" value="<?=$fyear[$i]?>">&nbsp;&nbsp;
 по&nbsp;&nbsp;
 <input type="text" name="tday[]" size="2" maxlength="2" value="<?=$tday[$i]?>">
 <select name="tmnth[]">
-	<option value="1" <? if ($tmnth[$i] == 1) print "SELECTED"?>>января</option>
-	<option value="2" <? if ($tmnth[$i] == 2) print "SELECTED"?>>февраля</option>
-	<option value="3" <? if ($tmnth[$i] == 3) print "SELECTED"?>>марта</option>
-	<option value="4" <? if ($tmnth[$i] == 4) print "SELECTED"?>>апреля</option>
-	<option value="5" <? if ($tmnth[$i] == 5) print "SELECTED"?>>мая</option>
-	<option value="6" <? if ($tmnth[$i] == 6) print "SELECTED"?>>июня</option>
-	<option value="7" <? if ($tmnth[$i] == 7) print "SELECTED"?>>июля</option>
-	<option value="8" <? if ($tmnth[$i] == 8) print "SELECTED"?>>августа</option>
-	<option value="9" <? if ($tmnth[$i] == 9) print "SELECTED"?>>сентября</option>
-	<option value="10" <? if ($tmnth[$i] == 10) print "SELECTED"?>>октября</option>
-	<option value="11" <? if ($tmnth[$i] == 11) print "SELECTED"?>>ноября</option>
-	<option value="12" <? if ($tmnth[$i] == 12) print "SELECTED"?>>декабря</option>
+	<option value="1" <?php if ($tmnth[$i] == 1) {
+    print 'SELECTED';
+}
+    ?>>января</option>
+	<option value="2" <?php if ($tmnth[$i] == 2) {
+    print 'SELECTED';
+}
+    ?>>февраля</option>
+	<option value="3" <?php if ($tmnth[$i] == 3) {
+    print 'SELECTED';
+}
+    ?>>марта</option>
+	<option value="4" <?php if ($tmnth[$i] == 4) {
+    print 'SELECTED';
+}
+    ?>>апреля</option>
+	<option value="5" <?php if ($tmnth[$i] == 5) {
+    print 'SELECTED';
+}
+    ?>>мая</option>
+	<option value="6" <?php if ($tmnth[$i] == 6) {
+    print 'SELECTED';
+}
+    ?>>июня</option>
+	<option value="7" <?php if ($tmnth[$i] == 7) {
+    print 'SELECTED';
+}
+    ?>>июля</option>
+	<option value="8" <?php if ($tmnth[$i] == 8) {
+    print 'SELECTED';
+}
+    ?>>августа</option>
+	<option value="9" <?php if ($tmnth[$i] == 9) {
+    print 'SELECTED';
+}
+    ?>>сентября</option>
+	<option value="10" <?php if ($tmnth[$i] == 10) {
+    print 'SELECTED';
+}
+    ?>>октября</option>
+	<option value="11" <?php if ($tmnth[$i] == 11) {
+    print 'SELECTED';
+}
+    ?>>ноября</option>
+	<option value="12" <?php if ($tmnth[$i] == 12) {
+    print 'SELECTED';
+}
+    ?>>декабря</option>
 </select>
 <input type="text" name="tyear[]" size="4" maxlength="4" value="<?=$tyear[$i]?>">
 <input type="submit" value="Ага!"><br><br>
 
 
 
-<? } ?>
+<?php 
+} ?>
 
 
 </form>

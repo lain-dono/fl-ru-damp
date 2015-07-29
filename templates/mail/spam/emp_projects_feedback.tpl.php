@@ -4,7 +4,7 @@
  * ##0026613, ##0026632
  */
 
-$url = sprintf('%s/users/%s/?kind=1&all=1',$host,$login);
+$url = sprintf('%s/users/%s/?kind=1&all=1', $host, $login);
 
 ?>
 Здравствуйте.

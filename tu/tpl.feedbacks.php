@@ -1,7 +1,6 @@
 <?php
-if(!defined('IN_STDF')) 
-{ 
-    header("HTTP/1.0 404 Not Found");
+if (!defined('IN_STDF')) {
+    header('HTTP/1.0 404 Not Found');
     exit;
 }
 ?>
@@ -21,6 +20,8 @@ if(!defined('IN_STDF'))
     <noindex>
     <?php include 'tpl.feedbacks-items.php'; ?>
     </noindex>
-    <?php if($is_feedbacks_paginator){ ?>
+    <?php if ($is_feedbacks_paginator) {
+    ?>
     <a id="feedbacks_next_page" href="javascript:void(0)" data-id="<?php echo $data['id'] ?>" data-total="<?php echo $data['total_feedbacks'] ?>" class="b-button b-button_more">Ещё отзывы</a>
-    <?php } ?>
+    <?php 
+} ?>

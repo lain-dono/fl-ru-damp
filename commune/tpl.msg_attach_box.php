@@ -6,7 +6,7 @@
                 <span class="addButton" style="font-size: 16px;">&nbsp;</span>
             </div>
         </div>
-        <? /*
+        <?php /*
           <input type="hidden" name="MAX_FILE_SIZE" value="<?=commune::MSG_FILE_MAX_SIZE?>"/>
           <input type="file" style="width:100%" name="file"/> */ ?>
 
@@ -14,7 +14,7 @@
         <ul>
             <li>Картинку: <?= commune::MSG_IMAGE_MAX_WIDTH ?>x<?= commune::MSG_IMAGE_MAX_HEIGHT ?> пикселей. <?= (commune::MSG_IMAGE_MAX_SIZE / 1024) ?> Кб. </li>
             <li>
-                Вы можете прикрепить до <?=commune::MAX_FILES ?> файлов общим объемом не более <?=(commune::MAX_FILE_SIZE / (1024*1024))?> Мб.<br/>
+                Вы можете прикрепить до <?=commune::MAX_FILES ?> файлов общим объемом не более <?=(commune::MAX_FILE_SIZE / (1024 * 1024))?> Мб.<br/>
                 Файлы следующих форматов запрещены к загрузке: <?=implode(', ', $GLOBALS['disallowed_array'])?>
             </li>
         </ul>
@@ -22,5 +22,5 @@
     <script type="text/javascript">
         new mAttach(document.getElementById('attaches'), <?= (commune::MAX_FILES - $max) ?>);
     </script>
-    <br/><?= ($error ? view_error($error) . '<br/>' : '') ?>
+    <br/><?= ($error ? view_error($error).'<br/>' : '') ?>
 </div>

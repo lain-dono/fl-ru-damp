@@ -1,20 +1,21 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/tservices/tservices_categories.php');
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/tservices/tservices_categories.php';
 
 /**
- * Class TServiceCatalog
+ * Class TServiceCatalog.
  *
  * Виджет - список категорий типовых услуг
  */
-class TServiceCatalog extends CWidget {
+class TServiceCatalog extends CWidget
+{
+    public function run()
+    {
+        $tservicesCategoriesModel = new tservices_categories();
+        $categoriesTree = $tservicesCategoriesModel->getAllCategories(true);
 
-	public function run() {
-		$tservicesCategoriesModel = new tservices_categories();
-		$categoriesTree = $tservicesCategoriesModel->getAllCategories(true);
-
-		$this->render('t-service-catalog', array(
-			'categoriesTree' => $categoriesTree,
-		));
-	}
+        $this->render('t-service-catalog', array(
+            'categoriesTree' => $categoriesTree,
+        ));
+    }
 }

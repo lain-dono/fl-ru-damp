@@ -28,14 +28,15 @@
                 <tr>
                     <td colspan="6">
                         <div class="pager">
-                            <?=new_paginator($page, ceil($page_count/sbr_adm::PAGE_SIZE), 10, "%s?site=admin&mode={$mode}&page=%d%s")?>
+                            <?=new_paginator($page, ceil($page_count / sbr_adm::PAGE_SIZE), 10, "%s?site=admin&mode={$mode}&page=%d%s")?>
                         </div>
                     </td>
                 </tr>
             </tfoot>
 			<tbody>
-                <? foreach($sbr_feedbacks as $sf) { ?>
-                <tr class="<?=(++$j%2==0 ? 'even' : 'odd')?>">
+                <?php foreach ($sbr_feedbacks as $sf) {
+    ?>
+                <tr class="<?=(++$j % 2 == 0 ? 'even' : 'odd')?>">
                     <td class="nr-a-o-date"><?=date('d.m.Y H:i', strtotime($sf['posted_time']))?></td>
                     <td class="nr-a-o-num"><a href="?access=A&<?=(is_emp($sf['role']) ? 'E' : 'F')?>=<?=$sf['login']?>&id=<?=$sf['sbr_id']?>">#<?=$sf['sbr_id']?></a></td>
                     <td><a href="/users/<?=$sf['login']?>/" class="nr-a-lnk-<?=(is_emp($sf['role']) ? 'emp' : 'frl')?>"><?=($sf['uname'].' '.$sf['usurname'].' ['.$sf['login'].']')?></a></td>
@@ -44,14 +45,18 @@
                     </td>
 					<td>
 						<span class="star-block">
-                            <? for($i=1;$i<=10;$i++) { ?>
-                            <b<?=($i<=round($sf['avg_rate_srv']) ? ' class="a"' : '')?>></b>
-                            <? } ?>
+                            <?php for ($i = 1;$i <= 10;++$i) {
+    ?>
+                            <b<?=($i <= round($sf['avg_rate_srv']) ? ' class="a"' : '')?>></b>
+                            <?php 
+}
+    ?>
 						</span>
 					</td>
-                    <td><?=reformat($sf['descr_srv'],40,0,1)?></td>
+                    <td><?=reformat($sf['descr_srv'], 40, 0, 1)?></td>
 				</tr>
-                <? } ?>
+                <?php 
+} ?>
 			</tbody>
 		</table>
 	</div>

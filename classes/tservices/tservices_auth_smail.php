@@ -6,90 +6,96 @@
 require_once $_SERVER['DOCUMENT_ROOT'].'/classes/template.php';
 require_once $_SERVER['DOCUMENT_ROOT'].'/classes/smail.php';
 
-/**
+/*
  * Директория шаблонов писем
  */
-define('TSERVICES_TPL_MAIL_PATH', $_SERVER['DOCUMENT_ROOT'] . '/templates/mail/tu/');
+define('TSERVICES_TPL_MAIL_PATH', $_SERVER['DOCUMENT_ROOT'].'/templates/mail/tu/');
 //define('TSERVICES_TPL_BASE_LAYOUT', 'layout.tpl.php');
 
 /**
  * Class tservices_auth_smail
- * Класс для работы с отправкой писем для ТУ
+ * Класс для работы с отправкой писем для ТУ.
  */
 class tservices_auth_smail extends smail
 {
-    protected $is_local = FALSE;
+    protected $is_local = false;
 
-    public function __construct() 
+    public function __construct()
     {
         parent::__construct();
 
-        $server = defined('SERVER')?strtolower(SERVER):'local';
+        $server = defined('SERVER') ? strtolower(SERVER) : 'local';
         $this->is_local = ($server == 'local');
     }
-    
 
     /**
      * Скрываем вызов некоторых методов чтобы при их вызове проверить 
-     * в каком окружении запускается рассылка и если на локале то игнорим ее
+     * в каком окружении запускается рассылка и если на локале то игнорим ее.
      * 
      * @todo: Если мешает достаточно закоментить проверку на лакальность ;)
      * 
      * @param string $method
-     * @param type $arguments
-     * @return boolean
+     * @param type   $arguments
+     *
+     * @return bool
      */
-    public function __call($method, $arguments) 
+    public function __call($method, $arguments)
     {
-        if($this->is_local) return FALSE;
-        
-        $method = '_' . $method;
-        if(method_exists($this, $method)) 
-        {
+        if ($this->is_local) {
+            return false;
+        }
+
+        $method = '_'.$method;
+        if (method_exists($this, $method)) {
             call_user_func_array(array($this, $method), $arguments);
         }
-        
-        return TRUE;
+
+        return true;
     }
 
-    
     /**
-     * Отправляем письмо о регистрации при заказе ТУ
+     * Отправляем письмо о регистрации при заказе ТУ.
      * 
      * @param type $status
-     * @return boolean
+     *
+     * @return bool
      */
-    public function _orderByNewUser($email, $tService, $code) {
+    public function _orderByNewUser($email, $tService, $code)
+    {
         $this->recipient = $email;
         $this->message = Template::render(
-                TSERVICES_TPL_MAIL_PATH . 'auth_order_by_new.tpl.php', 
+                TSERVICES_TPL_MAIL_PATH.'auth_order_by_new.tpl.php',
                 array(
-                    'smail' => &$this, 
+                    'smail' => &$this,
                     'tu_id' => $tService['id'],
                     'tu_title' => $tService['title'],
-                    'code' => $code
+                    'code' => $code,
                 )
         );
-        return $this->send('text/html');        
+
+        return $this->send('text/html');
     }
-    
+
     /**
-     * Отправляем письмо о подтверждении при заказе ТУ
+     * Отправляем письмо о подтверждении при заказе ТУ.
      * 
      * @param type $status
-     * @return boolean
+     *
+     * @return bool
      */
-    public function _orderByOldUser($email, $tService, $code) {
+    public function _orderByOldUser($email, $tService, $code)
+    {
         $this->recipient = $email;
         $this->message = Template::render(
-                TSERVICES_TPL_MAIL_PATH . 'auth_order_by_old.tpl.php', 
+                TSERVICES_TPL_MAIL_PATH.'auth_order_by_old.tpl.php',
                 array(
-                    'smail' => &$this, 
+                    'smail' => &$this,
                     'tu_id' => $tService['id'],
                     'tu_title' => $tService['title'],
-                    'code' => $code
+                    'code' => $code,
                 )
         );
-        return $this->send('text/html');        
+
+        return $this->send('text/html');
     }
 }

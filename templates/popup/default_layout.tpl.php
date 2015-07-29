@@ -1,24 +1,23 @@
 <?php
 
 /**
- * Общий шаблон popup-окна
+ * Общий шаблон popup-окна.
  */
-
 ?>
 <div id="<?=$popup_id?>" data-popup-window="true" 
      class="b-shadow 
             b-shadow_center 
-            <?php if(isset($popup_width)): ?> b-shadow_width_<?=$popup_width?><?php endif; ?> 
-            <?=(!isset($is_show))?'b-shadow_hide':'' ?> 
+            <?php if (isset($popup_width)): ?> b-shadow_width_<?=$popup_width?><?php endif; ?> 
+            <?=(!isset($is_show)) ? 'b-shadow_hide' : '' ?> 
             b-shadow_adaptive">
     <div class="b-shadow__body b-shadow__body_pad_15_20">
         
-        <?php if(isset($popup_title)): ?>
+        <?php if (isset($popup_title)): ?>
         <div class="b-fon <?=@$popup_title_class_bg?>">
             <div class="b-layout__title b-layout__title_padbot_5">
                 <span class="b-icon b-page__desktop b-page__ipad b-icon_float_left b-icon_top_4 <?=@$popup_title_class_icon?>"></span>
                 <?=$popup_title?>
-                <?php if(isset($popup_subtitle)): ?>
+                <?php if (isset($popup_subtitle)): ?>
                 <div class="b-layout__txt b-layout__txt_fontsize_11 b-layout__txt_lineheight_1 b-page__destop b-page__ipad">
                     <?=$popup_subtitle?>
                 </div>
@@ -28,7 +27,7 @@
         <?php endif; ?>
         
         <div class="b-layout <?php //b-layout_waiting ?>">
-            <?php if(isset($items_title)): ?>
+            <?php if (isset($items_title)): ?>
             <div class="b-layout__txt b-layout__txt_padbot_15 b-layout__txt_fontsize_15">
                 <?=$items_title?>
             </div> 

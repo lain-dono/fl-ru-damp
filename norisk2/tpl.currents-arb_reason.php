@@ -6,7 +6,7 @@
         <div class="ov-l">
             <div class="ov-in">
                 <div class="nr-arb-full-info">
-                    <h3>Этап &laquo;<a href="?site=Stage&id=<?=$stage->id?>"><?=reformat($stage->name,33, 0, 1)?></a>&raquo; отправлен на рассмотрение в арбитражную комиссию Free-lance.ru</h3>
+                    <h3>Этап &laquo;<a href="?site=Stage&id=<?=$stage->id?>"><?=reformat($stage->name, 33, 0, 1)?></a>&raquo; отправлен на рассмотрение в арбитражную комиссию Free-lance.ru</h3>
                     <p><?=date('j '.strtolower($GLOBALS['MONTHA'][date('n', strtotime($stage->arbitrage['requested']))]).' Y, H:i', strtotime($stage->arbitrage['requested']))?></p>
                     <p><a href="/users/<?=$stage->arbitrage['login']?>/" class="<?=is_emp($stage->arbitrage['role']) ? 'employer' : 'freelancer'?>-name"><?=$stage->arbitrage['uname']?> <?=$stage->arbitrage['usurname']?> [<?=$stage->arbitrage['login']?>]</a> обратился с причиной:</p>
                     <div class="form fs-dg nr-form-cause">
@@ -14,13 +14,21 @@
                         <b class="b2"></b>
                         <div class="form-in">
                             <p><?=reformat($stage->arbitrage['descr'], 48, 0, 1, 1)?></p>
-                            <? if($stage->arbitrage['attach']) { ?>
+                            <?php if ($stage->arbitrage['attach']) {
+    ?>
                             <ul class="list-files">
-                                <? foreach($stage->arbitrage['attach'] as $id=>$a) { if($a['is_deleted']=='t') continue; ?>
+                                <?php foreach ($stage->arbitrage['attach'] as $id => $a) {
+    if ($a['is_deleted'] == 't') {
+        continue;
+    }
+    ?>
                                 <li><a href="<?=WDCPREFIX.'/'.$a['path'].$a['name']?>" target="_blank"><?=($a['orig_name'] ? $a['orig_name'] : $a['name'])?></a>, <span><?=ConvertBtoMB($a['size'])?></span></li>
-                                <? } ?>
+                                <?php 
+}
+    ?>
                             </ul>
-                            <? } ?>
+                            <?php 
+} ?>
                         </div>
                         <b class="b2"></b>
                         <b class="b1"></b>

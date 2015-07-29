@@ -24,7 +24,7 @@
     </ul>
 */ ?>
     <ul class="b-menu__list b-menu__list_padleft_10">
-        <li class="b-menu__item <?= ($filter == '' && $site != 'drafts' ? 'b-menu__item_active':'')?>">
+        <li class="b-menu__item <?= ($filter == '' && $site != 'drafts' ? 'b-menu__item_active' : '')?>">
             <a href="/<?= sbr::NEW_TEMPLATE_SBR; ?>/" class="b-menu__link">
                 <span class="b-menu__b1">Все сделки</span>
             </a>
@@ -49,19 +49,25 @@
                 <span class="b-menu__b1"><span class="b-icon b-icon_sbr_gok"></span>Завершенные</span>
             </a>
         </li>
-        <? if($sbr->isEmp() && $sbr->draftExists()) { ?>
+        <?php if ($sbr->isEmp() && $sbr->draftExists()) {
+    ?>
         <li class="b-menu__item b-menu__item_last <?= $site == 'drafts' ? 'b-menu__item_active' : ''?>">
-            <a href="/<?= sbr::NEW_TEMPLATE_SBR; ?>/?site=drafts" class="b-menu__link">
+            <a href="/<?= sbr::NEW_TEMPLATE_SBR;
+    ?>/?site=drafts" class="b-menu__link">
                 <span class="b-menu__b1"><span class="b-icon b-icon_margtop_2 b-icon_sbr_edit"></span>Черновики</span>
             </a>
         </li>
-        <? }//if?>
-        <? if($count_old_sbr > 0) { ?>
+        <?php 
+}//if?>
+        <?php if ($count_old_sbr > 0) {
+    ?>
         <li class="b-menu__item b-menu__item_last <?= $site == 'archive' ? 'b-menu__item_active' : ''?>">
-            <a href="/<?= sbr::NEW_TEMPLATE_SBR; ?>/?site=archive" class="b-menu__link">
+            <a href="/<?= sbr::NEW_TEMPLATE_SBR;
+    ?>/?site=archive" class="b-menu__link">
                 <span class="b-menu__b1">Архив</span>
             </a>
         </li>
-        <? }//if?>
+        <?php 
+}//if?>
     </ul>
 </div>

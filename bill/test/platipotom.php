@@ -6,41 +6,43 @@ define('NO_CSRF', 1);
 //Данные платежной формы
 $paypost = $_POST;
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/classes/platipotom.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/payment_keys.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/platipotom.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/payment_keys.php';
 
-
-if(is_release()) exit;
-
-
-if(isset($_GET['cancel'])) { //Отказ от платежа
-    header("Location: /bill/fail");
+if (is_release()) {
     exit;
-} elseif($_GET['success']) {
-    $host    = $GLOBALS['host'];
+}
+
+if (isset($_GET['cancel'])) { //Отказ от платежа
+    header('Location: /bill/fail');
+    exit;
+} elseif ($_GET['success']) {
+    $host = $GLOBALS['host'];
     $platipotom = new platipotom();
     $payment = $_SESSION['post_payment'];
-    
+
     $request = array(
         'orderid' => $payment['orderid'], //Уникальный идентификатор заказа в базе магазина.
         'subid' => $payment['subid'], //Уникальный идентификатор пользователя
-        'sig' => $platipotom->getSig($payment['price'], $payment['orderid'], $payment['subid']) //Подпись платежа.
+        'sig' => $platipotom->getSig($payment['price'], $payment['orderid'], $payment['subid']), //Подпись платежа.
     );
     $get = '?';
     foreach ($request as $param => $value) {
-        if ($get !== '?') $get .= '&';
-        $get .= $param .'='. $value;
+        if ($get !== '?') {
+            $get .= '&';
+        }
+        $get .= $param.'='.$value;
     }
-    
+
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $host . "/income/platipotom.php".$get);
+    curl_setopt($ch, CURLOPT_URL, $host.'/income/platipotom.php'.$get);
     curl_setopt($ch, CURLOPT_USERPWD, BASIC_AUTH);
     ob_start();
     $res = curl_exec($ch);
     $complete = ob_get_clean();
-    
-    echo "<p>Результат <strong>нотификации</strong>:</p>";
+
+    echo '<p>Результат <strong>нотификации</strong>:</p>';
     echo '<pre>';
     print_r(htmlspecialchars($complete));
     echo '</pre>';

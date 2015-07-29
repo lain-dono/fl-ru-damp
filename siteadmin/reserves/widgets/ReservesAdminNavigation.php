@@ -1,52 +1,49 @@
 <?php
 
 /**
- * Class ReservesAdminNavigation
- *
+ * Class ReservesAdminNavigation.
  */
-class ReservesAdminNavigation extends CWidget 
+class ReservesAdminNavigation extends CWidget
 {
     public $menu_items = array();
     public $current_action;
 
-
-    public function init() 
+    public function init()
     {
         $default_menu_items = array(
             'index' => array(
                 'title' => 'Все Сделки',
-                'url' => '?action=index'
+                'url' => '?action=index',
             ),
             'frod' => array(
                 'title' => 'Подозрительные сделки',
-                'url' => '?action=frod'
+                'url' => '?action=frod',
             ),
             'reestr' => array(
                 'title' => 'Реестры',
-                'url' => '?action=reestr'
+                'url' => '?action=reestr',
             ),
             'factura' => array(
                 'title' => 'Реестр счет-фактур',
-                'url' => '?action=factura'
+                'url' => '?action=factura',
             ),
             'archive' => array(
                 'title' => 'Архив документов',
-                'url' => '?action=archive'
-            )
+                'url' => '?action=archive',
+            ),
         );
-        
+
         $this->menu_items = array_merge(
-                $default_menu_items, 
+                $default_menu_items,
                 $this->menu_items);
     }
-    
 
-    public function run() 
+    public function run()
     {
         //собираем шаблон
         $this->render('reserves-admin-navigation', array(
             'menu_items' => $this->menu_items,
-            'current_action' => $this->current_action
+            'current_action' => $this->current_action,
         ));
     }
 }

@@ -8,8 +8,7 @@ require_once '../classes/memBuff.php';
 require_once '../classes/smtp.php';
 require_once '../classes/users.php';
 
-
-/**
+/*
  * Логин пользователя от кого осуществляется рассылка
  * 
  */
@@ -17,7 +16,7 @@ $sender = 'admin';
 
 $eHost = $GLOBALS['host'];
 
-$eSubject = "Представляем новый сервис на сайте fl.ru";
+$eSubject = 'Представляем новый сервис на сайте fl.ru';
 
 $eMessage = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -756,7 +755,7 @@ $eMessage = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://ww
                             <td class="mcnImageContent" valign="top" style="padding-right: 0px;padding-left: 0px;padding-top: 0;padding-bottom: 0;text-align: center;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
                                 
                                     
-                                        <a href="http://www.fl.ru/users/'."%USER_LOGIN%".'/tu/?utm_source=mailing&utm_medium=email&utm_campaign=tp_promo130114"><img align="center" alt="" src="https://gallery.mailchimp.com/232009edbbee7d0fe99b1cca1/images/333.3.png" width="565" style="max-width: 565px;padding-bottom: 0;display: inline !important;vertical-align: bottom;border: 0;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;" class="mcnImage"></a>
+                                        <a href="http://www.fl.ru/users/'.'%USER_LOGIN%'.'/tu/?utm_source=mailing&utm_medium=email&utm_campaign=tp_promo130114"><img align="center" alt="" src="https://gallery.mailchimp.com/232009edbbee7d0fe99b1cca1/images/333.3.png" width="565" style="max-width: 565px;padding-bottom: 0;display: inline !important;vertical-align: bottom;border: 0;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;" class="mcnImage"></a>
                                     
                                 
                             </td>
@@ -904,9 +903,7 @@ $eMessage = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://ww
 $DB = new DB('master');
 $cnt = 0;
 
-
-
-$limit = 8000;  
+$limit = 8000;
 $sql = "
 SELECT u.uid, u.login, u.email, u.uname, u.usurname, usk.key AS ukey 
 FROM freelancer AS u 
@@ -915,41 +912,45 @@ WHERE substring(u.subscr from 8 for 1)::integer = 1 AND u.is_banned = B'0' AND (
 AND u.uid NOT IN (SELECT tservices.user_id FROM tservices WHERE tservices.active=true AND tservices.deleted=false)
 ";
 
-$sender = $DB->row("SELECT * FROM users WHERE login = ?", $sender);
+$sender = $DB->row('SELECT * FROM users WHERE login = ?', $sender);
 if (empty($sender)) {
     die("Unknown Sender\n");
 }
 
-$mail = new smtp;
+$mail = new smtp();
 $mail->subject = $eSubject;  // заголовок письма
 $mail->message = $eMessage; // текст письма
 $mail->recipient = ''; // свойство 'получатель' оставляем пустым
 $spamid = $mail->send('text/html');
-if (!$spamid) die('Failed!');
+if (!$spamid) {
+    die('Failed!');
+}
 // с этого момента рассылка создана, но еще никому не отправлена!
 // допустим нам нужно получить список получателей с какого-либо запроса
 $i = 0;
 $mail->recipient = array();
 $res = $DB->query($sql);
 while ($row = pg_fetch_assoc($res)) {
-    if($row['email'] == '') continue;
-    if ( strlen($row['ukey']) == 0 ) {
-        $row['ukey'] = users::writeUnsubscribeKey($row["uid"], true);
+    if ($row['email'] == '') {
+        continue;
+    }
+    if (strlen($row['ukey']) == 0) {
+        $row['ukey'] = users::writeUnsubscribeKey($row['uid'], true);
     }
     $mail->recipient[] = array(
         'email' => $row['email'],
-        'extra' => array('first_name' => $row['uname'], 'last_name' => $row['usurname'], 
+        'extra' => array('first_name' => $row['uname'], 'last_name' => $row['usurname'],
                          'USER_LOGIN' => $row['login'],
                          'SBR_ID' => $row['sbr_id'],
                          'DATE_SBR' => date('d.m.Y', strtotime($row['closed'])),
-                         'UNSUBSCRIBE_KEY' => $row['ukey'])
+                         'UNSUBSCRIBE_KEY' => $row['ukey'], ),
     );
     if (++$i >= 30000) {
         $mail->bind($spamid);
         $mail->recipient = array();
         $i = 0;
     }
-    $cnt++;
+    ++$cnt;
 }
 if ($i) {
     $mail->bind($spamid);

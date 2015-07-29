@@ -1,25 +1,30 @@
-<?
+<?php
   exit; // пользуемся /siteadmin/admin/
-	if (!is_admin_sm())
-		{exit;}
+	if (!is_admin_sm()) {
+	    exit;
+	}
 	$action = trim($_GET['action']);
-	if (!$action) $action = trim($_POST['action']);
-	
-	require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/spam.php");
+	if (!$action) {
+	    $action = trim($_POST['action']);
+	}
+
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/spam.php';
 	$sm = new spam();
-	
-	switch ($action){
-		case "post_msg":
+
+	switch ($action) {
+		case 'post_msg':
 		$msg = change_q($_POST['msg']);
 		$name = change_q($_POST['name']);
 		$role = $_POST['role'];
 		switch ($role) {
-			case "npro": $irole = 0;break;
-			case "pro": $irole = 1;break;
-			case "emp": $irole = 2;break;
+			case 'npro': $irole = 0;break;
+			case 'pro': $irole = 1;break;
+			case 'emp': $irole = 2;break;
 		}
 		$error = $sm->Update($msg, $name, $irole);
-		if (!$error) unset($msg);
+		if (!$error) {
+		    unset($msg);
+		}
 		break;
 	}
 	$val = $sm->Get();
@@ -27,7 +32,9 @@
 
 <strong>Спам</strong><br><br>
 Теги %name% и %surname% в теле письма будут заменены на имя и фамилию юзера.
-	<? if ($error) print(view_error($error));?>
+	<?php if ($error) {
+    print(view_error($error));
+}?>
 <form action="/siteadmin/spam/" method="post" onSubmit="this.btn.value='Подождите'; this.btn.disabled=true;">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
@@ -45,7 +52,9 @@
 	<tr>
 		<td height="115">
 			<textarea cols="10" rows="7" name="msg" class="wdh100"><?=input_ref($val['msg'])?></textarea>
-			<? if ($alert[2]) print(view_error($alert[2])) ?>
+			<?php if ($alert[2]) {
+    print(view_error($alert[2]));
+} ?>
 		</td>
 	</tr>
 	<tr>
@@ -57,7 +66,7 @@
 	<tr><td colspan="3">&nbsp;</td></tr>
 </table>
 </form>
-<?
+<?php
 	$val = $sm->Get(1);
 ?>
 <form action="/siteadmin/spam/" method="post" onSubmit="this.btn.value='Подождите'; this.btn.disabled=true;">
@@ -77,7 +86,9 @@
 	<tr>
 		<td height="115">
 			<textarea cols="10" rows="7" name="msg" class="wdh100"><?=input_ref($val['msg'])?></textarea>
-			<? if ($alert[2]) print(view_error($alert[2])) ?>
+			<?php if ($alert[2]) {
+    print(view_error($alert[2]));
+} ?>
 		</td>
 	</tr>
 	<tr>
@@ -89,7 +100,7 @@
 	<tr><td colspan="3">&nbsp;</td></tr>
 </table>
 </form>
-<?
+<?php
 	$val = $sm->Get(2);
 ?>
 <form action="/siteadmin/spam/" method="post" onSubmit="this.btn.value='Подождите'; this.btn.disabled=true;">
@@ -109,7 +120,9 @@
 	<tr>
 		<td height="115">
 			<textarea cols="10" rows="7" name="msg" class="wdh100"><?=input_ref($val['msg'])?></textarea>
-			<? if ($alert[2]) print(view_error($alert[2])) ?>
+			<?php if ($alert[2]) {
+    print(view_error($alert[2]));
+} ?>
 		</td>
 	</tr>
 	<tr>

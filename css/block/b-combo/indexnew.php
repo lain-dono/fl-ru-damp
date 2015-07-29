@@ -5,20 +5,20 @@
 <title>b-combo</title>
 <link href="b-combo.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="/scripts/mootools-new.js"></script>
-<script type="text/javascript" src="/scripts/b-combo/b-combo-dynamic-input.js?rand=<?=rand(1000,9999)?>"></script>
-<script type="text/javascript" src="/scripts/b-combo/b-combo-multidropdown.js?rand=<?=rand(1000,9999)?>"></script>
-<script type="text/javascript" src="/scripts/b-combo/b-combo-autocomplete.js?rand=<?=rand(1000,9999)?>"></script>
-<script type="text/javascript" src="/scripts/b-combo/b-combo-calendar.js?rand=<?=rand(1000,9999)?>"></script>
-<script type="text/javascript" src="/scripts/b-combo/b-combo-manager.js?rand=<?=rand(1000,9999)?>"></script>
+<script type="text/javascript" src="/scripts/b-combo/b-combo-dynamic-input.js?rand=<?=rand(1000, 9999)?>"></script>
+<script type="text/javascript" src="/scripts/b-combo/b-combo-multidropdown.js?rand=<?=rand(1000, 9999)?>"></script>
+<script type="text/javascript" src="/scripts/b-combo/b-combo-autocomplete.js?rand=<?=rand(1000, 9999)?>"></script>
+<script type="text/javascript" src="/scripts/b-combo/b-combo-calendar.js?rand=<?=rand(1000, 9999)?>"></script>
+<script type="text/javascript" src="/scripts/b-combo/b-combo-manager.js?rand=<?=rand(1000, 9999)?>"></script>
 
 <script type="text/javascript">
- <?
- require_once $_SERVER["DOCUMENT_ROOT"]."/classes/stdf.php";
+ <?php
+ require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
  /**
-  * На сайте скрипты professions_js.php и cities_js.php подключены в шаблоне template3.php
+  * На сайте скрипты professions_js.php и cities_js.php подключены в шаблоне template3.php.
   * */
- require_once $_SERVER["DOCUMENT_ROOT"]."/professions_js.php";
- require_once $_SERVER["DOCUMENT_ROOT"]."/cities_js.php";
+ require_once $_SERVER['DOCUMENT_ROOT'].'/professions_js.php';
+ require_once $_SERVER['DOCUMENT_ROOT'].'/cities_js.php';
  ?> 
 /*Определение переменной _TOKEN_KEY при использовании инпутов на сайте не нужно, так как
  * она уже определена  

@@ -1,11 +1,12 @@
-<? require_once($_SERVER['DOCUMENT_ROOT'].'/drafts/content_header.php'); ?>
+<?php require_once $_SERVER['DOCUMENT_ROOT'].'/drafts/content_header.php'; ?>
 
-<?
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/contacts.common.php");
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/contacts.common.php';
 $xajax->printJavascript('/xajax/');
 ?>
 
-    <? if($drafts) { ?>
+    <?php if ($drafts) {
+    ?>
         <form id="draft_frm" action="/drafts/" method="post">
 				<div>
         <input type="hidden" name="p" value="contacts" />
@@ -31,7 +32,8 @@ $xajax->printJavascript('/xajax/');
     			<col width="80" />
     			<col width="60" />
     		</colgroup>
-                <? foreach($drafts as $draft) { ?>
+                <?php foreach ($drafts as $draft) {
+    ?>
                 <tr class="b-layout__tr">
     				<td class="b-layout__one b-layout__one_bordbot_ccc b-layout__one_padtb_10"><div class="b-check b-check_padleft_10 b-check_top_2"><input id="del_draft_<?=$draft['id']?>" class="b-check__input" type="checkbox" name="del_draft[]" value="<?=$draft['id']?>" onClick="DraftsCheckToggleDeleteAll(this);" /></div></td>
     				<td class="b-layout__one b-layout__one_bordbot_ccc b-layout__one_padtb_10"><div class="b-layout__txt"><a class="b-layout__link" href="/contacts/?from=<?=$draft['to_login']?>&draft_id=<?=$draft['id']?>">Сообщение для <?=$draft['uname']?> <?=$draft['usurname']?> [<?=$draft['to_login']?>]</a></div></td>
@@ -39,11 +41,15 @@ $xajax->printJavascript('/xajax/');
     				<td class="b-layout__one b-layout__one_bordbot_ccc b-layout__one_padtb_10"><div class="b-layout__txt"><a class="b-layout__link" href="" onClick="xajax_PostDraft(<?=$draft['id']?>, 2); return false;">Отправить</a></div></td>
     				<td class="b-layout__one b-layout__one_bordbot_ccc b-layout__one_padtb_10"><div class="b-layout__txt"><a class="b-layout__link b-layout__link_color_c10600" href="" onClick="DraftDeleteSubmit(<?=$draft['id']?>); return false;" >Удалить</a></div></td>
     			</tr>
-                <? } ?>
+                <?php 
+}
+    ?>
         </table>
 				</div>
         </form>
-    <? } else { ?>
+    <?php 
+} else {
+    ?>
     
 <div class="b-fon">
 		<b class="b-fon__b1"></b>
@@ -56,15 +62,16 @@ $xajax->printJavascript('/xajax/');
 </div>
     
     
-    <? } ?>
+    <?php 
+} ?>
 
 <form id="f_frm" style="display:none;" action="" method="post">
 <div>
     <?php
-        if ( empty($_SESSION['msg_csrf']) || !is_array($_SESSION['msg_csrf']) ) {
+        if (empty($_SESSION['msg_csrf']) || !is_array($_SESSION['msg_csrf'])) {
             $_SESSION['msg_csrf'] = array();
         }
-        if ( count($_SESSION['msg_csrf']) > 40 ) {
+        if (count($_SESSION['msg_csrf']) > 40) {
             array_shift($_SESSION['msg_csrf']);
         }
         $_SESSION['msg_csrf'][] = $msg_csrf = md5(uniqid(rand(), true));

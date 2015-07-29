@@ -1,20 +1,20 @@
 <?php
-$aDays   = range( 1, 31 );
-$nYear   = intval( date('Y') );
-$aYears  = range( $nYear, $nYear + 10 );
+$aDays = range(1, 31);
+$nYear = intval(date('Y'));
+$aYears = range($nYear, $nYear + 10);
 $aMounth = array(
-    '01' => "Января", 
-    '02' => "Февраля", 
-    '03' => "Марта", 
-    '04' => "Апреля", 
-    '05' => "Мая", 
-    '06' => "Июня", 
-    '07' => "Июля", 
-    '08' => "Августа", 
-    '09' => "Сентября", 
-    '10' => "Октября", 
-    '11' => "Ноября", 
-    '12' => "Декабря"
+    '01' => 'Января',
+    '02' => 'Февраля',
+    '03' => 'Марта',
+    '04' => 'Апреля',
+    '05' => 'Мая',
+    '06' => 'Июня',
+    '07' => 'Июля',
+    '08' => 'Августа',
+    '09' => 'Сентября',
+    '10' => 'Октября',
+    '11' => 'Ноября',
+    '12' => 'Декабря',
 );
 //$uncompletedDeals = $sbr_info['all_cnt'] - $sbr_info['completed_cnt'];
 ?>
@@ -67,23 +67,29 @@ $aMounth = array(
 												<div class="b-select b-select_inline-block">
 														<select id="ban_day" class="b-select__select b-select__select_width_50" name="ban_day" maxlength="10">
                                                         <option value=""></option>
-														  <?php foreach ( $aDays as $nDay ) { ?>
+														  <?php foreach ($aDays as $nDay) {
+    ?>
                                                           <option value="<?=$nDay?>"><?=$nDay?></option>
-                                                          <?php } ?>
+                                                          <?php 
+} ?>
                                                         </select>
 												</div>&nbsp;<div class="b-select b-select_inline-block">
 														<select id="ban_month" class="b-select__select b-select__select_width_80" onchange="banned.updateDays('ban_day','ban_month','ban_year')" name="ban_month">
                                                           <option value=""></option>
-                                                          <?php foreach ( $aMounth as $key => $name ) { ?>
+                                                          <?php foreach ($aMounth as $key => $name) {
+    ?>
                                                           <option value="<?=$key?>"><?=$name?></option>
-                                                          <?php } ?>
+                                                          <?php 
+} ?>
                                                         </select>
 												</div>&nbsp;<div class="b-select b-select_inline-block">
 														<select id="ban_year" class="b-select__select b-select__select_width_50" onchange="banned.updateDays('ban_day','ban_month','ban_year')" name="ban_year">
                                                           <option value=""></option>
-                                                          <?php foreach ( $aYears as $nYear ) { ?>
+                                                          <?php foreach ($aYears as $nYear) {
+    ?>
                                                           <option value="<?=$nYear?>"><?=$nYear?></option>
-                                                          <?php } ?>
+                                                          <?php 
+} ?>
                                                         </select>
 												</div>&nbsp;&nbsp;
 													<div class="b-radio__item ">

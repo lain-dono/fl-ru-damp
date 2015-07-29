@@ -1,7 +1,10 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
 $cnt = users::CountAll();
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/payed.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/account.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/payed.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/account.php';
 $pro = payed::CountPro();
 $DB = new DB('master');
 ?>
@@ -15,7 +18,7 @@ $DB = new DB('master');
 
 
 <br><br>
-<?php $mFull = true; require_once ("top_menu.php"); ?>
+<?php $mFull = true; require_once 'top_menu.php'; ?>
 <br><br>
 
 <table width="100%" border="1" cellspacing="2" cellpadding="2" class="brd-tbl">
@@ -33,7 +36,7 @@ $DB = new DB('master');
 </tr>
 <tr>
 	<td>Всего народу (сегодня новых)</td>
-	<td><?=$cnt['all']?> (<?=$cnt['frl_today']+$cnt['emp_today']?>)</td>
+	<td><?=$cnt['all']?> (<?=$cnt['frl_today'] + $cnt['emp_today']?>)</td>
 </tr>
 <tr>
 	<td>- фрилансеров (сегодня новых)</td>
@@ -45,7 +48,7 @@ $DB = new DB('master');
 </tr>
 <tr>
 	<td>Всего живых</td>
-	<td><?=$cnt['live_emp_today']+$cnt['live_frl_today']?></td>
+	<td><?=$cnt['live_emp_today'] + $cnt['live_frl_today']?></td>
 </tr>
 <tr>
 	<td>- фрилансеров живых</td>

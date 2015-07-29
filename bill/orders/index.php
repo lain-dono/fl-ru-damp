@@ -1,21 +1,22 @@
 <?php
-$g_page_id    = "0|27";
+
+$g_page_id = '0|27';
 $new_site_css = true;
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/billing.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/professions.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/wallet/wallet.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/bar_notify.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/billing.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/professions.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/wallet/wallet.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/bar_notify.php';
 
 $main_path = $_SERVER['DOCUMENT_ROOT'];
 
-if(!get_uid()) {
-    header('Location: /fbd.php'); 
+if (!get_uid()) {
+    header('Location: /fbd.php');
     exit;
 }
 
 //Редиректим на историю заказов
-header('Location: /bill/history/?period=3'); 
+header('Location: /bill/history/?period=3');
 exit;
 
 /*
@@ -28,9 +29,9 @@ $tr_id = intval($_REQUEST['transaction']);
 $bill = new billing(get_uid(false));
 
 if($bill->getOrders()) {
-	foreach($bill->getOrders() as $order) {
-		if($order['op_code']==135) { $bill->clearOrders(); break; }
-	}
+    foreach($bill->getOrders() as $order) {
+        if($order['op_code']==135) { $bill->clearOrders(); break; }
+    }
 }
 
 $bill->setPage('orders');
@@ -67,5 +68,4 @@ exit;
 $js_file = array('billing.js');
 include ("{$main_path}/template3.php");
  * 
- */
-?>
+ */;

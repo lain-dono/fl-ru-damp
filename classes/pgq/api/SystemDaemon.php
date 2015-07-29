@@ -1,14 +1,15 @@
 <?php
-define("PIDFILE_PREFIX", ABS_PATH."/classes/pgq/tmp");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/pgq/api/SimpleLogger.php");
 
-declare(ticks = 1);
+define('PIDFILE_PREFIX', ABS_PATH.'/classes/pgq/tmp');
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/pgq/api/SimpleLogger.php';
+
+declare (ticks = 1);
 
 /**
  * Classes implementing SystemDaemon must implement following methods:
  *  - php_error_hook()
  *  - config()
- *  - process()
+ *  - process().
  *
  * None take argument.
  *
@@ -55,229 +56,238 @@ declare(ticks = 1);
  *  php foo.php logless
  *  php foo.php stop
  */
-abstract class SystemDaemon 
+abstract class SystemDaemon
 {
-  protected $loglevel = DEBUG;
-  protected $logfile;
-  protected $delay = 15;
-  protected $log;
-  protected $commands = array("start", "stop", "kill", "restart",
-			      "status", "reload",
-			      "logmore", "logless");
-	
-  protected $name;
-  protected $fullname;
+    protected $loglevel = DEBUG;
+    protected $logfile;
+    protected $delay = 15;
+    protected $log;
+    protected $commands = array('start', 'stop', 'kill', 'restart',
+                  'status', 'reload',
+                  'logmore', 'logless', );
 
-  protected $pidfile;
-  protected $sid;	
-  protected $killed = False;
-  protected $huped  = False;
-	
-  public function __construct( $argc, &$argv)
-  {		
-    $this->fullname = $argv[0];
-    $this->name     = basename($this->fullname);
-    $this->pidfile  = sprintf("%s/%s.pid", PIDFILE_PREFIX, $this->name);
-    
-    $this->log = new SimpleLogger(WARNING, STDOUT);
-    $this->main($argc, $argv);
-  }
+    protected $name;
+    protected $fullname;
+
+    protected $pidfile;
+    protected $sid;
+    protected $killed = false;
+    protected $huped = false;
+
+    public function __construct($argc, &$argv)
+    {
+        $this->fullname = $argv[0];
+        $this->name = basename($this->fullname);
+        $this->pidfile = sprintf('%s/%s.pid', PIDFILE_PREFIX, $this->name);
+
+        $this->log = new SimpleLogger(WARNING, STDOUT);
+        $this->main($argc, $argv);
+    }
 
   /**
    * Implement those functions when inheriting from this class.
    */
-  protected function config() {	}
-  protected function process() {	}
-  protected function php_error_hook() { }
-  
-  /**
-   * main is responsible of command line parsing and daemon interactions
-   */
-  public function main($argc, $argv) {
-    if( $argc != 2 ) {
-      fprintf(STDERR, $this->usage($this->name));
-      exit(1);
+  protected function config()
+  {
+  }
+    protected function process()
+    {
     }
-		
-    switch( $argv[1] ) {
-    case "start":
-      $pid = $this->getpid();
-      if( $pid !== false ) {
-	printf("Trying to start already running daemon '%s' [%s] \n",
-	       $this->name, $pid);
-	exit(4);
+    protected function php_error_hook()
+    {
+    }
+
+  /**
+   * main is responsible of command line parsing and daemon interactions.
+   */
+  public function main($argc, $argv)
+  {
+      if ($argc != 2) {
+          fprintf(STDERR, $this->usage($this->name));
+          exit(1);
       }
-      else 
-	$this->start();
+
+      switch ($argv[1]) {
+    case 'start':
+      $pid = $this->getpid();
+      if ($pid !== false) {
+          printf("Trying to start already running daemon '%s' [%s] \n",
+           $this->name, $pid);
+          exit(4);
+      } else {
+          $this->start();
+      }
       break;
-				
-    case "stop":
+
+    case 'stop':
       $pid = $this->checkpid(4);
       posix_kill($pid, SIGINT);
       break;
-      
-    case "kill":
+
+    case 'kill':
       $pid = $this->checkpid(4);
       posix_kill($pid, SIGTERM);
       break;
 
-    case "restart":
+    case 'restart':
       $pid = $this->checkpid(4);
       posix_kill($pid, SIGINT);
-      
-      while( file_exists($this->pidfile) ) {
-	sleep(1);
+
+      while (file_exists($this->pidfile)) {
+          sleep(1);
       }
-      $this->start();				
+      $this->start();
       break;
-      
-    case "status":
+
+    case 'status':
       $this->status();
       break;
-      
-    case "reload":
+
+    case 'reload':
       $pid = $this->checkpid(4);
       posix_kill($pid, SIGHUP);
       break;
-      
-    case "logmore":
+
+    case 'logmore':
       $pid = $this->checkpid(4);
       posix_kill($pid, SIGUSR1);
       break;
-      
-    case "logless":
+
+    case 'logless':
       $pid = $this->checkpid(4);
       posix_kill($pid, SIGUSR2);
       break;
-      
+
     default:
       printf($this->usage($this->name));
       exit(1);
-      break;				
+      break;
     }
   }
-  
+
   /**
    * start the daemon, fork(), exit from the father, start a new
    * session group from the child, and close STDIN, STDOUT and STDERR.
    *
    * The first $this->config() call is made here.
    */
-  public function start() 
+  public function start()
   {
-    /**
+      /*
      * UNIX daemon startup.
      */
-    
+
     $pid = pcntl_fork();
-    if ($pid < 0) {
-      fprintf(STDERR, "fork failure: %s",
-	      posix_strerror(posix_get_last_error()));
-      exit;
-    }
-    else if ( $pid ) {
-      /**
+      if ($pid < 0) {
+          fprintf(STDERR, 'fork failure: %s',
+          posix_strerror(posix_get_last_error()));
+          exit;
+      } elseif ($pid) {
+          /*
        * Father exit, and let is daemon child work.
        */
       exit;
-    }	        
-    else { 
-      /**
+      } else {
+          /*
        * The child works.
-       */  
+       */
       $this->sid = posix_setsid();
-       
-      if( $this->sid < 0 ) {
-	fprintf(STDERR, "setsid() failure: %s",
-		posix_strerror(posix_get_last_error()));
-	exit;
-      }
 
-      /**
+          if ($this->sid < 0) {
+              fprintf(STDERR, 'setsid() failure: %s',
+        posix_strerror(posix_get_last_error()));
+              exit;
+          }
+
+      /*
        * config() provides log filename and loglevel
        */
       $this->config();
-      unset( $this->log );
-      $this->log = new SimpleLogger($this->loglevel, $this->logfile);
+          unset($this->log);
+          $this->log = new SimpleLogger($this->loglevel, $this->logfile);
 
-      if( ! $this->log->check() ) {
-	fprintf(STDERR, "FATAL: could not open logfile '%s': %s",
-		$this->logfile,
-		posix_strerror(posix_get_last_error()));
-	exit;
-      }			
-      $this->log->notice("Init done (config & logger)");
-			
+          if (!$this->log->check()) {
+              fprintf(STDERR, "FATAL: could not open logfile '%s': %s",
+        $this->logfile,
+        posix_strerror(posix_get_last_error()));
+              exit;
+          }
+          $this->log->notice('Init done (config & logger)');
+
       // Redefine PHP language error handlers
-      set_error_handler( array( $this, "phpFault" ) );
-      set_exception_handler( array( $this, "exceptFault" ) );
-			 
-      $this->createpidfile();	
-		
-      /**
+      set_error_handler(array($this, 'phpFault'));
+          set_exception_handler(array($this, 'exceptFault'));
+
+          $this->createpidfile();
+
+      /*
        * Handle following signals
-       */   
-      pcntl_signal(SIGTERM, array(&$this, "handleSignals"));
-      pcntl_signal(SIGINT,  array(&$this, "handleSignals"));
-      pcntl_signal(SIGHUP,  array(&$this, "handleSignals"));
-      pcntl_signal(SIGUSR1, array(&$this, "handleSignals"));
-      pcntl_signal(SIGUSR2, array(&$this, "handleSignals"));
+       */
+      pcntl_signal(SIGTERM, array(&$this, 'handleSignals'));
+          pcntl_signal(SIGINT,  array(&$this, 'handleSignals'));
+          pcntl_signal(SIGHUP,  array(&$this, 'handleSignals'));
+          pcntl_signal(SIGUSR1, array(&$this, 'handleSignals'));
+          pcntl_signal(SIGUSR2, array(&$this, 'handleSignals'));
 
       // don't forget a daemon gets to close those
-      fclose(STDIN); fclose(STDOUT); fclose(STDERR);
-		    
-      /**
+      fclose(STDIN);
+          fclose(STDOUT);
+          fclose(STDERR);
+
+      /*
        * Now we're ready to run.
        */
       $this->run();
-    }
+      }
   }
-	
+
   /**
    * At quitting time, drop the pidfile and write to the logs we're done.
    */
-  public function stop() 
+  public function stop()
   {
-    $this->droppidfile();
-    $this->log->debug("Quitting...");
-    exit(0);
+      $this->droppidfile();
+      $this->log->debug('Quitting...');
+      exit(0);
   }
-	
+
   /**
    * status will simply print out if daemon is running, and under which pid.
    */
   public function status()
   {
-    $pid = $this->getpid();
-    if( $pid === False )
-      printf("SystemDaemon %s is not running.\n", $this->name);
-    else {
-      printf("SystemDaemon %s is running with pid %d\n", $this->name, $pid);
-    }
+      $pid = $this->getpid();
+      if ($pid === false) {
+          printf("SystemDaemon %s is not running.\n", $this->name);
+      } else {
+          printf("SystemDaemon %s is running with pid %d\n", $this->name, $pid);
+      }
   }
-	
+
   /**
    * Print out the supported commands.
    */
-  public function usage($progname) 
+  public function usage($progname)
   {
-    return sprintf("%s: %s\n", $progname, implode("|", $this->commands));
+      return sprintf("%s: %s\n", $progname, implode('|', $this->commands));
   }
-	
+
   /**
    * checkpid() will call getpid() and exit with the given error code
    * when the daemon is not running.
    */
-  public function checkpid($errcode) {
-    $pid = $this->getpid();
-    
-    if( $pid === false ) {
-      fprintf(STDERR, "No daemon '%s' running \n", $this->name);
-      exit($errcode);
-    }    
-    return $pid;
+  public function checkpid($errcode)
+  {
+      $pid = $this->getpid();
+
+      if ($pid === false) {
+          fprintf(STDERR, "No daemon '%s' running \n", $this->name);
+          exit($errcode);
+      }
+
+      return $pid;
   }
-	
+
   /**
    * getpid() ensure that the daemon is running, returning its pid
    * when it's the case and False when it's no more running.
@@ -285,101 +295,103 @@ abstract class SystemDaemon
    * Current implementation assumes a Linux environment and abuse
    * /proc facility to ensure that pidfile content matches our daemon.
    */
-  public function getpid() {		
-    if( file_exists($this->pidfile) )
-      {		
-	$pid = file_get_contents($this->pidfile);
-    
-    // Еще такой вариант проверки (для беты).
-    exec(sprintf('ps -p %s | grep "%s"', $pid, preg_quote($this->name,'/')), $pidprc);
-    if($pidprc && count($pidprc))
-      return $pid;
+  public function getpid()
+  {
+      if (file_exists($this->pidfile)) {
+          $pid = file_get_contents($this->pidfile);
 
-	
-	if( ! file_exists(sprintf("/proc/%s", $pid)) ) {
-	  $this->droppidfile();
-	  return false;
-	}
-		
-	/**
-	 * Both file_get_contents() and fopen()/fgetc() methods are
-	 * unable to get the /proc/... file content
-	 */
-	$cmdline = sprintf("/proc/%s/cmdline", $pid);
-	unset($cmd);
-	exec(sprintf("cat %s", $cmdline), $cmd);
-			
-	$cmd = explode("\0", $cmd[0]);
-	$cmd = $cmd[1];
-	
-	if( basename($cmd) == basename($this->fullname) )
-	  return $pid;
-			
-	else {
-	  printf("pidfile: /proc/%s/cmdline does not match '%s' \n",
-		 $pid, $this->fullname);
-	  $this->droppidfile();
-	  return false;
-	}
+    // Еще такой вариант проверки (для беты).
+    exec(sprintf('ps -p %s | grep "%s"', $pid, preg_quote($this->name, '/')), $pidprc);
+          if ($pidprc && count($pidprc)) {
+              return $pid;
+          }
+
+          if (!file_exists(sprintf('/proc/%s', $pid))) {
+              $this->droppidfile();
+
+              return false;
+          }
+
+    /*
+     * Both file_get_contents() and fopen()/fgetc() methods are
+     * unable to get the /proc/... file content
+     */
+    $cmdline = sprintf('/proc/%s/cmdline', $pid);
+          unset($cmd);
+          exec(sprintf('cat %s', $cmdline), $cmd);
+
+          $cmd = explode("\0", $cmd[0]);
+          $cmd = $cmd[1];
+
+          if (basename($cmd) == basename($this->fullname)) {
+              return $pid;
+          } else {
+              printf("pidfile: /proc/%s/cmdline does not match '%s' \n",
+         $pid, $this->fullname);
+              $this->droppidfile();
+
+              return false;
+          }
+      } else {
+          return false;
       }
-    else
-      return false;
   }
-	
+
   /**
    * startup time utility to write our pid to pidfile.
    *
    * We check for stale pidfile and remove it if necessary.
    */
-  public function createpidfile() {
-    if( file_exists($this->pidfile) ) {
-      $this->error("Pidfile '%s' already exists", $this->pidfile);
-      $this->droppidfile();
-    }			
-    $fd = fopen($this->pidfile, "w+");
-    
-    if( $fd !== false ) {
-      if( fwrite($fd, getmypid()) === False ) {
-	$this->log->fatal("Pidfile fwrite('%s') failed: %s", 
-			  $this->pidfile, 
-			  posix_strerror(posix_get_last_error()));
-	$this->droppidfile();
-	exit(2);	
+  public function createpidfile()
+  {
+      if (file_exists($this->pidfile)) {
+          $this->error("Pidfile '%s' already exists", $this->pidfile);
+          $this->droppidfile();
       }
+      $fd = fopen($this->pidfile, 'w+');
 
-      if( fclose($fd) === False ) {
-	$this->log->fatal("Pidfile fclose('%s') failed: %s", 
-			  $this->pidfile,
-			  posix_strerror(posix_get_last_error()));
-	$this->droppidfile();
-	exit(2);			
+      if ($fd !== false) {
+          if (fwrite($fd, getmypid()) === false) {
+              $this->log->fatal("Pidfile fwrite('%s') failed: %s",
+              $this->pidfile,
+              posix_strerror(posix_get_last_error()));
+              $this->droppidfile();
+              exit(2);
+          }
+
+          if (fclose($fd) === false) {
+              $this->log->fatal("Pidfile fclose('%s') failed: %s",
+              $this->pidfile,
+              posix_strerror(posix_get_last_error()));
+              $this->droppidfile();
+              exit(2);
+          }
+      } else {
+          $this->log->fatal("Pidfile fopen('%s') failed: %s",
+            $this->pidfile,
+            posix_strerror(posix_get_last_error()));
+          exit(2);
       }
-    }
-    else {
-      $this->log->fatal("Pidfile fopen('%s') failed: %s", 
-			$this->pidfile,
-			posix_strerror(posix_get_last_error()));
-      exit(2);
-    }
-    $this->log->notice("Pidfile '%s' created with '%s'",
-		       $this->pidfile, getmypid());
+      $this->log->notice("Pidfile '%s' created with '%s'",
+               $this->pidfile, getmypid());
   }
 
   /**
-   * drop our pidfile
-   */	
-  public function droppidfile() 
-  { 
-    $this->log->notice("rm %s", $this->pidfile);
+   * drop our pidfile.
+   */
+  public function droppidfile()
+  {
+      $this->log->notice('rm %s', $this->pidfile);
 
-    if( file_exists($this->pidfile) ) {
-      if( ! unlink($this->pidfile) )
-	$this->log->error("Cound not unlink '%s'", $this->pidfile);
-    }
-    else
-      $this->log->error("Pidfile '%s' does not exist", $this->pidfile);
+      if (file_exists($this->pidfile)) {
+          if (!unlink($this->pidfile)) {
+              $this->log->error("Cound not unlink '%s'", $this->pidfile);
+          }
+      } else {
+          $this->log->error("Pidfile '%s' does not exist", $this->pidfile);
+      }
   }
-	
+
   /**
    * The run() function leads the daemon work, by calling user
    * function process() and sleeping $this->delay, as long as we
@@ -387,121 +399,123 @@ abstract class SystemDaemon
    */
   public function run()
   {
-    $this->log->notice("run");
+      $this->log->notice('run');
 
-    while( ! $this->killed )
-      {
-	if( $this->huped ) {
-	  $this->config();
-	  
-	  // Don't forget to forward the loglevel change if any
-	  if( $this->loglevel )
-	    $this->log->loglevel = $this->loglevel;
-	  
-	  // And to force logfile reopening (be nice to log rotating)
-	  $this->log->reopen();
-	  
-	  $this->huped = False;
-	}
-	
-	$this->process();			
-	
-	if( ! $this->killed ) {
-	  $this->log->debug("sleeping %d seconds", $this->delay);
-	  sleep($this->delay);
-	}
+      while (!$this->killed) {
+          if ($this->huped) {
+              $this->config();
+
+      // Don't forget to forward the loglevel change if any
+      if ($this->loglevel) {
+          $this->log->loglevel = $this->loglevel;
       }
-    $this->stop();
+
+      // And to force logfile reopening (be nice to log rotating)
+      $this->log->reopen();
+
+              $this->huped = false;
+          }
+
+          $this->process();
+
+          if (!$this->killed) {
+              $this->log->debug('sleeping %d seconds', $this->delay);
+              sleep($this->delay);
+          }
+      }
+      $this->stop();
   }
 
   /**
-   * React to supported user signals
+   * React to supported user signals.
    */
-  public function handleSignals($sig) {
-    switch($sig) {
+  public function handleSignals($sig)
+  {
+      switch ($sig) {
     case SIGTERM:
-      $this->log->warning("Received TERM signal.");
+      $this->log->warning('Received TERM signal.');
       $this->stop();
       break;
 
     case SIGINT:
-      $this->log->warning("Received INT signal.");
-      $this->killed = True;
+      $this->log->warning('Received INT signal.');
+      $this->killed = true;
       break;
-				
+
     case SIGHUP:
-      $this->log->warning("Received HUP signal");
-      $this->huped = True;
+      $this->log->warning('Received HUP signal');
+      $this->huped = true;
       break;
-				
+
     case SIGUSR1:
-      $this->log->warning("Received USR1 signal, logging more");
+      $this->log->warning('Received USR1 signal, logging more');
       $this->log->logmore();
       break;
-				
+
     case SIGUSR2:
-      $this->log->warning("Received USR1 signal, logging less");
+      $this->log->warning('Received USR1 signal, logging less');
       $this->log->logless();
       break;
     }
   }
-		
-  /**
-   * Register our own PHP language error handlers
-   */
-  function phpFault( $errno, $errstr, $errfile, $errline )
-  {
-    $message = "PHP: ".strip_tags($errstr)." in {$errfile}:{$errline}";
 
-    switch( (int)$errno )
-      {
-      case E_PARSE:    
-      case E_CORE_ERROR: 
+  /**
+   * Register our own PHP language error handlers.
+   */
+  public function phpFault($errno, $errstr, $errfile, $errline)
+  {
+      $message = 'PHP: '.strip_tags($errstr)." in {$errfile}:{$errline}";
+
+      switch ((int) $errno) {
+      case E_PARSE:
+      case E_CORE_ERROR:
       case E_CORE_WARNING:
-      case E_COMPILE_ERROR: 
+      case E_COMPILE_ERROR:
       case E_COMPILE_WARNING:
-	$this->log->fatal( $message );
-	$this->stop();
-	break;
+    $this->log->fatal($message);
+    $this->stop();
+    break;
 
       case E_USER_ERROR:
       case E_ERROR:
-	$this->log->error( $message );
-	$this->php_error_hook();
-	break;
-	
+    $this->log->error($message);
+    $this->php_error_hook();
+    break;
+
       case E_WARNING:
       case E_USER_WARNING:
       case E_STRICT:
-	//case E_RECOVERABLE_ERROR:
-	$this->log->warning( $message );
-	return true;
-	break;
-	
+    //case E_RECOVERABLE_ERROR:
+    $this->log->warning($message);
+
+    return true;
+    break;
+
       case E_NOTICE:
       case E_USER_NOTICE:
-	$this->log->notice( $message );
-	return true;
-	break;
+    $this->log->notice($message);
+
+    return true;
+    break;
       }
-    return false;
+
+      return false;
   }
 
   /**
    * We also support non-catched exceptions and consider them as fatal
    * errors.
    */
-  function exceptFault( $exception )
+  public function exceptFault($exception)
   {
-    $trace = $exception->getTrace();
-    $message = $exception->getMessage();
-    
-    if( is_array($trace) && count($trace) > 0 ) {
-      $message .= "; source: " . $trace[0]["file"] . ":" . $trace[0]["line"];
-    }
-    
-    $this->log->fatal( $exception->getMessage($message) );
-    $this->stop();
+      $trace = $exception->getTrace();
+      $message = $exception->getMessage();
+
+      if (is_array($trace) && count($trace) > 0) {
+          $message .= '; source: '.$trace[0]['file'].':'.$trace[0]['line'];
+      }
+
+      $this->log->fatal($exception->getMessage($message));
+      $this->stop();
   }
 }
-?>

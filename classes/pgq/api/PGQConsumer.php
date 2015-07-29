@@ -1,10 +1,11 @@
 <?php
-if(!defined('SYSDAEMON')) {
+
+if (!defined('SYSDAEMON')) {
     define('SYSDAEMON', 'SystemDaemon');
 }
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/pgq/api/PGQ.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/pgq/api/".SYSDAEMON.".php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/pgq/api/PGQ.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/pgq/api/'.SYSDAEMON.'.php';
 
 /**
  * PGQConsumer is a SystemDaemon providing the PGQ SQL API for PHP
@@ -56,271 +57,274 @@ require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/pgq/api/".SYSDAEMON.".php");
  * See SystemDaemon documentation for using this class at PHP and
  * command line levels.
  */
-
 abstract class PGQConsumer extends SystemDaemon
 {
-  protected $connected  = NULL;
-  protected $src_constr;
-  protected $pg_src_con;
-		
-  protected $cname;  // consumer name (pgq consumer id)
+    protected $connected = null;
+    protected $src_constr;
+    protected $pg_src_con;
+
+    protected $cname;  // consumer name (pgq consumer id)
   protected $qname; // queue name
-	
-  public function __construct($cname, $qname, $argc, $argv, $src_constr) 
+
+  public function __construct($cname, $qname, $argc, $argv, $src_constr)
   {
-    $this->cname = $cname;
-    $this->qname = $qname;
-    
-    $this->commands[] = "install";
-    $this->commands[] = "uninstall";
-    $this->commands[] = "check";
-    $this->commands[] = "create_queue";
-    $this->commands[] = "drop_queue";
-    $this->commands[] = "register";
-    $this->commands[] = "unregister";
-    $this->commands[] = "failed";
-    $this->commands[] = "delete";
-    $this->commands[] = "retry";
-    
-    $this->src_constr  = $src_constr;
-		
-    parent::__construct($argc, $argv);
+      $this->cname = $cname;
+      $this->qname = $qname;
+
+      $this->commands[] = 'install';
+      $this->commands[] = 'uninstall';
+      $this->commands[] = 'check';
+      $this->commands[] = 'create_queue';
+      $this->commands[] = 'drop_queue';
+      $this->commands[] = 'register';
+      $this->commands[] = 'unregister';
+      $this->commands[] = 'failed';
+      $this->commands[] = 'delete';
+      $this->commands[] = 'retry';
+
+      $this->src_constr = $src_constr;
+
+      parent::__construct($argc, $argv);
   }
 
   /**
    * Implement those functions when inheriting from this class.
    */
-  public function config() {}
+  public function config()
+  {
+  }
 
   /**
-   * Optionnal hooks
+   * Optionnal hooks.
    */
-  public function preprocess_event($event) {}
-  public function postprocess_event($event) {}
-	
+  public function preprocess_event($event)
+  {
+  }
+    public function postprocess_event($event)
+    {
+    }
+
   /**
    * We overload SystemDaemon::main() in order to support our specific
    * commands too.
    */
-  public function main($argc, $argv) {
-    if( $argc < 2 ) {
-      fprintf(STDERR, $this->usage($this->name));
-      exit(1);
+  public function main($argc, $argv)
+  {
+      if ($argc < 2) {
+          fprintf(STDERR, $this->usage($this->name));
+          exit(1);
+      }
+
+      switch ($argv[1]) {
+      case 'install':
+    $pid = $this->getpid();
+    if ($pid !== false) {
+        $this->log->fatal('Can not install an already running daemon.');
+    } else {
+        $ret = $this->install();
+        exit($ret ? 0 : 1);
     }
-		
-    switch( $argv[1] )
-      {
-      case "install":
-	$pid = $this->getpid();
-	if( $pid !== False )
-	  $this->log->fatal("Can not install an already running daemon.");
-	else {
-	  $ret = $this->install();
-	  exit($ret ? 0 : 1);
-	}
-	break;
-	
-      case "uninstall":
-	$pid = $this->getpid();
-	if( $pid !== False )
-	  $this->log->fatal("Can not uninstall a running daemon.");
-	else {
-	  $ret = $this->uninstall();
-	  exit($ret ? 0 : 1);
-	}
-	break;
-	
-      case "check":
-	$pid = $this->getpid();
-	if( $pid !== False ) {
-	  $this->log->fatal("Daemon already running.");
-	  $this->status();
-	}
-	else {
-	  $ret = $this->check();
-	  exit($ret ? 0 : 1);
-	}
-	break;
+    break;
 
-      case "create_queue":
-	$pid = $this->getpid();
-	if( $pid !== False )
-	  $this->log->fatal("Can not create queue for an already running daemon.");
-	else {
-	  if( $this->connect() === False ) {
-	    exit(3);
-	  }
-	  else {
-	    $ret = $this->create_queue();
-	    $this->disconnect();
-	    exit($ret ? 0 : 1);
-	  }
-	}
-	break;
+      case 'uninstall':
+    $pid = $this->getpid();
+    if ($pid !== false) {
+        $this->log->fatal('Can not uninstall a running daemon.');
+    } else {
+        $ret = $this->uninstall();
+        exit($ret ? 0 : 1);
+    }
+    break;
 
-      case "drop_queue":
-	$pid = $this->getpid();
-	if( $pid !== False )
-	  $this->log->fatal("Can not drop queue for a running daemon.");
-	else {
-	  if( $this->connect() === False ) {
-	    exit(3);
-	  }
-	  else {
-	    $ret = $this->drop_queue();
-	    $this->disconnect();
-	    exit($ret ? 0 : 1);
-	  }
-	}
-	break;
+      case 'check':
+    $pid = $this->getpid();
+    if ($pid !== false) {
+        $this->log->fatal('Daemon already running.');
+        $this->status();
+    } else {
+        $ret = $this->check();
+        exit($ret ? 0 : 1);
+    }
+    break;
 
-      case "register":
-	$pid = $this->getpid();
-	if( $pid !== False )
-	  $this->log->fatal("Can not register already running daemon.");
-	else {
-	  if( $this->connect() === False ) {
-	    exit(3);
-	  }
-	  else {
-	    $ret = $this->register();
-	    $this->disconnect();
-	  
-	    exit($ret ? 0 : 1);
-	  }
-	}
-	break;
-	
-      case "unregister":
-	$pid = $this->getpid();
-	if( $pid !== False )
-	  $this->log->fatal("Can not unregister already running daemon.");
-	else {
-	  $force = False;
-	  if( $argc >= 3 ) {
-	    $force = ($argv[2] == "--force");
+      case 'create_queue':
+    $pid = $this->getpid();
+    if ($pid !== false) {
+        $this->log->fatal('Can not create queue for an already running daemon.');
+    } else {
+        if ($this->connect() === false) {
+            exit(3);
+        } else {
+            $ret = $this->create_queue();
+            $this->disconnect();
+            exit($ret ? 0 : 1);
+        }
+    }
+    break;
 
-	    if( $force != True ) {
-	      $this->log->fatal("unregister [--force]");
-	      exit(1);
-	    }
-	  }
+      case 'drop_queue':
+    $pid = $this->getpid();
+    if ($pid !== false) {
+        $this->log->fatal('Can not drop queue for a running daemon.');
+    } else {
+        if ($this->connect() === false) {
+            exit(3);
+        } else {
+            $ret = $this->drop_queue();
+            $this->disconnect();
+            exit($ret ? 0 : 1);
+        }
+    }
+    break;
 
-	  if( $this->connect() === False ) {
-	    exit(3);
-	  }
-	  else {
-	    if( $force )
-	      $ret = $this->force_unregister();
-	    else {
-	      if( $this->check_unregister() )
-		$ret = $this->force_unregister();
-	      else
-		$ret = False;
-	    }
+      case 'register':
+    $pid = $this->getpid();
+    if ($pid !== false) {
+        $this->log->fatal('Can not register already running daemon.');
+    } else {
+        if ($this->connect() === false) {
+            exit(3);
+        } else {
+            $ret = $this->register();
+            $this->disconnect();
 
-	    $this->disconnect();
-	  
-	    exit($ret ? 0 : 1);
-	  }
-	}
-	break;
+            exit($ret ? 0 : 1);
+        }
+    }
+    break;
 
-      case "failed":
-	if( $this->connect() === False ) {
-	  exit(3);
-	}
-	else {
-	  $events = $this->failed_event_list();
-	  if( $events !== False )
-	    foreach( $events  as $event ) {
-	      echo $event."\n";
-	    }
-	  else
-	    $this->log->warning("Failed event list is empty.");
-	  $this->disconnect();
-	  exit(0);
-	}
-	break;
+      case 'unregister':
+    $pid = $this->getpid();
+    if ($pid !== false) {
+        $this->log->fatal('Can not unregister already running daemon.');
+    } else {
+        $force = false;
+        if ($argc >= 3) {
+            $force = ($argv[2] == '--force');
 
-      case "delete":
-	if( $argc < 3 ) {
-	  $this->log->fatal("delete <event_id> [<event_id> ...]");
-	  exit(1);
-	}
+            if ($force != true) {
+                $this->log->fatal('unregister [--force]');
+                exit(1);
+            }
+        }
 
-	if( $this->connect() === False ) {
-	  exit(3);
-	}
-	else {
-	  if( $argv[2] == "all" )
-	    $this->failed_event_delete_all();
-	  else {
-	    for($i = 2; $i < $argc; $i++) {
-	      $this->failed_event_delete($argv[$i]);
-	    }
-	  }
-	  $this->disconnect();
-	  exit(0);
-	}
-	break;
+        if ($this->connect() === false) {
+            exit(3);
+        } else {
+            if ($force) {
+                $ret = $this->force_unregister();
+            } else {
+                if ($this->check_unregister()) {
+                    $ret = $this->force_unregister();
+                } else {
+                    $ret = false;
+                }
+            }
 
-      case "retry":
-	if( $argc < 3 ) {
-	  $this->log->fatal("delete <event_id> [<event_id> ...]");
-	  exit(1);
-	}
-	if( $this->connect() === False ) {
-	  exit(3);
-	}
-	else {
-	  if( $argv[2] == "all" )
-	    $this->failed_event_retry_all();
-	  else {
-	    for($i = 2; $i < $argc; $i++) {
-	      $this->failed_event_retry($argv[$i]);
-	    }
-	  }
-	  $this->disconnect();
-	  exit(0);
-	}
-	break;
-	
+            $this->disconnect();
+
+            exit($ret ? 0 : 1);
+        }
+    }
+    break;
+
+      case 'failed':
+    if ($this->connect() === false) {
+        exit(3);
+    } else {
+        $events = $this->failed_event_list();
+        if ($events !== false) {
+            foreach ($events  as $event) {
+                echo $event."\n";
+            }
+        } else {
+            $this->log->warning('Failed event list is empty.');
+        }
+        $this->disconnect();
+        exit(0);
+    }
+    break;
+
+      case 'delete':
+    if ($argc < 3) {
+        $this->log->fatal('delete <event_id> [<event_id> ...]');
+        exit(1);
+    }
+
+    if ($this->connect() === false) {
+        exit(3);
+    } else {
+        if ($argv[2] == 'all') {
+            $this->failed_event_delete_all();
+        } else {
+            for ($i = 2; $i < $argc; ++$i) {
+                $this->failed_event_delete($argv[$i]);
+            }
+        }
+        $this->disconnect();
+        exit(0);
+    }
+    break;
+
+      case 'retry':
+    if ($argc < 3) {
+        $this->log->fatal('delete <event_id> [<event_id> ...]');
+        exit(1);
+    }
+    if ($this->connect() === false) {
+        exit(3);
+    } else {
+        if ($argv[2] == 'all') {
+            $this->failed_event_retry_all();
+        } else {
+            for ($i = 2; $i < $argc; ++$i) {
+                $this->failed_event_retry($argv[$i]);
+            }
+        }
+        $this->disconnect();
+        exit(0);
+    }
+    break;
+
       default:
-	/**
-	 * Support daemon commands: start, stop, reload, restart, ...
-	 */
-	parent::main($argc, $argv);
-	break;
+    /*
+     * Support daemon commands: start, stop, reload, restart, ...
+     */
+    parent::main($argc, $argv);
+    break;
       }
   }
 
   /**
    * Check installation is ok before to run.
    */
-  public function run() {
-    if(DEBUG_DAEMON) {
-      parent::run();
-      return;
-    }
-    if( $this->check() )
-      parent::run();
-    else
-      $this->stop();
+  public function run()
+  {
+      if (DEBUG_DAEMON) {
+          parent::run();
+
+          return;
+      }
+      if ($this->check()) {
+          parent::run();
+      } else {
+          $this->stop();
+      }
   }
-	
+
   /**
    * Stop is called either at normal exit or when receiving an error,
    * PHP errors included.
    */
-  public function stop() {
-    if( $this->connected ) {
-      $this->rollback();
-      $this->disconnect();
-    }
-    parent::stop();
+  public function stop()
+  {
+      if ($this->connected) {
+          $this->rollback();
+          $this->disconnect();
+      }
+      parent::stop();
   }
-	
+
   /**
    * Process available batches, sleeping only when next_batch() returns null.
    *
@@ -337,35 +341,35 @@ abstract class PGQConsumer extends SystemDaemon
    */
   public function process()
   {
-    $sleep = False;
-    
-    if( $this->connect() === False ) {
-      // Can't connect to database, transient error: return to sleep
+      $sleep = false;
+
+      if ($this->connect() === false) {
+          // Can't connect to database, transient error: return to sleep
       return;
-    }
-
-    while( ! $sleep && ! $this->killed ) {
-      $batch_id = $this->next_batch();
-
-      switch( $batch_id ) {
-      case null:
-	$this->log->verbose("PGQConsumer.process: next_batch is null, sleep.");
-	$sleep = True;
-	break;
-
-      case False:
-	$this->log->verbose("PGQConsumer.process: failed to get batch.");
-	break;
-
-      case True:
-	$this->log->verbose("PGQConsumer.process: \$this->process_batch(%d).",
-			    $batch_id);
-
-	$this->process_batch($batch_id);
-	break;
       }
-    }
-    $this->disconnect();
+
+      while (!$sleep && !$this->killed) {
+          $batch_id = $this->next_batch();
+
+          switch ($batch_id) {
+      case null:
+    $this->log->verbose('PGQConsumer.process: next_batch is null, sleep.');
+    $sleep = true;
+    break;
+
+      case false:
+    $this->log->verbose('PGQConsumer.process: failed to get batch.');
+    break;
+
+      case true:
+    $this->log->verbose('PGQConsumer.process: $this->process_batch(%d).',
+                $batch_id);
+
+    $this->process_batch($batch_id);
+    break;
+      }
+      }
+      $this->disconnect();
   }
 
   /**
@@ -373,58 +377,61 @@ abstract class PGQConsumer extends SystemDaemon
    * processed or postponed by the end of this loop, so we only
    * COMMIT; when no error arise.
    */
-  public function process_batch($batch_id) {
-    $events = $this->preprocess_batch($batch_id);
+  public function process_batch($batch_id)
+  {
+      $events = $this->preprocess_batch($batch_id);
 
-    if( $events === False) {
-	$this->log->verbose("PGQConsumer.preprocess_batch got not events (False).");
-      return False;
-    }
+      if ($events === false) {
+          $this->log->verbose('PGQConsumer.preprocess_batch got not events (False).');
 
-    /**
+          return false;
+      }
+
+    /*
      * Event processing loop!
      */
-    $abort_batch = False;
+    $abort_batch = false;
 
-    foreach( $events as $event ) {
-      if( $abort_batch )
-	break;
+      foreach ($events as $event) {
+          if ($abort_batch) {
+              break;
+          }
 
-      if( $this->preprocess_event($event) === PGQ_ABORT_BATCH ) {
-	$abort_batch = True;
-      }
-      else {
-	$tag = $event->tag( $this->process_event($event) );
-	$this->log->verbose("PGQConsumer.process_batch processed event %d of batch %d, tag %d",
-	                    $event->id, $batch_id, $tag);
+          if ($this->preprocess_event($event) === PGQ_ABORT_BATCH) {
+              $abort_batch = true;
+          } else {
+              $tag = $event->tag($this->process_event($event));
+              $this->log->verbose('PGQConsumer.process_batch processed event %d of batch %d, tag %d',
+                        $event->id, $batch_id, $tag);
 
-	switch( $tag  ) {
-	case PGQ_ABORT_BATCH:
-	  $this->log->verbose("PGQConsumer.process_batch got PGQ_ABORT_BATCH");
-	  $abort_batch = True;
-	  break;
+              switch ($tag) {
+    case PGQ_ABORT_BATCH:
+      $this->log->verbose('PGQConsumer.process_batch got PGQ_ABORT_BATCH');
+      $abort_batch = true;
+      break;
 
-	case PGQ_EVENT_FAILED:
-	  $this->event_failed($batch_id, $event);
-	  break;
+    case PGQ_EVENT_FAILED:
+      $this->event_failed($batch_id, $event);
+      break;
 
-	case PGQ_EVENT_RETRY:
-	  $this->event_retry($batch_id, $event);
-	  break;
+    case PGQ_EVENT_RETRY:
+      $this->event_retry($batch_id, $event);
+      break;
 
-	case PGQ_EVENT_OK:
-	  break;
-	}
-	
-	if( ! $abort_batch ) {
-	  if( $this->postprocess_event($event) === PGQ_ABORT_BATCH) {
-	    $this->log->verbose("PGQConsumer.postprocess_event(%d) abort batches", $event->id);
-	    $abort_batch = True;
-	  }
-	}
-      }
+    case PGQ_EVENT_OK:
+      break;
     }
-    return $this->postprocess_batch($batch_id, $abort_batch);
+
+              if (!$abort_batch) {
+                  if ($this->postprocess_event($event) === PGQ_ABORT_BATCH) {
+                      $this->log->verbose('PGQConsumer.postprocess_event(%d) abort batches', $event->id);
+                      $abort_batch = true;
+                  }
+              }
+          }
+      }
+
+      return $this->postprocess_batch($batch_id, $abort_batch);
   }
 
   /**
@@ -434,116 +441,132 @@ abstract class PGQConsumer extends SystemDaemon
    * Exists as a separate function for implementers to accomodate
    * easily, see PGQRemoteConsumer.
    */
-  public function preprocess_batch($batch_id) {
-    pg_query($this->pg_src_con, "BEGIN;");
+  public function preprocess_batch($batch_id)
+  {
+      pg_query($this->pg_src_con, 'BEGIN;');
 
-    $events = $this->get_batch_events($batch_id);
-		
-    if( $events === False ) {
-      // batch with no event
-      $this->log->debug("PGQConsumer.preprocess_batch got no events");
-      $this->finish_batch($batch_id);
-      pg_query($this->pg_src_con, "COMMIT;");
-      return False;
-    }
-    $this->log->debug("PGQConsumer.preprocess_batch got %d events", count($events));
-    return $events;
+      $events = $this->get_batch_events($batch_id);
+
+      if ($events === false) {
+          // batch with no event
+      $this->log->debug('PGQConsumer.preprocess_batch got no events');
+          $this->finish_batch($batch_id);
+          pg_query($this->pg_src_con, 'COMMIT;');
+
+          return false;
+      }
+      $this->log->debug('PGQConsumer.preprocess_batch got %d events', count($events));
+
+      return $events;
   }
 
   /**
    * Conclude batch processing, COMMIT or ROLLBACK if $abort_batch,
    * and call finish_batch().
    */
-  public function postprocess_batch($batch_id, $abort_batch = False) {
-    if( $abort_batch) {
-    	$this->log->warning("PGQConsumer.postprocess_batch aborts: ROLLBACK");
-      $this->rollback();
-      return False;
-    }
+  public function postprocess_batch($batch_id, $abort_batch = false)
+  {
+      if ($abort_batch) {
+          $this->log->warning('PGQConsumer.postprocess_batch aborts: ROLLBACK');
+          $this->rollback();
 
-    if( $this->finish_batch($batch_id) === False )
-      $this->log->warning("Could not mark batch id %d as finished", $batch_id);
-    
-    pg_query($this->pg_src_con, "COMMIT;");
-    return True;
+          return false;
+      }
+
+      if ($this->finish_batch($batch_id) === false) {
+          $this->log->warning('Could not mark batch id %d as finished', $batch_id);
+      }
+
+      pg_query($this->pg_src_con, 'COMMIT;');
+
+      return true;
   }
 
   /**
-   * print out deamon status, and detailed queue informations
+   * print out deamon status, and detailed queue informations.
    */
-  public function status() {
-    if(DEBUG_DAEMON) {
-      parent::status();
-      return;
-    }
+  public function status()
+  {
+      if (DEBUG_DAEMON) {
+          parent::status();
 
-    $pid = $this->getpid();
-    if( $pid === False )
-      printf("PGQConsumer %s is not running.\n", $this->name);
-    else {
-      printf("PGQConsumer %s is running with pid %d\n", $this->name, $pid);
-
-      if( $this->connect() === False ) {
-	return;
+          return;
       }
-      $status = $this->get_consumer_info();
-      foreach( $status as $k => $v)
-	printf("%s: %s\n", $k, $v);
-      
-      $this->disconnect();
-    }
+
+      $pid = $this->getpid();
+      if ($pid === false) {
+          printf("PGQConsumer %s is not running.\n", $this->name);
+      } else {
+          printf("PGQConsumer %s is running with pid %d\n", $this->name, $pid);
+
+          if ($this->connect() === false) {
+              return;
+          }
+          $status = $this->get_consumer_info();
+          foreach ($status as $k => $v) {
+              printf("%s: %s\n", $k, $v);
+          }
+
+          $this->disconnect();
+      }
   }
-  
+
   /**
    * Consumer installation: create the queue and register consumer.
    */
-  protected function install() {
-    if( $this->connect() === False )
-      return False;
+  protected function install()
+  {
+      if ($this->connect() === false) {
+          return false;
+      }
 
-    $ret = $this->create_queue();
-    
-    if( $ret ) {
-      $ret = $this->register();
-    }
-    $this->disconnect();
+      $ret = $this->create_queue();
 
-    return $ret;
+      if ($ret) {
+          $ret = $this->register();
+      }
+      $this->disconnect();
+
+      return $ret;
   }
 
   /**
-   * Consumer uninstall: unregister the consumer and drop the queue
+   * Consumer uninstall: unregister the consumer and drop the queue.
    */
-  protected function uninstall() {
-    if( $this->connect() === False )
-      return False;
+  protected function uninstall()
+  {
+      if ($this->connect() === false) {
+          return false;
+      }
 
-    $ret = $this->unregister();
-    
-    if( $ret ) {
-      $ret = $this->drop_queue();
-    }
-    $this->disconnect();
+      $ret = $this->unregister();
 
-    return $ret;
+      if ($ret) {
+          $ret = $this->drop_queue();
+      }
+      $this->disconnect();
+
+      return $ret;
   }
 
   /**
    * Consumer check: check the queue exists and the consumer is
    * registered.
    */
-  protected function check() {
-    if( $this->connect() === False )
-      return False;
+  protected function check()
+  {
+      if ($this->connect() === false) {
+          return false;
+      }
 
-    $ret = $this->queue_exists();
+      $ret = $this->queue_exists();
 
-    if( $ret ) {
-      $ret = $this->is_registered();
-    }
-    $this->disconnect();
+      if ($ret) {
+          $ret = $this->is_registered();
+      }
+      $this->disconnect();
 
-    return $ret;
+      return $ret;
   }
 
   /**
@@ -553,117 +576,131 @@ abstract class PGQConsumer extends SystemDaemon
    * This now means there's some other consumer registered.
    * TODO: check for trigger absence when only 1 consumer is registered (us).
    */
-  protected function check_unregister() {
-    $consumers = $this->get_consumers();
+  protected function check_unregister()
+  {
+      $consumers = $this->get_consumers();
 
-    if( $consumers === False ) {
-      $this->log->error("Couldn't get consumer list for %s", $this->qname);
-      return False;
-    }
+      if ($consumers === false) {
+          $this->log->error("Couldn't get consumer list for %s", $this->qname);
 
-    if ( strlen($consumers) > 1 ) {
-      $this->log->notice("Some other consumers are registered, ".
-			 "unregistering %s.", $this->cname);
-      return True;
-    }
-    else {
-      // We are the only one consumer
-      $this->log->warning("This %s consumer is the only one registered, ".
-			  "use --force to unregister it.", $this->cname);
-      return False;
-    }
-    return False;
+          return false;
+      }
+
+      if (strlen($consumers) > 1) {
+          $this->log->notice('Some other consumers are registered, '.
+             'unregistering %s.', $this->cname);
+
+          return true;
+      } else {
+          // We are the only one consumer
+      $this->log->warning('This %s consumer is the only one registered, '.
+              'use --force to unregister it.', $this->cname);
+
+          return false;
+      }
+
+      return false;
   }
 
   /**
    * unregister without bothering.
    */
-  protected function force_unregister() {
-    return $this->unregister();
+  protected function force_unregister()
+  {
+      return $this->unregister();
   }
 
   /**
    * TODO.
-   * drop triggers on the provider
+   * drop triggers on the provider.
    */
-  protected function drop_trigger() {
-    return False;
+  protected function drop_trigger()
+  {
+      return false;
   }
-  
+
   /**
    * TODO.
    *
    * keep data job is to go find non consumed events in the pgq queue
    * and insert them again in the main table.
    */
-  protected function keep_data() {
-    if( $this->drop_trigger() ) {
-      return False;
-    }
-    return False;
+  protected function keep_data()
+  {
+      if ($this->drop_trigger()) {
+          return false;
+      }
+
+      return false;
   }
 
   /**
    * Connects to the conw & conp connection strings.
    */
-  public function connect($force = False) { 
-    if( $this->connected && ! $force ) {
-      $this->log->notice("connect called when connected is True");
-      return True;
-    }
+  public function connect($force = false)
+  {
+      if ($this->connected && !$force) {
+          $this->log->notice('connect called when connected is True');
 
-    if( $this->src_constr != "" ) {
-      $this->log->verbose("Opening pg_src connexion '%s'.", $this->src_constr);
-      if($this->connected === NULL) { // при первой попытке форсируем новое соединение. Иначе какие-то срывы, возможно, как-то с fork-ом связано.
+          return true;
+      }
+
+      if ($this->src_constr != '') {
+          $this->log->verbose("Opening pg_src connexion '%s'.", $this->src_constr);
+          if ($this->connected === null) { // при первой попытке форсируем новое соединение. Иначе какие-то срывы, возможно, как-то с fork-ом связано.
           $this->pg_src_con = pg_connect($this->src_constr, PGSQL_CONNECT_FORCE_NEW);
-      } else {
-          $this->pg_src_con = pg_connect($this->src_constr);
-      }
-      if( !$this->pg_src_con ) {
-          $this->log->error("Could not open pg_src connection");
+          } else {
+              $this->pg_src_con = pg_connect($this->src_constr);
+          }
+          if (!$this->pg_src_con) {
+              $this->log->error('Could not open pg_src connection');
           // $this->stop();
-          return False;
-      }
-      pg_query($this->pg_src_con, "SET client_encoding='WIN1251'");
-    }
-    else {
-      $this->log->error("Connexion string is empty, please fix.");
-      return False;
-    }
+          return false;
+          }
+          pg_query($this->pg_src_con, "SET client_encoding='WIN1251'");
+      } else {
+          $this->log->error('Connexion string is empty, please fix.');
 
-    $this->connected = True;
-    return True;
+          return false;
+      }
+
+      $this->connected = true;
+
+      return true;
   }
-	
+
   /**
-   * Disconnect from databases
+   * Disconnect from databases.
    */
-  public function disconnect() {
-    if( ! $this->connected ) {
-      $this->log->notice("disconnect called when $this->connected is False");
-      return;
-    }
-    
-    if( $this->pg_src_con != null && $this->pg_src_con !== False ) {
-      $this->log->verbose("Closing pg_src connection '%s'.",
-			  $this->src_constr);
-      pg_close($this->pg_src_con);
-      $this->pg_src_con = null;
-    }
-    $this->connected = False;
+  public function disconnect()
+  {
+      if (!$this->connected) {
+          $this->log->notice("disconnect called when $this->connected is False");
+
+          return;
+      }
+
+      if ($this->pg_src_con != null && $this->pg_src_con !== false) {
+          $this->log->verbose("Closing pg_src connection '%s'.",
+              $this->src_constr);
+          pg_close($this->pg_src_con);
+          $this->pg_src_con = null;
+      }
+      $this->connected = false;
   }
-	
+
   /**
-   * ROLLBACK ongoing transactions on src & dst connections
+   * ROLLBACK ongoing transactions on src & dst connections.
    */
-  protected function rollback() {
-    if( $this->pg_src_con != null && $this->pg_src_con !== False ) {
-      $this->log->notice("ROLLBACK pg_src connection '%s'.",
-			 $this->src_constr);
-      pg_query($this->pg_src_con, "ROLLBACK;");
-    }
+  protected function rollback()
+  {
+      if ($this->pg_src_con != null && $this->pg_src_con !== false) {
+          $this->log->notice("ROLLBACK pg_src connection '%s'.",
+             $this->src_constr);
+          pg_query($this->pg_src_con, 'ROLLBACK;');
+      }
   }
-	
+
   /**
    * This hook is called when a PHP error at level
    * E_USER_ERROR or E_ERROR is raised.
@@ -671,90 +708,108 @@ abstract class PGQConsumer extends SystemDaemon
    * Those errors are not considered fatal: abort current batch
    * processing, but don't have the PGQConsumer daemon quit.
    */
-  protected function php_error_hook() {
-    $this->rollback();
-  }
-    
-
-  protected function create_queue() {
-    return PGQ::create_queue($this->log, $this->pg_src_con, $this->qname);
-  }		
-
-  protected function drop_queue() {
-    return PGQ::drop_queue($this->log, $this->pg_src_con, $this->qname);
+  protected function php_error_hook()
+  {
+      $this->rollback();
   }
 
-  protected function queue_exists() {
-    return PGQ::queue_exists($this->log, $this->pg_src_con, $this->qname);
-  }
-	
-  protected function register() {			
-    return PGQ::register($this->log, $this->pg_src_con, 
-			 $this->qname, $this->cname);
-  }
-	
-  protected function unregister() {
-    return PGQ::unregister($this->log, $this->pg_src_con, 
-			   $this->qname, $this->cname);
-  }
-	
-  protected function is_registered() {
-    return PGQ::is_registered($this->log, $this->pg_src_con, 
-			      $this->qname, $this->cname);
-  }
+    protected function create_queue()
+    {
+        return PGQ::create_queue($this->log, $this->pg_src_con, $this->qname);
+    }
 
-  protected function get_consumer_info() {
-    return PGQ::get_consumer_info($this->log, $this->pg_src_con, 
-				  $this->qname, $this->cname);
-  }
+    protected function drop_queue()
+    {
+        return PGQ::drop_queue($this->log, $this->pg_src_con, $this->qname);
+    }
 
-  public function get_consumers() {
-    return PGQ::get_consumers($this->log, $this->pg_src_con, $this->qname);
-  }
-	
-  protected function next_batch() {
-    return PGQ::next_batch($this->log, $this->pg_src_con, 
-			   $this->qname, $this->cname);
-  }
+    protected function queue_exists()
+    {
+        return PGQ::queue_exists($this->log, $this->pg_src_con, $this->qname);
+    }
 
-  protected function finish_batch($batch_id) {
-    return PGQ::finish_batch($this->log, $this->pg_src_con, $batch_id);
-  }
+    protected function register()
+    {
+        return PGQ::register($this->log, $this->pg_src_con,
+             $this->qname, $this->cname);
+    }
 
-  protected function get_batch_events($batch_id) {
-    return PGQ::get_batch_events($this->log, $this->pg_src_con, $batch_id);
-  }
-	
-  protected function event_failed($batch_id, $event) {
-    return PGQ::event_failed($this->log, $this->pg_src_con, $batch_id, $event);
-  }
+    protected function unregister()
+    {
+        return PGQ::unregister($this->log, $this->pg_src_con,
+               $this->qname, $this->cname);
+    }
 
-  protected function event_retry($batch_id, $event) {
-    return PGQ::event_retry($this->log, $this->pg_src_con, $batch_id, $event);
-  }
+    protected function is_registered()
+    {
+        return PGQ::is_registered($this->log, $this->pg_src_con,
+                  $this->qname, $this->cname);
+    }
 
-  protected function failed_event_list() {
-    return PGQ::failed_event_list($this->log, $this->pg_src_con,
-				  $this->qname, $this->cname);
-  }
+    protected function get_consumer_info()
+    {
+        return PGQ::get_consumer_info($this->log, $this->pg_src_con,
+                  $this->qname, $this->cname);
+    }
 
-  protected function failed_event_delete_all() {
-    return PGQ::failed_event_delete_all($this->log, $this->pg_src_con,
-					$this->qname, $this->cname);
-  }
+    public function get_consumers()
+    {
+        return PGQ::get_consumers($this->log, $this->pg_src_con, $this->qname);
+    }
 
-  protected function failed_event_delete($event_id) {
-    return PGQ::failed_event_delete($this->log, $this->pg_src_con,
-				    $this->qname, $this->cname, $event_id);
-  }
+    protected function next_batch()
+    {
+        return PGQ::next_batch($this->log, $this->pg_src_con,
+               $this->qname, $this->cname);
+    }
 
-  protected function failed_event_retry_all() {
-    return PGQ::failed_event_retry_all($this->log, $this->pg_src_con,
-				       $this->qname, $this->cname);
-  }
+    protected function finish_batch($batch_id)
+    {
+        return PGQ::finish_batch($this->log, $this->pg_src_con, $batch_id);
+    }
 
-  protected function failed_event_retry($event_id) {
-    return PGQ::failed_event_retry($this->log, $this->pg_src_con,
-				   $this->qname, $this->cname, $event_id);
-  }
+    protected function get_batch_events($batch_id)
+    {
+        return PGQ::get_batch_events($this->log, $this->pg_src_con, $batch_id);
+    }
+
+    protected function event_failed($batch_id, $event)
+    {
+        return PGQ::event_failed($this->log, $this->pg_src_con, $batch_id, $event);
+    }
+
+    protected function event_retry($batch_id, $event)
+    {
+        return PGQ::event_retry($this->log, $this->pg_src_con, $batch_id, $event);
+    }
+
+    protected function failed_event_list()
+    {
+        return PGQ::failed_event_list($this->log, $this->pg_src_con,
+                  $this->qname, $this->cname);
+    }
+
+    protected function failed_event_delete_all()
+    {
+        return PGQ::failed_event_delete_all($this->log, $this->pg_src_con,
+                    $this->qname, $this->cname);
+    }
+
+    protected function failed_event_delete($event_id)
+    {
+        return PGQ::failed_event_delete($this->log, $this->pg_src_con,
+                    $this->qname, $this->cname, $event_id);
+    }
+
+    protected function failed_event_retry_all()
+    {
+        return PGQ::failed_event_retry_all($this->log, $this->pg_src_con,
+                       $this->qname, $this->cname);
+    }
+
+    protected function failed_event_retry($event_id)
+    {
+        return PGQ::failed_event_retry($this->log, $this->pg_src_con,
+                   $this->qname, $this->cname, $event_id);
+    }
 }

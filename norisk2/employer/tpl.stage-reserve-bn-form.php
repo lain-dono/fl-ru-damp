@@ -7,7 +7,8 @@
         </div>
     </div>
     <div class="form-in">
-        <? if($sbr->reserved_id && ($sbr->reqv[sbr::FT_JURI]->payed_time && $sbr->reqv[sbr::FT_JURI]->sbr_id == $sbr->id || $sbr->reqv[sbr::FT_PHYS]->accepted_time && $sbr->reqv[sbr::FT_PHYS]->sbr_id == $sbr_id)) { ?>
+        <?php if ($sbr->reserved_id && ($sbr->reqv[sbr::FT_JURI]->payed_time && $sbr->reqv[sbr::FT_JURI]->sbr_id == $sbr->id || $sbr->reqv[sbr::FT_PHYS]->accepted_time && $sbr->reqv[sbr::FT_PHYS]->sbr_id == $sbr_id)) {
+    ?>
             <div class="form-block first">
                 <div class="form-el">
                     <p>Вы уже зарезервировали деньги.</p>
@@ -23,13 +24,15 @@
                     </div>
                 </div>
             </div>
-        <? } else { ?>
+        <?php 
+} else {
+    ?>
             <div class="form-block first">
                 <div class="form-el">
                     <p>Заполните и проверьте правильность заполнения полей, это важно.</p>
                 </div>
             </div>
-            <?
+            <?php
             /*
             <div class="form-block">
                 <div class="form-el">
@@ -44,8 +47,13 @@
                     <input type="radio" name="form_type" <?=($form_type != sbr::FT_PHYS ? ' disabled="true"' : '')?> value="<?=sbr::FT_PHYS?>" id="ft<?=sbr::FT_PHYS?>" <?=($form_type == sbr::FT_PHYS ? ' checked="true"' : '')?> onclick="SBR.switchReqvFT(<?=sbr::FT_PHYS?>,<?=sbr::FT_JURI?>)" /><label for="ft<?=sbr::FT_PHYS?>"> Физическое лицо</label>
                 </div>
             </div>
-            <div class="form-block form-reserv-params" id="ft<?=sbr::FT_PHYS?>_set"<?=($sbr->user_reqvs['form_type']==sbr::FT_PHYS ? '' : ' style="display:none"')?>>
-                <? $i=0; foreach(sbr_meta::$reqv_fields[sbr::FT_PHYS] as $key=>$field) { if(!$field['bill_bound']) continue; ?>
+            <div class="form-block form-reserv-params" id="ft<?=sbr::FT_PHYS?>_set"<?=($sbr->user_reqvs['form_type'] == sbr::FT_PHYS ? '' : ' style="display:none"')?>>
+                <?php $i = 0;
+    foreach (sbr_meta::$reqv_fields[sbr::FT_PHYS] as $key => $field) {
+        if (!$field['bill_bound']) {
+            continue;
+        }
+        ?>
                     <div class="form-el <?=(($i++ % 2) ? 'odd' : 'even')?>">
                         <label class="form-label3"><?=$field['name']?></label>
                         <span class="form-input">
@@ -54,14 +62,24 @@
                         <div class="tip"></div>
                         <span class="form-hint" style="width:300px;margin:3px 0 0 0"><?=$field['example']?></span>
                     </div>
-                <? } ?>
-                <? if($sbr->reqv[sbr::FT_PHYS]->id) { ?>
+                <?php 
+    }
+    ?>
+                <?php if ($sbr->reqv[sbr::FT_PHYS]->id) {
+    ?>
                    <input type="hidden" name="ft<?=sbr::FT_PHYS?>[id]" value="<?=$sbr->reqv[sbr::FT_PHYS]->id?>" />
-                <? } ?>
+                <?php 
+}
+    ?>
                 <input type="hidden" name="ft<?=sbr::FT_PHYS?>[bank_code]" value="<?=bank_payments::BC_SB?>" />
             </div>
-            <div class="form-block form-reserv-params" id="ft<?=sbr::FT_JURI?>_set"<?=($sbr->user_reqvs['form_type']==sbr::FT_JURI ? '' : ' style="display:none"')?>>
-                <? $i=0; foreach(sbr_meta::$reqv_fields[sbr::FT_JURI] as $key=>$field) { if(!$field['bill_bound']) continue; ?>
+            <div class="form-block form-reserv-params" id="ft<?=sbr::FT_JURI?>_set"<?=($sbr->user_reqvs['form_type'] == sbr::FT_JURI ? '' : ' style="display:none"')?>>
+                <?php $i = 0;
+    foreach (sbr_meta::$reqv_fields[sbr::FT_JURI] as $key => $field) {
+        if (!$field['bill_bound']) {
+            continue;
+        }
+        ?>
                     <div class="form-el <?=(($i++ % 2) ? 'odd' : 'even')?>">
                         <label class="form-label3"><?=$field['name']?></label>
                         <span class="form-input">
@@ -70,10 +88,15 @@
                         <div class="tip"></div>
                         <span class="form-hint" style="width:300px;margin:3px 0 0 0"><?=$field['example']?></span>
                     </div>
-                <? } ?>
-                <? if($sbr->reqv[sbr::FT_JURI]->id) { ?>
+                <?php 
+    }
+    ?>
+                <?php if ($sbr->reqv[sbr::FT_JURI]->id) {
+    ?>
                   <input type="hidden" name="ft<?=sbr::FT_JURI?>[id]" value="<?=$sbr->reqv[sbr::FT_JURI]->id?>" />
-                <? } ?>
+                <?php 
+}
+    ?>
             </div>
             <div class="form-block last">
                 <div class="form-el">
@@ -87,7 +110,8 @@
                     </div>
                 </div>
             </div>
-        <? } ?>
+        <?php 
+} ?>
 
     </div>
     <b class="b2"></b>

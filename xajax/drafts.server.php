@@ -1,23 +1,25 @@
-<?
-$rpath = "../";
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/drafts.common.php");
+<?php
+
+$rpath = '../';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/drafts.common.php';
 
 /**
-* Получить и заполнить форму данными из черновика
+* Получить и заполнить форму данными из черновика.
 *
 * @param    int   $draft_id    ID черновика
 * @param    int   $type        Тип черновика
 */
-function FillDraftForm($draft_id, $type) {
+function FillDraftForm($draft_id, $type)
+{
     $objResponse = new xajaxResponse();
     session_start();
     $uid = get_uid(false);
     $draft_id = intval($draft_id);
-    if($uid) {
-        require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/drafts.php");
-        require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/blogs.php");
-        switch($type) {
+    if ($uid) {
+        require_once $_SERVER['DOCUMENT_ROOT'].'/classes/drafts.php';
+        require_once $_SERVER['DOCUMENT_ROOT'].'/classes/blogs.php';
+        switch ($type) {
             case 1:
                 // Проекты
                 /*$draft = drafts::getDraft($draft_id, $uid, 1);
@@ -92,39 +94,39 @@ function FillDraftForm($draft_id, $type) {
             case 2:
                 // Личка
                 $draft = drafts::getDraft($draft_id, $uid, 2);
-                if($draft) {
-                    $objResponse->assign("draft_id", "value", $draft['id']);
-                    $objResponse->assign("msg", "innerHTML", $draft['msg']);
+                if ($draft) {
+                    $objResponse->assign('draft_id', 'value', $draft['id']);
+                    $objResponse->assign('msg', 'innerHTML', $draft['msg']);
                 }
                 break;
             case 3:
                 // Блоги
                 $draft = drafts::getDraft($draft_id, $uid, 3);
-                if($draft) {
-                    $objResponse->assign("draft_id", "value", $draft['id']);
-                    $objResponse->assign("name", "value", $draft['title']);
-                    $objResponse->assign("msg", "value", $draft['msgtext']);
+                if ($draft) {
+                    $objResponse->assign('draft_id', 'value', $draft['id']);
+                    $objResponse->assign('name', 'value', $draft['title']);
+                    $objResponse->assign('msg', 'value', $draft['msgtext']);
 
-                    if($draft['yt_link']) {
-                        $objResponse->assign("fyt_link", "value", $draft['yt_link']);
+                    if ($draft['yt_link']) {
+                        $objResponse->assign('fyt_link', 'value', $draft['yt_link']);
                         $objResponse->script('$("yt_link").setStyle("display","block");');
                     } else {
-                        $objResponse->assign("fyt_link", "value", '');
+                        $objResponse->assign('fyt_link', 'value', '');
                         $objResponse->script('$("yt_link").setStyle("display","none");');
                     }
-                    if($draft['is_close_comments']=='t' || $draft['is_private']=='t') {
+                    if ($draft['is_close_comments'] == 't' || $draft['is_private'] == 't') {
                         $objResponse->script('$("settings").setStyle("display","block");');
                     } else {
                         $objResponse->script('$("settings").setStyle("display","none");');
                     }
-                    
-                    if($draft['is_close_comments']=='t') { 
+
+                    if ($draft['is_close_comments'] == 't') {
                         $objResponse->script('$("ch_close_comments").set("checked",true);');
                     } else {
                         $objResponse->script('$("ch_close_comments").set("checked",false);');
                     }
-                    
-                    if($draft['is_private']=='t') { 
+
+                    if ($draft['is_private'] == 't') {
                         $objResponse->script('$("ch_is_private").set("checked",true);');
                     } else {
                         $objResponse->script('$("ch_is_private").set("checked",false);');
@@ -133,24 +135,24 @@ function FillDraftForm($draft_id, $type) {
                     $objResponse->script('$("fcategory").set("value","'.$draft['category'].'|0");');
 
                     $answers = preg_split("/\|-\|-\|/", htmlspecialchars($draft['poll_answers']), -1, PREG_SPLIT_NO_EMPTY);
-                    
+
                     $show = TRUE;
-                    if ( empty($answers) ) {
-                        $answers = array( '' );
+                    if (empty($answers)) {
+                        $answers = array('');
                         $show = FALSE;
                     }
-                    
-                    if(!empty($draft['poll_question']) || (count($answers) && $show)) { 
+
+                    if (!empty($draft['poll_question']) || (count($answers) && $show)) {
                         $objResponse->script('$("trpollquestion").setStyle("display", "table-row");');
-                        $objResponse->script('$("trpolltype").setStyle("display", "table-row");');  
+                        $objResponse->script('$("trpolltype").setStyle("display", "table-row");');
                     } else {
                         $objResponse->script('$("trpollquestion").setStyle("display", "none");');
-                        $objResponse->script('$("trpolltype").setStyle("display", "none");');  
+                        $objResponse->script('$("trpolltype").setStyle("display", "none");');
                     }
-                    
-                    $objResponse->assign("poll-question", "value", $draft['poll_question']);
-                    $objResponse->assign("poll-question-source", "value", $draft['poll_question']);
-                    if($draft['poll_type']==0) {
+
+                    $objResponse->assign('poll-question', 'value', $draft['poll_question']);
+                    $objResponse->assign('poll-question-source', 'value', $draft['poll_question']);
+                    if ($draft['poll_type'] == 0) {
                         $objResponse->script('$("fmultiple0").set("checked", true);');
                         $objResponse->script('$("fmultiple1").set("checked", false);');
                     } else {
@@ -158,62 +160,67 @@ function FillDraftForm($draft_id, $type) {
                         $objResponse->script('$("fmultiple1").set("checked", true);');
                     }
 
-                    if(count($answers)) {
+                    if (count($answers)) {
                         $objResponse->script('$$(".poll-line").destroy();');
                         $i = 0;
                         $c = count($answers);
                         $out = '';
-                        $insert_id = "trpolltype";
-                        foreach($answers as $answer) {
-                            $objResponse->insertAfter($insert_id, "tr", "poll-{$i}");
+                        $insert_id = 'trpolltype';
+                        foreach ($answers as $answer) {
+                            $objResponse->insertAfter($insert_id, 'tr', "poll-{$i}");
                             $objResponse->script('$("poll-'.$i.'").set("class", "poll-line");');
                             $objResponse->script('$("poll-'.$i.'").set("valign", "top");');
                             $out = '';
-                            $out .= '<td>Ответ #<span class="poll-num">'.($i+1).'</span></td>';
+                            $out .= '<td>Ответ #<span class="poll-num">'.($i + 1).'</span></td>';
                             $out .= '<td>';
-						    $out .= '<table cellpadding="0" cellspacing="0" border="0">';
-						    $out .= '<tr>';
-							$out .= '<td><input maxlength="'.blogs::MAX_POLL_ANSWER_CHARS.'" class="poll-answer" type="text" value="'.addslashes($answer).'" name="answers[]" tabindex="20'.$i.'"></td>';
-							$out .= '<td class="poll-btn"><a class="poll-del" href="javascript: return false" onclick="poll.del(\'Blogs\', '.$i++.'); return false;"><img src="/images/delpoll.png" width="15" height="15" border="0" alt="Удалить ответ" title="Удалить ответ"></a></td>';
-							$out .= '<td class="poll-btn"><span class="poll-add">&nbsp;</span></td>';
-    						$out .= '</tr>';
-						    $out .= '</table>';
-						    $out .= '</td>';
-                            $objResponse->assign("poll-".($i-1), "innerHTML", $out);
-                            $insert_id = "poll-".($i-1);
+                            $out .= '<table cellpadding="0" cellspacing="0" border="0">';
+                            $out .= '<tr>';
+                            $out .= '<td><input maxlength="'.blogs::MAX_POLL_ANSWER_CHARS.'" class="poll-answer" type="text" value="'.addslashes($answer).'" name="answers[]" tabindex="20'.$i.'"></td>';
+                            $out .= '<td class="poll-btn"><a class="poll-del" href="javascript: return false" onclick="poll.del(\'Blogs\', '.$i++.'); return false;"><img src="/images/delpoll.png" width="15" height="15" border="0" alt="Удалить ответ" title="Удалить ответ"></a></td>';
+                            $out .= '<td class="poll-btn"><span class="poll-add">&nbsp;</span></td>';
+                            $out .= '</tr>';
+                            $out .= '</table>';
+                            $out .= '</td>';
+                            $objResponse->assign('poll-'.($i - 1), 'innerHTML', $out);
+                            $insert_id = 'poll-'.($i - 1);
                         }
                         $objResponse->script("poll.init('Blogs', document.getElementById('frm'), ".blogs::MAX_POLL_ANSWERS.", '');");
-                    } 
-                    
-                    if (!empty($draft['poll_question']) || (count($answers) && $show) ) {
+                    }
+
+                    if (!empty($draft['poll_question']) || (count($answers) && $show)) {
                         $objResponse->script('$("poll-0").setStyle("display", "table-row");');
                     } else {
                         $objResponse->script('$("poll-0").setStyle("display", "none");');
                     }
-
                 }
                 break;
             case 4:
                 // Сообщества
                 $draft = drafts::getDraft($draft_id, $uid, 4);
-                if($draft) {
-                    $objResponse->assign("draft_id", "value", $draft['id']);
+                if ($draft) {
+                    $objResponse->assign('draft_id', 'value', $draft['id']);
                     $objResponse->script('$("f_category_id").set("value", "'.$draft['category'].'");');
-                    $objResponse->assign("f_title", "value", $draft['title']);
-                    $objResponse->assign("msg", "value", $draft['msg']);
-                    $objResponse->script('$each($$("textarea.wysiwyg"), function(el) { if($(el).retrieve("MooEditable")) { if(el.get("id")=="msg") { $(el).retrieve("MooEditable").setContent("'.preg_replace('/"/','\"',preg_replace("/[\r\n]/",'\n',$draft["msg"])).'"); } } });');
-                    if($draft['yt_link']) {
+                    $objResponse->assign('f_title', 'value', $draft['title']);
+                    $objResponse->assign('msg', 'value', $draft['msg']);
+                    $objResponse->script('$each($$("textarea.wysiwyg"), function(el) { if($(el).retrieve("MooEditable")) { if(el.get("id")=="msg") { $(el).retrieve("MooEditable").setContent("'.preg_replace('/"/', '\"', preg_replace("/[\r\n]/", '\n', $draft['msg'])).'"); } } });');
+                    if ($draft['yt_link']) {
                         $objResponse->script('$("yt_box").setStyle("display","block");');
-                        $objResponse->assign("youtube_link", "value", $draft['yt_link']);
+                        $objResponse->assign('youtube_link', 'value', $draft['yt_link']);
                     }
-                    if($draft['close_comments']=='t' || $draft['is_private']=='t') {
+                    if ($draft['close_comments'] == 't' || $draft['is_private'] == 't') {
                         $objResponse->script('$("additional_box").setStyle("display","block");');
-                        if($draft['close_comments']=='t') { $objResponse->script('$("ch_close_comments").set("checked",true);'); }
-                        if($draft['is_private']=='t') { $objResponse->script('$("ch_is_private").set("checked",true);'); }
+                        if ($draft['close_comments'] == 't') {
+                            $objResponse->script('$("ch_close_comments").set("checked",true);');
+                        }
+                        if ($draft['is_private'] == 't') {
+                            $objResponse->script('$("ch_is_private").set("checked",true);');
+                        }
                     }
-                    if($draft['poll_question'] || $draft['poll_answers']) { $objResponse->script('$("pool_box").setStyle("display", "block");'); } 
-                    $objResponse->assign("question", "value", $draft['poll_question']);
-                    if($draft['poll_type']==0) {
+                    if ($draft['poll_question'] || $draft['poll_answers']) {
+                        $objResponse->script('$("pool_box").setStyle("display", "block");');
+                    } 
+                    $objResponse->assign('question', 'value', $draft['poll_question']);
+                    if ($draft['poll_type'] == 0) {
                         $objResponse->script('$("f_multiple0").set("checked", true);');
                         $objResponse->script('$("f_multiple1").set("checked", false);');
                     } else {
@@ -222,15 +229,14 @@ function FillDraftForm($draft_id, $type) {
                     }
                     $answers = preg_split("/\|-\|-\|/", $draft['poll_answers'], -1, PREG_SPLIT_NO_EMPTY);
 
-                    if(count($answers)) {
-
+                    if (count($answers)) {
                         $i = 0;
                         $c = count($answers);
                         $out = '';
-                        foreach($answers as $answer) {
+                        foreach ($answers as $answer) {
                             $out .= '<li class="poll-line" id="poll-'.$i.'">'."\n";
                             $out .= '<span class="btns" >';
-                            if ($i<count($answers)-1) {
+                            if ($i < count($answers) - 1) {
                                 $out .= '<a class="poll-del" href="javascript: return false" onclick="poll.del(\'Commune\', '.$i++.'); return false;">';
                                 $out .= '<img src="/images/btns/btn-remove-s.png" alt=""/>';
                                 $out .= '</a>';
@@ -240,200 +246,204 @@ function FillDraftForm($draft_id, $type) {
                                 $out .= '</a>'."\n";
                             }
                             $out .= '</span>'."\n";
-                            $out .= '<input class="poll-answer" maxlength="'.commune::POLL_ANSWER_CHARS_MAX.'" type="text" value="'.preg_replace("/\"/",'\"',$answer).'" name="answers[]" tabindex="20'.$i.'"/>'."\n";
+                            $out .= '<input class="poll-answer" maxlength="'.commune::POLL_ANSWER_CHARS_MAX.'" type="text" value="'.preg_replace('/"/', '\"', $answer).'" name="answers[]" tabindex="20'.$i.'"/>'."\n";
                             $out .= '</li>'."\n";
                         }
                         $out = $out;
 
-                        $objResponse->assign("poll_ans_home", "innerHTML", $out);
-                        if($draft['post_id']) {
+                        $objResponse->assign('poll_ans_home', 'innerHTML', $out);
+                        if ($draft['post_id']) {
                             $objResponse->script("poll.init('Commune', document.getElementById('idEditCommentForm_{$draft['post_id']}'), 10, '');");
                         } else {
                             $objResponse->script("poll.init('Commune', document.getElementById('editmsg'), 10, '');");
                         }
                     }
-                    
+
                     if (count($answers) || !empty($draft['poll_question'])) {
                         $objResponse->script('$("poll-0").setStyle("display", "table-row");');
                     }
-                    
                 }
                 break;
         }
     }
+
     return $objResponse;
 }
 
 /**
-* Сохранить черновик сообщества
+* Сохранить черновик сообщества.
 *
 * @param    array   $frm    Информация о посте в сообществе
 */
-function SaveDraftCommune($frm) {
+function SaveDraftCommune($frm)
+{
     session_start();
     $uid = get_uid(false);
     $aRes = array();
-    if($uid) {
+    if ($uid) {
         $frm['uid'] = $uid;
-        require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/drafts.php");
+        require_once $_SERVER['DOCUMENT_ROOT'].'/classes/drafts.php';
         $frm['msgtext'] = $frm['msgtext_source'];
         $draft = drafts::SaveCommune($frm);
-        $aRes['html'] = iconv('CP1251', 'UTF-8', "Сообщение сохранено в ".preg_replace("/^.* /","",preg_replace("/:\d{2}$/","",$draft['date'])));
+        $aRes['html'] = iconv('CP1251', 'UTF-8', 'Сообщение сохранено в '.preg_replace('/^.* /', '', preg_replace("/:\d{2}$/", '', $draft['date'])));
         $aRes['id'] = $draft['id'];
         $aRes['success'] = true;
-    }
-    else {
+    } else {
         $aRes['success'] = false;
     }
-    echo json_encode( $aRes );
+    echo json_encode($aRes);
 }
 
 /**
-* Проверяет наличие ранее сохраненных черновиков для сообществ
-*
+* Проверяет наличие ранее сохраненных черновиков для сообществ.
 */
-function CheckDraftsCommune() {
-   $objResponse = new xajaxResponse();
+function CheckDraftsCommune()
+{
+    $objResponse = new xajaxResponse();
     session_start();
     $uid = get_uid(false);
-    if($uid) {
-        require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/drafts.php");
+    if ($uid) {
+        require_once $_SERVER['DOCUMENT_ROOT'].'/classes/drafts.php';
         $count = drafts::CheckCommune($uid);
-        if($count) {
+        if ($count) {
             $objResponse->script('$("draft_div_info").setStyle("display","block")');
             $objResponse->assign('draft_div_info_text', 'innerHTML', 'Не забывайте, у вас в черновиках <a href="/drafts/?p=communes">сохранено '.$count.' '.getSymbolicName($count, 'messages').' в сообществах</a>');
         }
     }
+
     return $objResponse;
 }
 
 /**
-* Сохранить черновик блога
+* Сохранить черновик блога.
 *
 * @param    array   $frm    Информация о после в блоге
 */
-function SaveDraftBlog($frm) {
+function SaveDraftBlog($frm)
+{
     session_start();
     $uid = get_uid(false);
     $aRes = array();
-    if($uid) {
+    if ($uid) {
         $frm['uid'] = $uid;
-        require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/drafts.php");
+        require_once $_SERVER['DOCUMENT_ROOT'].'/classes/drafts.php';
         $draft = drafts::SaveBlog($frm);
-        $aRes['html'] = iconv('CP1251', 'UTF-8', "Текст блога сохранен в  ".preg_replace("/^.* /","",preg_replace("/:\d{2}$/","",$draft['date'])));
+        $aRes['html'] = iconv('CP1251', 'UTF-8', 'Текст блога сохранен в  '.preg_replace('/^.* /', '', preg_replace("/:\d{2}$/", '', $draft['date'])));
         $aRes['id'] = $draft['id'];
         $aRes['success'] = true;
         $drafts = drafts::getCounts($uid);
-        $aRes['count']   = $drafts["blogs"];  
-    }
-    else {
+        $aRes['count'] = $drafts['blogs'];
+    } else {
         $aRes['success'] = false;
     }
-    echo json_encode( $aRes );
+    echo json_encode($aRes);
 }
 
 /**
-* Проверяет наличие ранее сохраненных черновиков для блогов
-*
+* Проверяет наличие ранее сохраненных черновиков для блогов.
 */
-function CheckDraftsBlog() {
-   $objResponse = new xajaxResponse();
+function CheckDraftsBlog()
+{
+    $objResponse = new xajaxResponse();
     session_start();
     $uid = get_uid(false);
-    if($uid) {
-        require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/drafts.php");
+    if ($uid) {
+        require_once $_SERVER['DOCUMENT_ROOT'].'/classes/drafts.php';
         $count = drafts::CheckBlogs($uid);
-        if($count) {
+        if ($count) {
             $objResponse->script('$("draft_div_info").setStyle("display","block")');
             $objResponse->assign('draft_div_info_text', 'innerHTML', 'Не забывайте, у вас в черновиках <a href="/drafts/?p=blogs">'.ending($count, 'сохранен', 'сохранено', 'сохранено').' '.$count.' '.getSymbolicName($count, 'blogs').'</a>');
         }
     }
+
     return $objResponse;
 }
 
 /**
-* Сохнить черновик проекта
+* Сохнить черновик проекта.
 *
 * @param    array   $prj    Информация о проекте
 */
-function SaveDraftProject($prj, $newTemplate = false) {
+function SaveDraftProject($prj, $newTemplate = false)
+{
     session_start();
     $uid = get_uid(false);
-    if($uid) {
+    if ($uid) {
         $prj['uid'] = $uid;
-        require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/drafts.php");
+        require_once $_SERVER['DOCUMENT_ROOT'].'/classes/drafts.php';
         $draft = $newTemplate ? drafts::SaveProjectNew($prj) : drafts::SaveProject($prj);
-        $aRes['html'] = iconv('CP1251', 'UTF-8', "Текст проекта сохранен в  ".preg_replace("/^.* /","",preg_replace("/:\d{2}$/","",$draft['date'])));
+        $aRes['html'] = iconv('CP1251', 'UTF-8', 'Текст проекта сохранен в  '.preg_replace('/^.* /', '', preg_replace("/:\d{2}$/", '', $draft['date'])));
         $aRes['id'] = $draft['id'];
         $aRes['success'] = true;
-    }
-    else {
+    } else {
         $aRes['success'] = false;
     }
-    echo json_encode( $aRes );
+    echo json_encode($aRes);
 }
 
 /**
-* Сохнить черновик личного сообщения
+* Сохнить черновик личного сообщения.
 *
 * @param    array   $msg    Информация о сообщении
 */
-function SaveDraftContacts($msg) {
+function SaveDraftContacts($msg)
+{
     session_start();
     $uid = get_uid(false);
     $aRes = array();
-    if($uid) {
+    if ($uid) {
         $msg['uid'] = $uid;
-        require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/drafts.php");
+        require_once $_SERVER['DOCUMENT_ROOT'].'/classes/drafts.php';
         $draft = drafts::SaveContacts($msg);
-        $aRes['html'] = iconv('CP1251', 'UTF-8', "Текст сообщения сохранен в  ".preg_replace("/^.* /","",preg_replace("/:\d{2}$/","",$draft['date'])));
+        $aRes['html'] = iconv('CP1251', 'UTF-8', 'Текст сообщения сохранен в  '.preg_replace('/^.* /', '', preg_replace("/:\d{2}$/", '', $draft['date'])));
         $aRes['id'] = $draft['id'];
         $aRes['success'] = true;
-    }
-    else {
+    } else {
         $aRes['success'] = false;
     }
-    echo json_encode( $aRes );
+    echo json_encode($aRes);
 }
 
 /**
-* Проверяет наличие ранее сохраненных черновиков для личных сообщений
+* Проверяет наличие ранее сохраненных черновиков для личных сообщений.
 *
 * @param    string  $to_login   Получатель сообщений
 */
-function CheckDraftsContacts($to_login) {
-   $objResponse = new xajaxResponse();
+function CheckDraftsContacts($to_login)
+{
+    $objResponse = new xajaxResponse();
     session_start();
     $uid = get_uid(false);
-    if($uid) {
-        require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/drafts.php");
+    if ($uid) {
+        require_once $_SERVER['DOCUMENT_ROOT'].'/classes/drafts.php';
         $count = drafts::CheckContacts($to_login, $uid);
-        if($count) {
+        if ($count) {
             $objResponse->script('$("draft_div_info").setStyle("display","block")');
             $objResponse->assign('draft_div_info_text', 'innerHTML', 'Не забывайте, у вас в черновиках <a href="/drafts/?p=contacts" class="blue"><strong>сохранено '.$count.' '.getSymbolicName($count, 'messages').'</strong></a> для ['.$to_login.']');
         }
     }
+
     return $objResponse;
 }
 
 /**
-* Проверяет наличие ранее сохраненных черновиков для проектов
-*
+* Проверяет наличие ранее сохраненных черновиков для проектов.
 */
-function CheckDraftsProject($new = false) {
-   $objResponse = new xajaxResponse();
+function CheckDraftsProject($new = false)
+{
+    $objResponse = new xajaxResponse();
     session_start();
     $uid = get_uid(false);
-    if($uid) {
-        require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/drafts.php");
+    if ($uid) {
+        require_once $_SERVER['DOCUMENT_ROOT'].'/classes/drafts.php';
         $count = drafts::CheckProjects($uid);
-        if($count) {
+        if ($count) {
             if ($new) {
                 $showDraftsCount = 3;
                 $moreDraftsCount = $count - $showDraftsCount;
                 $drafts = drafts::getUserDrafts($uid, 1, $showDraftsCount);
                 ob_start();
-                include($_SERVER['DOCUMENT_ROOT'] . "/public/new/tpl.drafts_block.php");
+                include $_SERVER['DOCUMENT_ROOT'].'/public/new/tpl.drafts_block.php';
                 $html = ob_get_clean();
                 //$objResponse->script('$("draft_div_info").setStyle("display","block")');
                 $objResponse->assign('draft_div_info_text', 'innerHTML', $html);
@@ -444,150 +454,157 @@ function CheckDraftsProject($new = false) {
             }
         }
     }
+
     return $objResponse;
 }
 
-
 /**
-* Публикация черновика
+* Публикация черновика.
 *
 * @param    int     $draft_id   ID черновика
 * @param    int     $type       Тип черновика
 * @param    bool    $is_edit    false - публикация нового поста/прокта, true - публикация существующего поста/проекта
 */
-function PostDraft($draft_id, $type, $is_edit=false) {
+function PostDraft($draft_id, $type, $is_edit = false)
+{
     $objResponse = new xajaxResponse();
     session_start();
     $draft_id = intval($draft_id);
     $uid = get_uid(false);
-    if($uid) {
-        require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/drafts.php");
+    if ($uid) {
+        require_once $_SERVER['DOCUMENT_ROOT'].'/classes/drafts.php';
         $draft = drafts::getDraft($draft_id, $uid, $type);
-        if($draft) {
-            switch($type) {
+        if ($draft) {
+            switch ($type) {
                 case 2:
                     // Личка
-                    require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/attachedfiles.php");
+                    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/attachedfiles.php';
                     $attachedfiles = new attachedfiles($attachedfiles_session);
 
                     $attachedfiles_tmpdraft_files = drafts::getAttachedFiles($draft_id, 3);
-                    if($attachedfiles_tmpdraft_files) {
+                    if ($attachedfiles_tmpdraft_files) {
                         $attachedfiles_draft_files = array();
-                        foreach($attachedfiles_tmpdraft_files as $attachedfiles_draft_file) {
+                        foreach ($attachedfiles_tmpdraft_files as $attachedfiles_draft_file) {
                             $attachedfiles_draft_files[] = $attachedfiles_draft_file;
                         }
                         $attachedfiles->setFiles($attachedfiles_draft_files);
                     }
 
-
-
-                    $objResponse->assign("f_attachedfiles_session", "value", $attachedfiles->getSession());
-                    $objResponse->assign("f_msg", "innerHTML", $draft['msg']);
-                    $objResponse->assign("f_msg_to", "value", $draft['to_login']);
-                    $objResponse->assign("f_draft_id", "value", $draft['id']);
-                    $objResponse->assign("f_to_login", "value", $draft['to_login']);
+                    $objResponse->assign('f_attachedfiles_session', 'value', $attachedfiles->getSession());
+                    $objResponse->assign('f_msg', 'innerHTML', $draft['msg']);
+                    $objResponse->assign('f_msg_to', 'value', $draft['to_login']);
+                    $objResponse->assign('f_draft_id', 'value', $draft['id']);
+                    $objResponse->assign('f_to_login', 'value', $draft['to_login']);
                     $objResponse->script("var attrAction = document.createAttribute('action'); attrAction.value='/contacts/?from=".$draft['to_login']."'; $('f_frm').setAttributeNode(attrAction);");
                     $objResponse->script('$("f_frm").submit();');
                     break;
                 case 3:
                     // Блоги
-                    require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/blogs.php");
-                    $objResponse->assign("f_draft_id", "value", $draft['id']);
-                    $objResponse->assign("f_msg", "value", $draft['msgtext']);
-                    $objResponse->assign("f_yt_link", "value", $draft['yt_link']);
-                    if($draft['is_close_comments']=='t') { $objResponse->script('$("f_is_close_comments").set("checked",true);'); }
-                    if($draft['is_private']=='t') { $objResponse->script('$("f_is_private").set("checked",true);'); }
-                    $objResponse->assign("f_category", "value", $draft['category'].'|0');
-                    if($is_edit) {
+                    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/blogs.php';
+                    $objResponse->assign('f_draft_id', 'value', $draft['id']);
+                    $objResponse->assign('f_msg', 'value', $draft['msgtext']);
+                    $objResponse->assign('f_yt_link', 'value', $draft['yt_link']);
+                    if ($draft['is_close_comments'] == 't') {
+                        $objResponse->script('$("f_is_close_comments").set("checked",true);');
+                    }
+                    if ($draft['is_private'] == 't') {
+                        $objResponse->script('$("f_is_private").set("checked",true);');
+                    }
+                    $objResponse->assign('f_category', 'value', $draft['category'].'|0');
+                    if ($is_edit) {
                         $blogmsg = blogs::GetMsgInfo($draft['post_id'], $error, $perm);
-                        $objResponse->assign("f_msg_name", "value", $draft['title']);
-                        $objResponse->assign("f_tr", "value", $blogmsg['thread_id']);
-                        $objResponse->assign("f_olduser", "value", $blogmsg['fromuser_id']);
-                        $objResponse->assign("f_reply", "value", $draft['post_id']);
-                        $objResponse->assign("f_action", "value", 'change');
-                        $objResponse->assign("f_msg_name", "value", $draft['title']);
-                        $objResponse->assign("f_draft_post_id", "value", $draft['post_id']);
+                        $objResponse->assign('f_msg_name', 'value', $draft['title']);
+                        $objResponse->assign('f_tr', 'value', $blogmsg['thread_id']);
+                        $objResponse->assign('f_olduser', 'value', $blogmsg['fromuser_id']);
+                        $objResponse->assign('f_reply', 'value', $draft['post_id']);
+                        $objResponse->assign('f_action', 'value', 'change');
+                        $objResponse->assign('f_msg_name', 'value', $draft['title']);
+                        $objResponse->assign('f_draft_post_id', 'value', $draft['post_id']);
                         $objResponse->script("var attrAction = document.createAttribute('action'); attrAction.value='/blogs/view.php?id=".$draft['post_id']."'; $('f_frm').setAttributeNode(attrAction);");
                     } else {
-                        $objResponse->assign("f_name", "value", $draft['title']);
-                        $objResponse->assign("f_sub_ord", "value", 'new');
-                        $objResponse->assign("f_action", "value", 'new_tr');
+                        $objResponse->assign('f_name', 'value', $draft['title']);
+                        $objResponse->assign('f_sub_ord', 'value', 'new');
+                        $objResponse->assign('f_action', 'value', 'new_tr');
                         $objResponse->script("var attrAction = document.createAttribute('action'); attrAction.value='/blogs/viewgroup.php?gr=".$draft['category']."&ord=new&tr='; $('f_frm').setAttributeNode(attrAction);");
                     }
 
-                    require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/attachedfiles.php");
+                    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/attachedfiles.php';
                     $attachedfiles = new attachedfiles($attachedfiles_session);
 
                     $attachedfiles_tmpdraft_files = drafts::getAttachedFiles($draft_id, 1);
-                    if($attachedfiles_tmpdraft_files) {
+                    if ($attachedfiles_tmpdraft_files) {
                         $attachedfiles_draft_files = array();
-                        foreach($attachedfiles_tmpdraft_files as $attachedfiles_draft_file) {
+                        foreach ($attachedfiles_tmpdraft_files as $attachedfiles_draft_file) {
                             $attachedfiles_draft_files[] = $attachedfiles_draft_file;
                         }
                         $attachedfiles->setFiles($attachedfiles_draft_files, 1);
                     }
-                    $objResponse->assign("f_attachedfiles_session", "value", $attachedfiles->getSession());
+                    $objResponse->assign('f_attachedfiles_session', 'value', $attachedfiles->getSession());
 
-                    $objResponse->assign("f_poll_question", "value", $draft['poll_question']);
-                    $objResponse->assign("f_poll_type", "value", $draft['poll_type']);
+                    $objResponse->assign('f_poll_question', 'value', $draft['poll_question']);
+                    $objResponse->assign('f_poll_type', 'value', $draft['poll_type']);
 
                     $answers = $draft['poll_answers'];
-                    if(count($answers)) {
+                    if (count($answers)) {
                         $out = '';
-                        foreach($answers as $answer) {
+                        foreach ($answers as $answer) {
                             $out .= '<input type="hidden" value="'.htmlspecialchars($answer, ENT_QUOTES).'" name="answers[]" />';
                         }
-                        $objResponse->assign("f_poll_answers", "innerHTML", $out);
+                        $objResponse->assign('f_poll_answers', 'innerHTML', $out);
                     }
 
                     $objResponse->script('$("f_frm").submit();');
                     break;
                 case 4:
                     // Сообщества
-                    $objResponse->assign("f_id", "value", $draft['commune_id']);
-                    $objResponse->assign("f_draft_id", "value", $draft['id']);
-                    $objResponse->assign("f_category_id", "value", intval($draft['category']));
-                    $objResponse->assign("f_title", "value", $draft['title']);
-                    $objResponse->assign("f_msgtext", "value", $draft['msg']);
-                    $objResponse->assign("f_youtube_link", "value", $draft['yt_link']);
-                    if($draft['close_comments']=='t') { $objResponse->script('$("f_close_comments").set("checked",true);'); }
-                    if($draft['is_private']=='t') { $objResponse->script('$("f_is_private").set("checked",true);'); }
-                    if($is_edit) {
-                        $objResponse->assign("f_draft_post_id", "value", $draft['post_id']);
-                        $objResponse->assign("f_top_id", "value", $draft['post_id']);
-                        $objResponse->assign("f_message_id", "value", $draft['post_id']);
-                        $objResponse->assign("f_page", "value", 0);
+                    $objResponse->assign('f_id', 'value', $draft['commune_id']);
+                    $objResponse->assign('f_draft_id', 'value', $draft['id']);
+                    $objResponse->assign('f_category_id', 'value', intval($draft['category']));
+                    $objResponse->assign('f_title', 'value', $draft['title']);
+                    $objResponse->assign('f_msgtext', 'value', $draft['msg']);
+                    $objResponse->assign('f_youtube_link', 'value', $draft['yt_link']);
+                    if ($draft['close_comments'] == 't') {
+                        $objResponse->script('$("f_close_comments").set("checked",true);');
+                    }
+                    if ($draft['is_private'] == 't') {
+                        $objResponse->script('$("f_is_private").set("checked",true);');
+                    }
+                    if ($is_edit) {
+                        $objResponse->assign('f_draft_post_id', 'value', $draft['post_id']);
+                        $objResponse->assign('f_top_id', 'value', $draft['post_id']);
+                        $objResponse->assign('f_message_id', 'value', $draft['post_id']);
+                        $objResponse->assign('f_page', 'value', 0);
                         $objResponse->script("var attrAction = document.createAttribute('action'); attrAction.value='".getFriendlyURL('commune', $draft['post_id'])."'; $('f_frm').setAttributeNode(attrAction);");
-                        $objResponse->assign("f_action", "value", "do.Edit.post");
+                        $objResponse->assign('f_action', 'value', 'do.Edit.post');
                     } else {
                         $objResponse->script("var attrAction = document.createAttribute('action'); attrAction.value='".getFriendlyURL('commune_commune', $draft['commune_id'])."#o'; $('f_frm').setAttributeNode(attrAction);");
-                        $objResponse->assign("f_action", "value", "do.Create.post");
+                        $objResponse->assign('f_action', 'value', 'do.Create.post');
                     }
 
-                    require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/attachedfiles.php");
+                    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/attachedfiles.php';
                     $attachedfiles = new attachedfiles($attachedfiles_session);
-                    if(!$is_edit) {
+                    if (!$is_edit) {
                         $attachedfiles_tmpdraft_files = drafts::getAttachedFiles($draft_id, 2);
-                        if($attachedfiles_tmpdraft_files) {
+                        if ($attachedfiles_tmpdraft_files) {
                             $attachedfiles_draft_files = array();
-                            foreach($attachedfiles_tmpdraft_files as $attachedfiles_draft_file) {
+                            foreach ($attachedfiles_tmpdraft_files as $attachedfiles_draft_file) {
                                 $attachedfiles_draft_files[] = $attachedfiles_draft_file;
                             }
                             $attachedfiles->setFiles($attachedfiles_draft_files, 1);
                         }
                     }
-                    $objResponse->assign("f_attachedfiles_session", "value", $attachedfiles->getSession());
+                    $objResponse->assign('f_attachedfiles_session', 'value', $attachedfiles->getSession());
 
-                    $objResponse->assign("f_poll_question", "value", $draft['poll_question']);
-                    $objResponse->assign("f_poll_type", "value", $draft['poll_type']);
+                    $objResponse->assign('f_poll_question', 'value', $draft['poll_question']);
+                    $objResponse->assign('f_poll_type', 'value', $draft['poll_type']);
 
                     $answers = $draft['poll_answers'];
-                    if(count($answers)) {
+                    if (count($answers)) {
                         $out = '';
-                        foreach($answers as $answer) {
+                        foreach ($answers as $answer) {
                             $out .= '<input type="hidden" value="'.htmlspecialchars($answer, ENT_QUOTES).'" name="answers[]" />';
                         }
-                        $objResponse->assign("f_poll_answers", "innerHTML", $out);
+                        $objResponse->assign('f_poll_answers', 'innerHTML', $out);
                     }
 
                     $objResponse->script('$("f_frm").submit();');
@@ -595,9 +612,9 @@ function PostDraft($draft_id, $type, $is_edit=false) {
             }
         }
     }
+
     return $objResponse;
 }
-
 
 $xajax->processRequest();
 

@@ -1,227 +1,238 @@
 <?php
+
 /*
-	File: xajaxEventPlugin.inc.php
+    File: xajaxEventPlugin.inc.php
 
-	Contains the xajaxEventPlugin class
+    Contains the xajaxEventPlugin class
 
-	Title: xajaxEventPlugin class
+    Title: xajaxEventPlugin class
 
-	Please see <copyright.inc.php> for a detailed description, copyright
-	and license information.
+    Please see <copyright.inc.php> for a detailed description, copyright
+    and license information.
 */
 
 /*
-	@package xajax
-	@version $Id: xajaxEventPlugin.inc.php 362 2007-05-29 15:32:24Z calltoconstruct $
-	@copyright Copyright (c) 2005-2006 by Jared White & J. Max Wilson
-	@license http://www.xajaxproject.org/bsd_license.txt BSD License
+    @package xajax
+    @version $Id: xajaxEventPlugin.inc.php 362 2007-05-29 15:32:24Z calltoconstruct $
+    @copyright Copyright (c) 2005-2006 by Jared White & J. Max Wilson
+    @license http://www.xajaxproject.org/bsd_license.txt BSD License
 */
 
 /*
-	Constant: XAJAX_EVENT
-		Specifies that the item being registered via the <xajax->register> function
-		is an event.
-		
-	Constant: XAJAX_EVENT_HANDLER
-		Specifies that the item being registered via the <xajax->register> function
-		is an event handler.
+    Constant: XAJAX_EVENT
+        Specifies that the item being registered via the <xajax->register> function
+        is an event.
+        
+    Constant: XAJAX_EVENT_HANDLER
+        Specifies that the item being registered via the <xajax->register> function
+        is an event handler.
 */
-if (!defined ('XAJAX_EVENT')) define ('XAJAX_EVENT', 'xajax event');
-if (!defined ('XAJAX_EVENT_HANDLER')) define ('XAJAX_EVENT_HANDLER', 'xajax event handler');
+if (!defined('XAJAX_EVENT')) {
+    define('XAJAX_EVENT', 'xajax event');
+}
+if (!defined('XAJAX_EVENT_HANDLER')) {
+    define('XAJAX_EVENT_HANDLER', 'xajax event handler');
+}
 
 //SkipAIO
-require_once dirname(__FILE__) . '/support/xajaxEvent.inc.php';
+require_once dirname(__FILE__).'/support/xajaxEvent.inc.php';
 //EndSkipAIO
 
 /*
-	Class: xajaxEventPlugin
-	
-	Plugin that adds server side event handling capabilities to xajax.  Events can
-	be registered, then event handlers attached.
+    Class: xajaxEventPlugin
+    
+    Plugin that adds server side event handling capabilities to xajax.  Events can
+    be registered, then event handlers attached.
 */
 class xajaxEventPlugin extends xajaxRequestPlugin
 {
-	/*
-		Array: aEvents
-	*/
-	var $aEvents;
+    /*
+        Array: aEvents
+    */
+    public $aEvents;
 
-	/*
-		String: sXajaxPrefix
-	*/
-	var $sXajaxPrefix;
-	
-	/*
-		String: sEventPrefix
-	*/
-	var $sEventPrefix;
+    /*
+        String: sXajaxPrefix
+    */
+    public $sXajaxPrefix;
 
-	/*
-		String: sDefer
-	*/
-	var $sDefer;
-	
-	var $bDeferScriptGeneration;
+    /*
+        String: sEventPrefix
+    */
+    public $sEventPrefix;
 
-	/*
-		String: sRequestedEvent
-	*/
-	var $sRequestedEvent;
+    /*
+        String: sDefer
+    */
+    public $sDefer;
 
-	/*
-		Function: xajaxEventPlugin
-	*/
-	function xajaxEventPlugin()
-	{
-		$this->aEvents = array();
+    public $bDeferScriptGeneration;
 
-		$this->sXajaxPrefix = 'xajax_';
-		$this->sEventPrefix = 'event_';
-		$this->sDefer = '';
-		$this->bDeferScriptGeneration = false;
+    /*
+        String: sRequestedEvent
+    */
+    public $sRequestedEvent;
 
-		$this->sRequestedEvent = NULL;
+    /*
+        Function: xajaxEventPlugin
+    */
+    public function xajaxEventPlugin()
+    {
+        $this->aEvents = array();
 
-		if (isset($_GET['xjxevt'])) $this->sRequestedEvent = $_GET['xjxevt'];
-		if (isset($_POST['xjxevt'])) $this->sRequestedEvent = $_POST['xjxevt'];
-	}
+        $this->sXajaxPrefix = 'xajax_';
+        $this->sEventPrefix = 'event_';
+        $this->sDefer = '';
+        $this->bDeferScriptGeneration = false;
 
-	/*
-		Function: configure
-	*/
-	function configure($sName, $mValue)
-	{
-		if ('wrapperPrefix' == $sName) {
-			$this->sXajaxPrefix = $mValue;
-		} else if ('eventPrefix' == $sName) {
-			$this->sEventPrefix = $mValue;
-		} else if ('scriptDefferal' == $sName) {
-			if (true === $mValue) $this->sDefer = 'defer ';
-			else $this->sDefer = '';
-		} else if ('deferScriptGeneration' == $sName) {
-			if (true === $mValue || false === $mValue)
-				$this->bDeferScriptGeneration = $mValue;
-			else if ('deferred' === $mValue)
-				$this->bDeferScriptGeneration = $mValue;
-		}
-	}
+        $this->sRequestedEvent = null;
 
-	/*
-		Function: register
+        if (isset($_GET['xjxevt'])) {
+            $this->sRequestedEvent = $_GET['xjxevt'];
+        }
+        if (isset($_POST['xjxevt'])) {
+            $this->sRequestedEvent = $_POST['xjxevt'];
+        }
+    }
 
-		$sType - (string): type of item being registered
-		$sEvent - (string): the name of the event
-		$ufHandler - (function name or reference): a reference to the user function to call
-		$aConfiguration - (array): an array containing configuration options
-	*/
-	function register($aArgs)
-	{
-		if (1 < count($aArgs))
-		{
-			$sType = $aArgs[0];
+    /*
+        Function: configure
+    */
+    public function configure($sName, $mValue)
+    {
+        if ('wrapperPrefix' == $sName) {
+            $this->sXajaxPrefix = $mValue;
+        } elseif ('eventPrefix' == $sName) {
+            $this->sEventPrefix = $mValue;
+        } elseif ('scriptDefferal' == $sName) {
+            if (true === $mValue) {
+                $this->sDefer = 'defer ';
+            } else {
+                $this->sDefer = '';
+            }
+        } elseif ('deferScriptGeneration' == $sName) {
+            if (true === $mValue || false === $mValue) {
+                $this->bDeferScriptGeneration = $mValue;
+            } elseif ('deferred' === $mValue) {
+                $this->bDeferScriptGeneration = $mValue;
+            }
+        }
+    }
 
-			if (XAJAX_EVENT == $sType)
-			{
-				$sEvent = $aArgs[1];
+    /*
+        Function: register
 
-				if (false === isset($this->aEvents[$sEvent]))
-				{
-					$xe = new xajaxEvent($sEvent);
+        $sType - (string): type of item being registered
+        $sEvent - (string): the name of the event
+        $ufHandler - (function name or reference): a reference to the user function to call
+        $aConfiguration - (array): an array containing configuration options
+    */
+    public function register($aArgs)
+    {
+        if (1 < count($aArgs)) {
+            $sType = $aArgs[0];
 
-					if (2 < count($aArgs))
-						if (is_array($aArgs[2]))
-							foreach ($aArgs[2] as $sKey => $sValue)
-								$xe->configure($sKey, $sValue);
+            if (XAJAX_EVENT == $sType) {
+                $sEvent = $aArgs[1];
 
-					$this->aEvents[$sEvent] = $xe;
+                if (false === isset($this->aEvents[$sEvent])) {
+                    $xe = new xajaxEvent($sEvent);
 
-					return $xe->generateRequest($this->sXajaxPrefix, $this->sEventPrefix);
-				}
-			}
+                    if (2 < count($aArgs)) {
+                        if (is_array($aArgs[2])) {
+                            foreach ($aArgs[2] as $sKey => $sValue) {
+                                $xe->configure($sKey, $sValue);
+                            }
+                        }
+                    }
 
-			if (XAJAX_EVENT_HANDLER == $sType)
-			{
-				$sEvent = $aArgs[1];
+                    $this->aEvents[$sEvent] = $xe;
 
-				if (isset($this->aEvents[$sEvent]))
-				{
-					if (isset($aArgs[2]))
-					{
-						$xuf = $aArgs[2];
+                    return $xe->generateRequest($this->sXajaxPrefix, $this->sEventPrefix);
+                }
+            }
 
-						if (false === is_a($xuf, 'xajaxUserFunction'))
-							$xuf = new xajaxUserFunction($xuf);
+            if (XAJAX_EVENT_HANDLER == $sType) {
+                $sEvent = $aArgs[1];
 
-						$objEvent = $this->aEvents[$sEvent];
-						$objEvent->addHandler($xuf);
+                if (isset($this->aEvents[$sEvent])) {
+                    if (isset($aArgs[2])) {
+                        $xuf = $aArgs[2];
 
-						return true;
-					}
-				}
-			}
-		}
+                        if (false === is_a($xuf, 'xajaxUserFunction')) {
+                            $xuf = new xajaxUserFunction($xuf);
+                        }
 
-		return false;
-	}
+                        $objEvent = $this->aEvents[$sEvent];
+                        $objEvent->addHandler($xuf);
 
-	/*
-		Function: generateClientScript
-	*/
-	function generateClientScript()
-	{
-		if (false === $this->bDeferScriptGeneration || 'deferred' === $this->bDeferScriptGeneration)
-		{
-			if (0 < count($this->aEvents))
-			{
-				echo "\n<script type='text/javascript' ";
-				echo $this->sDefer;
-				echo "charset='UTF-8'>\n";
-				echo "/* <![CDATA[ */\n";
+                        return true;
+                    }
+                }
+            }
+        }
 
-				foreach (array_keys($this->aEvents) as $sKey)
-					$this->aEvents[$sKey]->generateClientScript($this->sXajaxPrefix, $this->sEventPrefix);
+        return false;
+    }
 
-				echo "/* ]]> */\n";
-				echo "</script>\n";
-			}
-		}
-	}
+    /*
+        Function: generateClientScript
+    */
+    public function generateClientScript()
+    {
+        if (false === $this->bDeferScriptGeneration || 'deferred' === $this->bDeferScriptGeneration) {
+            if (0 < count($this->aEvents)) {
+                echo "\n<script type='text/javascript' ";
+                echo $this->sDefer;
+                echo "charset='UTF-8'>\n";
+                echo "/* <![CDATA[ */\n";
 
-	/*
-		Function: canProcessRequest
-	*/
-	function canProcessRequest()
-	{
-		if (NULL == $this->sRequestedEvent)
-			return false;
+                foreach (array_keys($this->aEvents) as $sKey) {
+                    $this->aEvents[$sKey]->generateClientScript($this->sXajaxPrefix, $this->sEventPrefix);
+                }
 
-		return true;
-	}
+                echo "/* ]]> */\n";
+                echo "</script>\n";
+            }
+        }
+    }
 
-	/*
-		Function: processRequest
-	*/
-	function processRequest()
-	{
-		if (NULL == $this->sRequestedEvent)
-			return false;
+    /*
+        Function: canProcessRequest
+    */
+    public function canProcessRequest()
+    {
+        if (null == $this->sRequestedEvent) {
+            return false;
+        }
 
-		$objArgumentManager = xajaxArgumentManager::getInstance();
-		$aArgs = $objArgumentManager->process();
+        return true;
+    }
 
-		foreach (array_keys($this->aEvents) as $sKey)
-		{
-			$objEvent = $this->aEvents[$sKey];
+    /*
+        Function: processRequest
+    */
+    public function processRequest()
+    {
+        if (null == $this->sRequestedEvent) {
+            return false;
+        }
 
-			if ($objEvent->getName() == $this->sRequestedEvent)
-			{
-				$objEvent->fire($aArgs);
-				return true;
-			}
-		}
+        $objArgumentManager = xajaxArgumentManager::getInstance();
+        $aArgs = $objArgumentManager->process();
 
-		return 'Invalid event request received; no event was registered with this name.';
-	}
+        foreach (array_keys($this->aEvents) as $sKey) {
+            $objEvent = $this->aEvents[$sKey];
+
+            if ($objEvent->getName() == $this->sRequestedEvent) {
+                $objEvent->fire($aArgs);
+
+                return true;
+            }
+        }
+
+        return 'Invalid event request received; no event was registered with this name.';
+    }
 }
 
 $objPluginManager = xajaxPluginManager::getInstance();

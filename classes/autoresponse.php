@@ -1,19 +1,19 @@
 <?php
-require_once ABS_PATH."/classes/freelancer.php";
-require_once ABS_PATH."/classes/projects.php";
-require_once ABS_PATH . "/classes/projects_offers.php";
+
+require_once ABS_PATH.'/classes/freelancer.php';
+require_once ABS_PATH.'/classes/projects.php';
+require_once ABS_PATH.'/classes/projects_offers.php';
 
 /**
-* Класс модель для работы с автоответами на проекты
-*/
-
+ * Класс модель для работы с автоответами на проекты.
+ */
 class autoresponse
 {
-    static $table = 'autoresponse';
-    static $db = null;
+    public static $table = 'autoresponse';
+    public static $db = null;
 
     // Настройки
-    static $config = array(
+    public static $config = array(
         'price' => 10, // цена за один автоответ (руб.)
         'default_quantity' => 10, // количество автоответов по умолчанию для заказа
     );
@@ -36,8 +36,8 @@ class autoresponse
     }
 
     /**
-    * Активация текущего автоответа
-    */
+     * Активация текущего автоответа.
+     */
     public function activate()
     {
         $res = false;
@@ -52,16 +52,16 @@ class autoresponse
     }
 
     /**
-    * Уменьшаем количество автоответов на единицу и записываем в лог добавление автоответа
-    */
+     * Уменьшаем количество автоответов на единицу и записываем в лог добавление автоответа.
+     */
     public function reduce($user, $offer, $project_id)
     {
         global $DB;
         $res = false;
 
         if (isset($this->data['id']) && $this->data['id']) {
-            $sql = sprintf("INSERT INTO autoresponse_log (user_id, autoresponse_id, project_id, offer_id) 
-                    VALUES (%d, %d, %d, %d)",
+            $sql = sprintf('INSERT INTO autoresponse_log (user_id, autoresponse_id, project_id, offer_id) 
+                    VALUES (%d, %d, %d, %d)',
                     $user->uid, $this->data['id'], $project_id, $offer->offer_id
             );
             $res = $DB->query($sql);
@@ -74,19 +74,21 @@ class autoresponse
 
         return $res;
     }
-    
+
     /**
-     * Увеличиваем количество автоответов на единицу
+     * Увеличиваем количество автоответов на единицу.
      * 
      * @global type $DB
+     *
      * @param type $id ИД автоответов
+     *
      * @return bool TRUE, если успешно
-     */    
+     */
     public function increase($id)
     {
         global $DB;
         $res = false;
-        
+
         if ($id > 0) {
             $sql = 'UPDATE autoresponse SET remained = remained + 1 WHERE id = ?i';
             $res = $DB->query($sql, $id);
@@ -94,21 +96,23 @@ class autoresponse
 
         return $res;
     }
-    
+
     /**
-     * Уменьщает количество автоответов для всех предложений проекта
+     * Уменьщает количество автоответов для всех предложений проекта.
+     *
      * @param type $project_id
+     *
      * @return type
      */
     public function reduceByProject($project_id)
     {
         $projects_offers = new projects_offers();
         $offers = $projects_offers->getPrjOffersLite($project_id);
-        
+
         if (!is_array($offers) || !count($offers)) {
             return;
         }
-        
+
         $user = new freelancer();
         foreach ($offers as $offer) {
             if ($offer['auto'] > 0) {
@@ -116,13 +120,15 @@ class autoresponse
                 $user->uid = $offer['user_id'];
                 $projects_offers->offer_id = $offer['id'];
                 $this->reduce($user, $projects_offers, $project_id);
-            } 
+            }
         }
     }
-    
+
     /**
-     * Увеличивает количество автоответов для всех предложений проекта
+     * Увеличивает количество автоответов для всех предложений проекта.
+     *
      * @param type $project_id
+     *
      * @return type
      */
     public function increaseByProject($project_id)
@@ -133,24 +139,25 @@ class autoresponse
         if (!is_array($offers) || !count($offers)) {
             return;
         }
-        
+
         foreach ($offers as $offer) {
             if ($offer['auto'] > 0) {
                 $this->increase($offer['auto']);
-            } 
+            }
         }
     }
-    
+
     /**
-    * Создание нового автоответа на проект
-    * @param array $data Массив с параметрами для создания автоответа
-    */
-    static function create($data)
+     * Создание нового автоответа на проект.
+     *
+     * @param array $data Массив с параметрами для создания автоответа
+     */
+    public static function create($data)
     {
         global $DB;
         $table = self::$table;
         $autoresponse = null;
-        
+
         $price = intval($data['total']) * self::$config['price'];
 
         $sql = "INSERT INTO $table 
@@ -160,10 +167,10 @@ class autoresponse
             VALUES (?i, ?, ?, ?i, ?i, ?i, ?i, ?i, ?i, ?i, ?i, ?);
             SELECT currval('autoresponse_id_seq');
         ";
-        $id = $DB->val($sql, 
-            $data['user_id'], 
+        $id = $DB->val($sql,
+            $data['user_id'],
             $data['descr'],
-            isset($data['only_4_cust']) && $data['only_4_cust']?'t':'f', 
+            isset($data['only_4_cust']) && $data['only_4_cust'] ? 't' : 'f',
             intval($data['filter_budget']),
             intval($data['filter_budget_currency']),
             intval($data['filter_budget_priceby']),
@@ -172,44 +179,46 @@ class autoresponse
             $price,
             intval($data['total']),
             intval($data['total']),
-            $data['is_pro']?'t':'f'
+            $data['is_pro'] ? 't' : 'f'
         );
 
         if (!$DB->error && $id) {
             $data['id'] = $id;
             $data['price'] = $price;
-            $autoresponse = new autoresponse($data);
-        }
-
-        return $autoresponse;        
-    }
-
-    /**
-    * Извлечение одного автоответа
-    *
-    * @param int $id Идентификатор автоответа
-    * @return Object autoresponse
-    */
-    static function get($id)
-    {
-        $autoresponse = null;
-
-        $table = self::$table;
-
-        if ($row = self::$db->row("SELECT * FROM {$table} WHERE id=? ", $id)) {
-            $autoresponse = new autoresponse($row);
+            $autoresponse = new self($data);
         }
 
         return $autoresponse;
     }
 
     /**
-    * Извлечение купленых автоответов для пользователя
-    *
-    * @param int $user_id Идентификатор пользователя
-    * @return array(autoresponse a1, ... autoresponse an)|array()
-    */
-    static function findForUser($user_id)
+     * Извлечение одного автоответа.
+     *
+     * @param int $id Идентификатор автоответа
+     *
+     * @return Object autoresponse
+     */
+    public static function get($id)
+    {
+        $autoresponse = null;
+
+        $table = self::$table;
+
+        if ($row = self::$db->row("SELECT * FROM {$table} WHERE id=? ", $id)) {
+            $autoresponse = new self($row);
+        }
+
+        return $autoresponse;
+    }
+
+    /**
+     * Извлечение купленых автоответов для пользователя.
+     *
+     * @param int $user_id Идентификатор пользователя
+     *
+     * @return array(autoresponse a1, ... autoresponse an)|array()
+     */
+    public static function findForUser($user_id)
     {
         $list = array();
 
@@ -221,19 +230,21 @@ class autoresponse
             );
 
             foreach ($rows as $row) {
-                $list[] = new autoresponse($row);
+                $list[] = new self($row);
             }
         }
+
         return $list;
     }
 
     /**
-    * Извлечение автоответов которые соответсвуют критериям проекта
-    *
-    * @param project $project Проект (объект класса project)
-    * @return array (autoresponse a1, autoresponse a2, ... autoresponse a1)
-    */
-    static function getListForProject($project)
+     * Извлечение автоответов которые соответсвуют критериям проекта.
+     *
+     * @param project $project Проект (объект класса project)
+     *
+     * @return array (autoresponse a1, autoresponse a2, ... autoresponse a1)
+     */
+    public static function getListForProject($project)
     {
         global $DB;
         $list = array();
@@ -245,10 +256,10 @@ class autoresponse
             if ($sql_spec) {
                 $sql_spec .= ' OR ';
             }
-            $sql_spec .= sprintf(" 
+            $sql_spec .= sprintf(' 
                 (filter_category_id = %d AND filter_subcategory_id = %d) 
                 OR 
-                (filter_category_id = %d AND filter_subcategory_id = 0)",
+                (filter_category_id = %d AND filter_subcategory_id = 0)',
                 $spec['category_id'], $spec['subcategory_id'], $spec['category_id']
             );
         }
@@ -262,7 +273,7 @@ class autoresponse
                             (filter_budget <= %d AND filter_budget_currency = %d AND filter_budget_priceby = %d)
                     )
                     AND ($sql_spec) 
-                ORDER BY user_id, post_date", 
+                ORDER BY user_id, post_date",
                 intval($project['cost']), $project['currency'], $project['priceby']
         );
 
@@ -279,27 +290,27 @@ class autoresponse
                 $data['contacts_freelancer'] = array(
                     'phone' => array(
                         'name' => 'Телефон',
-                        'value' => $freelancer->phone
+                        'value' => $freelancer->phone,
                     ),
                     'site' => array(
                         'name' => 'Сайт',
-                        'value' => $freelancer->site
+                        'value' => $freelancer->site,
                     ),
                     'icq' => array(
                         'name' => 'ICQ',
-                        'value' => $freelancer->icq
+                        'value' => $freelancer->icq,
                     ),
                     'skype' => array(
                         'name' => 'Skype',
-                        'value' => $freelancer->skype
+                        'value' => $freelancer->skype,
                     ),
                     'email' => array(
                         'name' => 'E-mail',
-                        'value' => $freelancer->second_email
-                    )
+                        'value' => $freelancer->second_email,
+                    ),
                 );
 
-                $list[] = new autoresponse($data);
+                $list[] = new self($data);
             }
         }
 

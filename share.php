@@ -1,17 +1,17 @@
-<?
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-$title = urldecode( __paramInit('string', 'title') );
-$login = urldecode( __paramInit('string', 'login') );
-$name  = urldecode( __paramInit('string', 'name') );
-$img   = urldecode( __paramInit('string', 'img') );
-$gr_name  = urldecode( __paramInit('string', 'gr_name') );
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+$title = urldecode(__paramInit('string', 'title'));
+$login = urldecode(__paramInit('string', 'login'));
+$name = urldecode(__paramInit('string', 'name'));
+$img = urldecode(__paramInit('string', 'img'));
+$gr_name = urldecode(__paramInit('string', 'gr_name'));
 //$id    = __paramInit( 'int', 'id' );
-$from  = __paramInit( 'string', 'from' );
+$from = __paramInit('string', 'from');
 $id = $_GET['id'];
-if(is_array($id)) {
-   $id = array_map("intval", $id);
+if (is_array($id)) {
+    $id = array_map('intval', $id);
 } else {
-   $id = intval($id);
+    $id = intval($id);
 }
 ?>
 <!DOCTYPE HTML>
@@ -23,6 +23,6 @@ if(is_array($id)) {
 	</style>
     </head>
     <body>
-        <?= SocialButtonsSrc( $id, $title, $img, $from, $login, $name, $gr_name ) ?>
+        <?= SocialButtonsSrc($id, $title, $img, $from, $login, $name, $gr_name) ?>
     </body>
 </html>

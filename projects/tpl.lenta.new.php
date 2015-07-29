@@ -1,12 +1,12 @@
-<script type="text/javascript">var openedProjects=new Array();var isPrjCssOpened=<?=($isPrjOpened? 'true' : 'false')?>;</script>
+<script type="text/javascript">var openedProjects=new Array();var isPrjCssOpened=<?=($isPrjOpened ? 'true' : 'false')?>;</script>
 
 <?php 
-$can_change_prj = hasPermissions("projects");
+$can_change_prj = hasPermissions('projects');
 
-if($can_change_prj) {
-	$quickEditPoputType = 1;
-    require_once($_SERVER['DOCUMENT_ROOT'].'/projects/tpl.prj-quickedit.php');
-?>
+if ($can_change_prj) {
+    $quickEditPoputType = 1;
+    require_once $_SERVER['DOCUMENT_ROOT'].'/projects/tpl.prj-quickedit.php';
+    ?>
 
 <div id="popup_budget" class="b-shadow b-shadow_inline-block b-shadow_width_335 b-shadow_center b-shadow_zindex_3 b-shadow_hide">
 	<div class="b-shadow__right">
@@ -64,25 +64,35 @@ if($can_change_prj) {
 	</div>
 </div>
 
-<?php } //if ?>
+<?php 
+} //if ?>
 
 
-<?php foreach ($list as $row) { ?>
-	<?php $project = projects::initData($row); ?>
-	<? if ($row['t_is_ontop'] && !$row['strong_top'] && isset($_COOKIE['hidetopprjlenta']) && $_COOKIE['hidetopprjlenta']==1 && $_COOKIE['hidetopprjlenta_time']<strtotime($row['create_date'])) { $hidetopprjlenta_more = 1; } ?>
-	<div class="b-post <?= $row['is_color'] == 't' ? 'b-post_bg_fffded' : '' ?> b-post_padbot_15 b-post_margbot_20 b-post_bordbot_eee b-post_relative <?=($row['t_is_ontop'] && !$row['strong_top']) ? 'topprjpay' : '' ?>" id="project-item<?= $row['id'] ?>" <?=($row['t_is_ontop'] && !$row['strong_top'] && isset($_COOKIE['hidetopprjlenta']) && $_COOKIE['hidetopprjlenta']==1 && $_COOKIE['hidetopprjlenta_time']>strtotime($row['create_date'])) ? 'style="display: none;"' : '' ?>>
-	<?php require($_SERVER['DOCUMENT_ROOT'].'/projects/tpl.lenta-item.php'); ?>
+<?php foreach ($list as $row) {
+    ?>
+	<?php $project = projects::initData($row);
+    ?>
+	<?php if ($row['t_is_ontop'] && !$row['strong_top'] && isset($_COOKIE['hidetopprjlenta']) && $_COOKIE['hidetopprjlenta'] == 1 && $_COOKIE['hidetopprjlenta_time'] < strtotime($row['create_date'])) {
+    $hidetopprjlenta_more = 1;
+}
+    ?>
+	<div class="b-post <?= $row['is_color'] == 't' ? 'b-post_bg_fffded' : '' ?> b-post_padbot_15 b-post_margbot_20 b-post_bordbot_eee b-post_relative <?=($row['t_is_ontop'] && !$row['strong_top']) ? 'topprjpay' : '' ?>" id="project-item<?= $row['id'] ?>" <?=($row['t_is_ontop'] && !$row['strong_top'] && isset($_COOKIE['hidetopprjlenta']) && $_COOKIE['hidetopprjlenta'] == 1 && $_COOKIE['hidetopprjlenta_time'] > strtotime($row['create_date'])) ? 'style="display: none;"' : '' ?>>
+	<?php require $_SERVER['DOCUMENT_ROOT'].'/projects/tpl.lenta-item.php';
+    ?>
 	</div>
-<?php } ?>
+<?php 
+} ?>
 
-<? if (empty($list)) { ?>
+<?php if (empty($list)) {
+    ?>
     <div class="b-post b-post_padtop_60">
         <h4 class="b-post__h4 b-post__h4_padbot_5 b-post__h4_center"><?= $kind == 2 || $kind == 7 ? 'Конкурсов' : ($kind == 4 ? 'Вакансий' : 'Проектов') ?> не найдено</h4>
         <div class="b-post__txt b-post__txt_center">Попробуйте изменить параметры фильтра</div>
     </div>
-<? } ?>
+<?php 
+} ?>
 
-<?php if(!$this->hide_rss): ?>
+<?php if (!$this->hide_rss) : ?>
 <div class="b-rss b-rss_padbot_15">
     <script type="text/javascript">
         var RSS_LINK = '/rss/<?= $rss_link ?>';
@@ -112,6 +122,6 @@ if($can_change_prj) {
 
 </div>
 <?php endif; ?>
-<?php if(!$this->hide_paginator): ?>
-    <?= new_paginator2($this->page, $this->pages, array(3, $this->filter ? 1 : 3), "%s?".urldecode(url('page'.($kind==2 || $kind==8 ? '' : ',kind'), array('page' => '%d', 'kind' => $kind)))."%s", true) ?> 
+<?php if (!$this->hide_paginator): ?>
+    <?= new_paginator2($this->page, $this->pages, array(3, $this->filter ? 1 : 3), '%s?'.urldecode(url('page'.($kind == 2 || $kind == 8 ? '' : ',kind'), array('page' => '%d', 'kind' => $kind))).'%s', true) ?> 
 <?php endif; ?>

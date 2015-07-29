@@ -1,7 +1,10 @@
-<?  
-  if(!hasGroupPermissions('administrator') && $_SESSION['login']!='sll') { header('Location: /404.php'); exit; }
+<?php  
+  if (!hasGroupPermissions('administrator') && $_SESSION['login'] != 'sll') {
+      header('Location: /404.php');
+      exit;
+  }
   $scl = new stat_collector(TRUE);
-  switch($_GET['step']) {
+  switch ($_GET['step']) {
     case 'all': $scl->Run(); break;
     case 1: $scl->Step1(); break;
     case 2: $scl->Step2(); break;
@@ -11,8 +14,8 @@
     case 6: $scl->Step6(); break;
     case 'crStatLog': $scl->tmp__crStatLog(); break;
   }
-  
-  switch ( $_GET['words_step'] ) {
+
+  switch ($_GET['words_step']) {
       case 'all': $scl->wordsStatRun(); break;
       case 1: $scl->wordsStatStep1(); break;
       case 2: $scl->wordsStatStep2(); break;
@@ -53,7 +56,7 @@
     </tr>
     <tr>
         <td>
-        <pre style="color:blue;padding:20px"><? $scl=NULL; ?></pre>
+        <pre style="color:blue;padding:20px"><?php $scl = NULL; ?></pre>
         </td>
     </tr>
   </table>

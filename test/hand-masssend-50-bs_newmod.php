@@ -1,6 +1,6 @@
 <?php
 /**
- * Уведомление у которых еще не было никогда про, даже тестового
+ * Уведомление у которых еще не было никогда про, даже тестового.
  * */
 ini_set('max_execution_time', '0');
 ini_set('memory_limit', '512M');
@@ -10,7 +10,7 @@ require_once '../classes/memBuff.php';
 require_once '../classes/smtp2.php';
 require_once '../classes/users.php';
 
-/**
+/*
  * Логин пользователя от кого осуществляется рассылка
  * 
  */
@@ -26,30 +26,29 @@ if ($_GET['test'] == 1) {
     $sql = "SELECT u.uid, u.email, u.login, u.uname, u.usurname, u.subscr, usk.key AS ukey FROM users AS u LEFT JOIN users_subscribe_keys AS usk ON usk.uid = u.uid WHERE login IN ('land_f', 'land_e2', 'bolvan')"; // TEST!!
 }
 
-
 if ($_GET['to'] != null) {
     $sql = "SELECT u.uid, u.email, u.login, u.uname, u.usurname, u.subscr, usk.key AS ukey FROM users AS u LEFT JOIN users_subscribe_keys AS usk ON usk.uid = u.uid WHERE email = '{$_GET['to']}'"; // TEST!!
 }
 
 $eHost = $GLOBALS['host'];
 
-$eSubject = "Безопасная Сделка: теперь еще лучше";
+$eSubject = 'Безопасная Сделка: теперь еще лучше';
 
-$mail = new smtp2;
+$mail = new smtp2();
 
-$img1  = $mail->cid();
-$img2  = $mail->cid();
-$img3  = $mail->cid();
-$img4  = $mail->cid();
-$img5  = $mail->cid();
-$img6  = $mail->cid();
+$img1 = $mail->cid();
+$img2 = $mail->cid();
+$img3 = $mail->cid();
+$img4 = $mail->cid();
+$img5 = $mail->cid();
+$img6 = $mail->cid();
 
-$mail->attach(ABS_PATH . '/images/letter/160720131.png', $img1);
-$mail->attach(ABS_PATH . '/images/letter/170720131.gif', $img2);
-$mail->attach(ABS_PATH . '/images/letter/160720133.png', $img3);
-$mail->attach(ABS_PATH . '/images/letter/160720134.png', $img4);
-$mail->attach(ABS_PATH . '/images/letter/160720135.png', $img5);
-$mail->attach(ABS_PATH . '/images/letter/160720136.png', $img6);
+$mail->attach(ABS_PATH.'/images/letter/160720131.png', $img1);
+$mail->attach(ABS_PATH.'/images/letter/170720131.gif', $img2);
+$mail->attach(ABS_PATH.'/images/letter/160720133.png', $img3);
+$mail->attach(ABS_PATH.'/images/letter/160720134.png', $img4);
+$mail->attach(ABS_PATH.'/images/letter/160720135.png', $img5);
+$mail->attach(ABS_PATH.'/images/letter/160720136.png', $img6);
 
 ob_start(); ?><html>
 <head>
@@ -244,14 +243,14 @@ ob_start(); ?><html>
 </tbody></table>
 
 </body>
-</html><? $eMessage = ob_get_clean();
+</html><?php $eMessage = ob_get_clean();
 // ----------------------------------------------------------------------------------------------------------------
 // -- Рассылка ----------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------------
 $DB = new DB('master');
 $cnt = 0;
 
-$sender = $DB->row("SELECT * FROM users WHERE login = ?", $sender);
+$sender = $DB->row('SELECT * FROM users WHERE login = ?', $sender);
 if (empty($sender)) {
     die("Unknown Sender\n");
 }
@@ -269,19 +268,19 @@ $i = 0;
 $mail->recipient = array();
 $res = $DB->query($sql);
 while ($row = pg_fetch_assoc($res)) {
-    if ( strlen($row['ukey']) == 0 ) {
+    if (strlen($row['ukey']) == 0) {
         $row['ukey'] = users :: writeUnsubscribeKey($row['uid']);
     }
     $mail->recipient[] = array(
         'email' => "{$row['uname']} {$row['usurname']} [{$row['login']}] <{$row['email']}>",
-        'extra' => array('USER_LOGIN' => $row['login'], 'UID' => $row['uid'], 'UNSUBSCRIBE_KEY' => $row["ukey"])
+        'extra' => array('USER_LOGIN' => $row['login'], 'UID' => $row['uid'], 'UNSUBSCRIBE_KEY' => $row['ukey']),
     );
     if (++$i >= 30000) {
         $mail->bind($spamid);
         $mail->recipient = array();
         $i = 0;
     }
-    $cnt++;
+    ++$cnt;
 }
 if ($i) {
     $mail->bind($spamid);

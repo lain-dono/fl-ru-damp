@@ -1,34 +1,39 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
-if(!hasPermissions('adm') && hasPermissions('masssending')) {
-  exit;
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
+if (!hasPermissions('adm') && hasPermissions('masssending')) {
+    exit;
 }
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/masssending.common.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/masssending.common.php';
 $xajax->printJavascript('/xajax/');
 
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/classes/stop_words.php' );
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stop_words.php';
 
-$stop_words = new stop_words( true );
+$stop_words = new stop_words(true);
 
-  if(!($pss = masssending::Get(NULL,$om, ($page-1)*$per_page, $per_page)))
-    $pss=array();
+  if (!($pss = masssending::Get(null, $om, ($page - 1) * $per_page, $per_page))) {
+      $pss = array();
+  }
 
-  $newCnt      = masssending::GetCount(masssending::OM_NEW);
+  $newCnt = masssending::GetCount(masssending::OM_NEW);
   $acceptedCnt = masssending::GetCount(masssending::OM_ACCEPTED);
-  $deniedCnt   = masssending::GetCount(masssending::OM_DENIED);
+  $deniedCnt = masssending::GetCount(masssending::OM_DENIED);
 
   $pages = 1;
-  if ($om==masssending::OM_NEW) {
-    $pages = ceil($newCnt/$per_page);
+  if ($om == masssending::OM_NEW) {
+      $pages = ceil($newCnt / $per_page);
+  } elseif ($om == masssending::OM_ACCEPTED) {
+      $pages = ceil($acceptedCnt / $per_page);
+  } elseif ($om == masssending::OM_DENIED) {
+      $pages = ceil($deniedCnt / $per_page);
   }
-  else if ($om==masssending::OM_ACCEPTED) {
-    $pages = ceil($acceptedCnt/$per_page);  
+
+  function chel($num)
+  {
+      return('человек'.((($num % 100 >= 11 && $num % 100 <= 14) || $num % 10 > 4 || !($num % 10) || $num % 10 == 1) ? '' : 'а'));
   }
-  else if ($om==masssending::OM_DENIED) {
-    $pages = ceil($deniedCnt/$per_page);  
-  }
-  
-  function chel($num){return('человек'.((($num%100>=11&&$num%100<=14)||$num%10>4||!($num%10)||$num%10==1)?'':'а'));}
 /*
   function __prntUsrInfo(
    $user,
@@ -78,34 +83,38 @@ function masssendingSave() {
 </style>
 
 
-<? if ($_GET['result']=='success') { ?>
+<?php if ($_GET['result'] == 'success') {
+    ?>
   <div>
     <img src="/images/ico_ok.gif" alt="" border="0" height="18" width="19"/>&nbsp;&nbsp;Готово!
     <br/>
     <br/>
   </div>
-<? } ?>
-<? if ($masssending->error) { ?>
+<?php 
+} ?>
+<?php if ($masssending->error) {
+    ?>
   <div>
     <?=view_error($masssending->error)?>
     <br/>
     <br/>
   </div>
-<? } ?>
+<?php 
+} ?>
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
   <tr valign="top">
     <td>
       <table border="0" cellspacing="0" cellpadding="4">
         <tr>
-          <td class="bm<?=($om==masssending::OM_NEW?'-active':'')?>">
+          <td class="bm<?=($om == masssending::OM_NEW ? '-active' : '')?>">
             <a href="?om=<?=masssending::OM_NEW?>">Новые</a>&nbsp;<span class="bm-num"><?=$newCnt?></span>
           </td>
           <td style="width:5px">&nbsp;</td>
-          <td class="bm<?=($om==masssending::OM_ACCEPTED?'-active':'')?>">
+          <td class="bm<?=($om == masssending::OM_ACCEPTED ? '-active' : '')?>">
             <a href="?om=<?=masssending::OM_ACCEPTED?>">Разрешенные</a>&nbsp;<span class="bm-num"><?=$acceptedCnt?></span>
           </td>
           <td style="width:5px">&nbsp;</td>
-          <td class="bm<?=($om==masssending::OM_DENIED?'-active':'')?>">
+          <td class="bm<?=($om == masssending::OM_DENIED ? '-active' : '')?>">
             <a href="?om=<?=masssending::OM_DENIED?>">Отказанные</a>&nbsp;<span class="bm-num"><?=$deniedCnt?></span>
           </td>
         </tr>
@@ -117,12 +126,12 @@ function masssendingSave() {
           <div align="left">Цена за человека</div>
           <div style="margin-top:10px">
             <label for="idNoPro">без <img src="/images/icons/f-pro.png" class="pro"></label>
-            <input id="idNoPro" type="text" name="no_pro" value="<?=preg_replace('/\.00$/','',$tariff['no_pro'])?>" style="width:40px;text-align:right;padding-right:3px" />
+            <input id="idNoPro" type="text" name="no_pro" value="<?=preg_replace('/\.00$/', '', $tariff['no_pro'])?>" style="width:40px;text-align:right;padding-right:3px" />
             руб.
           </div>
           <div style="margin-top:2px">
             <label for="idPro">с <img src="/images/icons/f-pro.png" class="pro"></label>
-            <input id="idPro" type="text" name="pro" value="<?=preg_replace('/\.00$/','',$tariff['pro'])?>" style="width:40px;text-align:right;padding-right:3px" />
+            <input id="idPro" type="text" name="pro" value="<?=preg_replace('/\.00$/', '', $tariff['pro'])?>" style="width:40px;text-align:right;padding-right:3px" />
             руб.
           </div>
           <div style="margin:10px 15px 0 0">
@@ -137,29 +146,32 @@ function masssendingSave() {
 </table>
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
   <col style="width:10px" />
-  <? foreach($pss as $ps) { ?>
+  <?php foreach ($pss as $ps) {
+    ?>
     <tr valign="top">
       <td>
         <a name="mass_<?=$ps['id']?>"></a>
         <?=view_avatar($ps['user_login'], $ps['user_photo'])?>
       </td>
       <td style="padding:0 0 0 10px">
-        <?=__prntUsrInfo($ps, 'user_').'&nbsp;&nbsp;'.dateFormat("[d.m.Y | H:i]", $ps['posted_time'])?>
+        <?=__prntUsrInfo($ps, 'user_').'&nbsp;&nbsp;'.dateFormat('[d.m.Y | H:i]', $ps['posted_time'])?>
         <div id="mass_txt_<?=$ps['id']?>" style="padding-top:5px">
-          <?php $msg_text = !$om && $ps['user_is_pro'] != 't' ? $stop_words->replace( $ps['msgtext'] ) : $ps['msgtext']; ?>
-          <?=reformat($msg_text,30,0,0,1);?>
+          <?php $msg_text = !$om && $ps['user_is_pro'] != 't' ? $stop_words->replace($ps['msgtext']) : $ps['msgtext'];
+    ?>
+          <?=reformat($msg_text, 30, 0, 0, 1);
+    ?>
         </div>
 		<div style="margin-top: 10px">
-		<?
+		<?php
 		if (!empty($ps['files'])) {
-			$fl = '<div class="attachments attachments-p">';
-			foreach ($ps['files'] as $file) {
-				$fl .= '<div class = "flw_offer_attach">'.viewattachLeft( null, $file['fname'], $file['path'], $file, 0, 0, 0, 0, 0, 0, $nn )."</div>";
-			}
-      $fl .= '</div>';
-			echo "<b>Файлы:</b></br>" . $fl;
+		    $fl = '<div class="attachments attachments-p">';
+		    foreach ($ps['files'] as $file) {
+		        $fl .= '<div class = "flw_offer_attach">'.viewattachLeft(null, $file['fname'], $file['path'], $file, 0, 0, 0, 0, 0, 0, $nn).'</div>';
+		    }
+		    $fl .= '</div>';
+		    echo '<b>Файлы:</b></br>'.$fl;
 		}
-		?>
+    ?>
 		</div>
       </td>
     </tr>
@@ -170,26 +182,28 @@ function masssendingSave() {
           <tr valign="middle">
             <td  style="padding:15px 0 15px 0;width:160px;background:#f0f0f0;font-size:18px; text-align:center">
               <span>Сумма:</span>
-              <span style="color:#6bb24b"><?=preg_replace('/\.00$/','',round($ps['pre_sum'],2))?>&nbsp;руб.</span>
+              <span style="color:#6bb24b"><?=preg_replace('/\.00$/', '', round($ps['pre_sum'], 2))?>&nbsp;руб.</span>
               <div style="padding-top:2px"><?=$ps['all_count'].'&nbsp;'.chel($ps['all_count'])?></div>
             </td>
             <td style="width:12px">&nbsp;</td>
             <td style="padding:5px 5px 8px 10px;background:#f0f0f0">
               <div style="padding-bottom:5px"><b>Рассылка в разделы:</b></div>
               <ul style="margin:0;padding-left:15px">
-                <?
-                  if($ps['prof_names'] && ($prof_names = explode(',', $ps['prof_names']))) {
-                    foreach($prof_names as $name)
-                      print("<li>{$name}</li>");
+                <?php
+                  if ($ps['prof_names'] && ($prof_names = explode(',', $ps['prof_names']))) {
+                      foreach ($prof_names as $name) {
+                          print("<li>{$name}</li>");
+                      }
+                  } else {
+                      print('<li>Все разделы</li>');
                   }
-                  else
-                    print("<li>Все разделы</li>");
-                ?>
+    ?>
               </ul>
             </td>
           </tr>
         </table>
-        <? if($om==masssending::OM_NEW) { ?>
+        <?php if ($om == masssending::OM_NEW) {
+    ?>
           <form action="/siteadmin/masssending/" method="post">
 		  <input type="hidden" id="status-<?=$ps['id']?>" name="status" value="123">
             <table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:30px">
@@ -217,10 +231,16 @@ function masssendingSave() {
             <input name="id" type="hidden" value="<?=$ps['id']?>"/>
             <input name="action" type="hidden" value="Decide"/>
           </form>
-        <? } else if($om==masssending::OM_DENIED && $ps['denied_reason']) { ?>
+        <?php 
+} else {
+    if ($om == masssending::OM_DENIED && $ps['denied_reason']) {
+        ?>
           <div style="margin:25px 0 2px 0"><b>Причина отказа:</b></div>
-          <div><?=reformat2($ps['denied_reason'],30,0,1)?></div>
-        <? } ?>
+          <div><?=reformat2($ps['denied_reason'], 30, 0, 1)?></div>
+        <?php 
+    }
+}
+    ?>
       </td>
     </tr>
     <tr valign="top">
@@ -229,14 +249,15 @@ function masssendingSave() {
     <tr valign="top">
       <td colspan="2" style="padding-top:30px">&nbsp;</td>
     </tr>
-  <? } ?>
+  <?php 
+} ?>
 </table>
 
 <?php
-  if ( $pages > 1 ) {
-      $sHref = e_url( 'page', null );
-      $sHref = e_url( 'page', '', $sHref );    
-      echo get_pager2( $pages, $page, $sHref );
+  if ($pages > 1) {
+      $sHref = e_url('page', null);
+      $sHref = e_url('page', '', $sHref);
+      echo get_pager2($pages, $page, $sHref);
   }
 ?>
 

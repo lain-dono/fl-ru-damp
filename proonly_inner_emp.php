@@ -1,9 +1,9 @@
-<?
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/employer.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/projects_offers_answers.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/op_codes.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/rating.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/professions.php");
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/employer.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/projects_offers_answers.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/op_codes.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/rating.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/professions.php';
 global $session;
 session_start();
 
@@ -14,16 +14,15 @@ $tr_id = intval($_REQUEST['transaction_id']);
 $user = new employer();
 
 $user->GetUser($_SESSION['login']);
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/account.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/account.php';
 $account = new account();
 $ok = $account->GetInfo($uid, true);
 $transaction_id = $account->start_transaction($uid, $tr_id);
 
-
 ?>
 
 <script type="text/javascript">
-    var account_sum = <?= round($account->sum,2) ?>;
+    var account_sum = <?= round($account->sum, 2) ?>;
 
     function changeMonthPro(x) {
         mpro = $('month_pro').get('html')-0;
@@ -51,28 +50,30 @@ $transaction_id = $account->start_transaction($uid, $tr_id);
             		<input type="hidden" name="transaction_id" value="<?=$transaction_id?>">
             		<input type="hidden" name="action" value="buy">
                     <h3 class="b-layout__h3">Покупка <a class="b-layout__link" href="/payed-emp/"><span class="b-icon b-icon__pro b-icon__pro_e b-icon_top_3" alt="Платный аккаунт" title="Платный аккаунт"></span></a> аккаунта:</h3>
-                    <? if($_SESSION['pro_last']): ?>
-                    <?
+                    <?php if ($_SESSION['pro_last']): ?>
+                    <?php
                     $last_time = $_SESSION['pro_last'];
-                    if(floor((strtotime($last_time)-time())/(60*60*24)) > 0) {
-                        $last_ending = floor((strtotime($last_time)-time())/(60*60*24));
+                    if (floor((strtotime($last_time) - time()) / (60 * 60 * 24)) > 0) {
+                        $last_ending = floor((strtotime($last_time) - time()) / (60 * 60 * 24));
                         $last_string1 = 'день';
                         $last_string2 = 'дня';
                         $last_string3 = 'дней';
-                    } else if (floor((strtotime($last_time)-time())/(60*60)) > 0) {
-                        $last_ending = floor((strtotime($last_time)-time())/(60*60));
-                        $last_string1 = 'час';
-                        $last_string2 = 'часа';
-                        $last_string3 = 'часов';
                     } else {
-                        $last_ending = floor((strtotime($last_time)-time())/(60));
-                        $last_string1 = 'минута';
-                        $last_string2 = 'минуты';
-                        $last_string3 = 'минут';
+                        if (floor((strtotime($last_time) - time()) / (60 * 60)) > 0) {
+                            $last_ending = floor((strtotime($last_time) - time()) / (60 * 60));
+                            $last_string1 = 'час';
+                            $last_string2 = 'часа';
+                            $last_string3 = 'часов';
+                        } else {
+                            $last_ending = floor((strtotime($last_time) - time()) / (60));
+                            $last_string1 = 'минута';
+                            $last_string2 = 'минуты';
+                            $last_string3 = 'минут';
+                        }
                     }
                     ?>
                     <div class="b-layout__txt b-layout__txt_padbot_10">Ваш <a class="b-layout__link" href="/payed-emp/"><span class="b-icon b-icon__pro b-icon__pro_e b-icon_top_3" alt="Платный аккаунт" title="Платный аккаунт"></span></a> аккаунт истекает через <?=$last_ending?> <?=ending($last_ending, $last_string1, $last_string2, $last_string3)?></div>
-                    <? endif; ?>
+                    <?php endif; ?>
                     <table class="buy-pro-tbl">
     					<tbody>
                             <tr class="first">

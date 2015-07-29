@@ -8,14 +8,18 @@
 $smail->subject = "Отзыв в заказе «{$order['title']}»";
 
 $title = reformat(htmlspecialchars($order['title']), 30, 0, 1);
-$order_url = $GLOBALS['host'] . tservices_helper::getOrderCardUrl($order['id']);
+$order_url = $GLOBALS['host'].tservices_helper::getOrderCardUrl($order['id']);
 $frl_feedback = reformat(htmlspecialchars($order['frl_feedback']), 30);
 $frl_is_good = ($order['frl_rating'] > 0);
-$feedback_url = $GLOBALS['host'] . "/users/{$order['employer']['login']}/opinions/";
+$feedback_url = $GLOBALS['host']."/users/{$order['employer']['login']}/opinions/";
 
 ?>
 По результатам сотрудничества в заказе &laquo;<a href="<?=$order_url?>"><?=$title?></a>&raquo; 
-исполнитель оставил вам <?php if($frl_is_good){ ?>положительный<?php }else{ ?>отрицательный<?php } ?> отзыв:
+исполнитель оставил вам <?php if ($frl_is_good) {
+    ?>положительный<?php 
+} else {
+    ?>отрицательный<?php 
+} ?> отзыв:
 
 <i><?=$frl_feedback?></i>
 

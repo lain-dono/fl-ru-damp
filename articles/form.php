@@ -1,6 +1,6 @@
 <?php
-if ( hasPermissions('articles') ) {
-    require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/uploader/uploader.php");
+if (hasPermissions('articles')) {
+    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/uploader/uploader.php';
     $templates = array(
         uploader::getTemplate('uploader', 'wysiwyg/'),
         uploader::getTemplate('uploader.file', 'wysiwyg/'),
@@ -16,8 +16,8 @@ if ( hasPermissions('articles') ) {
             articlesFileInput(el);
         });
         <?php
-        if ( hasPermissions('articles') ) {
-        ?>CKEDITOR.config.customConfig = '/scripts/ckedit/config_admin.js';<?php 
+        if (hasPermissions('articles')) {
+            ?>CKEDITOR.config.customConfig = '/scripts/ckedit/config_admin.js';<?php 
         }
         ?>
         CKEDITOR.replace('msgtext', {

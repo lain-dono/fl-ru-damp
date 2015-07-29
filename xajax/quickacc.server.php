@@ -4,15 +4,15 @@
  * @todo: Более не используется погашение задолженности
  *        оставил если вдруг внезапно вернемся
  */
-
-$rpath = "../";
-require_once ($_SERVER['DOCUMENT_ROOT'] . "/xajax/quickacc.common.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/billing.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/yandex_kassa.php");
+$rpath = '../';
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/quickacc.common.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/billing.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/yandex_kassa.php';
 
 session_start();
 
-function quickACCGetYandexKassaLink($sum, $payment) {
+function quickACCGetYandexKassaLink($sum, $payment)
+{
     $objResponse = new xajaxResponse();
 
     /*
@@ -50,7 +50,7 @@ function quickACCGetYandexKassaLink($sum, $payment) {
     $objResponse->script('$("quick_acc_div_wait").set("html", \''.$html_form.'\');');
     $objResponse->script("$('quick_acc_div_wait').getElements('form')[0].submit();");
     */
-    
+
     return $objResponse;
 }
 

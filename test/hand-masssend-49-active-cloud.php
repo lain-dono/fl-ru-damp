@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Уведомление работодателям
+ * Уведомление работодателям.
  * */
 ini_set('max_execution_time', '0');
 ini_set('memory_limit', '512M');
@@ -9,21 +10,21 @@ require_once '../classes/stdf.php';
 require_once '../classes/memBuff.php';
 require_once '../classes/smtp.php';
 require_once '../classes/users.php';
-/**
+/*
  * Логин пользователя от кого осуществляется рассылка
  * 
  */
 $sender = 'admin';
 
-if ( defined('HTTP_PREFIX') ) {
-    $pHttp = str_replace("://", "", HTTP_PREFIX); // Введено с учетом того планируется включение HTTPS на серверах (для писем в ЛС)
+if (defined('HTTP_PREFIX')) {
+    $pHttp = str_replace('://', '', HTTP_PREFIX); // Введено с учетом того планируется включение HTTPS на серверах (для писем в ЛС)
 } else {
     $pHttp = 'http';
 }
-$pHost = str_replace("$pHttp://", "", $GLOBALS['host']);
+$pHost = str_replace("$pHttp://", '', $GLOBALS['host']);
 $eHost = $GLOBALS['host'];
 
-$eSubject = "Кому скидки от ActiveCloud?";
+$eSubject = 'Кому скидки от ActiveCloud?';
 $eMessage = "<p>Здравствуйте!</p>
 <p>Мы объявляем о начале партнерства с компанией ActiveCloud, ведущим облачным хостинг-провайдером. В честь этого события ActiveCloud дарит всем пользователям сайта Free-lance.ru скидку на хостинг в размере 40% и скидку на Облачный сервер в размере 10%.</p>
 <p>Немного о компании: ActiveCloud предоставляет надежный хостинг и профессиональные облачные решения начиная с 2003 года для более чем 25 000 своих клиентов в РФ и пяти других государствах СНГ. ActiveCloud входит в группу Softline – ведущую международную компанию, специализирующуюся на лицензировании ПО и оказывающую широкий спектр различных IT-услуг.</p>
@@ -49,15 +50,17 @@ $sql = "SELECT u.uid, email, login, uname, usurname, usk.key AS ukey
 // ----------------------------------------------------------------------------------------------------------------
 // -- Рассылка ----------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------------
-$M  = new DB('master');
+$M = new DB('master');
 $cnt = 0;
 
-$mail = new smtp;
+$mail = new smtp();
 $mail->subject = $eSubject;  // заголовок письма
 $mail->message = $eMessage; // текст письма
 $mail->recipient = ''; // свойство 'получатель' оставляем пустым
 $spamid = $mail->send('text/html');
-if (!$spamid) die('Failed!');
+if (!$spamid) {
+    die('Failed!');
+}
 // с этого момента рассылка создана, но еще никому не отправлена!
 
 $mail->recipient = array();
@@ -65,24 +68,24 @@ $i = 0;
 //Отправить сообщения
 while ($rows = $M->rows($sql, $i)) {
     $pm_users = array();
-	foreach ($rows as $row) {
-		unset( $csv_users[ $row["fromuser_id"] ] );
-	    if ( strlen($row['ukey']) == 0 ) {
-	        $row['ukey'] = users::writeUnsubscribeKey($row["uid"]);
-	    }
-	    if ( is_email($row['email']) ) {
-	        $mail->recipient[] = array(
-	            'email' => $row['email'],
-	            'extra' => array('first_name' => $row['uname'], 'last_name' => $row['usurname'], 'UNSUBSCRIBE_KEY' => $row['ukey'])
-	        );
-	   
-	        $mail->bind($spamid);
-	         $mail->recipient = array();
-	   
-	        $cnt++;
-	    }
-	    $pm_users[] = $row["uid"];
-	    $i++;
-	}
+    foreach ($rows as $row) {
+        unset($csv_users[ $row['fromuser_id'] ]);
+        if (strlen($row['ukey']) == 0) {
+            $row['ukey'] = users::writeUnsubscribeKey($row['uid']);
+        }
+        if (is_email($row['email'])) {
+            $mail->recipient[] = array(
+                'email' => $row['email'],
+                'extra' => array('first_name' => $row['uname'], 'last_name' => $row['usurname'], 'UNSUBSCRIBE_KEY' => $row['ukey']),
+            );
+
+            $mail->bind($spamid);
+            $mail->recipient = array();
+
+            ++$cnt;
+        }
+        $pm_users[] = $row['uid'];
+        ++$i;
+    }
 }
 echo "OK. Total: {$cnt} users\n";

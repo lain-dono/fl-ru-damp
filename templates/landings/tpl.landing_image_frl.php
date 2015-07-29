@@ -15,7 +15,7 @@
        
        <div class="b-layout b-layout_padleft_20 b-layout_padright_20 b-layout__txt_center b-layout_margbot_20">
            <div class="b-layout b-layout_inline-block b-layout_width_575 b-layout_pad_20 b-layout_overflow_hidden b-layout_width_auto_iphone">
-               <?php if(is_pro()): ?>
+               <?php if (is_pro()): ?>
                     <a href="/projects/" class="b-layout__title b-layout__title_color_fff">
                         Посмотреть предложения о работе
                     </a>

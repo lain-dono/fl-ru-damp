@@ -1,7 +1,9 @@
-<?php namespace UniversalAnalytics\Track;
+<?php
 
-class SocialInteraction extends Entity {
+namespace UniversalAnalytics\Track;
 
+class SocialInteraction extends Entity
+{
     protected $shortName = 'social';
 
     protected $attributes = array(
@@ -23,5 +25,4 @@ class SocialInteraction extends Entity {
         'sn',
         'st',
     );
-
 }

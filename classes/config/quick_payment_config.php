@@ -1,4 +1,5 @@
 <?php
+
 // Логины на бое, которым доступна Яндекс.Касса
 $allowed_logins = array(
     'fl-test',
@@ -8,5 +9,5 @@ $allowed_logins = array(
     'testuser5',
     'testuser13',
     'danyamaster',
-    'danyamaster2'
+    'danyamaster2',
 );

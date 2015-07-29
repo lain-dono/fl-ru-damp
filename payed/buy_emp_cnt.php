@@ -1,5 +1,5 @@
-<?
-	require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/employer.php");
+<?php
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/employer.php';
 	$user = new employer();
 	$user->GetUser($_SESSION['login']);
 ?>
@@ -10,7 +10,8 @@
 }
 </style>
 <h1>Услуги</h1>
-<? if ($profs) { ?>
+<?php if ($profs) {
+    ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="19">
 <tr valign="top">
 	<td height="400" valign="top" bgcolor="#FFFFFF" class="box2" style="color: #333333;">
@@ -28,7 +29,9 @@
 	</td>
 </tr>
 </table>
-<? } else { ?>
+<?php 
+} else {
+    ?>
 <table width="100%" border="0" cellspacing="0" cellpadding="19">
 <tr valign="top">
 	<td height="400" valign="top" bgcolor="#FFFFFF" class="box2" style="color: #333333;">
@@ -41,4 +44,5 @@
 	</td>
 </tr>
 </table>
-<? } ?>
+<?php 
+} ?>

@@ -1,7 +1,7 @@
 <?php 
-include_once("act.portfolio.php"); // Файл для обработки логики
+include_once 'act.portfolio.php'; // Файл для обработки логики
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/users.common.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/users.common.php';
 $xajax->printJavascript('/xajax/');
 ?>
 
@@ -10,36 +10,50 @@ $xajax->printJavascript('/xajax/');
     <input type="hidden" name="action" value="serv_change" />
     <input type="hidden" name="prjid" value="" />
     
-    <?php if ($error_serv) { ?>
+    <?php if ($error_serv) {
+    ?>
     <div class="b-fon b-fon_width_full b-fon_padbot_17">
         <div class="b-fon__body b-fon__body_pad_10 b-fon__body_padleft_35 b-fon__body_fontsize_13 b-fon__body_bg_ffeeeb">
-            <span class="b-icon b-icon_sbr_rattent b-icon_margleft_-25"></span><?= $error_serv; ?>
+            <span class="b-icon b-icon_sbr_rattent b-icon_margleft_-25"></span><?= $error_serv;
+    ?>
         </div>
     </div>
-    <?php } ?>
-    <?php if ($info_serv) { ?>
+    <?php 
+} ?>
+    <?php if ($info_serv) {
+    ?>
     <div class="b-fon b-fon_width_full b-fon_padbot_17">
         <div class="b-fon__body b-fon__body_pad_10 b-fon__body_padleft_35 b-fon__body_fontsize_13 b-fon__body_bg_f0ffdf b-fon__body_bordbot_dfedcf">
-            <span class="b-icon b-icon_sbr_gok b-icon_margleft_-25"></span><?= $info_serv; ?>
+            <span class="b-icon b-icon_sbr_gok b-icon_margleft_-25"></span><?= $info_serv;
+    ?>
         </div>
     </div>
-    <?php } ?>
+    <?php 
+} ?>
     <div class="b-layout__txt b-layout__txt_float_right b-page__desktop"><img src="/images/ico_setup.gif" alt="" width="6" height="9" />&nbsp;&nbsp;<a class="b-layout__link b-layout__link_fontsize_11 b-layout__link_color_0f71c8" href="/users/<?= $user->login ?>/setup/portfsetup/">Изменить разделы</a></div>
     
     <div class="b-select b-select_inline-block b-select_padbot_20">
         <label class="b-select__label" for="b-select__select">Выберите название закладки:</label>
         <select id="tab_name_id" class="b-select__select  b-select__select_inline-block b-select__select_width_110" name="tab_name_id">
-          <option value="0"<? if ($frm_serv_val['tab_name_id'] == 0) { ?> selected='selected'<? } ?>>Портфолио</option>
-          <option value="1"<? if ($frm_serv_val['tab_name_id'] == 1) { ?> selected='selected'<? } ?>>Услуги</option>
+          <option value="0"<?php if ($frm_serv_val['tab_name_id'] == 0) {
+    ?> selected='selected'<?php 
+} ?>>Портфолио</option>
+          <option value="1"<?php if ($frm_serv_val['tab_name_id'] == 1) {
+    ?> selected='selected'<?php 
+} ?>>Услуги</option>
         </select>
     </div>
     <div class="b-layout__txt b-layout__txt_padbot_20 b-page__ipad b-page__iphone"><img src="/images/ico_setup.gif" alt="" width="6" height="9" />&nbsp;&nbsp;<a class="b-layout__link b-layout__link_fontsize_11" href="/users/<?= $user->login ?>/setup/portfsetup/">Изменить разделы</a></div>
     <div class="b-layout__txt b-layout__txt_padbot_15 b-layout__txt_fontsize_11"><a class="b-layout__link b-layout__link_fontsize_11 b-layout__link_color_0f71c8" href="/users/<?= $user->login ?>/setup/specsetup/" id="ap11">Специализация</a>:&nbsp;&nbsp;<?= professions::GetProfNameWP($user->spec, ' / ', 'Нет специализации') ?></div>
-    <? if(!is_pro()) { ?>
+    <?php if (!is_pro()) {
+    ?>
     <div class="b-layout__txt b-layout__txt_padbot_15 b-layout__txt_fontsize_11">Чтобы увеличить количество специализаций и получить дополнительные возможности, рекомендуем приобрести аккаунт <?= view_pro(false, false, true, 'владельцев платного аккаунта')?></div>
-    <? } else { ?>
+    <?php 
+} else {
+    ?>
     <div class="b-layout__txt b-layout__txt_padbot_15 b-layout__txt_fontsize_11"><a class="b-layout__link b-layout__link_fontsize_11 b-layout__link_color_0f71c8" href="/users/<?= $user->login ?>/setup/specaddsetup/" id="ap11">Дополнительные специализации</a>:&nbsp;&nbsp;<?= $specs_add_string ?></div>
-    <? } ?>
+    <?php 
+} ?>
   <div class="b-check b-check_padbot_20">
      <table class="b-layout__table b-layout__table_width_full">
         <tr class="b-layout__tr">
@@ -71,9 +85,9 @@ $xajax->printJavascript('/xajax/');
         <td class="b-layout__td b-layout__td_width_140 b-layout__td_padbot_10 b-layout__td_right b-layout__td_left_ipad b-layout__td_padright_35">
            <div class="b-select  b-select_margright_5 b-select_inline-block">
               <select  class="b-select__select b-select__select_width_50" name="cost_type_hour" id="cost_type_hour">
-                  <option value="0" <?= ($frm_serv_val['cost_type_hour'] == 0 ? "selected='selected'" : "") ?> >USD</option>
-                  <option value="1" <?= ($frm_serv_val['cost_type_hour'] == 1 ? "selected='selected'" : "") ?>>Euro</option>
-                  <option value="2" <?= ($frm_serv_val['cost_type_hour'] == 2 ? "selected='selected'" : "") ?>>Руб</option>
+                  <option value="0" <?= ($frm_serv_val['cost_type_hour'] == 0 ? "selected='selected'" : '') ?> >USD</option>
+                  <option value="1" <?= ($frm_serv_val['cost_type_hour'] == 1 ? "selected='selected'" : '') ?>>Euro</option>
+                  <option value="2" <?= ($frm_serv_val['cost_type_hour'] == 2 ? "selected='selected'" : '') ?>>Руб</option>
               </select>
            </div>
            <div class="b-input b-input_width_60 b-input_inline-block">
@@ -91,9 +105,9 @@ $xajax->printJavascript('/xajax/');
         <td class="b-layout__td b-layout__td_width_140 b-layout__td_padbot_10 b-layout__td_right b-layout__td_left_ipad b-layout__td_padright_35">
            <div class="b-select  b-select_margright_5 b-select_inline-block">
               <select class="b-select__select b-select__select_width_50" name="cost_type_month" id="cost_type_month">
-                  <option value="0" <?= ($frm_serv_val['cost_type_month'] == 0 ? "selected='selected'" : "") ?> >USD</option>
-                  <option value="1" <?= ($frm_serv_val['cost_type_month'] == 1 ? "selected='selected'" : "") ?>>Euro</option>
-                  <option value="2" <?= ($frm_serv_val['cost_type_month'] == 2 ? "selected='selected'" : "") ?>>Руб</option>
+                  <option value="0" <?= ($frm_serv_val['cost_type_month'] == 0 ? "selected='selected'" : '') ?> >USD</option>
+                  <option value="1" <?= ($frm_serv_val['cost_type_month'] == 1 ? "selected='selected'" : '') ?>>Euro</option>
+                  <option value="2" <?= ($frm_serv_val['cost_type_month'] == 2 ? "selected='selected'" : '') ?>>Руб</option>
               </select>
            </div>
            <div class="b-input b-input_width_60 b-input_inline-block">
@@ -104,7 +118,7 @@ $xajax->printJavascript('/xajax/');
      </tr>
   </table>         
     <div class="b-check b-check_padbot_30">
-        <input type="checkbox" id="in_officel" name="in_office" value="1" <?= $frm_serv_val['in_office'] == "t" ? " checked='checked'" : "" ?>  class="b-check__input" />
+        <input type="checkbox" id="in_officel" name="in_office" value="1" <?= $frm_serv_val['in_office'] == 't' ? " checked='checked'" : '' ?>  class="b-check__input" />
         <label class="b-check__label b-check__label_bold b-check__label_color_71" for="in_officel">
             Ищу долгосрочную работу <span style="display:inline-block; vertical-align: baseline; line-height:1; padding: 0 0 0 15px; background: url(/images/icons-sprite.png) no-repeat -100px -337px;">в офисе</span>
         </label>

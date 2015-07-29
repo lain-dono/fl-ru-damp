@@ -1,13 +1,12 @@
 <?php
 
 /**
- * Шаблон контентной области попапа выбора превью
+ * Шаблон контентной области попапа выбора превью.
  */
-
 ?>
         <aside class="b-layout__side b-layout__side_content">
 <?php
-            foreach($value['elements'] as $element): 
+            foreach ($value['elements'] as $element):
                 $element_id = "{$key}_{$element->id}";
 ?>
             <label for="<?=$element_id?>" 
@@ -20,7 +19,7 @@
                 else:
 ?>
                 <div class="b-layout b-layout_relative">
-                    <?php if($image_tag = $element->getThumbnail()): ?>
+                    <?php if ($image_tag = $element->getThumbnail()): ?>
                         <?=$image_tag?>
                     <?php elseif ($image_url = $element->getThumbnailUrl()): ?>
                     <img width="200" height="150" class="b-pic" src="<?=$image_url?>" alt="" title=""/>

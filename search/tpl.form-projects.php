@@ -1,17 +1,17 @@
 <?php
-require_once ($_SERVER['DOCUMENT_ROOT'] . "/xajax/countrys.common.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/professions.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/country.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/city.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/countrys.common.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/professions.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/country.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/city.php';
 $xajax->printJavascript('/xajax/');
 
 $is_show_adv = isset($_SESSION['search_advanced'][$type]);
 
-if(!$filter) {
+if (!$filter) {
     $filter = $_SESSION['search_advanced'][$type];
 }
 
-$categories = professions::GetAllGroupsLite(TRUE);
+$categories = professions::GetAllGroupsLite(true);
 $countries = country::GetCountries();
 
 if ($filter['country']) {
@@ -20,7 +20,7 @@ if ($filter['country']) {
 
 $all_mirrored_specs = professions::GetAllMirroredProfsId();
 $mirrored_specs = array();
-for ($is=0; $is<sizeof($all_mirrored_specs); $is++) {
+for ($is = 0; $is < sizeof($all_mirrored_specs); ++$is) {
     $mirrored_specs[$all_mirrored_specs[$is]['main_prof']] = $all_mirrored_specs[$is]['mirror_prof'];
     $mirrored_specs[$all_mirrored_specs[$is]['mirror_prof']] = $all_mirrored_specs[$is]['main_prof'];
 }
@@ -29,7 +29,7 @@ $_SESSION['ph_categories'] = $filter['categories'];
 
   //создаем массив специализаций (для фильтра на главной он уже есть в $prfs, для фильтра в проектах фрилансера его нет, поэтому делаем проверку на существование
 if (!sizeof($profs)) {
-    $all_specs = professions::GetAllProfessions("", 0, 1);
+    $all_specs = professions::GetAllProfessions('', 0, 1);
 } else {
     $all_specs = $profs;
 }
@@ -42,61 +42,61 @@ var curFBulletsBox = 1;
 
 var filter_user_specs={
 <?php if ($filter['user_specs']) {
-    $i=0;
-    foreach($filter['user_specs'] as $ms) {
-        print(($i++?',':'').$ms.':1'); 
+    $i = 0;
+    foreach ($filter['user_specs'] as $ms) {
+        print(($i++ ? ',' : '').$ms.':1');
     }
 }?>};
 
 var filter_specs = new Array();
 var filter_specs_ids = new Array();
-<?
+<?php
 $spec_now = 0;
-for ($i=0; $i<sizeof($all_specs); $i++) {
+for ($i = 0; $i < sizeof($all_specs); ++$i) {
     if ($all_specs[$i]['groupid'] != $spec_now) {
         $spec_now = $all_specs[$i]['groupid'];
-        echo "filter_specs[".$all_specs[$i]['groupid']."]=[";
+        echo 'filter_specs['.$all_specs[$i]['groupid'].']=[';
     }
-    
-    echo "[".$all_specs[$i]['id'].",'".$all_specs[$i]['profname']."']";
 
-    if ($all_specs[$i+1]['groupid'] != $spec_now) {
-        echo "];";
+    echo '['.$all_specs[$i]['id'].",'".$all_specs[$i]['profname']."']";
+
+    if ($all_specs[$i + 1]['groupid'] != $spec_now) {
+        echo '];';
     } else {
-        echo ",";
+        echo ',';
     }
 }
 
 $spec_now = 0;
-for ($i=0; $i<sizeof($all_specs); $i++) {
+for ($i = 0; $i < sizeof($all_specs); ++$i) {
     if ($all_specs[$i]['groupid'] != $spec_now) {
         $spec_now = $all_specs[$i]['groupid'];
-        echo "filter_specs_ids[".$all_specs[$i]['groupid']."]={";
+        echo 'filter_specs_ids['.$all_specs[$i]['groupid'].']={';
     }
-    
-    echo "".$all_specs[$i]['id'].":1";
 
-    if ($all_specs[$i+1]['groupid'] != $spec_now) {
-        echo "};";
+    echo ''.$all_specs[$i]['id'].':1';
+
+    if ($all_specs[$i + 1]['groupid'] != $spec_now) {
+        echo '};';
     } else {
-        echo ",";
+        echo ',';
     }
 }
 ?>
 
-<?php require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/freelancers_filter.php";?>
+<?php require_once $_SERVER['DOCUMENT_ROOT'].'/classes/freelancers_filter.php';?>
 var filter_mirror_specs = <?=freelancers_filters::getMirroredSpecsJsObject($all_mirrored_specs); ?>; 
 var filter_bullets = [[],[]];
-<?
+<?php
 if (sizeof($_SESSION['ph_categories'])) {
-    for ($ci=0; $ci<2; $ci++) {
+    for ($ci = 0; $ci < 2; ++$ci) {
         $ph_categories[$ci] = array();
         if (sizeof($_SESSION['ph_categories'][$ci])) {
             foreach ($_SESSION['ph_categories'][$ci] as $fkey => $fvalue) {
                 $fvalue = intval($fvalue);
-                $fkey   = intval($fkey);
+                $fkey = intval($fkey);
                 if ($fkey) {
-                    if ( !freelancers_filters::mirrorExistsInArray($fkey, $ph_categories[$ci], $mirrored_specs) ) {
+                    if (!freelancers_filters::mirrorExistsInArray($fkey, $ph_categories[$ci], $mirrored_specs)) {
                         if (!$fvalue) {
                             $proftitle = professions::GetGroup($fkey, $error);
                             $proftitle = $proftitle['name'];
@@ -104,18 +104,20 @@ if (sizeof($_SESSION['ph_categories'])) {
                             $proftitle = professions::GetProfName($fkey);
                             $prof_group = professions::GetProfField($fkey, 'prof_group');
                         }
-                        ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>] = new Array();<?
-                        ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['type'] = <?=(int)$fvalue?>;<?
-                        ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['title'] = '<?=$proftitle?>';<?
-                        ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['parentid'] = '<?=(!($fvalue)?0:(int)$prof_group)?>';<?
+                        ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>] = new Array();<?php
+                        ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['type'] = <?=(int) $fvalue?>;<?php
+                        ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['title'] = '<?=$proftitle?>';<?php
+                        ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['parentid'] = '<?=(!($fvalue) ? 0 : (int) $prof_group)?>';<?php
                         
                         if ($mirrored_specs[$fkey]) {
-                            ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['mirror'] = <?=$mirrored_specs[$fkey]?>;<?
+                            ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['mirror'] = <?=$mirrored_specs[$fkey]?>;<?php
+
                         } else {
-                            ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['mirror'] = 0;<?
+                            ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['mirror'] = 0;<?php
+
                         }
                     }
-                    $ph_categories[$ci][] = (int)$fkey;
+                    $ph_categories[$ci][] = (int) $fkey;
                 }
             }
         }
@@ -124,13 +126,13 @@ if (sizeof($_SESSION['ph_categories'])) {
 ?>
 
 </script>
-<fieldset class="flt-cnt" id="advanced-search" style="display:<?= $is_show_adv?"block":"none";?>; padding:0 15px;">
+<fieldset class="flt-cnt" id="advanced-search" style="display:<?= $is_show_adv ? 'block' : 'none';?>; padding:0 15px;">
           <div class="flt-block c" >
                <label class="flt-lbl">Бюджет:</label>
                <div class="flt-b-in" >
                     <span class="flt-prm bjt-bl">
-                        <input type="text" maxlength="6" value="<?= $filter['cost_from']!=''?intval($filter['cost_from']):$filter['cost_from']?>" name="pf_cost_from" id="pf_cost_from" class="flt-prm1" size="10" /> &mdash;
-	                	<input type="text" maxlength="6" value="<?= $filter['cost_to']!=''?intval($filter['cost_to']):$filter['cost_to']?>" name="pf_cost_to" id="pf_cost_to" class="flt-prm1" size="10" />&nbsp;&nbsp;
+                        <input type="text" maxlength="6" value="<?= $filter['cost_from'] != '' ? intval($filter['cost_from']) : $filter['cost_from']?>" name="pf_cost_from" id="pf_cost_from" class="flt-prm1" size="10" /> &mdash;
+	                	<input type="text" maxlength="6" value="<?= $filter['cost_to'] != '' ? intval($filter['cost_to']) : $filter['cost_to']?>" name="pf_cost_to" id="pf_cost_to" class="flt-prm1" size="10" />&nbsp;&nbsp;
                             <select name="pf_currency" class="pf-sel" id="pf_currency">
                                <option value="2" <?= ($filter['currency'] === null || $filter['currency'] == 2 ? 'selected="selected"' : '')?>>Руб</option>
                                <option value="0" <?= ($filter['currency'] !== null && $filter['currency'] == 0 ? 'selected="selected"' : '')?>>USD</option>
@@ -138,7 +140,7 @@ if (sizeof($_SESSION['ph_categories'])) {
                             </select>
                     </span>
                     <div class="b-check b-check_inline-block b-check_padtop_5">
-                        <input class="b-check__input" type="checkbox" value="1" name="pf_wo_budjet" id="pf_wo_budjet" <?= ($filter['wo_cost'] == 't')?'checked="checked"':''?> /> 
+                        <input class="b-check__input" type="checkbox" value="1" name="pf_wo_budjet" id="pf_wo_budjet" <?= ($filter['wo_cost'] == 't') ? 'checked="checked"' : ''?> /> 
                         <label for="pf_wo_budjet" class="b-check__label">Смотреть проекты с неуказанным бюджетом</label>
                     </div>
                     <br/><br/>
@@ -154,9 +156,14 @@ if (sizeof($_SESSION['ph_categories'])) {
                          <span class="flt-prm">
                            <select onchange="FilterSubCategory(this.value)" id="pf_category" name="pf_category" class="flt-p-sel">
                              <option value="0">Выберите раздел</option>
-                             <? foreach($categories as $category) { if($category['id'] <= 0) continue; ?>
+                             <?php foreach ($categories as $category) {
+    if ($category['id'] <= 0) {
+        continue;
+    }
+    ?>
                              <option value="<?=$category['id']?>"><?=$category['name']?></option>
-                             <? } ?>
+                             <?php 
+} ?>
                            </select>
                          </span><a href="javascript: void(0);" onclick="if($('pf_category').value != 0) FilterAddBullet(0, $('pf_category').value, $('pf_category').options[$('pf_category').selectedIndex].text, 0);" class="lnk-dot-blue">Добавить</a>
                     </div>
@@ -167,12 +174,15 @@ if (sizeof($_SESSION['ph_categories'])) {
                            </select>
                          </span><a href="javascript: void(0);" onclick="if($('pf_subcategory').value != 0) FilterAddBullet(1, $('pf_subcategory').value, $('pf_subcategory').options[$('pf_subcategory').selectedIndex].text, $('pf_category').value);" class="lnk-dot-blue">Добавить</a>
                     </div>
-                    <?php if($_SESSION['uid'] && !is_emp($_SESSION['role'])) {?>
+                    <?php if ($_SESSION['uid'] && !is_emp($_SESSION['role'])) {
+    ?>
                     <div class="b-check  b-check_inline-block b-check_padtop_10" >
-                        <input class="b-check__input" type="checkbox" value="1" name="pf_my_specs" id="pf_my_specs" <?= ($filter['my_specs']=='t'?'checked="checked"':'');?> <?= (!$user_specs?"disabled title='У вас не выбраны специализации'":"")?>/> 
-                        <label for="pf_my_specs" class="b-check__label" <?= (!$user_specs?"title='У вас нет выбранных специализаций'":"")?>>Смотреть только мои специализации</label>
+                        <input class="b-check__input" type="checkbox" value="1" name="pf_my_specs" id="pf_my_specs" <?= ($filter['my_specs'] == 't' ? 'checked="checked"' : '');
+    ?> <?= (!$user_specs ? "disabled title='У вас не выбраны специализации'" : '')?>/> 
+                        <label for="pf_my_specs" class="b-check__label" <?= (!$user_specs ? "title='У вас нет выбранных специализаций'" : '')?>>Смотреть только мои специализации</label>
                     </div>
-                    <?php } //if?>
+                    <?php 
+} //if?>
                     <br/>
                     <div class="flt-spec-list " id="pf_specs"> </div>
                </div>
@@ -184,9 +194,12 @@ if (sizeof($_SESSION['ph_categories'])) {
                            <span class="flt-prm">
                              <select  name="pf_country" id="pf_country" class="flt-p-sel" onChange="$('pf_country').set('disabled', 'disabled');xajax_GetCitysByCid(this.value);">
                                 <option value="0">Все страны</option>
-                                <?php foreach($countries as $country_id => $country_name) {?>
-                                <option value="<?= $country_id?>" <?= ($country_id == $filter['country'])?'selected="selected"':'';?>><?= $country_name?></option>
-                                <?php }?>
+                                <?php foreach ($countries as $country_id => $country_name) {
+    ?>
+                                <option value="<?= $country_id?>" <?= ($country_id == $filter['country']) ? 'selected="selected"' : '';
+    ?>><?= $country_name?></option>
+                                <?php 
+}?>
                              </select>
                            </span>
                       </div>
@@ -194,11 +207,16 @@ if (sizeof($_SESSION['ph_categories'])) {
                            <span id="frm_city" class="flt-prm">
                              <select name="pf_city" class="flt-p-sel">
                                <option value="0">Все города</option>
-                               <?php if($cities) {?>
-                                   <?php foreach($cities as $city_id=>$city_name) {?>
-                                   <option value="<?=$city_id?>" <?= ($city_id == $filter['city'])?'selected="selected"':'';?>><?= $city_name?></option>
-                                   <?php } //foreach?>
-                               <?php }//if?>
+                               <?php if ($cities) {
+    ?>
+                                   <?php foreach ($cities as $city_id => $city_name) {
+    ?>
+                                   <option value="<?=$city_id?>" <?= ($city_id == $filter['city']) ? 'selected="selected"' : '';
+    ?>><?= $city_name?></option>
+                                   <?php 
+} //foreach?>
+                               <?php 
+}//if?>
                              </select>
                            </span>
                       </div>

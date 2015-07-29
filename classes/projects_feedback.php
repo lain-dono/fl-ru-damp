@@ -2,26 +2,25 @@
 
 /**
  * Класс projects_feedback
- * Модель для работы с отзывами по проекту 
+ * Модель для работы с отзывами по проекту.
  */
-class projects_feedback 
+class projects_feedback
 {
-        const LIFETIME = 604800;//7*24*60*60;
-    
+    const LIFETIME = 604800;//7*24*60*60;
+
         protected $feedback;
-        protected $rating;
-        protected $user_id;
-        protected $modified_id;
-        protected $is_emp;
-        protected $show;
-        protected $touser_id;
+    protected $rating;
+    protected $user_id;
+    protected $modified_id;
+    protected $is_emp;
+    protected $show;
+    protected $touser_id;
 
-        private $TABLE              = 'projects_feedbacks';
-        private $TABLE_PROJECTS     = 'projects';
+    private $TABLE = 'projects_feedbacks';
+    private $TABLE_PROJECTS = 'projects';
 
-        protected $errors = array(1);
-        protected $current_attributes = array();
-
+    protected $errors = array(1);
+    protected $current_attributes = array();
 
         //----------------------------------------------------------------------
 
@@ -31,162 +30,155 @@ class projects_feedback
             return empty($this->errors);
         }
 
-
         //----------------------------------------------------------------------
-        
-        
+
+
         /**
-         * Проверка атрибутов класса
+         * Проверка атрибутов класса.
          * 
          * @param string $key
-         * @param mixed $value
-         * @return boolean
+         * @param mixed  $value
+         *
+         * @return bool
          */
         public function validation($key, $value)
         {
-            $error = FALSE;
-            
-            switch($key)
-            {
-                case 'feedback': 
-                    $error = empty($value) || (strlen($value) > 500); 
+            $error = false;
+
+            switch ($key) {
+                case 'feedback':
+                    $error = empty($value) || (strlen($value) > 500);
                     break;
                 case 'rating':
-                    $error = !in_array($value, array('1','-1'));
+                    $error = !in_array($value, array('1', '-1'));
                     break;
                 case 'user_id':
                 case 'modified_id':
                     $error = !(is_int($value) && ($value > 0));
                     break;
             }
-            
-            if($error) 
-            {
+
+            if ($error) {
                 $this->errors[$key] = $error;
-                return FALSE;
+
+                return false;
             }
-            
-            return TRUE;
+
+            return true;
         }
-        
-        
+
         //----------------------------------------------------------------------
-        
-        
+
+
         /**
-         * Фильтр атрибутов класса
+         * Фильтр атрибутов класса.
          * 
          * @param string $key
-         * @param mixed $value
+         * @param mixed  $value
+         *
          * @return mixed
          */
         public function filter($key, $value)
         {
-            switch($key)
-            {
+            switch ($key) {
                 case 'feedback':
-                    $value = substr(trim(htmlspecialchars(stripslashes($value))),0,500);
+                    $value = substr(trim(htmlspecialchars(stripslashes($value))), 0, 500);
                     break;
                 case 'user_id':
                 case 'modified_id':
                     $value = intval($value);
                     break;
             }
-            
+
             return $value;
         }
 
-        
-        
-        
         //----------------------------------------------------------------------
 
 
-
         /**
-         * Инициализация или получение аттрибутов класса
+         * Инициализация или получение аттрибутов класса.
          * 
          * @param array $attributes
+         *
          * @return type
          */
-        public function attributes($attributes = null) 
+        public function attributes($attributes = null)
         {
-            if (is_null($attributes)) 
-            {
+            if (is_null($attributes)) {
                 return get_object_vars($this);
             }
-            
+
             $this->errors = array();
-            
-            foreach ($attributes as $key => $value) 
-            {
-                if (property_exists($this, $key)) 
-                {
+
+            foreach ($attributes as $key => $value) {
+                if (property_exists($this, $key)) {
                     $value = $this->filter($key, $value);
                     $is_valid = $this->validation($key, $value);
-                    if($is_valid) 
-                    {
+                    if ($is_valid) {
                         $this->current_attributes[] = $key;
                         $this->{$key} = $value;
                     }
                 }
             }
-            
+
             return $this->is_valid();
         }
-    
-    
+
         //----------------------------------------------------------------------
-        
-        
+
+
         /**
-         * Помечаем отзы как удаленный
+         * Помечаем отзы как удаленный.
          * 
          * @param int $feedback_id
-         * @return boolean
+         *
+         * @return bool
          */
         public function deleteFeedback($feedback_id)
         {
-            return $this->db()->update($this->TABLE,array(
+            return $this->db()->update($this->TABLE, array(
                 'deleted' => 't',
                 'modified_id' => $this->modified_id,
-                'update_time' => date('Y-m-d H:i:s')
-            ),'id = ?i',$feedback_id);
+                'update_time' => date('Y-m-d H:i:s'),
+            ), 'id = ?i', $feedback_id);
         }
 
-        
         //----------------------------------------------------------------------
-        
-        
+
+
         /**
-         * Обновление отзыва
+         * Обновление отзыва.
          * 
          * @param int $feedback_id
-         * @return boolean
+         *
+         * @return bool
          */
         public function updateFeedback($feedback_id)
         {
-            if(empty($this->current_attributes)) return FALSE;
-            
+            if (empty($this->current_attributes)) {
+                return false;
+            }
+
             $data = array();
-            
-            foreach($this->current_attributes as $attr_key)
-            {
+
+            foreach ($this->current_attributes as $attr_key) {
                 $data[$attr_key] = $this->{$attr_key};
             }
-            
+
             $data['update_time'] = date('Y-m-d H:i:s');
-            return $this->db()->update($this->TABLE,$data,'id = ?i',$feedback_id); 
+
+            return $this->db()->update($this->TABLE, $data, 'id = ?i', $feedback_id);
         }
 
-        
         //----------------------------------------------------------------------
-        
+
 
         /**
-         * Добавление отзыва
+         * Добавление отзыва.
          * 
          * @param int $project_id
+         *
          * @return int ID
          */
         public function addFeedback($project_id)
@@ -198,18 +190,17 @@ class projects_feedback
                 'rating' => $this->rating,
                 'is_emp' => $this->is_emp,
                 'show' => $this->show,
-                'touser_id' => $this->touser_id
-            ),'id');
+                'touser_id' => $this->touser_id,
+            ), 'id');
         }
-        
-        
+
         //----------------------------------------------------------------------
-        
-        
+
+
         public function getFeedbackByProjectID($project_id)
         {
             $result = array();
-            
+
             $rows = $this->db()->rows("
                 SELECT
                     *
@@ -218,24 +209,24 @@ class projects_feedback
                     project_id = ?i
                     AND deleted = FALSE 
                 LIMIT 2
-            ",$project_id);
-                
-            if(!$rows) return $result;
-            
-            foreach($rows as $el)
-            {
-                $prefix = ($el['is_emp'] == 't')?'emp':'frl';
-                $result[$prefix . '_feedback'] = $el['feedback'];
-                $result[$prefix . '_posted_time'] = $el['posted_time'];
-                $result[$prefix . '_rating'] = $el['rating'];
+            ", $project_id);
+
+            if (!$rows) {
+                return $result;
             }
-        
+
+            foreach ($rows as $el) {
+                $prefix = ($el['is_emp'] == 't') ? 'emp' : 'frl';
+                $result[$prefix.'_feedback'] = $el['feedback'];
+                $result[$prefix.'_posted_time'] = $el['posted_time'];
+                $result[$prefix.'_rating'] = $el['rating'];
+            }
+
             return $result;
         }
 
-
         //----------------------------------------------------------------------
-        
+
 
         public function getFeedback($feedback_id)
         {
@@ -251,33 +242,34 @@ class projects_feedback
                 WHERE
                     fb.deleted = FALSE 
                     AND fb.id = ?i
-            ",$feedback_id);
+            ", $feedback_id);
         }
-        
+
         //----------------------------------------------------------------------
-        
-        
+
+
         /**
-         * Проверка разрешено ли еще добавлять редактировать отзывы
+         * Проверка разрешено ли еще добавлять редактировать отзывы.
          * 
          * @param string $close_date
-         * @return boolean
+         *
+         * @return bool
          */
         public static function isAllowFeedback($close_date)
         {
-            if(!$close_date) return FALSE;
+            if (!$close_date) {
+                return false;
+            }
+
             return ((strtotime($close_date) + static::LIFETIME) >= time());
         }
-        
 
-        
         //----------------------------------------------------------------------    
-        
-        
-        
+
+
         /**
-        * @return DB
-        */
+         * @return DB
+         */
         public function db()
         {
             return $GLOBALS['DB'];

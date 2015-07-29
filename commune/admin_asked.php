@@ -1,4 +1,4 @@
-<?
+<?php
 $is_comm_admin = $user_mod & (commune::MOD_COMM_ADMIN | commune::MOD_COMM_MODERATOR);
 $is_author = $user_mod & (commune::MOD_COMM_AUTHOR);
 ?>
@@ -25,7 +25,9 @@ $is_author = $user_mod & (commune::MOD_COMM_AUTHOR);
 								<tbody>
 
 
-<? if(count($members)) foreach($members as $memb) { ?>
+<?php if (count($members)) {
+    foreach ($members as $memb) {
+        ?>
 
 									<tr>
 										<td>
@@ -35,7 +37,8 @@ $is_author = $user_mod & (commune::MOD_COMM_AUTHOR);
 												<div class="form fs-o cau-note">
 													<b class="b1"></b>
 													<b class="b2"></b>
-													<div class="form-in" id="idNote<?= $memb['user_id'];?>">
+													<div class="form-in" id="idNote<?= $memb['user_id'];
+        ?>">
 														<?= __commPrntMemberNote($memb['user_id'], $comm['id'], $memb['note_txt'], ($is_comm_admin || $is_author)) ?>
 													</div>
 													<b class="b2"></b>
@@ -45,20 +48,36 @@ $is_author = $user_mod & (commune::MOD_COMM_AUTHOR);
 										</td>
 
 										<td>
-                                                                                    <strong><?= date("d.m.Y H:i", strtotime($memb['asked_time']));?></strong>
+                                                                                    <strong><?= date('d.m.Y H:i', strtotime($memb['asked_time']));
+        ?></strong>
 										</td>
 										<td class="cau-lnks">
-											<strong><a href="?id=<?=$id?>&site=Admin.members&mode=Asked&m=<?=$memb['id']?><?php if ($page>1){ ?>&page=<?=$page?><?php } ?>&action=do.Accept.member" class="lnk-dot-green">Добавить в сообщество</a>&nbsp;&nbsp;&nbsp; <a href="?id=<?=$id?>&site=Admin.members&mode=Asked&m=<?=$memb['id']?><?php if ($page>1){ ?>&page=<?=$page?><?php } ?>&action=do.Unaccept.member" class="lnk-dot-red">Отказать</a></strong>&nbsp;&nbsp;&nbsp;
+											<strong><a href="?id=<?=$id?>&site=Admin.members&mode=Asked&m=<?=$memb['id']?><?php if ($page > 1) {
+    ?>&page=<?=$page?><?php 
+}
+        ?>&action=do.Accept.member" class="lnk-dot-green">Добавить в сообщество</a>&nbsp;&nbsp;&nbsp; <a href="?id=<?=$id?>&site=Admin.members&mode=Asked&m=<?=$memb['id']?><?php if ($page > 1) {
+    ?>&page=<?=$page?><?php 
+}
+        ?>&action=do.Unaccept.member" class="lnk-dot-red">Отказать</a></strong>&nbsp;&nbsp;&nbsp;
 										</td>
 									</tr>
 
-<? }else{ ?>
-                                                                        <tr><td><? if($user_login!==NULL && empty($members)) { ?>
+<?php 
+    }
+} else {
+    ?>
+                                                                        <tr><td><?php if ($user_login !== NULL && empty($members)) {
+    ?>
                       Пользователь не найден
-                    <? } else { ?>
+                    <?php 
+} else {
+    ?>
                       &nbsp;
-                    <? } ?></td></tr>
-<? } ?>
+                    <?php 
+}
+    ?></td></tr>
+<?php 
+} ?>
 
 								</tbody>
 							</table>

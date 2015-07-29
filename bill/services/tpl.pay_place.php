@@ -6,9 +6,10 @@
     <span class="b-layout__txt b-layout__txt_float_right b-layout__txt_fontsize_11 b-page__desktop b-page__ipad"><a href="/pay_place/top_payed.php" class="b-layout__link promo-link">Подробнее об услуге</a></span>
     <h3 class="b-layout__h3 b-layout__h3_padleft_70 b-layout__txt_padleft_null_iphone">
         Карусель  &#160;&#160;
-        <? if($service['type'] == 'lately') { //if?>
+        <?php if ($service['type'] == 'lately') { //if?>
             <span class="b-layout__txt b-layout__txt_fontsize_11 b-layout__txt_color_808080 b-layouyt__txt_weight_normal">Срок действия истек <?= date('d.m.Y', strtotime($service['d']))?></span>
-        <? } //if?>
+        <?php 
+} //if?>
     </h3>
     <div class="b-layout__txt b-layout__txt_fontsize_11 b-layout__txt_padbot_20 b-layout__txt_padleft_70 b-layout__txt_padleft_null_iphone">Что может быть заметнее рекламного объявления на главной странице или наверху каталога фрилансеров? Это очень эффективный способ продвижения вашего аккаунта на сайте. Прокатитесь на Карусели и «накатайте» выгодный проект.</div>
     <div class="b-buttons b-buttons_padleft_70 b-buttons_padbot_10 b-layout__txt_padleft_null_iphone">

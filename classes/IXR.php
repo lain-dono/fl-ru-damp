@@ -1,6 +1,7 @@
 <?php
+
 /**
- * IXR - The Incutio XML-RPC Library
+ * IXR - The Incutio XML-RPC Library.
  *
  * Copyright (c) 2010, Incutio Ltd.
  * All rights reserved.
@@ -29,27 +30,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * @package IXR
  * @since 1.5
  *
  * @copyright  Incutio Ltd 2010 (http://www.incutio.com)
+ *
  * @version    1.7.4 7th September 2010
+ *
  * @author     Simon Willison
+ *
  * @link       http://scripts.incutio.com/xmlrpc/ Site/manual
+ *
  * @license    http://www.opensource.org/licenses/bsd-license.php BSD
  */
 
 /**
- * IXR_Value
+ * IXR_Value.
  *
- * @package IXR
  * @since 1.5
  */
-class IXR_Value {
-    var $data;
-    var $type;
+class IXR_Value
+{
+    public $data;
+    public $type;
 
-    function IXR_Value($data, $type = false)
+    public function IXR_Value($data, $type = false)
     {
         $this->data = $data;
         if (!$type) {
@@ -59,17 +63,17 @@ class IXR_Value {
         if ($type == 'struct') {
             // Turn all the values in the array in to new IXR_Value objects
             foreach ($this->data as $key => $value) {
-                $this->data[$key] = new IXR_Value($value);
+                $this->data[$key] = new self($value);
             }
         }
         if ($type == 'array') {
-            for ($i = 0, $j = count($this->data); $i < $j; $i++) {
-                $this->data[$i] = new IXR_Value($this->data[$i]);
+            for ($i = 0, $j = count($this->data); $i < $j; ++$i) {
+                $this->data[$i] = new self($this->data[$i]);
             }
         }
     }
 
-    function calculateType()
+    public function calculateType()
     {
         if ($this->data === true || $this->data === false) {
             return 'boolean';
@@ -92,6 +96,7 @@ class IXR_Value {
         // If it is a normal PHP object convert it in to a struct
         if (is_object($this->data)) {
             $this->data = get_object_vars($this->data);
+
             return 'struct';
         }
         if (!is_array($this->data)) {
@@ -106,7 +111,7 @@ class IXR_Value {
         }
     }
 
-    function getXml()
+    public function getXml()
     {
         // Return XML for this value
         switch ($this->type) {
@@ -128,16 +133,18 @@ class IXR_Value {
                     $return .= '  <value>'.$item->getXml()."</value>\n";
                 }
                 $return .= '</data></array>';
+
                 return $return;
                 break;
             case 'struct':
                 $return = '<struct>'."\n";
                 foreach ($this->data as $name => $value) {
-					$name = htmlspecialchars($name);
+                    $name = htmlspecialchars($name);
                     $return .= "  <member><name>$name</name><value>";
                     $return .= $value->getXml()."</value></member>\n";
                 }
                 $return .= '</struct>';
+
                 return $return;
                 break;
             case 'date':
@@ -145,65 +152,66 @@ class IXR_Value {
                 return $this->data->getXml();
                 break;
         }
+
         return false;
     }
 
     /**
-     * Checks whether or not the supplied array is a struct or not
+     * Checks whether or not the supplied array is a struct or not.
      *
      * @param unknown_type $array
-     * @return boolean
+     *
+     * @return bool
      */
-    function isStruct($array)
+    public function isStruct($array)
     {
         $expected = 0;
         foreach ($array as $key => $value) {
-            if ((string)$key != (string)$expected) {
+            if ((string) $key != (string) $expected) {
                 return true;
             }
-            $expected++;
+            ++$expected;
         }
+
         return false;
     }
 }
 
 /**
- * IXR_MESSAGE
+ * IXR_MESSAGE.
  *
- * @package IXR
  * @since 1.5
- *
  */
 class IXR_Message
 {
-    var $message;
-    var $messageType;  // methodCall / methodResponse / fault
-    var $faultCode;
-    var $faultString;
-    var $methodName;
-    var $params;
+    public $message;
+    public $messageType;  // methodCall / methodResponse / fault
+    public $faultCode;
+    public $faultString;
+    public $methodName;
+    public $params;
 
     // Current variable stacks
-    var $_arraystructs = array();   // The stack used to keep track of the current array/struct
-    var $_arraystructstypes = array(); // Stack keeping track of if things are structs or array
-    var $_currentStructName = array();  // A stack as well
-    var $_param;
-    var $_value;
-    var $_currentTag;
-    var $_currentTagContents;
+    public $_arraystructs = array();   // The stack used to keep track of the current array/struct
+    public $_arraystructstypes = array(); // Stack keeping track of if things are structs or array
+    public $_currentStructName = array();  // A stack as well
+    public $_param;
+    public $_value;
+    public $_currentTag;
+    public $_currentTagContents;
     // The XML parser
-    var $_parser;
+    public $_parser;
 
-    function IXR_Message($message)
+    public function IXR_Message($message)
     {
-        $this->message =& $message;
+        $this->message = &$message;
     }
 
-    function parse()
+    public function parse()
     {
         // first remove the XML declaration
         // merged from WP #10698 - this method avoids the RAM usage of preg_replace on very large messages
-        $header = preg_replace( '/<\?xml.*?\?'.'>/', '', substr($this->message, 0, 100), 1);
+        $header = preg_replace('/<\?xml.*?\?'.'>/', '', substr($this->message, 0, 100), 1);
         $this->message = substr_replace($this->message, $header, 0, 100);
         if (trim($this->message) == '') {
             return false;
@@ -237,14 +245,15 @@ class IXR_Message
             $this->faultCode = $this->params[0]['faultCode'];
             $this->faultString = $this->params[0]['faultString'];
         }
+
         return true;
     }
 
-    function tag_open($parser, $tag, $attr)
+    public function tag_open($parser, $tag, $attr)
     {
         $this->_currentTagContents = '';
         $this->currentTag = $tag;
-        switch($tag) {
+        switch ($tag) {
             case 'methodCall':
             case 'methodResponse':
             case 'fault':
@@ -262,26 +271,26 @@ class IXR_Message
         }
     }
 
-    function cdata($parser, $cdata)
+    public function cdata($parser, $cdata)
     {
         $this->_currentTagContents .= $cdata;
     }
 
-    function tag_close($parser, $tag)
+    public function tag_close($parser, $tag)
     {
         $valueFlag = false;
-        switch($tag) {
+        switch ($tag) {
             case 'int':
             case 'i4':
-                $value = (int)trim($this->_currentTagContents);
+                $value = (int) trim($this->_currentTagContents);
                 $valueFlag = true;
                 break;
             case 'double':
-                $value = (double)trim($this->_currentTagContents);
+                $value = (double) trim($this->_currentTagContents);
                 $valueFlag = true;
                 break;
             case 'string':
-                $value = (string)trim($this->_currentTagContents);
+                $value = (string) trim($this->_currentTagContents);
                 $valueFlag = true;
                 break;
             case 'dateTime.iso8601':
@@ -291,12 +300,12 @@ class IXR_Message
             case 'value':
                 // "If no type is indicated, the type is string."
                 if (trim($this->_currentTagContents) != '') {
-                    $value = (string)$this->_currentTagContents;
+                    $value = (string) $this->_currentTagContents;
                     $valueFlag = true;
                 }
                 break;
             case 'boolean':
-                $value = (boolean)trim($this->_currentTagContents);
+                $value = (boolean) trim($this->_currentTagContents);
                 $valueFlag = true;
                 break;
             case 'base64':
@@ -324,12 +333,12 @@ class IXR_Message
         if ($valueFlag) {
             if (count($this->_arraystructs) > 0) {
                 // Add value to struct or array
-                if ($this->_arraystructstypes[count($this->_arraystructstypes)-1] == 'struct') {
+                if ($this->_arraystructstypes[count($this->_arraystructstypes) - 1] == 'struct') {
                     // Add to struct
-                    $this->_arraystructs[count($this->_arraystructs)-1][$this->_currentStructName[count($this->_currentStructName)-1]] = $value;
+                    $this->_arraystructs[count($this->_arraystructs) - 1][$this->_currentStructName[count($this->_currentStructName) - 1]] = $value;
                 } else {
                     // Add to array
-                    $this->_arraystructs[count($this->_arraystructs)-1][] = $value;
+                    $this->_arraystructs[count($this->_arraystructs) - 1][] = $value;
                 }
             } else {
                 // Just add as a paramater
@@ -341,19 +350,18 @@ class IXR_Message
 }
 
 /**
- * IXR_Server
+ * IXR_Server.
  *
- * @package IXR
  * @since 1.5
  */
 class IXR_Server
 {
-    var $data;
-    var $callbacks = array();
-    var $message;
-    var $capabilities;
+    public $data;
+    public $callbacks = array();
+    public $message;
+    public $capabilities;
 
-    function IXR_Server($callbacks = false, $data = false, $wait = false)
+    public function IXR_Server($callbacks = false, $data = false, $wait = false)
     {
         $this->setCapabilities();
         if ($callbacks) {
@@ -365,11 +373,11 @@ class IXR_Server
         }
     }
 
-    function serve($data = false)
+    public function serve($data = false)
     {
         if (!$data) {
             if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] !== 'POST') {
-            	header('Content-Type: text/plain'); // merged from WP #9093
+                header('Content-Type: text/plain'); // merged from WP #9093
                 die('XML-RPC server accepts POST requests only.');
             }
 
@@ -378,7 +386,7 @@ class IXR_Server
                 // workaround for a bug in PHP 5.2.2 - http://bugs.php.net/bug.php?id=41293
                 $data = file_get_contents('php://input');
             } else {
-                $data =& $HTTP_RAW_POST_DATA;
+                $data = &$HTTP_RAW_POST_DATA;
             }
         }
         $this->message = new IXR_Message($data);
@@ -416,7 +424,7 @@ EOD;
       $this->output($xml);
     }
 
-    function call($methodname, $args)
+    public function call($methodname, $args)
     {
         if (!$this->hasMethod($methodname)) {
             return new IXR_Error(-32601, 'server error. requested method '.$methodname.' does not exist.');
@@ -445,17 +453,18 @@ EOD;
                 if (!is_callable(array($method[0], $method[1]))) {
                     return new IXR_Error(-32601, 'server error. requested object method "'.$method[1].'" does not exist.');
                 }
-            } else if (!function_exists($method)) {
+            } elseif (!function_exists($method)) {
                 return new IXR_Error(-32601, 'server error. requested function "'.$method.'" does not exist.');
             }
 
             // Call the function
             $result = call_user_func($method, $args);
         }
+
         return $result;
     }
 
-    function error($error, $message = false)
+    public function error($error, $message = false)
     {
         // Accepts either an error object or an error code and message
         if ($message && !is_object($error)) {
@@ -464,7 +473,7 @@ EOD;
         $this->output($error->getXml());
     }
 
-    function output($xml)
+    public function output($xml)
     {
         $xml = '<?xml version="1.0"?>'."\n".$xml;
         $length = strlen($xml);
@@ -476,50 +485,50 @@ EOD;
         exit;
     }
 
-    function hasMethod($method)
+    public function hasMethod($method)
     {
         return in_array($method, array_keys($this->callbacks));
     }
 
-    function setCapabilities()
+    public function setCapabilities()
     {
         // Initialises capabilities array
         $this->capabilities = array(
             'xmlrpc' => array(
                 'specUrl' => 'http://www.xmlrpc.com/spec',
-                'specVersion' => 1
+                'specVersion' => 1,
         ),
             'faults_interop' => array(
                 'specUrl' => 'http://xmlrpc-epi.sourceforge.net/specs/rfc.fault_codes.php',
-                'specVersion' => 20010516
+                'specVersion' => 20010516,
         ),
             'system.multicall' => array(
                 'specUrl' => 'http://www.xmlrpc.com/discuss/msgReader$1208',
-                'specVersion' => 1
+                'specVersion' => 1,
         ),
         );
     }
 
-    function getCapabilities($args)
+    public function getCapabilities($args)
     {
         return $this->capabilities;
     }
 
-    function setCallbacks()
+    public function setCallbacks()
     {
         $this->callbacks['system.getCapabilities'] = 'this:getCapabilities';
         $this->callbacks['system.listMethods'] = 'this:listMethods';
         $this->callbacks['system.multicall'] = 'this:multiCall';
     }
 
-    function listMethods($args)
+    public function listMethods($args)
     {
         // Returns a list of methods - uses array_reverse to ensure user defined
         // methods are listed before server defined methods
         return array_reverse(array_keys($this->callbacks));
     }
 
-    function multiCall($methodcalls)
+    public function multiCall($methodcalls)
     {
         // See http://www.xmlrpc.com/discuss/msgReader$1208
         $return = array();
@@ -534,29 +543,29 @@ EOD;
             if (is_a($result, 'IXR_Error')) {
                 $return[] = array(
                     'faultCode' => $result->code,
-                    'faultString' => $result->message
+                    'faultString' => $result->message,
                 );
             } else {
                 $return[] = array($result);
             }
         }
+
         return $return;
     }
 }
 
 /**
- * IXR_Request
+ * IXR_Request.
  *
- * @package IXR
  * @since 1.5
  */
 class IXR_Request
 {
-    var $method;
-    var $args;
-    var $xml;
+    public $method;
+    public $args;
+    public $xml;
 
-    function IXR_Request($method, $args)
+    public function IXR_Request($method, $args)
     {
         $this->method = $method;
         $this->args = $args;
@@ -576,40 +585,38 @@ EOD;
         $this->xml .= '</params></methodCall>';
     }
 
-    function getLength()
+    public function getLength()
     {
         return strlen($this->xml);
     }
 
-    function getXml()
+    public function getXml()
     {
         return $this->xml;
     }
 }
 
 /**
- * IXR_Client
+ * IXR_Client.
  *
- * @package IXR
  * @since 1.5
- *
  */
 class IXR_Client
 {
-    var $server;
-    var $port;
-    var $path;
-    var $useragent;
-    var $response;
-    var $message = false;
-    var $debug = false;
-    var $timeout;
-    var $headers = array();
+    public $server;
+    public $port;
+    public $path;
+    public $useragent;
+    public $response;
+    public $message = false;
+    public $debug = false;
+    public $timeout;
+    public $headers = array();
 
     // Storage place for an error message
-    var $error = false;
+    public $error = false;
 
-    function IXR_Client($server, $path = false, $port = 80, $timeout = 15)
+    public function IXR_Client($server, $path = false, $port = 80, $timeout = 15)
     {
         if (!$path) {
             // Assume we have been given a URL instead
@@ -631,7 +638,7 @@ class IXR_Client
         $this->timeout = $timeout;
     }
 
-    function query()
+    public function query()
     {
         $args = func_get_args();
         $method = array_shift($args);
@@ -639,15 +646,15 @@ class IXR_Client
         $length = $request->getLength();
         $xml = $request->getXml();
         $r = "\r\n";
-        $request  = "POST {$this->path} HTTP/1.0$r";
+        $request = "POST {$this->path} HTTP/1.0$r";
 
         // Merged from WP #8145 - allow custom headers
-        $this->headers['Host']          = $this->server;
-        $this->headers['Content-Type']  = 'text/xml';
-        $this->headers['User-Agent']    = $this->useragent;
-        $this->headers['Content-Length']= $length;
+        $this->headers['Host'] = $this->server;
+        $this->headers['Content-Type'] = 'text/xml';
+        $this->headers['User-Agent'] = $this->useragent;
+        $this->headers['Content-Length'] = $length;
 
-        foreach( $this->headers as $header => $value ) {
+        foreach ($this->headers as $header => $value) {
             $request .= "{$header}: {$value}{$r}";
         }
         $request .= $r;
@@ -666,6 +673,7 @@ class IXR_Client
         }
         if (!$fp) {
             $this->error = new IXR_Error(-32300, 'transport error - could not open socket');
+
             return false;
         }
         fputs($fp, $request);
@@ -679,6 +687,7 @@ class IXR_Client
                 // Check line for '200'
                 if (strstr($line, '200') === false) {
                     $this->error = new IXR_Error(-32300, 'transport error - HTTP status code was not 200');
+
                     return false;
                 }
                 $gotFirstLine = true;
@@ -687,11 +696,11 @@ class IXR_Client
                 $gettingHeaders = false;
             }
             if (!$gettingHeaders) {
-            	// merged from WP #12559 - remove trim
+                // merged from WP #12559 - remove trim
                 $contents .= $line;
             }
             if ($this->debug) {
-            	$debugContents .= $line;
+                $debugContents .= $line;
             }
         }
         if ($this->debug) {
@@ -703,12 +712,14 @@ class IXR_Client
         if (!$this->message->parse()) {
             // XML error
             $this->error = new IXR_Error(-32700, 'parse error. not well formed');
+
             return false;
         }
 
         // Is the message a fault?
         if ($this->message->messageType == 'fault') {
             $this->error = new IXR_Error($this->message->faultCode, $this->message->faultString);
+
             return false;
         }
 
@@ -716,47 +727,45 @@ class IXR_Client
         return true;
     }
 
-    function getResponse()
+    public function getResponse()
     {
         // methodResponses can only have one param - return that
         return $this->message->params[0];
     }
 
-    function isError()
+    public function isError()
     {
         return (is_object($this->error));
     }
 
-    function getErrorCode()
+    public function getErrorCode()
     {
         return $this->error->code;
     }
 
-    function getErrorMessage()
+    public function getErrorMessage()
     {
         return $this->error->message;
     }
 }
 
-
 /**
- * IXR_Error
+ * IXR_Error.
  *
- * @package IXR
  * @since 1.5
  */
 class IXR_Error
 {
-    var $code;
-    var $message;
+    public $code;
+    public $message;
 
-    function IXR_Error($code, $message)
+    public function IXR_Error($code, $message)
     {
         $this->code = $code;
         $this->message = htmlspecialchars($message);
     }
 
-    function getXml()
+    public function getXml()
     {
         $xml = <<<EOD
 <methodResponse>
@@ -777,26 +786,27 @@ class IXR_Error
 </methodResponse>
 
 EOD;
+
         return $xml;
     }
 }
 
 /**
- * IXR_Date
+ * IXR_Date.
  *
- * @package IXR
  * @since 1.5
  */
-class IXR_Date {
-    var $year;
-    var $month;
-    var $day;
-    var $hour;
-    var $minute;
-    var $second;
-    var $timezone;
+class IXR_Date
+{
+    public $year;
+    public $month;
+    public $day;
+    public $hour;
+    public $minute;
+    public $second;
+    public $timezone;
 
-    function IXR_Date($time)
+    public function IXR_Date($time)
     {
         // $time can be a PHP timestamp or an ISO one
         if (is_numeric($time)) {
@@ -806,7 +816,7 @@ class IXR_Date {
         }
     }
 
-    function parseTimestamp($timestamp)
+    public function parseTimestamp($timestamp)
     {
         $this->year = date('Y', $timestamp);
         $this->month = date('m', $timestamp);
@@ -817,7 +827,7 @@ class IXR_Date {
         $this->timezone = '';
     }
 
-    function parseIso($iso)
+    public function parseIso($iso)
     {
         $this->year = substr($iso, 0, 4);
         $this->month = substr($iso, 4, 2);
@@ -828,61 +838,59 @@ class IXR_Date {
         $this->timezone = substr($iso, 17);
     }
 
-    function getIso()
+    public function getIso()
     {
         return $this->year.$this->month.$this->day.'T'.$this->hour.':'.$this->minute.':'.$this->second.$this->timezone;
     }
 
-    function getXml()
+    public function getXml()
     {
         return '<dateTime.iso8601>'.$this->getIso().'</dateTime.iso8601>';
     }
 
-    function getTimestamp()
+    public function getTimestamp()
     {
         return mktime($this->hour, $this->minute, $this->second, $this->month, $this->day, $this->year);
     }
 }
 
 /**
- * IXR_Base64
+ * IXR_Base64.
  *
- * @package IXR
  * @since 1.5
  */
 class IXR_Base64
 {
-    var $data;
+    public $data;
 
-    function IXR_Base64($data)
+    public function IXR_Base64($data)
     {
         $this->data = $data;
     }
 
-    function getXml()
+    public function getXml()
     {
         return '<base64>'.base64_encode($this->data).'</base64>';
     }
 }
 
 /**
- * IXR_IntrospectionServer
+ * IXR_IntrospectionServer.
  *
- * @package IXR
  * @since 1.5
  */
 class IXR_IntrospectionServer extends IXR_Server
 {
-    var $signatures;
-    var $help;
+    public $signatures;
+    public $help;
 
-    function IXR_IntrospectionServer()
+    public function IXR_IntrospectionServer()
     {
         $this->setCallbacks();
         $this->setCapabilities();
         $this->capabilities['introspection'] = array(
             'specUrl' => 'http://xmlrpc.usefulinc.com/doc/reserved.html',
-            'specVersion' => 1
+            'specVersion' => 1,
         );
         $this->addCallback(
             'system.methodSignature',
@@ -910,14 +918,14 @@ class IXR_IntrospectionServer extends IXR_Server
         );
     }
 
-    function addCallback($method, $callback, $args, $help)
+    public function addCallback($method, $callback, $args, $help)
     {
         $this->callbacks[$method] = $callback;
         $this->signatures[$method] = $args;
         $this->help[$method] = $help;
     }
 
-    function call($methodname, $args)
+    public function call($methodname, $args)
     {
         // Make sure it's in an array
         if ($args && !is_array($args)) {
@@ -940,7 +948,7 @@ class IXR_IntrospectionServer extends IXR_Server
         // Check the argument types
         $ok = true;
         $argsbackup = $args;
-        for ($i = 0, $j = count($args); $i < $j; $i++) {
+        for ($i = 0, $j = count($args); $i < $j; ++$i) {
             $arg = array_shift($args);
             $type = array_shift($signature);
             switch ($type) {
@@ -982,7 +990,7 @@ class IXR_IntrospectionServer extends IXR_Server
         return parent::call($methodname, $argsbackup);
     }
 
-    function methodSignature($method)
+    public function methodSignature($method)
     {
         if (!$this->hasMethod($method)) {
             return new IXR_Error(-32601, 'server error. requested method "'.$method.'" not specified.');
@@ -1019,43 +1027,43 @@ class IXR_IntrospectionServer extends IXR_Server
                     break;
             }
         }
+
         return $return;
     }
 
-    function methodHelp($method)
+    public function methodHelp($method)
     {
         return $this->help[$method];
     }
 }
 
 /**
- * IXR_ClientMulticall
+ * IXR_ClientMulticall.
  *
- * @package IXR
  * @since 1.5
  */
 class IXR_ClientMulticall extends IXR_Client
 {
-    var $calls = array();
+    public $calls = array();
 
-    function IXR_ClientMulticall($server, $path = false, $port = 80)
+    public function IXR_ClientMulticall($server, $path = false, $port = 80)
     {
         parent::IXR_Client($server, $path, $port);
         $this->useragent = 'The Incutio XML-RPC PHP Library (multicall client)';
     }
 
-    function addCall()
+    public function addCall()
     {
         $args = func_get_args();
         $methodName = array_shift($args);
         $struct = array(
             'methodName' => $methodName,
-            'params' => $args
+            'params' => $args,
         );
         $this->calls[] = $struct;
     }
 
-    function query()
+    public function query()
     {
         // Prepare multicall, then call the parent::query() method
         return parent::query('system.multicall', $this->calls);

@@ -1,6 +1,6 @@
 <?php
 /**
- * Шаблон поумолчанию popup-окна "быстрой" оплаты
+ * Шаблон поумолчанию popup-окна "быстрой" оплаты.
  */
 ?>
 <div id="<?= @$popup_id ?>" data-quick-payment="<?= $unic_name ?>" class="b-shadow b-shadow_block b-shadow_center b-shadow_width_520 <?= (!@$is_show) ? 'b-shadow_hide' : '' ?> b-shadow__quick">
@@ -22,8 +22,8 @@
                         <input type="hidden" name="id" value="" id="<?= $unic_name ?>_hidden_id" />
                         <input type="hidden" value="<?= $ammount ?>" id="<?= $unic_name ?>_ammount" disabled="disabled" />
                         <input type="hidden" name="prof_id" value="<?=$prof_use?>" />
-                        <input type="hidden" name="is_spec" value="<?=(int)$is_spec?>" />
-                        <input type="hidden" name="is_prolong" value="<?=(bool)$date_stop?>" />
+                        <input type="hidden" name="is_spec" value="<?=(int) $is_spec?>" />
+                        <input type="hidden" name="is_prolong" value="<?=(bool) $date_stop?>" />
                         <div class="b-combo b-combo_inline-block b-combo_valign_mid">
                             <a class="b-button b-button_poll_plus b-button_absolute b-button_z-index_3 b-button_top_8 b-button_right_5" href="javascript:void(0)"></a>
                             <a class="b-button b-button_poll_minus b-button_absolute b-button_z-index_3 b-button_top_8 b-button_left_5" href="javascript:void(0)"></a>
@@ -73,8 +73,8 @@
                             <?php if (isset($payment['title'])): ?>
                                 <a class="b-button b-button_margbot_5 b-button__pm <?= @$payment['class'] ?>" 
                                    href="javascript:void(0);" 
-                                   <?=(isset($payment['data-maxprice']))?'data-maxprice="'.$payment['data-maxprice'].'"':''?> 
-                                   <?= (isset($payment['wait'])) ? 'data-quick-payment-wait="' . $payment['wait'] . '"' : '' ?> 
+                                   <?=(isset($payment['data-maxprice'])) ? 'data-maxprice="'.$payment['data-maxprice'].'"' : ''?> 
+                                   <?= (isset($payment['wait'])) ? 'data-quick-payment-wait="'.$payment['wait'].'"' : '' ?> 
                                    data-quick-payment-type="<?= $key ?>"><span class="b-button__txt"><?= @$payment['title'] ?></span></a> 
                                 <?php if (isset($payment['content_after'])): ?>
                                 <div class="<?=$key?>_text b-layout__txt b-layout__txt_fontsize_11 b-layout__txt_inline-block b-layout__txt_valign_middle b-layout__txt_width_440">

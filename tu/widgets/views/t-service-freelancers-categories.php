@@ -1,30 +1,30 @@
 <?php
-if(!defined('IN_STDF')) {
-	header("HTTP/1.0 404 Not Found");
-	exit;
+if (!defined('IN_STDF')) {
+    header('HTTP/1.0 404 Not Found');
+    exit;
 }
 
 /**
- * Представление для виджета TServiceFreelancersCategories
+ * Представление для виджета TServiceFreelancersCategories.
  *
  *
- * @var TServiceFreelancersCategories $this
- * @var array $profs
+ * @var TServiceFreelancersCategories
+ * @var array
  */
-
-if(isset($profs) && count($profs)) 
-{ 
-
-?>
+if (isset($profs) && count($profs)) {
+    ?>
 <div id="specialis" class="b-layout b-layout_clear_both b-layout_top_40 b-layout_overflow_hidden b-page__desktop">
-    <?php $groups_repeat = array(); ?> 
+    <?php $groups_repeat = array();
+    ?> 
         <h2 class="b-layout__title">Фрилансеры по специализациям</h2>
         <div class="b-layout b-layout_col_4 b-layout_col_2_ipad b-layout_col_1_iphone">
         <?php foreach ($profs as $prof): ?>
             <?php if (!isset($groups_repeat[$prof['grouplink']]) && ($groups_repeat[$prof['grouplink']] = 1)): ?>
                     <div class="b-layout__txt b-layout__txt_inline-block"><a class="b-layout__link b-layout__link_fontsize_11" href="/freelancers/<?=$prof['grouplink']?>"><?=$prof['groupname']?></a></div><br>
-            <?php endif; ?>
-        <?php endforeach; ?>
+            <?php endif;
+    ?>
+        <?php endforeach;
+    ?>
         </div>
     <?php /*
     <h2 class="b-layout__title">
@@ -39,7 +39,8 @@ if(isset($profs) && count($profs))
         </a>
     </div>
     <?php } ?>
-	*/ ?>
+    */ ?>
 </div>
 <?php
+
 }

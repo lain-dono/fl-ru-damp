@@ -1,8 +1,8 @@
 <?php
-chdir(dirname(__FILE__));
-require_once "../stdf.php";
-require_once "../sitemap.php";
 
+chdir(dirname(__FILE__));
+require_once '../stdf.php';
+require_once '../sitemap.php';
 
 $help = "
 --blogs\t\tCreate blogs sitemap\n
@@ -19,26 +19,22 @@ $help = "
 ";
 
 $type = preg_replace('/^--/', '', $argv[1]);
-$send = SERVER==='release';
+$send = SERVER === 'release';
 
-
-if($type == 'all') {
-   foreach(sitemap::$types as $t=>$p)
-    	sitemap::create($t, $send);
-   	sitemap::generateMainSitemap();
-   	if($send) {
-   		sitemap::send();
-   	}
-}
-else if(sitemap::$types[$type]) {
+if ($type == 'all') {
+    foreach (sitemap::$types as $t => $p) {
+        sitemap::create($t, $send);
+    }
+    sitemap::generateMainSitemap();
+    if ($send) {
+        sitemap::send();
+    }
+} elseif (sitemap::$types[$type]) {
     sitemap::create($type, $send);
     sitemap::generateMainSitemap();
-   	if($send) {
-   		sitemap::send();
-   	}
-}
-else {
+    if ($send) {
+        sitemap::send();
+    }
+} else {
     echo $help;
 }
-
-?>

@@ -4,8 +4,9 @@
    global $id, $comm, $alert, $user_mod;
 
   // Все админы (модераторы, упрявляторы).
-  if(!($admins = commune::GetMembers($id, commune::MEMBER_ADMIN | commune::JOIN_STATUS_ACCEPTED))) // Хотя модераторы всегда is_accepted.
+  if (!($admins = commune::GetMembers($id, commune::MEMBER_ADMIN | commune::JOIN_STATUS_ACCEPTED))) { // Хотя модераторы всегда is_accepted.
     $admins = array();
+  }
 
   $adminCnt = count($admins);
 ?>
@@ -27,10 +28,12 @@
           <tr valign="top">
             <td>
               <b>Администрация</b>
-              <? if($user_mod & (commune::MOD_ADMIN | commune::MOD_COMM_AUTHOR | commune::MOD_COMM_MANAGER)) { ?> <?// Хотя comm_manager сюда не попадет. На всякий случай... ?>
+              <?php if ($user_mod & (commune::MOD_ADMIN | commune::MOD_COMM_AUTHOR | commune::MOD_COMM_MANAGER)) {
+    ?> <?// Хотя comm_manager сюда не попадет. На всякий случай... ?>
                 <br/><br/>
                 <a class="blue" href="?id=<?=$id?>&site=Admin.members"><b>Участники</b></a>
-              <? } ?>
+              <?php 
+} ?>
             </td>
             <td style="padding-left:40px">
               <table border="0" width="100%" cellpadding="0" cellspacing="0">
@@ -38,11 +41,12 @@
                 <col style="width:165px"/>
                 <col style="width:195px"/>
                 <col style="width:125px"/>
-                <? if($adminCnt <= commune::MAX_ADMIN_COUNT) { ?>
+                <?php if ($adminCnt <= commune::MAX_ADMIN_COUNT) {
+    ?>
                   <tr valign="top">
                     <td colspan="4" style="padding:0 0 50px 10px">
                       <div>
-                        <b>Добавить в администрацию</b> <? // !!! А если забанен?>
+                        <b>Добавить в администрацию</b> <?php // !!! А если забанен?>
                       </div>
                       <div style="padding-top:2px">
                         Не больше шести человек
@@ -59,8 +63,10 @@
                       </div>
                     </td>
                   </tr>
-                <? } ?>
-                <? if($adminCnt) { ?>
+                <?php 
+} ?>
+                <?php if ($adminCnt) {
+    ?>
                   <tr valign="middle">
                     <td align="center">&nbsp;</td>
                     <td align="center">
@@ -72,15 +78,17 @@
                     </td>
                     <td align="center">&nbsp;</td>
                   </tr>
-                <? } ?>
+                <?php 
+} ?>
                 <tr valign="top">
                   <td colspan="4">&nbsp;</td>
                 </tr>
-                <? if($adminCnt) { ?>
+                <?php if ($adminCnt) {
+    ?>
                   <form action="?id=<?=$id?>&site=Admin" method="post">
                     <input type="hidden" name="action" value="do.Update.admin"/>
-                    <? foreach($admins as $adm) {
-                    ?>
+                    <?php foreach ($admins as $adm) {
+    ?>
                       <input type="hidden" name="member_id[]" value="<?=$adm['id']?>"/>
                       <tr valign="middle">
                         <td align="left" style="padding:15px 0 15px 20px;border-top: 1px solid #DCDBD9;">
@@ -101,27 +109,30 @@
                           </table>
                         </td>
                         <td style="padding:15px 0 15px 15px;border-top: 1px solid #DCDBD9;" align="center">
-                          <input type="checkbox" <?=($adm['is_moderator']=='t' ? 'checked ' : '')?>
+                          <input type="checkbox" <?=($adm['is_moderator'] == 't' ? 'checked ' : '')?>
                                  onclick="this.nextSibling.value=(this.checked ? 1 : 0)"
-                          /><input name="is_moderator[]" type="hidden" value="<?=($adm['is_moderator']=='t' ? 1 : 0)?>"/>
+                          /><input name="is_moderator[]" type="hidden" value="<?=($adm['is_moderator'] == 't' ? 1 : 0)?>"/>
                         </td>
                         <td style="border-top: 1px solid #DCDBD9;" align="center">
-                          <input type="checkbox" <?=($adm['is_manager']=='t' ? 'checked ' : '')?>
+                          <input type="checkbox" <?=($adm['is_manager'] == 't' ? 'checked ' : '')?>
                                  onclick="this.nextSibling.value=(this.checked ? 1 : 0)"
-                          /><input name="is_manager[]" type="hidden" value="<?=($adm['is_manager']=='t' ? 1 : 0)?>"/>
+                          /><input name="is_manager[]" type="hidden" value="<?=($adm['is_manager'] == 't' ? 1 : 0)?>"/>
                         </td>
                         <td style="border-top: 1px solid #DCDBD9;" align="center">
                           <a class="blue" href="?id=<?=$id?>&site=Admin&m=<?=$adm['id']?>&action=do.Remove.admin"><b>Удалить</b></a>
                         </td>
                       </tr>
-                    <? } ?>
+                    <?php 
+}
+    ?>
                     <tr valign="top">
                       <td colspan="4" style="padding:50px 0 25px 10px">
                         <input type="submit" style="width:110px" value="Сохранить"/>
                       </td>
                     </tr>
                   </form>
-                <? } ?>
+                <?php 
+} ?>
               </table>
             </td>
           </tr>

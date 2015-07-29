@@ -1,19 +1,20 @@
 <?php
-$g_page_id    = "0|27";
+
+$g_page_id = '0|27';
 $new_site_css = true;
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/billing.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/bar_notify.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/billing.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/bar_notify.php';
 
 $main_path = $_SERVER['DOCUMENT_ROOT'];
 
-if(!get_uid()) {
-    header('Location: /fbd.php'); 
+if (!get_uid()) {
+    header('Location: /fbd.php');
     exit;
 }
 
 //Редиректим на историю заказов
-header('Location: /bill/history/?period=3'); 
+header('Location: /bill/history/?period=3');
 exit;
 
 /*
@@ -40,5 +41,4 @@ $barNotify->delNotifies( array('page'=>'bill') );
 
 include ("{$main_path}/template3.php");
  * 
- */
-?>
+ */;

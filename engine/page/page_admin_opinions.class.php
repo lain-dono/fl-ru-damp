@@ -1,5 +1,7 @@
 <?php
-class page_admin_opinions extends page_base {    
+
+class page_admin_opinions extends page_base
+{
     /*function getlistAction() {
         $order_dir = front::$_req["dir"];
         if(!in_array($order_dir, array("ASC", "DESC"))) $order_dir = "ASC";
@@ -20,43 +22,45 @@ class page_admin_opinions extends page_base {
         
         echo json_encode(array("data"=>$blogs , "totalCount"=>$totalCount));
     }*/
-    function getinfoAction() {
-        $db = front::og("db"); 
-        $one_news = $db->select("SELECT * FROM sopinions WHERE id = ?n LIMIT 1;", front::$_req["id"])->fetchRow();
-        $one_news = front::toUtf($one_news); 
+    public function getinfoAction()
+    {
+        $db = front::og('db');
+        $one_news = $db->select('SELECT * FROM sopinions WHERE id = ?n LIMIT 1;', front::$_req['id'])->fetchRow();
+        $one_news = front::toUtf($one_news);
       //  foreach($one_news as &$one) { $one = br2nl($one);}  
-        echo json_encode(array("form"=>$one_news));
+        echo json_encode(array('form' => $one_news));
     }
-    
-    function deleteAction() {
-        $db = front::og("db"); 
-        
-        if(intval($id = front::$_req["id"]) > 0) {
-            $affected_rows = $db->delete("DELETE FROM sopinions WHERE id = ?n;", 
+
+    public function deleteAction()
+    {
+        $db = front::og('db');
+
+        if (intval($id = front::$_req['id']) > 0) {
+            $affected_rows = $db->delete('DELETE FROM sopinions WHERE id = ?n;',
                 $id
             );
         }
-        echo json_encode(array("success"=>$affected_rows));
+        echo json_encode(array('success' => $affected_rows));
     }
-    function saveAction() {
-        $db = front::og("db"); 
-        
+    public function saveAction()
+    {
+        $db = front::og('db');
+
         $save = front::toWin(array(
-            "msgtext" => front::$_req["form"]["msgtext"], 
-            "sign" => front::$_req["form"]["sign"], 
-            "link" => front::$_req["form"]["link"], 
-            "logo" => page_admin_flash_upload2::getFileValue(front::$_req["form"]["logo"], "about/opinions/"), 
+            'msgtext' => front::$_req['form']['msgtext'],
+            'sign' => front::$_req['form']['sign'],
+            'link' => front::$_req['form']['link'],
+            'logo' => page_admin_flash_upload2::getFileValue(front::$_req['form']['logo'], 'about/opinions/'),
         ));
-        
+
       //  foreach($save as &$one) { $one = ($one);}  
-        
-        if(intval($id = front::$_req["id"]) > 0) {
-            $aff = $db->update("UPDATE sopinions SET ?s WHERE (id = ?n)", $save, $id);
+
+        if (intval($id = front::$_req['id']) > 0) {
+            $aff = $db->update('UPDATE sopinions SET ?s WHERE (id = ?n)', $save, $id);
         } else {
-            $id = $db->insert("sopinions", $save);
+            $id = $db->insert('sopinions', $save);
         }
-        
-        echo json_encode(array("success"=>true, "id"=>$id));
+
+        echo json_encode(array('success' => true, 'id' => $id));
     }
 }
-?>

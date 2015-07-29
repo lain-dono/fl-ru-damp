@@ -3,52 +3,55 @@
 require_once 'DigestBlockList.php';
 
 /**
- * Класс для работы с блоком "Интервью"
+ * Класс для работы с блоком "Интервью".
  */
-class DigestBlockListInterview extends DigestBlockList {
-    
+class DigestBlockListInterview extends DigestBlockList
+{
     /**
-     * Возможность добавлять дополнительные поля
+     * Возможность добавлять дополнительные поля.
      * 
-     * @var boolean 
+     * @var bool
      */
     const ADD_FIELD = true;
-    
+
     /**
-     * Маска валидации и проверки ссылки
+     * Маска валидации и проверки ссылки.
      * 
-     * @var string 
+     * @var string
      */
     const MASK_LINK = '~interview\/(\d+)\/~mix';
-    
+
     /**
      * @see parent::$title
-     * @var string 
+     *
+     * @var string
      */
     public $title = '<a class="b-layout__link" href="/interview/" target="_blank">Интервью</a>';
-    
+
     /**
      * @see parent::$hint
-     * @var string 
+     *
+     * @var string
      */
-    public $hint  = 'Например: https://www.free-lance.ru/interview/100/example.html';
-    
+    public $hint = 'Например: https://www.free-lance.ru/interview/100/example.html';
+
     /**
      * @see parent::$title_field
-     * @var string 
+     *
+     * @var string
      */
     public $title_field = 'Ссылки на интервью:';
-    
-    
+
     /**
      * @see parent::initHtmlData
      */
-    public function initHtmlData() {
-        require_once $_SERVER['DOCUMENT_ROOT'] . '/classes/interview.php';
-        
+    public function initHtmlData()
+    {
+        require_once $_SERVER['DOCUMENT_ROOT'].'/classes/interview.php';
+
         $ids = $this->parseLinks();
-        if($ids) {
-            $this->html_data = interview::getInterviewById(array_map("intval", $ids));
+        if ($ids) {
+            $this->html_data = interview::getInterviewById(array_map('intval', $ids));
         }
     }
 }

@@ -11,24 +11,29 @@
  */
 ?>
 <?php
-require_once (dirname(__FILE__) . '/class.basemapper.php');
+require_once dirname(__FILE__).'/class.basemapper.php';
 
-class BanMapper extends BaseMapper {
-	public function __construct(DBDriver $db, $model_name) {
- 		parent::__construct($db, $model_name, array("created", "till"));	 	
-  	}
-  	
-  	public function getBanBydAddress($address) {
-  	  return array_shift(
-  	    $this->makeSearch("address = ? AND unix_timestamp(till) > unix_timestamp(CURRENT_TIMESTAMP)", 
-  	      $address, 
-  	      null, 
-  	      1)
-  	    );
-  	}
-  	public function isBanned($address) {
-      $ban = $this->getBanBydAddress($address);
-      return !empty($ban);
-  	}
+class BanMapper extends BaseMapper
+{
+    public function __construct(DBDriver $db, $model_name)
+    {
+        parent::__construct($db, $model_name, array('created', 'till'));
+    }
+
+    public function getBanBydAddress($address)
+    {
+        return array_shift(
+        $this->makeSearch('address = ? AND unix_timestamp(till) > unix_timestamp(CURRENT_TIMESTAMP)',
+          $address,
+          null,
+          1)
+        );
+    }
+    public function isBanned($address)
+    {
+        $ban = $this->getBanBydAddress($address);
+
+        return !empty($ban);
+    }
 }
 ?>

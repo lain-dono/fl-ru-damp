@@ -7,7 +7,7 @@
 
 $smail->subject = "Отмена заказа на типовую услугу «{$order['title']}»";
 
-$order_url = $GLOBALS['host'] . tservices_helper::getOrderCardUrl($order['id']);
+$order_url = $GLOBALS['host'].tservices_helper::getOrderCardUrl($order['id']);
 $title = reformat(htmlspecialchars($order['title']), 30, 0, 1);
 
 ?>

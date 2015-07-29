@@ -1,10 +1,11 @@
 <?php
 /**
- * Шаблон попап формы быстрого редактирования конкурсной работы
+ * Шаблон попап формы быстрого редактирования конкурсной работы.
+ *
  * @author Max 'BlackHawk' Yastrembovich
  */
-if ( !defined('IN_STDF') ) { 
-    header("HTTP/1.0 404 Not Found"); // ибо нефиг
+if (!defined('IN_STDF')) {
+    header('HTTP/1.0 404 Not Found'); // ибо нефиг
     exit();
 }
 ?>
@@ -63,22 +64,22 @@ if ( !defined('IN_STDF') ) {
         <table cellpadding="0" border="0">
         <tr>
             <td class="ca-add-text b-post__txt_fontsize_15"><a href="#" onclick="boxes.add(); return false;">Добавить еще 3 поля</a></td>
-            <td class="ca-add-info b-post__txt_fontsize_11">Для файлов до 2Мбайт. Файлы следующих форматов запрещены к загрузке:<br/><?php $i=0; $aTmp = array();
-				foreach ( $GLOBALS['disallowed_array'] as $sOne ) {
-					if ( $i > 14 ) {
-						$i = 0;
-						echo implode(', ', $aTmp).'<br/>';
-						$aTmp = array();
-					}
-					
-					$aTmp[] = $sOne;
-					$i++;
-				}
-				
-				if ( $aTmp ) {
-					echo implode(', ', $aTmp).'<br/>';
-				}
-				?>
+            <td class="ca-add-info b-post__txt_fontsize_11">Для файлов до 2Мбайт. Файлы следующих форматов запрещены к загрузке:<br/><?php $i = 0; $aTmp = array();
+                foreach ($GLOBALS['disallowed_array'] as $sOne) {
+                    if ($i > 14) {
+                        $i = 0;
+                        echo implode(', ', $aTmp).'<br/>';
+                        $aTmp = array();
+                    }
+
+                    $aTmp[] = $sOne;
+                    ++$i;
+                }
+
+                if ($aTmp) {
+                    echo implode(', ', $aTmp).'<br/>';
+                }
+                ?>
             </td>
         </tr>
         </table>

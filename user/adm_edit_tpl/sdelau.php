@@ -1,10 +1,11 @@
 <?php
 /**
- * Шаблон попап формы быстрого редактирования предложений фрилансеров Сделаю
+ * Шаблон попап формы быстрого редактирования предложений фрилансеров Сделаю.
+ *
  * @author Max 'BlackHawk' Yastrembovich
  */
-if ( !defined('IN_STDF') ) { 
-    header("HTTP/1.0 404 Not Found"); // ибо нефиг
+if (!defined('IN_STDF')) {
+    header('HTTP/1.0 404 Not Found'); // ибо нефиг
     exit();
 }
 ?>
@@ -71,23 +72,25 @@ if ( !defined('IN_STDF') ) {
                 <select name="categories" class="b-select__select b-select__select_width_180" onchange="adm_edit_content.prjSubCategory(this);adm_edit_content.hideError('categories');">
                     <option value="0">Выберите раздел</option>
                 <?php
-                foreach ( $categories as $cat ) {
-                    if ( $cat['id'] <=0 ) {
+                foreach ($categories as $cat) {
+                    if ($cat['id'] <= 0) {
                         continue;
                     }
                     ?>
-                    <option value="<?=$cat['id']?>" <?=($offer['category_id']==$cat['id'] ? ' selected' : '')?>><?=$cat['name']?></option><?php
+                    <option value="<?=$cat['id']?>" <?=($offer['category_id'] == $cat['id'] ? ' selected' : '')?>><?=$cat['name']?></option><?php
+
                 }
                 ?>
                     </select>
                     <select name="subcategories" class="b-select__select b-select__select_width_180" onchange="adm_edit_content.hideError('categories')">
-                        <option value='0' <?=($project_category['subcategory_id']==0 ? ' selected' : '')?>>Все специализации</option>
-                <?php                    
+                        <option value='0' <?=($project_category['subcategory_id'] == 0 ? ' selected' : '')?>>Все специализации</option>
+                <?php 
                 $categories_specs = $professions[$offer['category_id']];
 
-                for ( $i=0; $i<sizeof($categories_specs); $i++ ) {
+                for ($i = 0; $i < sizeof($categories_specs); ++$i) {
                     ?><option value="<?=$categories_specs[$i]['id']?>" <?=($categories_specs[$i]['id'] == $offer['subcategory_id'] ? ' selected' : '')?>><?=$categories_specs[$i]['profname']?></option>
                 <?php
+
                 }
                 ?>
                 </select>

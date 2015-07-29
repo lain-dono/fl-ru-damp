@@ -1,9 +1,9 @@
-<?
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/freelancer.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/projects_offers_answers.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/op_codes.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/rating.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/professions.php");
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/freelancer.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/projects_offers_answers.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/op_codes.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/rating.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/professions.php';
 global $session;
 session_start();
 //    	$user = new freelancer();
@@ -20,8 +20,9 @@ $transaction_id = $account->start_transaction($uid, $tr_id);
 $op_codes = new op_codes();
 $opcodes = $op_codes->getCodes('80,16,65');
 
-if ($paid_specs = professions::getPaidSpecs($uid))
+if ($paid_specs = professions::getPaidSpecs($uid)) {
     $paid_spec_cnt = count($paid_specs);
+}
 $free_spec_cnt = is_pro() ? 5 : 1;
 $spec_cnt = $paid_spec_cnt + $free_spec_cnt;
 $paid_spec_price = $opcodes[professions::OP_PAID_SPEC]['sum'] * $paid_spec_cnt;
@@ -40,27 +41,31 @@ if (strtolower($_GET['pro_auto_prolong']) == 'off') {
 }
 
 $user->GetUser($_SESSION['login']);
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/account.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/account.php';
 $account = new account();
 $ok = $account->GetInfo($uid, true);
 
 $u_is_pro_auto_prolong = $user->GetField($uid, $e, 'is_pro_auto_prolong', false); // Включено ли у юзера автоматическое продление PRO
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/professions.common.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/professions.common.php';
 $xajax->printJavascript('/xajax/');
 ?>
 
 <script type="text/javascript">
-    var account_sum = <?= round($account->sum,2) ?>;
+    var account_sum = <?= round($account->sum, 2) ?>;
     var op = [];
-<? foreach ($poa_codes as $ammount => $sum) { ?>
-        op[<?= $ammount ?>] = <?= round($sum,2); ?>;
-<? } ?>
-    var SPARAMS={<?
-if ($paid_specs)
+<?php foreach ($poa_codes as $ammount => $sum) {
+    ?>
+        op[<?= $ammount ?>] = <?= round($sum, 2);
+    ?>;
+<?php 
+} ?>
+    var SPARAMS={<?php
+if ($paid_specs) {
     foreach ($paid_specs as $i => $prof) {
-        echo ($i ? ',' : '') . $i . ':[' . (int) $prof['paid_id'] . ',' . (int) $prof['prof_id'] . ']';
+        echo ($i ? ',' : '').$i.':['.(int) $prof['paid_id'].','.(int) $prof['prof_id'].']';
     }
+}
 ?>};
 
 query = location.href.split('#');
@@ -93,28 +98,30 @@ if ( query[1] && query[1] != 'undefined' ) {
             		<input type="hidden" name="transaction_id" value="<?=$transaction_id?>">
             		<input type="hidden" name="action" value="buy">
                     <h3 class="b-layout__h3">Покупка <span class="b-icon b-icon__pro b-icon__pro_f b-icon_top_3" title="Платного аккаунта"></span> аккаунта:</h3>
-                    <? if($_SESSION['pro_last']): ?>
-                    <?
+                    <?php if ($_SESSION['pro_last']): ?>
+                    <?php
                     $last_time = $_SESSION['pro_last'];
-                    if(floor((strtotime($last_time)-time())/(60*60*24)) > 0) {
-                        $last_ending = floor((strtotime($last_time)-time())/(60*60*24));
+                    if (floor((strtotime($last_time) - time()) / (60 * 60 * 24)) > 0) {
+                        $last_ending = floor((strtotime($last_time) - time()) / (60 * 60 * 24));
                         $last_string1 = 'день';
                         $last_string2 = 'дня';
                         $last_string3 = 'дней';
-                    } else if (floor((strtotime($last_time)-time())/(60*60)) > 0) {
-                        $last_ending = floor((strtotime($last_time)-time())/(60*60));
-                        $last_string1 = 'час';
-                        $last_string2 = 'часа';
-                        $last_string3 = 'часов';
                     } else {
-                        $last_ending = floor((strtotime($last_time)-time())/(60));
-                        $last_string1 = 'минута';
-                        $last_string2 = 'минуты';
-                        $last_string3 = 'минут';
+                        if (floor((strtotime($last_time) - time()) / (60 * 60)) > 0) {
+                            $last_ending = floor((strtotime($last_time) - time()) / (60 * 60));
+                            $last_string1 = 'час';
+                            $last_string2 = 'часа';
+                            $last_string3 = 'часов';
+                        } else {
+                            $last_ending = floor((strtotime($last_time) - time()) / (60));
+                            $last_string1 = 'минута';
+                            $last_string2 = 'минуты';
+                            $last_string3 = 'минут';
+                        }
                     }
                     ?>
                     <div class="b-layout__txt b-layout__txt_padbot_10">Ваш <span class="b-icon b-icon__pro b-icon__pro_f b-icon_top_3" alt="Платный аккаунт" title="Платный аккаунт"></span> аккаунт истекает через <?=$last_ending?> <?=ending($last_ending, $last_string1, $last_string2, $last_string3)?></div>
-                    <? endif; ?>
+                    <?php endif; ?>
                     <table class="buy-pro-tbl">
                         <col width="22" />
                         <col width="70" />

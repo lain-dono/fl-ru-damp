@@ -15,7 +15,7 @@
                                         <td  height="100" width="20"></td>
                                         <td  height="100">
                                             <font color="#0F71C8" size="5" face="arial,sans-serif">
-                                            <a href="/siteadmin/mailer/?action=<?= ( $preview == 1 ? "digest_edit" : "report" );?>&id=<?= $digest_id;?>">Назад</a>
+                                            <a href="/siteadmin/mailer/?action=<?= ($preview == 1 ? 'digest_edit' : 'report');?>&id=<?= $digest_id;?>">Назад</a>
                                             </forn>
                                         </td>
                                         <td  height="100"></td>

@@ -1,5 +1,5 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/bill.common.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/bill.common.php';
 $xajax->printJavascript('/xajax/');
 ?>
 <a name="top"></a>
@@ -14,7 +14,7 @@ $xajax->printJavascript('/xajax/');
                 </div>
                 <h1 class="b-page__title">Оплата заказа на сумму <span class="b-layout__txt b-layout__txt_color_fd6c30 b-layout__txt_fontsize_34"><?= to_money($reserveData['res_ammount']) ?> руб.</span></h1>
 
-                <? include($_SERVER['DOCUMENT_ROOT'] . "/bill/widget/tpl.right_column.php"); ?>
+                <?php include $_SERVER['DOCUMENT_ROOT'].'/bill/widget/tpl.right_column.php'; ?>
 
                 <div class="b-layout__one b-layout__one_width_72ps">
                     <h2 class="b-layout__title">Список заказов не оплачен</h2>

@@ -70,7 +70,7 @@
                     <?php foreach ($macbook_top_10 as $data): ?>
                         <div class="b-layout__txt b-layout__txt_color_64 b-layout__txt_fontsize_15 b-layout__txt_lineheight_1 b-layout__txt_padbot_15">
                             <?php if ($data['user']->uname || $data['user']->usurname): ?>
-                                <a class="b-layout__link b-layout__link_color_64 b-layout__link_bold b-layout_hover_link_decorated" href="<?=$data['user']->getProfileUrl()?>"><?=htmlspecialchars($data['user']->uname) . ' ' . htmlspecialchars($data['user']->usurname)?></a> 
+                                <a class="b-layout__link b-layout__link_color_64 b-layout__link_bold b-layout_hover_link_decorated" href="<?=$data['user']->getProfileUrl()?>"><?=htmlspecialchars($data['user']->uname).' '.htmlspecialchars($data['user']->usurname)?></a> 
                             <?php endif; ?>
                             [<a class="b-layout__link b-layout_h b-layout__link_color_64 b-layout__link_no-decorat" href="<?=$data['user']->getProfileUrl()?>"><?=$data['user']->login?></a>]
                         </div>

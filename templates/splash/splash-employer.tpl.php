@@ -17,7 +17,9 @@
             </td>
             <td class="b-layout__right">
                 <h3 class="b-layout__h3 b-layout__h3_padbot_5">Контакты всех фрилансеров</h3>
-                <div class="b-layout__txt">Если вы хотите обращаться к фрилансерам<br>напрямую, вам нужен профессиональный<br>аккаунт. Работодатели с аккаунтом PRO могут<br>видеть контакты всех пользователей сайта.<?php if(!is_pro()) {?><br><a class="b-layout__link" href="/payed/">Купить аккаунт</a> <span class="b-icon b-icon__pro b-icon__pro_e "></span><?php } ?></div>
+                <div class="b-layout__txt">Если вы хотите обращаться к фрилансерам<br>напрямую, вам нужен профессиональный<br>аккаунт. Работодатели с аккаунтом PRO могут<br>видеть контакты всех пользователей сайта.<?php if (!is_pro()) {
+    ?><br><a class="b-layout__link" href="/payed/">Купить аккаунт</a> <span class="b-icon b-icon__pro b-icon__pro_e "></span><?php 
+} ?></div>
             </td>
             <td class="b-layout__one b-layout__one_padleft_20">
                 <img class="b-layout__pic b-layout__pic_margright_20" src="/images/promo-icons/big/11.png" alt="">

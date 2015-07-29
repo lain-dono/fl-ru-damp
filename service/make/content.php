@@ -28,7 +28,7 @@
     <div class="b-buttons b-buttons_overflow_hidden b-buttons_padbot_40 b-promo__buttons"> <a class="b-button b-button_round_green" href="/public/offer/"> <span class="b-button__b1"> <span class="b-button__b2"><span class="b-button__txt">Добавить объявление</span></span> </span> </a></div>
     <span class="b-promo__megafon"></span>
 															
-    <? include("../tpl.help.php"); ?>	
+    <?php include '../tpl.help.php'; ?>	
     
     <?if($f_offers) {
         echo '<h2 class="b-promo__h2 b-promo__h2_padbot_20">Последние объявления</h2>';

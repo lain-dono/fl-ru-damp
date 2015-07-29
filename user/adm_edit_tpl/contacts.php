@@ -1,10 +1,11 @@
 <?php
 /**
- * Шаблон попап формы быстрого редактирования личных сообщений
+ * Шаблон попап формы быстрого редактирования личных сообщений.
+ *
  * @author Max 'BlackHawk' Yastrembovich
  */
-if ( !defined('IN_STDF') ) { 
-    header("HTTP/1.0 404 Not Found"); // ибо нефиг
+if (!defined('IN_STDF')) {
+    header('HTTP/1.0 404 Not Found'); // ибо нефиг
     exit();
 }
 ?>

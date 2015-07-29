@@ -1,8 +1,9 @@
 <?php
+
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
- * Random Number Generator
+ * Random Number Generator.
  *
  * PHP versions 4 and 5
  *
@@ -34,17 +35,16 @@
  * THE SOFTWARE.
  *
  * @category   Crypt
- * @package    Crypt_Random
+ *
  * @author     Jim Wigginton <terrafrost@php.net>
  * @copyright  MMVII Jim Wigginton
  * @license    http://www.opensource.org/licenses/mit-license.html  MIT License
+ *
  * @link       http://phpseclib.sourceforge.net
  */
 
 /**
- * "Is Windows" test
- *
- * @access private
+ * "Is Windows" test.
  */
 define('CRYPT_RANDOM_IS_WINDOWS', strtoupper(substr(PHP_OS, 0, 3)) === 'WIN');
 
@@ -56,8 +56,8 @@ define('CRYPT_RANDOM_IS_WINDOWS', strtoupper(substr(PHP_OS, 0, 3)) === 'WIN');
  * eg. for RSA key generation.
  *
  * @param Integer $length
+ *
  * @return String
- * @access public
  */
 function crypt_random_string($length)
 {
@@ -145,18 +145,18 @@ function crypt_random_string($length)
         session_start();
 
         $v = $seed = $_SESSION['seed'] = pack('H*', sha1(
-            serialize($_SERVER) .
-            serialize($_POST) .
-            serialize($_GET) .
-            serialize($_COOKIE) .
-            serialize($GLOBALS) .
-            serialize($_SESSION) .
+            serialize($_SERVER).
+            serialize($_POST).
+            serialize($_GET).
+            serialize($_COOKIE).
+            serialize($GLOBALS).
+            serialize($_SESSION).
             serialize($_OLD_SESSION)
         ));
         if (!isset($_SESSION['count'])) {
             $_SESSION['count'] = 0;
         }
-        $_SESSION['count']++;
+        ++$_SESSION['count'];
 
         session_write_close();
 
@@ -167,9 +167,9 @@ function crypt_random_string($length)
             ini_set('session.use_cookies', $old_use_cookies);
             session_cache_limiter($old_session_cache_limiter);
         } else {
-           if (isset($_OLD_SESSION)) {
-               $_SESSION = $_OLD_SESSION;
-               unset($_OLD_SESSION);
+            if (isset($_OLD_SESSION)) {
+                $_SESSION = $_OLD_SESSION;
+                unset($_OLD_SESSION);
             } else {
                 unset($_SESSION);
             }
@@ -183,8 +183,8 @@ function crypt_random_string($length)
         // http://tools.ietf.org/html/rfc4253#section-7.2
         //
         // see the is_string($crypto) part for an example of how to expand the keys
-        $key = pack('H*', sha1($seed . 'A'));
-        $iv = pack('H*', sha1($seed . 'C'));
+        $key = pack('H*', sha1($seed.'A'));
+        $iv = pack('H*', sha1($seed.'C'));
 
         // ciphers are used as per the nist.gov link below. also, see this link:
         //
@@ -204,6 +204,7 @@ function crypt_random_string($length)
                 break;
             default:
                 $crypto = $seed;
+
                 return crypt_random_string($length);
         }
 
@@ -231,8 +232,9 @@ function crypt_random_string($length)
             $i = pack('H*', sha1(microtime()));
             $r = pack('H*', sha1($i ^ $v));
             $v = pack('H*', sha1($r ^ $i));
-            $result.= $r;
+            $result .= $r;
         }
+
         return substr($result, 0, $length);
     }
 
@@ -243,7 +245,8 @@ function crypt_random_string($length)
         $i = $crypto->encrypt(microtime());
         $r = $crypto->encrypt($i ^ $v);
         $v = $crypto->encrypt($r ^ $i);
-        $result.= $r;
+        $result .= $r;
     }
+
     return substr($result, 0, $length);
 }

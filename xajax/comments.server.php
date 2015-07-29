@@ -1,108 +1,108 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/xajax/comments.common.php';
-require_once $_SERVER['DOCUMENT_ROOT'] ."/classes/stdf.php";
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/comments.common.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
 
 /**
- * Выводит форму редактировая комментария в админке комментариев
+ * Выводит форму редактировая комментария в админке комментариев.
  *
- * @param  integer  $type  Тип группы комментариев
- * @param  integer  $id    id комментария
+ * @param int $type Тип группы комментариев
+ * @param int $id   id комментария
+ *
  * @return xajaxResponse
  */
-function EditComment($type, $id) {
- require_once $_SERVER['DOCUMENT_ROOT'] . '/classes/comments.php';
+function EditComment($type, $id)
+{
+    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/comments.php';
 
-	session_start();
-	$objResponse = new xajaxResponse();
+    session_start();
+    $objResponse = new xajaxResponse();
 
-	if(!hasPermissions('comments')) {
-		return $objResponse;
-	}
-	
-	$comments = new comments;
-	$item = $comments->GetItem(intval($type), intval($id));
+    if (!hasPermissions('comments')) {
+        return $objResponse;
+    }
 
-	$show_title = false;
-	$show_files = ($type == comments::T_ARTICLES);
-	$show_video = ($type == comments::T_ARTICLES);
+    $comments = new comments();
+    $item = $comments->GetItem(intval($type), intval($id));
 
-	if (!empty($item)) {
-	    define( 'IS_SITE_ADMIN', 1 );
-	    require_once $_SERVER['DOCUMENT_ROOT'] . '/siteadmin/comments/blocks.php';
-		$objResponse->assign("edit-{$type}-{$id}", 'innerHTML', CommentEditor($item, $show_title, $show_files, $show_video));
-		if ($show_video) {
-			$objResponse->script("$$('.cl-form-files li input[type=image]').addEvent('click', FilesList)");
-		}
-	}
+    $show_title = false;
+    $show_files = ($type == comments::T_ARTICLES);
+    $show_video = ($type == comments::T_ARTICLES);
 
-	return $objResponse;
+    if (!empty($item)) {
+        define('IS_SITE_ADMIN', 1);
+        require_once $_SERVER['DOCUMENT_ROOT'].'/siteadmin/comments/blocks.php';
+        $objResponse->assign("edit-{$type}-{$id}", 'innerHTML', CommentEditor($item, $show_title, $show_files, $show_video));
+        if ($show_video) {
+            $objResponse->script("$$('.cl-form-files li input[type=image]').addEvent('click', FilesList)");
+        }
+    }
 
+    return $objResponse;
 }
 
-
-function RateComment($sname, $item, $dir) {
-    
+function RateComment($sname, $item, $dir)
+{
     session_start();
     $objResponse = new xajaxResponse();
 
     $uid = get_uid(false);
-    if(!$uid) {
+    if (!$uid) {
         return $objResponse;
     }
 
     $obj = null;
-    
-    switch(strtolower($sname)) {
+
+    switch (strtolower($sname)) {
         case 'commune':
-            if(!commune_carma::isAllowedVote()) {
+            if (!commune_carma::isAllowedVote()) {
                 return $objResponse;
             }
-            require_once $_SERVER['DOCUMENT_ROOT'] ."/classes/comments/CommentsCommune.php";
+            require_once $_SERVER['DOCUMENT_ROOT'].'/classes/comments/CommentsCommune.php';
             $comments = new CommentsCommune($item);
-            $data     = $comments->getData($item);
-            if($data['author'] == $uid) return $objResponse; // За свой коммент голосовать нельзя 
+            $data = $comments->getData($item);
+            if ($data['author'] == $uid) {
+                return $objResponse;
+            } // За свой коммент голосовать нельзя 
             break;
         default:
             return $objResponse;
     }
 
     $result = $comments->RateComment($uid, $item, $dir);
-    $jsfunct = "RateCommentCallback";
-    if($comments->is_new_template) {
-        $jsfunct = "RateCommentCallbackNew";
+    $jsfunct = 'RateCommentCallback';
+    if ($comments->is_new_template) {
+        $jsfunct = 'RateCommentCallbackNew';
     }
     $objResponse->call($jsfunct, $item, $dir);
 
     return $objResponse;
-    
 }
 
-
-function GetComment($sname, $item) {
-    
+function GetComment($sname, $item)
+{
     session_start();
     $objResponse = new xajaxResponse();
 
     $uid = get_uid(false);
-    if(!$uid) {
+    if (!$uid) {
         return $objResponse;
     }
 
-    switch(strtolower($sname)) {
+    switch (strtolower($sname)) {
         case 'commune':
-            require_once $_SERVER['DOCUMENT_ROOT'] ."/classes/comments/CommentsCommune.php";
-            $comments = new CommentsCommune( $item, date('Y-m-d H:i:s') );
+            require_once $_SERVER['DOCUMENT_ROOT'].'/classes/comments/CommentsCommune.php';
+            $comments = new CommentsCommune($item, date('Y-m-d H:i:s'));
 
             break;
         case 'articles':
-            require_once $_SERVER['DOCUMENT_ROOT'] ."/classes/comments/CommentsArticles.php";
-            $comments = new CommentsArticles( $item, date('Y-m-d H:i:s') );
+            require_once $_SERVER['DOCUMENT_ROOT'].'/classes/comments/CommentsArticles.php';
+            $comments = new CommentsArticles($item, date('Y-m-d H:i:s'));
 
             break;
         case 'adminlog':
-            require_once $_SERVER['DOCUMENT_ROOT'] ."/classes/comments/CommentsAdminLog.php";
-            $comments = new CommentsAdminLog( $item, date('Y-m-d H:i:s') );
+            require_once $_SERVER['DOCUMENT_ROOT'].'/classes/comments/CommentsAdminLog.php';
+            $comments = new CommentsAdminLog($item, date('Y-m-d H:i:s'));
             break;
         default:
             return $objResponse;
@@ -122,13 +122,12 @@ function GetComment($sname, $item) {
 //    $msg['msgtext'] = preg_replace_callback("/<([^\s>]+)[^>](.*?)*>/si",
 //            create_function('$matches', 'return str_replace("&nbsp;", " ", $matches[0]);'),
 //        $msg['msgtext']);
-    if($comments->enableNewWysiwyg) $msg['msgtext'] = html2wysiwyg($msg['msgtext']);
+    if ($comments->enableNewWysiwyg) {
+        $msg['msgtext'] = html2wysiwyg($msg['msgtext']);
+    }
     $objResponse->call('commentEditCallback', $msg, $attach);
 
     return $objResponse;
-
 }
 
 $xajax->processRequest();
-
-?>

@@ -1,7 +1,7 @@
 <?php
 
-if (!defined('IN_STDF')) { 
-    header ("Location: /404.php");
+if (!defined('IN_STDF')) {
+    header('Location: /404.php');
     exit;
 }
 
@@ -31,9 +31,9 @@ if (!defined('IN_STDF')) {
                     </div>
                     <?php if ($_2fa_provider > 0): ?>
                     <div class="b-layout__txt">
-                        <?php if($_2fa_provider == OpauthModel::TYPE_VK): ?>
+                        <?php if ($_2fa_provider == OpauthModel::TYPE_VK): ?>
                         <a href="/auth/?param=vkontakte" class="b-auth_btn b-auth_btn_flat b-auth_btn_vk b-auth_btn_h40">ВКонтакте</a>
-                        <?php elseif($_2fa_provider == OpauthModel::TYPE_FACEBOOK): ?>
+                        <?php elseif ($_2fa_provider == OpauthModel::TYPE_FACEBOOK): ?>
                         <a href="/auth/?param=facebook" class="b-auth_btn b-auth_btn_flat b-auth_btn_facebook b-auth_btn_h40">Facebook</a>
                         <?php else: ?>
                         <a href="/auth/?param=odnoklassniki" class="b-auth_btn b-auth_btn_flat b-auth_btn_odnoklassniki b-auth_btn_h40">Одноклассники</a>
@@ -42,10 +42,10 @@ if (!defined('IN_STDF')) {
                     <?php else: ?>
                         <form name="form_reg" id="login_form" method="POST" action="/">
                             <input type="hidden" name="action" value="login" />
-                            <?php if(isset($_user_action)): ?>
+                            <?php if (isset($_user_action)): ?>
                             <input type="hidden" name="user_action" value="<?=$_user_action?>" />
                             <?php endif; ?>
-                            <?php if(isset($redirectUri)): ?>
+                            <?php if (isset($redirectUri)): ?>
                             <input type="hidden" name="redirect" value="<?=$redirectUri?>" />    
                             <?php endif; ?>
                             <table cellspacing="0" cellpadding="0" border="0" class="b-layout__table">

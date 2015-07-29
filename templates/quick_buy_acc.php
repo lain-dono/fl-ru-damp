@@ -6,7 +6,7 @@
     
         <div id="quick_acc_div_main">
     
-            <input type="hidden" id="quick_acc_f_account_sum" value="<?= round($_SESSION['ac_sum'], 2)<0 ? 0 : round($_SESSION['ac_sum'], 2) ?>"/>
+            <input type="hidden" id="quick_acc_f_account_sum" value="<?= round($_SESSION['ac_sum'], 2) < 0 ? 0 : round($_SESSION['ac_sum'], 2) ?>"/>
     
             <div class="b-layout__txt b-layout__txt_padtb_10 b-layout__txt_fontsize_15">Сумма и способ оплаты</div>
     
@@ -18,10 +18,12 @@
             </div>
     
     
-            <?
+            <?php
             $quick_acc_sum = floor($_SESSION['ac_sum']);
-            if($quick_acc_sum>-10) { $quick_acc_sum=-10; }
-            $quick_acc_sum  = $quick_acc_sum*-1;
+            if ($quick_acc_sum > -10) {
+                $quick_acc_sum = -10;
+            }
+            $quick_acc_sum = $quick_acc_sum * -1;
             ?>
             <div class="b-layout__txt b-layout__txt_padleft_20 b-layout__txt_fontsize_11">
                 Сумма к оплате: <span id="quick_acc_sum_pay"><?=$quick_acc_sum?></span> руб.<br>
@@ -138,8 +140,9 @@ function quickACC_select(obj) {
 }
 
 <?php 
-require_once(ABS_PATH . '/classes/yandex_kassa_helper.php');
-if(yandex_kassa_helper::isAllowKassa()) { ?>
+require_once ABS_PATH.'/classes/yandex_kassa_helper.php';
+if (yandex_kassa_helper::isAllowKassa()) {
+    ?>
 function quickACC_process(type, step) {
     switch(type) {
         case 'webmoney':
@@ -159,7 +162,9 @@ function quickACC_process(type, step) {
             break;
     }
 }
-<?php } else { ?>
+<?php 
+} else {
+    ?>
 function quickACC_process(type, step) {
     switch(type) {
         case 'webmoney':
@@ -173,7 +178,8 @@ function quickACC_process(type, step) {
             break;
     }
 }
-<?php } ?>
+<?php 
+} ?>
 
 
 var limit = 1200; // в секундах

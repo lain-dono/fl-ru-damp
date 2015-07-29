@@ -1,21 +1,27 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/static_compress.php");
-if(!defined('IN_SBR')) { // в СБР уже все есть.
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/static_compress.php';
+if (!defined('IN_SBR')) { // в СБР уже все есть.
   session_start();
-  $uid = get_uid();
-  $id = intval($_GET['id']);
-  $print_mode = $$print_mode;
+    $uid = get_uid();
+    $id = intval($_GET['id']);
+    $print_mode = $$print_mode;
 }
-if (!$_SESSION['login']) {header ("Location: /fbd.php"); exit;}
+if (!$_SESSION['login']) {
+    header('Location: /fbd.php');
+    exit;
+}
 
 $bp = new bank_payments();
-if($id) {
-  $bp->GetRow($id, (hasPermissions('bankpayments') && hasPermissions('adm')) ? '' : " AND user_id = {$uid}");
+if ($id) {
+    $bp->GetRow($id, (hasPermissions('bankpayments') && hasPermissions('adm')) ? '' : " AND user_id = {$uid}");
 }
-if(!$bp->id) { header("Location: /404.php"); exit; }
-if($bp->sbr_id) {
+if (!$bp->id) {
+    header('Location: /404.php');
+    exit;
+}
+if ($bp->sbr_id) {
     $sbr = new sbr_emp($bp->user_id);
-    if($sbr->initFromId($bp->sbr_id, false, false, NULL, false)) {
+    if ($sbr->initFromId($bp->sbr_id, false, false, null, false)) {
         $contract_num = $sbr->getContractNum();
         $sbr_nds = $sbr->getCommNds($sbr_comm);
     }
@@ -24,23 +30,26 @@ $bp->sum = round($bp->sum, 2);
 $sum_rk = preg_split('/[.,]/', $bp->sum);
 $sum_rk[1] = str_pad($sum_rk[1], 2, '0');
 
-$stc = new static_compress;
+$stc = new static_compress();
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title>Удаленная работа (фри-ланс) на Free-lance.ru</title>
 		<meta content="text/html; charset=windows-1251" http-equiv="Content-Type"/>
-		<?php $stc->Add("/css/style.css"); ?>
+		<?php $stc->Add('/css/style.css'); ?>
 		<?php $stc->Send(); ?>
 	</head>
 	<body>
-<? if(!$print_mode) { ?>
+<?php if (!$print_mode) {
+    ?>
 		<div class="container">
 			<div class="body clear">
 				<div class="main clear">
-					<a href="/bill/"><?= PrintSiteLogo(); ?></a>
-<? } ?>
+					<a href="/bill/"><?= PrintSiteLogo();
+    ?></a>
+<?php 
+} ?>
    				<table class="cbr-tbl">
    					<tr>
    						<th rowspan="7" style="border-bottom: none;">
@@ -92,17 +101,29 @@ $stc = new static_compress;
    					<tr>
    						<td>
    							<strong>
-                              <? if($contract_num) { ?>
+                              <?php if ($contract_num) {
+    ?>
                                 Оплата по договору-оферте № <?=$contract_num?>.
-                                <? if($sbr_nds) { ?>
+                                <?php if ($sbr_nds) {
+    ?>
                                   В том числе НДС 18% &mdash; <?=num2strL($sbr_nds)?>
-                                  <? if($sbr_comm) { ?> с суммы агентского вознаграждения ООО "Ваан" &mdash; <?=num2strL($sbr_comm)?><? } ?>
-                                <? } else { ?>
+                                  <?php if ($sbr_comm) {
+    ?> с суммы агентского вознаграждения ООО "Ваан" &mdash; <?=num2strL($sbr_comm)?><?php 
+}
+    ?>
+                                <?php 
+} else {
+    ?>
                                   НДС не облагается
-                                <? } ?>
-                              <? } else { ?>
+                                <?php 
+}
+    ?>
+                              <?php 
+} else {
+    ?>
    			    			    Оплата услуг сайта Free-lance.ru по счету<br/>№ <?=$bp->bill_num?>. В том числе НДС.
-                              <? } ?>
+                              <?php 
+} ?>
    							</strong>
    						</td>
    						<td style="text-align:center; vertical-align:middle;">
@@ -171,17 +192,29 @@ $stc = new static_compress;
    					<tr>
    						<td>
    							<strong>
-                              <? if($contract_num) { ?>
+                              <?php if ($contract_num) {
+    ?>
                                 Оплата по договору-оферте № <?=$contract_num?>.
-                                <? if($sbr_nds) { ?>
+                                <?php if ($sbr_nds) {
+    ?>
                                   В том числе НДС 18% &mdash; <?=num2strL($sbr_nds)?>
-                                  <? if($sbr_comm) { ?> с суммы агентского вознаграждения ООО "Ваан" &mdash; <?=num2strL($sbr_comm)?><? } ?>
-                                <? } else { ?>
+                                  <?php if ($sbr_comm) {
+    ?> с суммы агентского вознаграждения ООО "Ваан" &mdash; <?=num2strL($sbr_comm)?><?php 
+}
+    ?>
+                                <?php 
+} else {
+    ?>
                                   НДС не облагается
-                                <? } ?>
-                              <? } else { ?>
+                                <?php 
+}
+    ?>
+                              <?php 
+} else {
+    ?>
    			    			    Оплата услуг сайта Free-lance.ru по счету<br/>№ <?=$bp->bill_num?>. В том числе НДС.
-                              <? } ?>
+                              <?php 
+} ?>
    							</strong>
    						</td>
    						<td style="text-align:center; vertical-align:middle;">
@@ -201,13 +234,15 @@ $stc = new static_compress;
    						</td>
    					</tr>
    				</table>
-<? if(!$print_mode) { ?>
+<?php if (!$print_mode) {
+    ?>
 					<div class="tcbr-btns">
  						  <input type="button" class="i-btn" value="Распечатать" onclick="window.print();"/>
 					</div>
 				</div>
 			</div>
 		</div>
-<? } ?>
+<?php 
+} ?>
 	</body>
 </html>

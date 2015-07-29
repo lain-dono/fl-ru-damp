@@ -1,9 +1,10 @@
-<? 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/buttons/multi_buttons.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/LocalDateTime.php");
+<?php 
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/buttons/multi_buttons.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/LocalDateTime.php';
 $multi = new multi_buttons();
 
-if($stage->version != $stage->frl_version) {// Фрилансер еще не согласился, для расчета берем старую дату
+if ($stage->version != $stage->frl_version) {
+    // Фрилансер еще не согласился, для расчета берем старую дату
     $frl_version = $stage->getVersion($stage->frl_version, $stage->data);
     $work_time = intval($frl_version['work_time']);
     $start_time = $frl_version['start_time'];
@@ -12,77 +13,79 @@ if($stage->version != $stage->frl_version) {// Фрилансер еще не с
     $start_time = $stage->start_time;
 }
 $work_time = $work_time < 0 ? 0 : $work_time;
-$cdate = new LocalDateTime(date('d.m.Y', strtotime($start_time . ' + ' . $work_time . 'day')));
+$cdate = new LocalDateTime(date('d.m.Y', strtotime($start_time.' + '.$work_time.'day')));
 $cdate->getWorkForDay(pskb::PERIOD_EXP);
-$days      = ($work_time + pskb::PERIOD_EXP) . "day";
-$overtime  = strtotime($start_time . ' + ' . $days);
-if($sbr->data['lc_id'] > 0) {
-    $overtime = strtotime($sbr->data['dateEndLC'] . ' - ' . pskb::ARBITRAGE_PERIOD_DAYS . " day");
+$days = ($work_time + pskb::PERIOD_EXP).'day';
+$overtime = strtotime($start_time.' + '.$days);
+if ($sbr->data['lc_id'] > 0) {
+    $overtime = strtotime($sbr->data['dateEndLC'].' - '.pskb::ARBITRAGE_PERIOD_DAYS.' day');
     // Сб, Вс не рабочие дни
-    if(date('w', $overtime) == 0 || date('w', $overtime) == 6) {
+    if (date('w', $overtime) == 0 || date('w', $overtime) == 6) {
         $d = date('w', $overtime) == 6 ? 1 : 2;
-        $overtime = $overtime - ($d * 3600* 24);
+        $overtime = $overtime - ($d * 3600 * 24);
     }
 } else {
     $overtime = null;
 }
 
 // Если в арбитраже действий, делать никаких нельзя, независимо от статуса СБР, если завершено кнопок уже никаких не будет
-if($stage->data['status'] == sbr_stages::STATUS_INARBITRAGE || $stage->data['status'] == sbr_stages::STATUS_ARBITRAGED || $stage->status == sbr_stages::STATUS_COMPLETED) return;
+if ($stage->data['status'] == sbr_stages::STATUS_INARBITRAGE || $stage->data['status'] == sbr_stages::STATUS_ARBITRAGED || $stage->status == sbr_stages::STATUS_COMPLETED) {
+    return;
+}
 
 // Инициируем все доступные кнопки один раз @todo Что-то тут надо придумать
 $arbitrage = new buttons('Обратиться в арбитраж', 'red', 'arbitrage');
-$arbitrage->addEvent("onclick", "toggle_arb();");
+$arbitrage->addEvent('onclick', 'toggle_arb();');
 
 $condition = new buttons('Посмотреть условия сделки', null, 'condition');
-$condition->setLink("/" . sbr::NEW_TEMPLATE_SBR . "/?site=master&id={$sbr->id}");
+$condition->setLink('/'.sbr::NEW_TEMPLATE_SBR."/?site=master&id={$sbr->id}");
 
 $refuse = new buttons('Отказаться от сделки', 'red', 'refuse');
-$refuse->addEvent("onclick", "$('refuse_dialog').toggleClass('b-shadow_hide'); return false;");
+$refuse->addEvent('onclick', "$('refuse_dialog').toggleClass('b-shadow_hide'); return false;");
 
 $agree = new buttons('Согласиться с изменениями', null, 'action_stage');
-$agree->addEvent("onclick", "submitForm($('actionStageForm'), {action:'agree_stage', ok:1});");
+$agree->addEvent('onclick', "submitForm($('actionStageForm'), {action:'agree_stage', ok:1});");
 
 $refuse_stage = new buttons('Отказаться от изменений', 'red', 'refuse_stage');
-$refuse_stage->addEvent("onclick", "$('refuse_stage_dialog').toggleClass('b-shadow_hide'); return false;");
+$refuse_stage->addEvent('onclick', "$('refuse_stage_dialog').toggleClass('b-shadow_hide'); return false;");
 
-switch($sbr->status) {
+switch ($sbr->status) {
     case sbr::STATUS_NEW:
-        
+
         $multi->addButton($condition);
         $multi->addButton($refuse);
-        
+
         break;
     case sbr::STATUS_CHANGED:
-        if($sbr->data['reserved_id']) { // Деньги зарезервированы, тут еще зависимость от статусов будет
-            if($stage_changed) { 
-                if($stage->data['status'] == sbr_stages::STATUS_PROCESS && $stage->v_data['status'] == sbr_stages::STATUS_NEW) {
+        if ($sbr->data['reserved_id']) { // Деньги зарезервированы, тут еще зависимость от статусов будет
+            if ($stage_changed) {
+                if ($stage->data['status'] == sbr_stages::STATUS_PROCESS && $stage->v_data['status'] == sbr_stages::STATUS_NEW) {
                     $agree->setName('Приступить к работе'); // Меняем название кнопки
                 }
 
                 $multi->addButton($agree);
 
                 // Отказатся нельзя от изменений когда сделку переводят из состояния Не начат
-                if($stage->v_data['status'] != sbr_stages::STATUS_NEW) { 
+                if ($stage->v_data['status'] != sbr_stages::STATUS_NEW) {
                     $multi->addButton($refuse_stage);
                 }
             }
-            if($stage->status != sbr_stages::STATUS_NEW) {
+            if ($stage->status != sbr_stages::STATUS_NEW) {
                 $multi->addButton($arbitrage);
             }
         } else { // Деньги не зарезервированы
             // Если есть изменения в текущей сделке
-            if($stage_changed) {
+            if ($stage_changed) {
                 $multi->addButton($agree);
                 $multi->addButton($refuse_stage);
-            } 
-            
+            }
+
             $multi->addButton($refuse);
         }
-        
+
         break;
     case sbr::STATUS_PROCESS:
-        if($sbr->data['reserved_id'] && $stage->status != sbr_stages::STATUS_NEW) { // Деньги зарезервированы
+        if ($sbr->data['reserved_id'] && $stage->status != sbr_stages::STATUS_NEW) { // Деньги зарезервированы
             $multi->addButton($arbitrage);
         } else { // Деньги еще не зарезервированы
             $multi->addButton($refuse);
@@ -90,28 +93,28 @@ switch($sbr->status) {
         break;
     case sbr::STATUS_REFUSED:
     case sbr::STATUS_CANCELED:
-        
+
         break;
 }
 
 // Если время вышло #0020166 #0023680
-if(time() > $overtime && $overtime !== null) {
+if (time() > $overtime && $overtime !== null) {
     $multi->removeButton($arbitrage);
 }
 
-if($sbr->lc_id > 0) {
+if ($sbr->lc_id > 0) {
     $multi->removeButton($refuse);
 }
 
 // Выводим сгенерированные кнопки
 $multi->view();
 // Если есть кнопка арбитража
-if($multi->isButton('arbitrage')) {
-    include ($_SERVER['DOCUMENT_ROOT'] . "/sbr/arbitrage.php");
+if ($multi->isButton('arbitrage')) {
+    include $_SERVER['DOCUMENT_ROOT'].'/sbr/arbitrage.php';
 }
 
 // Если есть кнопки из блока действий по этапу сделки
-if($multi->isButton('action_stage')) {
+if ($multi->isButton('action_stage')) {
     ?>
     <form method="post" id="actionStageForm">
         <input type="hidden" name="ok" value="" />
@@ -121,10 +124,11 @@ if($multi->isButton('action_stage')) {
         <input type="hidden" name="site" value="<?=$site?>" />
         <input type="hidden" name="action" value="" /> 
     </form>   
-    <?
+    <?php
+
 }
 
-if($multi->isButton('refuse_stage')) {
+if ($multi->isButton('refuse_stage')) {
     ?>
     <form method="post" id="refuseStageForm">
         <div class="b-shadow b-shadow_center b-shadow_zindex_11 b-shadow_width_620 b-shadow_hide" id="refuse_stage_dialog">
@@ -157,12 +161,14 @@ if($multi->isButton('refuse_stage')) {
         <input type="hidden" name="id" value="<?=$stage->id?>" />
         <input type="hidden" name="action" value="agree_stage" />
     </form>
-    <?
+    <?php
+
 }
 
-if($multi->isButton('refuse')) {
+if ($multi->isButton('refuse')) {
     ?>
-    <form action="?id=<?= $sbr->id;?>" method="post" id="refuseForm">
+    <form action="?id=<?= $sbr->id;
+    ?>" method="post" id="refuseForm">
         <div class="b-shadow b-shadow_center b-shadow_zindex_11 b-shadow_width_620 b-shadow_hide" id="refuse_dialog">
             <div class="b-shadow__right">
                 <div class="b-shadow__left">
@@ -191,7 +197,8 @@ if($multi->isButton('refuse')) {
         <input type="hidden" name="version" value="<?=$sbr->data['version']?>" />
         <input type="hidden" name="action" value="agree" />
     </form>
-    <?
+    <?php
+
 }
 
 ?>

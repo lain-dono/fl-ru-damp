@@ -1,7 +1,9 @@
-<?php namespace UniversalAnalytics\Track;
+<?php
 
-class Page extends Entity {
+namespace UniversalAnalytics\Track;
 
+class Page extends Entity
+{
     protected $shortName = 'page';
 
     protected $attributes = array(
@@ -19,5 +21,4 @@ class Page extends Entity {
     );
 
     protected $required = array();
-
 }

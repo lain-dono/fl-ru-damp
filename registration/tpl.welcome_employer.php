@@ -33,10 +33,10 @@
 		
 </div>
 
-<?
-if ( !empty($_SESSION['is_new_user']) ) {
+<?php
+if (!empty($_SESSION['is_new_user'])) {
     unset($_SESSION['is_new_user']);
-?>
+    ?>
 <script language="javascript" src="http://www.everestjs.net/static/st.v2.js"></script>
 <script language="javascript">
 var ef_event_type="transaction";
@@ -52,6 +52,7 @@ var ef_fb_is_app = 0;
 effp();
 </script>
 <noscript><img src='http://pixel.everesttech.net/3208/t?ev_reg_worker=0&ev_reg_employer=1&ev_reg_worker_master=0&ev_reg_employer_master=0&ev_transid=<?=md5($_SESSION['uid'])?>' width='1' height='1'/></noscript>
-<?
+<?php
+
 }
 ?>

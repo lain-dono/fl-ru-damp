@@ -1,45 +1,45 @@
-<?
-/**
- * подключаем файл с основными функциями
- *
- */
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
+<?php
 
 /**
- * Класс для работы с правами доступа пользователей
- *
+ * подключаем файл с основными функциями.
  */
-class permissions {
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
 
+/**
+ * Класс для работы с правами доступа пользователей.
+ */
+class permissions
+{
     /**
-     * Обновить информацию о группе и ее правах доступа
+     * Обновить информацию о группе и ее правах доступа.
      *
-     * @param   integer $id     Идентификатор группы
-     * @param   string  $name   Название группы
-     * @param   array   $rights Права доступа группы
+     * @param integer $id     Идентификатор группы
+     * @param string  $name   Название группы
+     * @param array   $rights Права доступа группы
      */
-    function updateGroup($id, $name, $rights) {
+    public function updateGroup($id, $name, $rights)
+    {
         global $DB;
 
-        $sql = "UPDATE permissions_groups SET name=? WHERE id=?i AND id<>0";
+        $sql = 'UPDATE permissions_groups SET name=? WHERE id=?i AND id<>0';
         $DB->query($sql, $name, $id);
 
-        $sql = "SELECT * FROM permissions_groups_rights WHERE group_id=?i";
+        $sql = 'SELECT * FROM permissions_groups_rights WHERE group_id=?i';
         $drights = $DB->rows($sql, $id);
-        if($drights) {
-            foreach($drights as $right) {
+        if ($drights) {
+            foreach ($drights as $right) {
                 $sql = "DELETE FROM permissions_rights_users WHERE right_id = ?i AND is_allow = 'f';";
                 $DB->hold()->query($sql, $right['right_id']);
             }
             $DB->query();
         }
 
-        $sql = "DELETE FROM permissions_groups_rights WHERE group_id=?i";
+        $sql = 'DELETE FROM permissions_groups_rights WHERE group_id=?i';
         $DB->query($sql, $id);
 
-        if($rights && $id) {
-            $sql = "";
-            foreach($rights as $right) {
+        if ($rights && $id) {
+            $sql = '';
+            foreach ($rights as $right) {
                 $sql .= "INSERT INTO permissions_groups_rights(group_id, right_id) VALUES({$id}, {$right}); ";
             }
             $DB->query($sql);
@@ -47,22 +47,24 @@ class permissions {
     }
 
     /**
-     * Получить полную информацию о группе и ее правах
+     * Получить полную информацию о группе и ее правах.
      *
-     * @param   integer $id Идентификатор группы
-     * @return  array       Информация о группе и правах доступа
+     * @param integer $id Идентификатор группы
+     *
+     * @return array Информация о группе и правах доступа
      */
-    function getGroupInfo($id) {
+    public function getGroupInfo($id)
+    {
         global $DB;
 
-        $sql = "SELECT * FROM permissions_groups WHERE id=?i";
+        $sql = 'SELECT * FROM permissions_groups WHERE id=?i';
         $group = $DB->row($sql, $id);
         $group['rights'] = array();
 
-        $sql = "SELECT right_id FROM permissions_groups_rights WHERE group_id=?i";
+        $sql = 'SELECT right_id FROM permissions_groups_rights WHERE group_id=?i';
         $rights = $DB->rows($sql, $id);
-        if($rights) {
-            foreach($rights as $right) {
+        if ($rights) {
+            foreach ($rights as $right) {
                 array_push($group['rights'], $right['right_id']);
             }
         }
@@ -71,21 +73,23 @@ class permissions {
     }
 
     /**
-     * Создание новой группы
+     * Создание новой группы.
      *
-     * @param   string  $name   Название группы
-     * @param   array   $rights Разрешенные права для группы
-     * @return  integer         ID созданной группы
+     * @param string $name   Название группы
+     * @param array  $rights Разрешенные права для группы
+     *
+     * @return integer ID созданной группы
     */
-    function addGroup($name, $rights) {
+    public function addGroup($name, $rights)
+    {
         global $DB;
 
-        $sql = "INSERT INTO permissions_groups(name) VALUES(?) RETURNING id";
+        $sql = 'INSERT INTO permissions_groups(name) VALUES(?) RETURNING id';
         $id = $DB->val($sql, $name);
 
-        if($rights && $id) {
-            $sql = "";
-            foreach($rights as $right) {
+        if ($rights && $id) {
+            $sql = '';
+            foreach ($rights as $right) {
                 $sql .= "INSERT INTO permissions_groups_rights(group_id, right_id) VALUES({$id}, {$right}); ";
             }
             $DB->query($sql);
@@ -95,36 +99,38 @@ class permissions {
     }
 
     /**
-     * Удаление группы
+     * Удаление группы.
      *
-     * @param   integer $id Идентификатор группы
+     * @param integer $id Идентификатор группы
      */
-    function deleteGroup($id) {
+    public function deleteGroup($id)
+    {
         global $DB;
 
-        $sql = "SELECT * FROM permissions_groups_rights WHERE group_id=?i AND group_id<>0 AND group_id<>1";
+        $sql = 'SELECT * FROM permissions_groups_rights WHERE group_id=?i AND group_id<>0 AND group_id<>1';
         $rights = $DB->rows($sql, $id);
-        if($rights) {
-            foreach($right as $right) {
+        if ($rights) {
+            foreach ($right as $right) {
                 $sql = "DELETE FROM permissions_rights_users WHERE right_id = ?i AND is_allow = 'f';";
                 $DB->hold()->query($sql, $right['right_id']);
             }
             $DB->query();
         }
 
-        $sql = "DELETE FROM permissions_groups WHERE id=?i AND id<>0 AND id<>1";
+        $sql = 'DELETE FROM permissions_groups WHERE id=?i AND id<>0 AND id<>1';
         $DB->query($sql, $id);
     }
 
     /**
-     * Получить список всех доступных прав
+     * Получить список всех доступных прав.
      *
-     * @return  array   Список всех доступных прав
+     * @return array Список всех доступных прав
      */
-    function getAllRights() {
+    public function getAllRights()
+    {
         global $DB;
 
-        $sql = "SELECT * FROM permissions_rights ORDER BY code";
+        $sql = 'SELECT * FROM permissions_rights ORDER BY code';
         $rights = $DB->rows($sql);
 
         return $rights;
@@ -133,28 +139,31 @@ class permissions {
     /**
      * Получить список всех групп
      *
-     * @return  array   Информация о группах
+     * @return array Информация о группах
      */
-    function getAllGroups() {
+    public function getAllGroups()
+    {
         global $DB;
 
-        $sql = "SELECT * FROM permissions_groups ORDER BY name";
+        $sql = 'SELECT * FROM permissions_groups ORDER BY name';
         $groups = $DB->rows($sql);
 
         return $groups;
     }
 
     /**
-     * Проверить входит ли пользователь в группу
+     * Проверить входит ли пользователь в группу.
      *
-     * @param   integer $uid    ID пользователя
-     * @param   string  $group  Группы
-     * @return  boolean         Входит или нет
+     * @param integer $uid   ID пользователя
+     * @param string  $group Группы
+     *
+     * @return boolean Входит или нет
      */
-    function getUserGroupPermissions($uid, $group) {
+    public function getUserGroupPermissions($uid, $group)
+    {
         global $DB;
 
-        switch($group) {
+        switch ($group) {
             case 'administrator':
                 $group_id = 0;
                 break;
@@ -167,16 +176,19 @@ class permissions {
         }
 
         $sql = "SELECT 1 FROM permissions_groups_users WHERE user_id={$uid} AND group_id={$group_id}";
-        return ($DB->val($sql)==1?true:false);
+
+        return ($DB->val($sql) == 1 ? true : false);
     }
 
     /**
-     * Получить права доступа пользователя
+     * Получить права доступа пользователя.
      *
-     * @param   integer $uid    ID пользователя
-     * @return  array           разрешенные права для пользователя
+     * @param integer $uid ID пользователя
+     *
+     * @return array разрешенные права для пользователя
      */
-    function getUserPermissions($uid) {
+    public function getUserPermissions($uid)
+    {
         global $DB;
 
         $permissions = array();
@@ -202,45 +214,47 @@ class permissions {
                 ";
         $permissions_data = $DB->rows($sql, $uid, $uid, $uid);
 
-        if($permissions_data) {
-            foreach($permissions_data as $v) {
-                if(!in_array($v['code'],$permissions)) {
+        if ($permissions_data) {
+            foreach ($permissions_data as $v) {
+                if (!in_array($v['code'], $permissions)) {
                     array_push($permissions, $v['code']);
                 }
             }
-            foreach($permissions_data as $v) {
-                if($v['is_allow']=='f' && !in_array($v['code'],$notAllowPermissions)) {
+            foreach ($permissions_data as $v) {
+                if ($v['is_allow'] == 'f' && !in_array($v['code'], $notAllowPermissions)) {
                     array_push($notAllowPermissions, $v['code']);
                 }
             }
         }
-  
-        $permissions = array_diff($permissions,$notAllowPermissions);
+
+        $permissions = array_diff($permissions, $notAllowPermissions);
 
         return $permissions;
     }
 
     /**
-     * Поиск пользователей по заданным критериям
+     * Поиск пользователей по заданным критериям.
      *
-     * @param   integer $group_id   Идентификатор группы
-     * @param   string  $login      Логин пользователя
-     * @return  array               Спсок найденных пользователей
+     * @param integer $group_id Идентификатор группы
+     * @param string  $login    Логин пользователя
+     *
+     * @return array Спсок найденных пользователей
      */
-    function getUsers($search_group, $search_login) {
+    public function getUsers($search_group, $search_login)
+    {
         global $DB;
 
-        if(trim($search_login)) {
-            $sqlSearchLogin = " AND lower(u.login) LIKE lower(?u)";
+        if (trim($search_login)) {
+            $sqlSearchLogin = ' AND lower(u.login) LIKE lower(?u)';
         }
 
-        switch($search_group) {
+        switch ($search_group) {
             case '-4':
-                $sql = "SELECT u.* 
+                $sql = 'SELECT u.* 
                         FROM users as u
-                        WHERE ".($search_login?"lower(u.login) LIKE lower(?u) ":"1=2")."
+                        WHERE '.($search_login ? 'lower(u.login) LIKE lower(?u) ' : '1=2').'
                         ORDER BY u.login
-                        ";
+                        ';
                 break;
             case '-3':
                 $sql = "SELECT DISTINCT(a_u.*) 
@@ -289,83 +303,96 @@ class permissions {
         }
 
         $users = $DB->rows($sql, "%{$search_login}%", "%{$search_login}%");
+
         return $users;
     }
 
     /**
-     * Получить список групп в который находится пользователь
+     * Получить список групп в который находится пользователь.
      *
-     * @param   integer $uid    ID пользователя
-     * @return  array           Группы в которых находится пользователь
+     * @param integer $uid ID пользователя
+     *
+     * @return array Группы в которых находится пользователь
      */
-    function getUserGroups($uid) {
+    public function getUserGroups($uid)
+    {
         global $DB;
 
-        $sql = "SELECT p_g.* 
+        $sql = 'SELECT p_g.* 
                 FROM permissions_groups_users as p_g_u 
                 LEFT JOIN permissions_groups as p_g ON p_g.id = p_g_u.group_id
-                WHERE p_g_u.user_id=?i";
+                WHERE p_g_u.user_id=?i';
+
         return $DB->rows($sql, $uid);
     }
 
     /**
-     * Получить список дополнительных прав пользователя
+     * Получить список дополнительных прав пользователя.
      *
-     * @param   integer $uid    ID пользователя
-     * @return  array           Дополнительные права, которые имеет пользователь
+     * @param integer $uid ID пользователя
+     *
+     * @return array Дополнительные права, которые имеет пользователь
      */
-    function getUserExtraRights($uid) {
+    public function getUserExtraRights($uid)
+    {
         global $DB;
 
-        $sql = "SELECT p_r.*, p_r_u.is_allow
+        $sql = 'SELECT p_r.*, p_r_u.is_allow
                 FROM permissions_rights_users as p_r_u 
                 LEFT JOIN permissions_rights as p_r ON p_r.id = p_r_u.right_id
-                WHERE p_r_u.user_id=?i";
+                WHERE p_r_u.user_id=?i';
+
         return $DB->rows($sql, $uid);
     }
 
     /**
-     * Удаление пользователя из всех груп и удаление всех его прав
+     * Удаление пользователя из всех груп и удаление всех его прав.
      *
-     * @param   integer $uid    ID пользователя
+     * @param integer $uid ID пользователя
      */
-    function deleteUser($uid) {
+    public function deleteUser($uid)
+    {
         global $DB;
 
-        $sql = "DELETE FROM permissions_groups_users WHERE user_id=?i";
+        $sql = 'DELETE FROM permissions_groups_users WHERE user_id=?i';
         $DB->query($sql, $uid);
 
-        $sql = "DELETE FROM permissions_rights_users WHERE user_id=?i";
+        $sql = 'DELETE FROM permissions_rights_users WHERE user_id=?i';
         $DB->query($sql, $uid);
     }
 
     /**
-     * Изменить информацию о группах и правах пользователя
+     * Изменить информацию о группах и правах пользователя.
      *
-     * @param   integer     $uid                ID пользователя
-     * @param   array       $groups             Информация о группах
-     * @param   array       $rights_allow       Информация о разрешенных правах
+     * @param integer $uid          ID пользователя
+     * @param array   $groups       Информация о группах
+     * @param array   $rights_allow Информация о разрешенных правах
      */
-    function updateUser($uid, $groups, $rights_allow) {
+    public function updateUser($uid, $groups, $rights_allow)
+    {
         global $DB;
 
         $user_groups_rights = array();
-        if(!is_array($rights_allow)) $rights_allow = array();
-        if(!is_array($rights_disallow)) $rights_disallow = array();
+        if (!is_array($rights_allow)) {
+            $rights_allow = array();
+        }
+        if (!is_array($rights_disallow)) {
+            $rights_disallow = array();
+        }
 
-        $sql = "DELETE FROM permissions_groups_users WHERE user_id=?i";
+        $sql = 'DELETE FROM permissions_groups_users WHERE user_id=?i';
         $DB->query($sql, $uid);
-        $sql = "DELETE FROM permissions_rights_users WHERE user_id=?i";
+        $sql = 'DELETE FROM permissions_rights_users WHERE user_id=?i';
         $DB->query($sql, $uid);
 
-        if(is_array($groups)) {
-            $sql = "";
-            if($groups) {
-                foreach($groups as $group) {
-                    $g_rights = permissions::getGroupInfo($group);
-                    if($g_rights['rights']) {
-                        foreach($g_rights['rights'] as $g_right) {
-                            if(!in_array($g_right, $user_groups_rights)) {
+        if (is_array($groups)) {
+            $sql = '';
+            if ($groups) {
+                foreach ($groups as $group) {
+                    $g_rights = self::getGroupInfo($group);
+                    if ($g_rights['rights']) {
+                        foreach ($g_rights['rights'] as $g_right) {
+                            if (!in_array($g_right, $user_groups_rights)) {
                                 array_push($user_groups_rights, $g_right);
                             }
                         }
@@ -382,26 +409,25 @@ class permissions {
         $rights_allow = $tr_allow;
         $rights_disallow = $tr_disallow;
 
-        if(is_array($rights_allow)) {
-            $sql = "";
-            if($rights_allow) {
-                foreach($rights_allow as $right) {
+        if (is_array($rights_allow)) {
+            $sql = '';
+            if ($rights_allow) {
+                foreach ($rights_allow as $right) {
                     $sql .= "INSERT INTO permissions_rights_users(right_id,user_id,is_allow) VALUES({$right},{$uid},'t');\n ";
                 }
                 $DB->query($sql);
             }
         }
 
-        if(is_array($rights_disallow)) {
-            $sql = "";
-            if($rights_disallow) {
-                foreach($rights_disallow as $right) {
+        if (is_array($rights_disallow)) {
+            $sql = '';
+            if ($rights_disallow) {
+                foreach ($rights_disallow as $right) {
                     $sql .= "INSERT INTO permissions_rights_users(right_id,user_id,is_allow) VALUES({$right},{$uid},'f');\n ";
                 }
                 $DB->query($sql);
             }
         }
     }
-
 }
 ?>

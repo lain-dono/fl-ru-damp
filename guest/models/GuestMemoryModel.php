@@ -1,10 +1,8 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/yii/CModel.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/memBuff2.php');
-require_once('GuestConst.php');
-
-
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/yii/CModel.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/memBuff2.php';
+require_once 'GuestConst.php';
 
 class GuestMemoryModel extends CModel
 {
@@ -19,15 +17,16 @@ class GuestMemoryModel extends CModel
         $this->memBuff = new memBuff();
     }
 
-
     public function saveData($data)
     {
-        $key = substr(md5(self::SOLT . implode(',', $data)), 0, 12);
+        $key = substr(md5(self::SOLT.implode(',', $data)), 0, 12);
         $this->memBuff->add($key, $data, $this->expire);
-        return $key; 
+
+        return $key;
     }
-    
-    public function getData($key) {
+
+    public function getData($key)
+    {
         return $this->memBuff->get($key);
     }
 }

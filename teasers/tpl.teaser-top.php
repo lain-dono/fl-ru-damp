@@ -1,6 +1,6 @@
-<?
+<?php
 $prjID = __paramInit('int', 'prj_id', null, null);
-$link = $prjID ? '/public/?step=1&public=' . $prjID : '/service/top/';
+$link = $prjID ? '/public/?step=1&public='.$prjID : '/service/top/';
 ?>
 <td class="b-layout__td b-layout__td_width_70 b-layout__td_center b-layout__td_width_null_ipad"><span class="b-page__desktop"><img class="b-layout__pic" src="/images/promo-icons/small/5.png" alt=""  /></span></td>
 <td class="b-layout__td"><h3 class="b-layout__h3 b-layout__h3_padbot_5"><a class="b-layout__link b-layout__link_bold" href="/service/top/">Закрепление проекта</a></h3>

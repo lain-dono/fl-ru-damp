@@ -18,18 +18,23 @@ var SBR; window.addEvent('domready', function() { SBR = new Sbr('adminFrm'); } )
                         <div class="form-el">
                             <label class="form-label">Период</label>
                             <span class="form-input">
-                                <? include($_SERVER['DOCUMENT_ROOT'].'/norisk2/tpl.filter-period.php') ?>
+                                <?php include($_SERVER['DOCUMENT_ROOT'].'/norisk2/tpl.filter-period.php') ?>
                             </span>
                         </div>
                         <div class="form-el">
                             <label class="form-label">Валюта</label>
                             <ul class="form-input c">
-                                <? foreach($EXRATE_CODES as $ex_code=>$ex) { if( !($ex_code==exrates::BANK||$ex_code==exrates::YM||$ex_code==exrates::WMR) ) continue; ?>
+                                <?php foreach ($EXRATE_CODES as $ex_code => $ex) {
+    if (!($ex_code == exrates::BANK || $ex_code == exrates::YM || $ex_code == exrates::WMR)) {
+        continue;
+    }
+    ?>
                                 <li>
                                     <label><span class="i-chk"><input type="checkbox" name="filter[cost_sys][]" value="<?=$ex_code?>"<?=($filter['cost_sys'] && in_array($ex_code, $filter['cost_sys']) ? ' checked="checked"' : '')?> /></span><?=$ex[2]?>
                                     </label>
                                 </li>
-                                <? } ?>
+                                <?php 
+} ?>
                             </ul>
                         </div>
                     </div>

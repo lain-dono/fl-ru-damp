@@ -1,5 +1,8 @@
-<?
-if (!$_in_setup) {header ("HTTP/1.0 403 Forbidden"); exit;}
+<?php
+if (!$_in_setup) {
+    header ('HTTP/1.0 403 Forbidden');
+    exit;
+}
 ?>
 <form action="." method="post">
 <table style="width:100%; border:0" cellspacing="0" cellpadding="0">
@@ -19,7 +22,9 @@ if (!$_in_setup) {header ("HTTP/1.0 403 Forbidden"); exit;}
 	<tr>
 		<td style="vertical-align:top; height:40px">
 			<input type="password" name="passwd" class="wdh100" />
-			<? if ($error) print(view_error($error)) ?>
+			<?php if ($error) {
+    print(view_error($error));
+} ?>
 		</td>
 	</tr>
 	<tr>

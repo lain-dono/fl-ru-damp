@@ -1,7 +1,8 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/pgq/api/PGQConsumer.php");
 
-/**
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/pgq/api/PGQConsumer.php';
+
+/*
  * PGQRemoteConsumer is a PGQConsumer to use when you need to process
  * the events at a remote site. It ensures a single batch won't get
  * processed more than once.
@@ -26,24 +27,24 @@ require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/pgq/api/PGQConsumer.php");
  * See PGQConsumer for more details.
  */
 
-define("PGQ_TRIGGER_NAME", "ins_to_queue");
-define("PGQ_LAST_BATCH", "pgq_last_batch");
+define('PGQ_TRIGGER_NAME', 'ins_to_queue');
+define('PGQ_LAST_BATCH', 'pgq_last_batch');
 
 abstract class PGQRemoteConsumer extends PGQConsumer
 {
-  protected $table; // table name where to install pgq.logutriga trigger
+    protected $table; // table name where to install pgq.logutriga trigger
   protected $dst_constr;
-  protected $pg_dst_con;
+    protected $pg_dst_con;
 
-  public function __construct($cname, $qname, $table,
-			      $argc, $argv, $src_constr, $dst_constr)
-  {
-    $this->table         = $table;
-    $this->dst_constr    = $dst_constr;
-    $this->last_batch_id = null;
-    
-    parent::__construct($cname, $qname, $argc, $argv, $src_constr);
-  }
+    public function __construct($cname, $qname, $table,
+                  $argc, $argv, $src_constr, $dst_constr)
+    {
+        $this->table = $table;
+        $this->dst_constr = $dst_constr;
+        $this->last_batch_id = null;
+
+        parent::__construct($cname, $qname, $argc, $argv, $src_constr);
+    }
 
   /**
    * Manage batches of events, and call process_event() for each of
@@ -55,345 +56,374 @@ abstract class PGQRemoteConsumer extends PGQConsumer
    *
    * Manage source and destination database transactions.
    */
-  public function preprocess_batch($batch_id) {
-    $events = parent::preprocess_batch($batch_id);
+  public function preprocess_batch($batch_id)
+  {
+      $events = parent::preprocess_batch($batch_id);
 
-    if( $events === False ) {
-      $this->log->debug("PGQRemoteConsumer.preprocess_batch got no events");
-      return False;
-    }
-    pg_query($this->pg_dst_con, "BEGIN;");
+      if ($events === false) {
+          $this->log->debug('PGQRemoteConsumer.preprocess_batch got no events');
+
+          return false;
+      }
+      pg_query($this->pg_dst_con, 'BEGIN;');
 
     // WARNING: DO NOT USE switch() HERE
     $batch_done = $this->is_batch_done($batch_id);
-    
-    if( $batch_done === null ) {
-      // error getting last batch information, don't process_batch
-      return False;
-    }
-    else if( $batch_done === True ) {
-      // both connections are finished at this point
-      return False;
-    }
-	else if ( $batch_done === False ) {
-      return $events;
-    }
+
+      if ($batch_done === null) {
+          // error getting last batch information, don't process_batch
+      return false;
+      } elseif ($batch_done === true) {
+          // both connections are finished at this point
+      return false;
+      } elseif ($batch_done === false) {
+          return $events;
+      }
   }
 
   /**
-   * postprocess_batch just set batch_id as done
+   * postprocess_batch just set batch_id as done.
    */
-  public function postprocess_batch($batch_id, $abort_batch) {
-    if( $abort_batch ) {
-      $this->rollback();
-      return False;
-    }
-    
-    if( $this->set_batch_done($batch_id) ) {
-      parent::postprocess_batch($batch_id);
-      pg_query($this->pg_dst_con, "COMMIT;");
-      return True;
-    }
+  public function postprocess_batch($batch_id, $abort_batch)
+  {
+      if ($abort_batch) {
+          $this->rollback();
+
+          return false;
+      }
+
+      if ($this->set_batch_done($batch_id)) {
+          parent::postprocess_batch($batch_id);
+          pg_query($this->pg_dst_con, 'COMMIT;');
+
+          return true;
+      }
 
     // $this->rollback() has already been called when set_batch_done()
     // failed.
-    return False;
+    return false;
   }
 
-
   /**
-   * Get last processed batch_id
+   * Get last processed batch_id.
    */
-  public function is_batch_done($batch_id) {
-    $sql = sprintf("SELECT batch_id FROM %s ".
-		   "WHERE qname = '%s' AND consumer_id = '%s'",
-		   PGQ_LAST_BATCH,
-		   pg_escape_string($this->qname),
-		   pg_escape_string($this->cname));
+  public function is_batch_done($batch_id)
+  {
+      $sql = sprintf('SELECT batch_id FROM %s '.
+           "WHERE qname = '%s' AND consumer_id = '%s'",
+           PGQ_LAST_BATCH,
+           pg_escape_string($this->qname),
+           pg_escape_string($this->cname));
 
-    $this->log->debug($sql);
-    if( ($r = pg_query($this->pg_dst_con, $sql)) === False ) {
-      $this->log->warning("Could not retreive last processed batch id ".
-			  "from dst database");
-      $this->rollback();
-      return null;
-    }
-    
-    $this->last_batch_id = null;
-		
-    if( pg_num_rows( $r ) > 0  ) {
-      $this->last_batch_id = pg_fetch_result($r, 0, 0);
-    }
-    $this->log->debug("PGQRemoteConsumer.is_batch_done last_batch_id=%d batch_id=%d", $this->last_batch_id, $batch_id);
-		
-    if( $this->last_batch_id == null ) {
-      $this->log->warning("No last processed batch id");
-      return False;
-    }
-    else if( $batch_id <= $this->last_batch_id ) {
-      /**
+      $this->log->debug($sql);
+      if (($r = pg_query($this->pg_dst_con, $sql)) === false) {
+          $this->log->warning('Could not retreive last processed batch id '.
+              'from dst database');
+          $this->rollback();
+
+          return;
+      }
+
+      $this->last_batch_id = null;
+
+      if (pg_num_rows($r) > 0) {
+          $this->last_batch_id = pg_fetch_result($r, 0, 0);
+      }
+      $this->log->debug('PGQRemoteConsumer.is_batch_done last_batch_id=%d batch_id=%d', $this->last_batch_id, $batch_id);
+
+      if ($this->last_batch_id == null) {
+          $this->log->warning('No last processed batch id');
+
+          return false;
+      } elseif ($batch_id <= $this->last_batch_id) {
+          /*
        * batch already processed. As batch_id is a bigserial (see
        * pgq.next_batch SQL code), no wraparound risk here.
        */
-      $this->log->verbose("Skipping batch %d, already processed (<= %d)", 
-			  $batch_id, $this->last_batch_id);
-      $this->finish_batch($batch_id);
-      pg_query($this->pg_src_con, "COMMIT;");			
-      pg_query($this->pg_dst_con, "ROLLBACK;");
+      $this->log->verbose('Skipping batch %d, already processed (<= %d)',
+              $batch_id, $this->last_batch_id);
+          $this->finish_batch($batch_id);
+          pg_query($this->pg_src_con, 'COMMIT;');
+          pg_query($this->pg_dst_con, 'ROLLBACK;');
 
-      return True;
-    }
-    $this->log->debug("PGQRemoteConsumer.is_batch_done === False");
-    return False;
+          return true;
+      }
+      $this->log->debug('PGQRemoteConsumer.is_batch_done === False');
+
+      return false;
   }
 
   /**
    * last batch processed gets to be stored at remote database.
    */
-  public function set_batch_done($batch_id) {
-    if( $this->last_batch_id === null )
-      $sql = sprintf("INSERT INTO pgq_last_batch(qname, consumer_id, batch_id) ".
-		     "VALUES ('%s', '%s', %d)",
-		     pg_escape_string($this->qname),
-		     pg_escape_string($this->cname),
-		     (int)$batch_id);
-    else
-      $sql = sprintf("UPDATE pgq_last_batch SET batch_id = %d ".
-		     "WHERE qname = '%s' AND consumer_id = '%s'",
-		     (int)$batch_id,
-		     pg_escape_string($this->qname),
-		     pg_escape_string($this->cname));
+  public function set_batch_done($batch_id)
+  {
+      if ($this->last_batch_id === null) {
+          $sql = sprintf('INSERT INTO pgq_last_batch(qname, consumer_id, batch_id) '.
+             "VALUES ('%s', '%s', %d)",
+             pg_escape_string($this->qname),
+             pg_escape_string($this->cname),
+             (int) $batch_id);
+      } else {
+          $sql = sprintf('UPDATE pgq_last_batch SET batch_id = %d '.
+             "WHERE qname = '%s' AND consumer_id = '%s'",
+             (int) $batch_id,
+             pg_escape_string($this->qname),
+             pg_escape_string($this->cname));
+      }
 
-    $this->log->debug($sql);
-    if( ($r = pg_query($this->pg_dst_con, $sql)) === False ) {
-      $this->log->error("Could not store last_batch_id (%d) into ".
-			"destination database, ROLLBACK", $batch_id);
-      $this->rollback();
-      return False;
-    }
+      $this->log->debug($sql);
+      if (($r = pg_query($this->pg_dst_con, $sql)) === false) {
+          $this->log->error('Could not store last_batch_id (%d) into '.
+            'destination database, ROLLBACK', $batch_id);
+          $this->rollback();
+
+          return false;
+      }
 
     // don't cache last_batch_id, ask it at remote database each time
     $this->last_batch_id = null;
-    return True;
+
+      return true;
   }
 
   /**
    * Install must take care of creating the trigger.
-
+   
    * But we don't create the PGQ_LAST_BATCH table, which can be shared be
    * several daemons.
    *
    * We don't uninstall the trigger here, this could lead to data loss
    * if not done properly. You're on your own.
    */
-  public function install() {
-    $ret = parent::install();
-    if ($ret ) 
-      $ret = $this->install_trigger();
+  public function install()
+  {
+      $ret = parent::install();
+      if ($ret) {
+          $ret = $this->install_trigger();
+      }
 
-    return $ret;
+      return $ret;
   }
 
   /**
    * PGQRemoteConsumer must have:
    *  - a PGQ_LAST_BATCH table on $dst_constr to store last processed batch_id
-   *  - a PGQ_TRIGGER_NAME trigger on source $table which produces events
+   *  - a PGQ_TRIGGER_NAME trigger on source $table which produces events.
    */
-  public function check() {
-    if( parent::check() === False )
-      return False;
+  public function check()
+  {
+      if (parent::check() === false) {
+          return false;
+      }
 
-    if( $this->connect() === False )
-      return False;
+      if ($this->connect() === false) {
+          return false;
+      }
 
-    $ret = $this->check_pgq_last_batch();
+      $ret = $this->check_pgq_last_batch();
 
-    if( $ret ) {
-      $ret = $this->check_pgq_trigger();
-    }    
-    $this->disconnect();
+      if ($ret) {
+          $ret = $this->check_pgq_trigger();
+      }
+      $this->disconnect();
 
-    return $ret;
+      return $ret;
   }
 
   /**
    * Check we have a PGQ_LAST_BATCH table in remote database.
    */
-  public function check_pgq_last_batch() {
-    $sql_ct = sprintf("SELECT tablename FROM pg_catalog.pg_tables ".
-		      "where tablename = '%s'", PGQ_LAST_BATCH );
-    $this->log->verbose("PGQRemoteConsumer: %s", $sql_ct);
+  public function check_pgq_last_batch()
+  {
+      $sql_ct = sprintf('SELECT tablename FROM pg_catalog.pg_tables '.
+              "where tablename = '%s'", PGQ_LAST_BATCH);
+      $this->log->verbose('PGQRemoteConsumer: %s', $sql_ct);
 
-    $result = pg_query($this->pg_dst_con, $sql_ct);
-    
-    if(  $result === False ) {
-      $this->log->fatal("Could not check if table exist '%s'", PGQ_LAST_BATCH);
-      return False;
-    }
-		
-    if( pg_num_rows( $result ) == 0) {
-      $this->log->fatal("Table %s doesn't exist on database '%s'", 
-			PGQ_LAST_BATCH, $this->dst_constr);
+      $result = pg_query($this->pg_dst_con, $sql_ct);
+
+      if ($result === false) {
+          $this->log->fatal("Could not check if table exist '%s'", PGQ_LAST_BATCH);
+
+          return false;
+      }
+
+      if (pg_num_rows($result) == 0) {
+          $this->log->fatal("Table %s doesn't exist on database '%s'",
+            PGQ_LAST_BATCH, $this->dst_constr);
 
       // Be nice with user
-      $this->log->fatal("Please issue CREATE TABLE %s ".
-			"(qname text, consumer_id text, batch_id bigint, ".
-			"PRIMARY KEY (qname, consumer_id);",
-			PGQ_LAST_BATCH);
-	return False;
-    }
-    return True;
+      $this->log->fatal('Please issue CREATE TABLE %s '.
+            '(qname text, consumer_id text, batch_id bigint, '.
+            'PRIMARY KEY (qname, consumer_id);',
+            PGQ_LAST_BATCH);
+
+          return false;
+      }
+
+      return true;
   }
 
   /**
    * Return the SQL for creating the trigger.
-   */  
-  public function trigger_sql() {
-    return sprintf("CREATE TRIGGER %s ".
-		   "BEFORE INSERT ON %s ".
-		   "FOR EACH ROW EXECUTE PROCEDURE ".
-		   "pgq.logutriga('%s', 'SKIP')",
-		   PGQ_TRIGGER_NAME,
-		   pg_escape_string($this->table),
-		   pg_escape_string($this->qname));
+   */
+  public function trigger_sql()
+  {
+      return sprintf('CREATE TRIGGER %s '.
+           'BEFORE INSERT ON %s '.
+           'FOR EACH ROW EXECUTE PROCEDURE '.
+           "pgq.logutriga('%s', 'SKIP')",
+           PGQ_TRIGGER_NAME,
+           pg_escape_string($this->table),
+           pg_escape_string($this->qname));
   }
 
   /**
-   * Check PGQ_TRIGGER_NAME is installed on $this->table
+   * Check PGQ_TRIGGER_NAME is installed on $this->table.
    */
-  public function check_pgq_trigger() {
-    $sql_ct = sprintf("SELECT t.tgname, pg_catalog.pg_get_triggerdef(t.oid) ".
-		      "  FROM pg_catalog.pg_trigger t ".
-		      "       JOIN pg_class c ON t.tgrelid = c.oid ");
-	                  
-    if( strpos($this->table, ".") > 0 ) {
-      // table name with schema
-      $tmp = explode(".", $this->table);
-      $schemaname = $tmp[0];
-      $tablename  = $tmp[1];
-      
-      $sql_ct = sprintf("%s WHERE c.relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = '%s') ".
-			"AND c.relname = '%s' AND tgname = '%s'", 
-			$sql_ct,
-			pg_escape_string($schemaname),
-			pg_escape_string($tablename), 
-			pg_escape_string(PGQ_TRIGGER_NAME));
-    }
-    else {
-      // non qualified table name
+  public function check_pgq_trigger()
+  {
+      $sql_ct = sprintf('SELECT t.tgname, pg_catalog.pg_get_triggerdef(t.oid) '.
+              '  FROM pg_catalog.pg_trigger t '.
+              '       JOIN pg_class c ON t.tgrelid = c.oid ');
+
+      if (strpos($this->table, '.') > 0) {
+          // table name with schema
+      $tmp = explode('.', $this->table);
+          $schemaname = $tmp[0];
+          $tablename = $tmp[1];
+
+          $sql_ct = sprintf("%s WHERE c.relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = '%s') ".
+            "AND c.relname = '%s' AND tgname = '%s'",
+            $sql_ct,
+            pg_escape_string($schemaname),
+            pg_escape_string($tablename),
+            pg_escape_string(PGQ_TRIGGER_NAME));
+      } else {
+          // non qualified table name
       $sql_ct = sprintf("%s WHERE c.relname = '%s' AND tgname = '%s'",
-			$sql_ct,
-			pg_escape_string($this->table), 
-			pg_escape_string(PGQ_TRIGGER_NAME));
-    }
-        
-    $this->log->verbose("PGQRemoteConsumer check: %s", $sql_ct);
-    if( ($r = pg_query($this->pg_src_con, $sql_ct)) === False ) {
-      $this->log->fatal("PGQRemoteConsumer check: SQL error ON '%s'", $sql_ct);
-      return False;
-    }
-
-    $sql_tr         = $this->trigger_sql();
-    $trigger_exists = (pg_num_rows($r) == 1);
-
-    if( $trigger_exists == 1) {
-      $triggerdef = pg_fetch_result($r, 0, 1);
-      if( $triggerdef != $sql_tr ) {
-	$this->log->fatal("PGQRemoteConsumer check: ".
-			  "%s TRIGGER already exists on ".
-			  "table %s but is not PGQRemoteConsumer's",
-			  PGQ_TRIGGER_NAME,
-			  $this->table);
-
-	$this->log->fatal("trigger def is        '%s'",
-			  PGQ_TRIGGER_NAME,
-			  $triggerdef);
-
-	$this->log->fatal("trigger def should be '%s'",
-			  PGQ_TRIGGER_NAME,
-			  $sql_tr);
-	$trigger_exists = False;
+            $sql_ct,
+            pg_escape_string($this->table),
+            pg_escape_string(PGQ_TRIGGER_NAME));
       }
-    }
-    return $trigger_exists;
+
+      $this->log->verbose('PGQRemoteConsumer check: %s', $sql_ct);
+      if (($r = pg_query($this->pg_src_con, $sql_ct)) === false) {
+          $this->log->fatal("PGQRemoteConsumer check: SQL error ON '%s'", $sql_ct);
+
+          return false;
+      }
+
+      $sql_tr = $this->trigger_sql();
+      $trigger_exists = (pg_num_rows($r) == 1);
+
+      if ($trigger_exists == 1) {
+          $triggerdef = pg_fetch_result($r, 0, 1);
+          if ($triggerdef != $sql_tr) {
+              $this->log->fatal('PGQRemoteConsumer check: '.
+              '%s TRIGGER already exists on '.
+              "table %s but is not PGQRemoteConsumer's",
+              PGQ_TRIGGER_NAME,
+              $this->table);
+
+              $this->log->fatal("trigger def is        '%s'",
+              PGQ_TRIGGER_NAME,
+              $triggerdef);
+
+              $this->log->fatal("trigger def should be '%s'",
+              PGQ_TRIGGER_NAME,
+              $sql_tr);
+              $trigger_exists = false;
+          }
+      }
+
+      return $trigger_exists;
   }
 
   /**
    * Installs trigger at source site.
    */
-  public function install_trigger() {
-    if( $this->connect() === False )
-      return False;
+  public function install_trigger()
+  {
+      if ($this->connect() === false) {
+          return false;
+      }
 
-    if( $this->check_pgq_trigger() ) {
-      $this->log->error("PGQRemoteConsumer trigger already exists");
-      return False;
-    }
+      if ($this->check_pgq_trigger()) {
+          $this->log->error('PGQRemoteConsumer trigger already exists');
 
-    $sql_tr = $this->trigger_sql();
-    $this->log->verbose("PGQRemoteConsumer: %s", $sql_tr);
+          return false;
+      }
 
-    if( pg_query($this->pg_src_con, $sql_tr) === False ) {
-      $this->log->fatal("Could not install pgq.logutriga ".
-			"trigger to '%s'", $this->table);
-      return False;
-    }
-    return True;
+      $sql_tr = $this->trigger_sql();
+      $this->log->verbose('PGQRemoteConsumer: %s', $sql_tr);
+
+      if (pg_query($this->pg_src_con, $sql_tr) === false) {
+          $this->log->fatal('Could not install pgq.logutriga '.
+            "trigger to '%s'", $this->table);
+
+          return false;
+      }
+
+      return true;
   }
 
   /**
    * Connects to the conw & conp connection strings.
    */
-  public function connect($force = False) { 
-    if( $this->connected && ! $force ) {
-      $this->log->notice("connect called when connected is True");
-      return;
-    }
-		
-    if( $this->dst_constr != "" ) {			
-      $this->log->verbose("Opening pg_dst connexion '%s'.",
-			  $this->dst_constr);			
-      $this->pg_dst_con = pg_connect($this->dst_constr);
-      
-      if( $this->pg_dst_con === False ) {
-	$this->log->fatal("Could not open pg_dst connextion '%s'.",
-			  $this->dst_constr);
-	$this->stop();
-      }
-      pg_query($this->pg_dst_con, "SET client_encoding='WIN1251'");
+  public function connect($force = false)
+  {
+      if ($this->connected && !$force) {
+          $this->log->notice('connect called when connected is True');
 
-    }
-    parent::connect($force);
+          return;
+      }
+
+      if ($this->dst_constr != '') {
+          $this->log->verbose("Opening pg_dst connexion '%s'.",
+              $this->dst_constr);
+          $this->pg_dst_con = pg_connect($this->dst_constr);
+
+          if ($this->pg_dst_con === false) {
+              $this->log->fatal("Could not open pg_dst connextion '%s'.",
+              $this->dst_constr);
+              $this->stop();
+          }
+          pg_query($this->pg_dst_con, "SET client_encoding='WIN1251'");
+      }
+      parent::connect($force);
   }
-	
+
   /**
-   * Disconnect from databases
+   * Disconnect from databases.
    */
-  public function disconnect() {
-    if( ! $this->connected ) {
-      $this->log->notice("disconnect called when $this->connected is False");
-      return;
-    }
-    
-    if( $this->pg_dst_con != null && $this->pg_dst_con !== False ) {
-      $this->log->verbose("Closing pg_dst connection '%s'.",
-			  $this->dst_constr);
-      pg_close($this->pg_dst_con);
-      $this->pg_dst_con = null;
-    }
-    parent::disconnect();
+  public function disconnect()
+  {
+      if (!$this->connected) {
+          $this->log->notice("disconnect called when $this->connected is False");
+
+          return;
+      }
+
+      if ($this->pg_dst_con != null && $this->pg_dst_con !== false) {
+          $this->log->verbose("Closing pg_dst connection '%s'.",
+              $this->dst_constr);
+          pg_close($this->pg_dst_con);
+          $this->pg_dst_con = null;
+      }
+      parent::disconnect();
   }
-	
+
   /**
-   * ROLLBACK ongoing transactions on src & dst connections
+   * ROLLBACK ongoing transactions on src & dst connections.
    */
-  protected function rollback() {
-    if( $this->pg_dst_con != null && $this->pg_dst_con !== False ) {
-      $this->log->notice("ROLLBACK pg_dst connection '%s'.",
-			 $this->dst_constr);
-      pg_query($this->pg_dst_con, "ROLLBACK;");
-    }
-    parent::rollback();
+  protected function rollback()
+  {
+      if ($this->pg_dst_con != null && $this->pg_dst_con !== false) {
+          $this->log->notice("ROLLBACK pg_dst connection '%s'.",
+             $this->dst_constr);
+          pg_query($this->pg_dst_con, 'ROLLBACK;');
+      }
+      parent::rollback();
   }
 }
-?>

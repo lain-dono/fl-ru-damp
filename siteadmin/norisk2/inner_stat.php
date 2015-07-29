@@ -1,5 +1,10 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
-if(!$sbr) exit;
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
+if (!$sbr) {
+    exit;
+}
 // курсы обмена
 $exrates = exrates::GetAll();
 ?>
@@ -10,14 +15,15 @@ var SBR; window.addEvent('domready', function() { SBR = new Sbr('siteadminFrm');
 <div class="m-cl-bar">
     <form action="." method="get" id="siteadminFrm">
         Период:
-        <? include($_SERVER['DOCUMENT_ROOT'].'/norisk2/tpl.filter-period.php') ?>
+        <?php include($_SERVER['DOCUMENT_ROOT'].'/norisk2/tpl.filter-period.php') ?>
         <input type="hidden" name="site" value="stat" />
         <input type="submit" value="Показать" />
         &nbsp;&nbsp;
         <a href="/siteadmin/norisk2/?site=stat" class="lnk-dot-666">Сбросить фильтр</a>
     </form>
 </div>
-<? foreach($stats as $type=>$st) { ?>
+<?php foreach ($stats as $type => $st) {
+    ?>
 <div class="nr-stat-one">
     <div class="nr-stat-one-h">
 <!--
@@ -27,21 +33,21 @@ var SBR; window.addEvent('domready', function() { SBR = new Sbr('siteadminFrm');
         <h4><?=sbr_adm::$stat_graphs[$type]?></h4>
     </div>
 
-<?
+<?php
 $vsegoSum = 0;
-$vsegoSum += $st['graphs'][1]['total']['sum'] * $exrates["1" . exrates::BANK];
-$vsegoSum += $st['graphs'][2]['total']['sum'] * $exrates["2" . exrates::BANK];
-$vsegoSum += $st['graphs'][3]['total']['sum'] * $exrates["3" . exrates::BANK];
-$vsegoSum += $st['graphs'][4]['total']['sum'] * $exrates["4" . exrates::BANK];
-$vsegoSum += $st['graphs'][5]['total']['sum'] * $exrates["5" . exrates::BANK];
+    $vsegoSum += $st['graphs'][1]['total']['sum'] * $exrates['1'.exrates::BANK];
+    $vsegoSum += $st['graphs'][2]['total']['sum'] * $exrates['2'.exrates::BANK];
+    $vsegoSum += $st['graphs'][3]['total']['sum'] * $exrates['3'.exrates::BANK];
+    $vsegoSum += $st['graphs'][4]['total']['sum'] * $exrates['4'.exrates::BANK];
+    $vsegoSum += $st['graphs'][5]['total']['sum'] * $exrates['5'.exrates::BANK];
 
-$vsegoCnt = 0;
-$vsegoCnt += intval($st['graphs'][1]['total']['cnt']);
-$vsegoCnt += intval($st['graphs'][2]['total']['cnt']);
-$vsegoCnt += intval($st['graphs'][3]['total']['cnt']);
-$vsegoCnt += intval($st['graphs'][4]['total']['cnt']);
-$vsegoCnt += intval($st['graphs'][5]['total']['cnt']);
-?>
+    $vsegoCnt = 0;
+    $vsegoCnt += intval($st['graphs'][1]['total']['cnt']);
+    $vsegoCnt += intval($st['graphs'][2]['total']['cnt']);
+    $vsegoCnt += intval($st['graphs'][3]['total']['cnt']);
+    $vsegoCnt += intval($st['graphs'][4]['total']['cnt']);
+    $vsegoCnt += intval($st['graphs'][5]['total']['cnt']);
+    ?>
     
 <table>
     <tr>
@@ -55,12 +61,12 @@ $vsegoCnt += intval($st['graphs'][5]['total']['cnt']);
     </tr>
     <tr>
         <td><div style="padding:5px;"><strong>Сумма:</strong></div></td>
-        <td><div style="padding:5px;"><?=round($st['graphs'][2]['total']['sum'],2)?> $</div></td>
-        <td><div style="padding:5px;"><?=round($st['graphs'][3]['total']['sum'],2)?> руб</div></td>
-        <td><div style="padding:5px;"><?=round($st['graphs'][4]['total']['sum'],2)?> руб</div></td>
-        <td><div style="padding:5px;"><?=round($st['graphs'][5]['total']['sum'],2)?></div></td>
-        <td><div style="padding:5px;"><?=round($st['graphs'][1]['total']['sum'],2)?></div></td>
-        <td><div style="padding:5px;"><?=round($vsegoSum,2)?></div></td>
+        <td><div style="padding:5px;"><?=round($st['graphs'][2]['total']['sum'], 2)?> $</div></td>
+        <td><div style="padding:5px;"><?=round($st['graphs'][3]['total']['sum'], 2)?> руб</div></td>
+        <td><div style="padding:5px;"><?=round($st['graphs'][4]['total']['sum'], 2)?> руб</div></td>
+        <td><div style="padding:5px;"><?=round($st['graphs'][5]['total']['sum'], 2)?></div></td>
+        <td><div style="padding:5px;"><?=round($st['graphs'][1]['total']['sum'], 2)?></div></td>
+        <td><div style="padding:5px;"><?=round($vsegoSum, 2)?></div></td>
     </tr>
     <tr>
         <td><div style="padding:5px;"><strong>Кол-во:</strong></div></td>
@@ -74,11 +80,14 @@ $vsegoCnt += intval($st['graphs'][5]['total']['cnt']);
 </table>
 <br/>
 
-    <?
+    <?php
     // общие суммы для всей таблицы
     $total_sums = array();
 
-    $n = 0; foreach($st['graphs'] as $sys=>$graph) { $n++; ?>
+    $n = 0;
+    foreach ($st['graphs'] as $sys => $graph) {
+        ++$n;
+        ?>
 <!--
         <h5><?=$EXRATE_CODES[$sys][3]?>&nbsp;(<?=sbr_meta::view_cost($graph['total']['sum'])?>&nbsp;&nbsp;/&nbsp;&nbsp;<?=$graph['total']['cnt']?>)</h5>
 -->
@@ -88,40 +97,51 @@ $vsegoCnt += intval($st['graphs'][5]['total']['cnt']);
                     <tbody>
                         <tr style="border-top: 1px solid #F0EFED;">
                             <td style="width:80px;"><?=$EXRATE_CODES[$sys][3]?></td>
-                            <?
-                              foreach($graph['months'] as $year=>$months) {
+                            <?php
+                              foreach ($graph['months'] as $year => $months) {
                                   if (!is_array($total_sums[$year])) {
                                       $total_sums[$year] = array();
                                   }
-                                  foreach($months as $mon => $month) {
+                                  foreach ($months as $mon => $month) {
                                       if (!is_array($total_sums[$year][$mon])) {
                                           $total_sums[$year][$mon] = array('sum' => 0, 'cnt' => 0);
                                       }
-                                      $total_sums[$year][$mon]['sum'] += $month['sum'] * $exrates[$sys . exrates::BANK];
+                                      $total_sums[$year][$mon]['sum'] += $month['sum'] * $exrates[$sys.exrates::BANK];
                                       $total_sums[$year][$mon]['cnt'] += $month['cnt'];
-                                      
+
                                       $sum = round($month['sum']);
                                       $ssum = $sum ? $sum : '&nbsp;';
                                       $cnt = $sum ? intval($month['cnt']) : '&nbsp';
-                            ?>
-                                <td class="<?=($year % 2)?'o':'e'?>">
-                                    <span><small style="color:#333"><?= ($sys == exrates::FM ? ( (int) $ssum > 0 ? _bill($ssum) : '' ) : $ssum );?><br/><?=$cnt?></small></span>
-                                    <? if($month['fm_sum'] && $st['total']['fm_max']) { ?>
-                                    <div style="height:<?=(1+round(100 * ($month['fm_sum'] / $st['total']['fm_max'])))?>px"></div>
-                                    <? } else { ?>
+                                      ?>
+                                <td class="<?=($year % 2) ? 'o' : 'e'?>">
+                                    <span><small style="color:#333"><?= ($sys == exrates::FM ? ((int) $ssum > 0 ? _bill($ssum) : '') : $ssum);
+                                      ?><br/><?=$cnt?></small></span>
+                                    <?php if ($month['fm_sum'] && $st['total']['fm_max']) {
+    ?>
+                                    <div style="height:<?=(1 + round(100 * ($month['fm_sum'] / $st['total']['fm_max'])))?>px"></div>
+                                    <?php 
+} else {
+    ?>
                                     <div class="empty"></div>
-                                    <? } ?>
+                                    <?php 
+}
+                                      ?>
                                 </td>
-                            <? } } ?>
+                            <?php 
+                                  }
+                              }
+        ?>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-    <? } ?>
+    <?php 
+    }
+    ?>
     
     
-    <? // ГРАФИК С ОБЩИМИ СУММАМИ //////////////////// 
+    <?php // ГРАФИК С ОБЩИМИ СУММАМИ //////////////////// 
     
     // ищем максимальную сумму
     $max_sum = 0;
@@ -139,49 +159,59 @@ $vsegoCnt += intval($st['graphs'][5]['total']['cnt']);
                 <tfoot>
                     <tr>
                         <th style="width:80px;">&nbsp;</td>
-                        <?
+                        <?php
                             $ycols = array();
-                            foreach($graph['months'] as $year=>$months) {
-                                $ycols[$year]=0;
-                                foreach($months as $i=>$month) {
-                                    $ycols[$year]++;
-                        ?>
-                            <th class="<?=($year % 2)?'o':'e'?>"><span><?=$i?></span></th>
-                        <? } } ?>
+    foreach ($graph['months'] as $year => $months) {
+        $ycols[$year] = 0;
+        foreach ($months as $i => $month) {
+            ++$ycols[$year];
+            ?>
+                            <th class="<?=($year % 2) ? 'o' : 'e'?>"><span><?=$i?></span></th>
+                        <?php 
+        }
+    }
+    ?>
                     </tr>
                     <tr>
                         <th style="width:80px;">&nbsp;</td>
-                        <? foreach($ycols as $year=>$cs) { ?>
-                            <th colspan="<?=$cs?>" class="<?=($year % 2)?'o':'e'?>"><strong><?=$year?></strong></th>
-                        <? } ?>
+                        <?php foreach ($ycols as $year => $cs) {
+    ?>
+                            <th colspan="<?=$cs?>" class="<?=($year % 2) ? 'o' : 'e'?>"><strong><?=$year?></strong></th>
+                        <?php 
+}
+    ?>
                     </tr>
                 </tfoot>
 
                 <tbody>
                     <tr style="border-top: 1px solid #F0EFED;">
                         <td style="width:80px;">Всего, в рублях</td>
-                        <?
-                            foreach($total_sums as $year=>$months) {
-                                foreach($months as $mon => $month) {
+                        <?php
+                            foreach ($total_sums as $year => $months) {
+                                foreach ($months as $mon => $month) {
                                     $sum = round($month['sum']);
                                     $ssum = $sum ? $sum : '&nbsp;';
                                     $cnt = $sum ? intval($month['cnt']) : '&nbsp';
-                        ?>
-                            <td class="<?=($year % 2)?'o':'e'?>">
+                                    ?>
+                            <td class="<?=($year % 2) ? 'o' : 'e'?>">
                                 <span><small style="color:#333"><?=$ssum?><br/><?=$cnt?></small></span>
-                                <div style="height:<?=(1+round(100 * ($month['sum'] / $max_sum)))?>px"></div>
+                                <div style="height:<?=(1 + round(100 * ($month['sum'] / $max_sum)))?>px"></div>
                             </td>
-                        <? } } ?>
+                        <?php 
+                                }
+                            }
+    ?>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>    
     
-    <? //********************************************* ?>
+    <?php //********************************************* ?>
     
     
     
 
 </div>
-<? } ?>
+<?php 
+} ?>

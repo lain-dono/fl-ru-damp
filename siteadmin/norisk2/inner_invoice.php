@@ -1,7 +1,12 @@
-<?php if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
-if(!$sbr) exit;
+<?php if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
+if (!$sbr) {
+    exit;
+}
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/sbr.common.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/sbr.common.php';
 $xajax->printJavascript('/xajax/');
 ?>
 <h2 class="b-layout__title b-layout__title_padbot_20">Автозагрузка актов и с/ф</h3>
@@ -114,9 +119,11 @@ $xajax->printJavascript('/xajax/');
             <td>
                 <select name="f_status" class="filter_select">
                     <option value="-1" <?= $filter['f_status'] == -1 ? 'selected' : '' ?>>Все</option>
-                    <? foreach (sbr_adm::$invoice_state as $st_id => $st_name) { ?>
+                    <?php foreach (sbr_adm::$invoice_state as $st_id => $st_name) {
+    ?>
                     <option value="<?= $st_id ?>" <?= $filter['f_status'] == $st_id ? 'selected' : '' ?>><?= $st_name ?></option>
-                    <? } ?>
+                    <?php 
+} ?>
                 </select>
             </td>
             <td>
@@ -137,8 +144,10 @@ $xajax->printJavascript('/xajax/');
                 
             </td>
         </tr>
-        <? if ($data) { ?>
-            <? foreach ($data as $row) { ?>
+        <?php if ($data) {
+    ?>
+            <?php foreach ($data as $row) {
+    ?>
                 <tr id="query<?= $row['id'] ?>">
                     <td id="pp-place-<?= $row['sbr_id'] ?>">
                         <?= !$row['sbr_id'] ? ' - ' : $row['sbr_id'] ?>
@@ -147,11 +156,16 @@ $xajax->printJavascript('/xajax/');
                         <?= $row['login'] ?>
                     </td>
                     <td>
-                        <? if($row['sbr_id']) { ?>
+                        <?php if ($row['sbr_id']) {
+    ?>
                         <a href="javascript:void(0)" onclick="xajax_aGetLCInfo(<?= $row['sbr_id'] ?>)"><?= $row['lc_id'] ?></a>
-                        <? } else { ?>
+                        <?php 
+} else {
+    ?>
                         <?= $row['lc_id'] ?>
-                        <? } ?>
+                        <?php 
+}
+    ?>
                     </td>
                     <td>
                         <?= date('d.m.Y', strtotime($row['actdate'])) ?>
@@ -170,15 +184,21 @@ $xajax->printJavascript('/xajax/');
                         <?= $row['err'] ?>
                     </td>
                 </tr>
-            <? } ?>
-        <? } else { ?>
+            <?php 
+}
+    ?>
+        <?php 
+} else {
+    ?>
             <tr>
                 <td colspan="8">
                     Ничего не найдено
                 </td>
             </tr>
-        <? } ?>
-        <? if ($pagesCount > 1) { ?>
+        <?php 
+} ?>
+        <?php if ($pagesCount > 1) {
+    ?>
             <tr>
                 <td colspan="8">
                     <div class="pager">
@@ -186,7 +206,8 @@ $xajax->printJavascript('/xajax/');
                     </div>
                 </td>
             </tr>
-        <? } ?>
+        <?php 
+} ?>
     </tbody>
 </table>
 </form>

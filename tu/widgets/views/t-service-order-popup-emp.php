@@ -1,17 +1,18 @@
 <?php
 
 /**
- * Попап при заказе ТУ для заказчика
+ * Попап при заказе ТУ для заказчика.
  */
-
 $title = reformat($title, 30, 0, 1);
-$price = tservices_helper::cost_format($price,true, false, false);
-$days = $days . ' ' . ending($days, 'день', 'дня', 'дней');
+$price = tservices_helper::cost_format($price, true, false, false);
+$days = $days.' '.ending($days, 'день', 'дня', 'дней');
 
 $show_popup = (isset($_POST['popup']));
 
 ?>
-<div id="tservices_orders_status_popup" class="b-shadow b-shadow_center b-shadow_width_520 <?php if(!$show_popup){ ?>b-shadow_hide <?php } ?>b-shadow__quick" style="display:block;">
+<div id="tservices_orders_status_popup" class="b-shadow b-shadow_center b-shadow_width_520 <?php if (!$show_popup) {
+    ?>b-shadow_hide <?php 
+} ?>b-shadow__quick" style="display:block;">
     <div class="b-shadow__body b-shadow__body_pad_15_20">
         <h2 class="b-layout__title">
             Заказ услуги

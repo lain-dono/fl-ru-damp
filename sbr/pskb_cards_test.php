@@ -1,6 +1,6 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/stdf.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/pskb.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/stdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/pskb.php';
 // для беты и альфы
 if (is_release()) {
     header_location_exit('/404.php');
@@ -28,15 +28,19 @@ $defaults2['sign'] = pskb::signCardRequest($defaults2);
     </head>
     <body class="b-page" style=" background:#f0ffdf;">
         <form id="res_frm_1" method="post" action="/income/pscb.php?res=1">
-            <? foreach ($defaults as $k => $v) { ?>
+            <?php foreach ($defaults as $k => $v) {
+    ?>
             <input type="hidden" name="<?= $k ?>" value="<?= $v ?>"/>
-            <? } ?>
+            <?php 
+} ?>
             <input type="hidden" name="u_token_key" value="<?= $_SESSION['rand'] ?>"/>
         </form>
         <form id="res_frm_2" method="post" action="/income/pscb.php?res=2">
-            <? foreach ($defaults2 as $k => $v) { ?>
+            <?php foreach ($defaults2 as $k => $v) {
+    ?>
             <input type="hidden" name="<?= $k ?>" value="<?= $v ?>"/>
-            <? } ?>
+            <?php 
+} ?>
             <input type="hidden" name="u_token_key" value="<?= $_SESSION['rand'] ?>"/>
         </form>
         <div class="b-layout" style="text-align:center; padding-top:150px;">

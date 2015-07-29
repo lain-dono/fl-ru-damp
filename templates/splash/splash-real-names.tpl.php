@@ -56,9 +56,11 @@
                               <td class="b-layout__one">&#160;</td>
                             </tr>
                     </table>
-                    <? if (!$r_data['o_inf_factor']) { ?>
+                    <?php if (!$r_data['o_inf_factor']) {
+    ?>
                         <div class="b-layout__txt b-layout__txt_padbot_30 b-layout__txt_fontsize_11">Хотите добавить 100 баллов к своему рейтингу? Просто укажите свое имя, возраст, специализацию, город, страну и добавьте хотя бы 1 работу в портфолио по выбранной вами специализации.</div>
-                    <? } ?>
+                    <?php 
+} ?>
                     <form action="/users/<?= $_SESSION['login'] ?>/setup/main/" method="post" id="real_name_form">
                         <input type="hidden" name="action" value="real_name_splash" />
                         <table class="b-layout__table">
@@ -92,7 +94,7 @@
                                     <img id="real_img" class="b-layout__pic b-layout__pic_valign_top" src="<?= $userpicSrc ?>" alt="" width="50" height="50" />
 
                                         <div id="attach_userpic" class="b-file b-file_padbot_10 b-file_inline-block">
-                                           <?
+                                           <?php
                                            $params = array(
                                                'button_title' => 'Загрузить фотографию',
                                                'maxfiles' => 1,
@@ -101,7 +103,7 @@
                                                'no_forbidden_formats' => true,
                                            );
                                            ?>
-                                           <?= $attachedFiles->getFormTemplate("attachedfiles_finance", 'userpic', $params) ?>
+                                           <?= $attachedFiles->getFormTemplate('attachedfiles_finance', 'userpic', $params) ?>
                                         </div>
 
                                     </td>

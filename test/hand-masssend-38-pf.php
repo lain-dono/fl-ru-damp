@@ -1,6 +1,6 @@
 <?php
 /**
- * Уведомление у которых еще не было никогда про, даже тестового
+ * Уведомление у которых еще не было никогда про, даже тестового.
  * */
 ini_set('max_execution_time', '0');
 ini_set('memory_limit', '512M');
@@ -9,7 +9,7 @@ require_once '../classes/stdf.php';
 require_once '../classes/memBuff.php';
 require_once '../classes/smtp2.php';
 
-/**
+/*
  * Логин пользователя от кого осуществляется рассылка
  * 
  */
@@ -20,15 +20,15 @@ $sql = "SELECT uid, email, login, uname, usurname, subscr FROM employer WHERE su
 
 $eHost = $GLOBALS['host'];
 
-$eSubject = "Free-lance.ru: Отдохните, а мы поработаем за вас";
+$eSubject = 'Free-lance.ru: Отдохните, а мы поработаем за вас';
 
-$mail = new smtp2;
+$mail = new smtp2();
 
-$img17  = $mail->cid();
-$img16  = $mail->cid();
+$img17 = $mail->cid();
+$img16 = $mail->cid();
 
-$mail->attach(ABS_PATH . '/images/letter/17.png', $img17);
-$mail->attach(ABS_PATH . '/images/letter/16.png', $img16);
+$mail->attach(ABS_PATH.'/images/letter/17.png', $img17);
+$mail->attach(ABS_PATH.'/images/letter/16.png', $img16);
 
 ob_start(); ?>
 <html>
@@ -186,14 +186,14 @@ ob_start(); ?>
 </html>
 
 
-<? $eMessage = ob_get_clean();
+<?php $eMessage = ob_get_clean();
 // ----------------------------------------------------------------------------------------------------------------
 // -- Рассылка ----------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------------
 $master = new DB('master');
 $cnt = 0;
 
-$sender = $master->row("SELECT * FROM users WHERE login = ?", $sender);
+$sender = $master->row('SELECT * FROM users WHERE login = ?', $sender);
 if (empty($sender)) {
     die("Unknown Sender\n");
 }
@@ -213,14 +213,14 @@ $res = $master->query($sql);
 while ($row = pg_fetch_assoc($res)) {
     $mail->recipient[] = array(
         'email' => "{$row['uname']} {$row['usurname']} [{$row['login']}] <{$row['email']}>",
-        'extra' => array('USER_LOGIN' => $row['login'])
+        'extra' => array('USER_LOGIN' => $row['login']),
     );
     if (++$i >= 30000) {
         $mail->bind($spamid);
         $mail->recipient = array();
         $i = 0;
     }
-    $cnt++;
+    ++$cnt;
 }
 if ($i) {
     $mail->bind($spamid);

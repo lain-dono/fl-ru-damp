@@ -5,10 +5,9 @@
  * Все переводы каретки (\n) будут заменены <br/> при выводе сообщения и при отправке письма
  */
 
-
 $smail->subject = "Исполнитель подтвердил заказ на услугу «{$order['title']}»";
 
-$order_url = $GLOBALS['host'] . tservices_helper::getOrderCardUrl($order['id']);
+$order_url = $GLOBALS['host'].tservices_helper::getOrderCardUrl($order['id']);
 $title = reformat(htmlspecialchars($order['title']), 30, 0, 1);
 $order_price = tservices_helper::cost_format($order['order_price'], true, false, false);
 $order_days = tservices_helper::days_format($order['order_days']);
@@ -16,7 +15,7 @@ $order_days = tservices_helper::days_format($order['order_days']);
 //$order_end_date = date('d.m.Y', strtotime("+ {$order['order_days']} days",strtotime($order['accept_date'])));
 
 $reserve_price = tservices_helper::cost_format($order['reserve_data']['reserve_price'], true, false, false);
-$reserve_tax = $order['reserve_data']['tax']*100;
+$reserve_tax = $order['reserve_data']['tax'] * 100;
 
 ?>
 Здравствуйте.
@@ -25,7 +24,7 @@ $reserve_tax = $order['reserve_data']['tax']*100;
 Бюджет заказа – <?=$order_price ?>. 
 Сумма резервирования – <?=$reserve_price?> (бюджет + <?=$reserve_tax?>% комиссии).
 
-Срок выполнения работы – <?=$order_days ?><?php if(false): ?> (до <?=$order_end_date?>)<?php endif; ?>.
+Срок выполнения работы – <?=$order_days ?><?php if (false): ?> (до <?=$order_end_date?>)<?php endif; ?>.
 Рекомендуем вам всю переписку с исполнителем вести непосредственно в заказе. 
 
 <a href="<?=$order_url?>">Перейти к заказу и зарезервировать сумму</a> / <a href="<?=$order_url?>">Связаться с исполнителем</a>

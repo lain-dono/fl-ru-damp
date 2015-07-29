@@ -1,29 +1,29 @@
 <?php
 
-class LoginController extends CController 
+class LoginController extends CController
 {
     /**
-     * Инициализация контроллера
+     * Инициализация контроллера.
      */
-    public function init() 
+    public function init()
     {
         parent::init();
-        
+
         $uid = get_uid(false);
-        
+
         if ($uid) {
             //Если уже авторизован то на главную
             $this->redirect('/');
         }
-        
+
         $this->layout = '//layouts/content';
     }
 
-
     /**
-     * Обработка события до какого-либо экшена
+     * Обработка события до какого-либо экшена.
      * 
      * @param string $action
+     *
      * @return bool
      */
     /*
@@ -31,22 +31,20 @@ class LoginController extends CController
     {
     }
     */
-    
 
     public function actionIndex()
     {
-        require_once(__DIR__ . '/../models/LoginForm.php');
-        
+        require_once __DIR__.'/../models/LoginForm.php';
+
         $form = new LoginForm();
-        
-        if (isset($_POST) && sizeof($_POST) > 0 && 
+
+        if (isset($_POST) && sizeof($_POST) > 0 &&
             $form->isValid($_POST)) {
-            
             $this->redirect($form->getRedirect());
         }
-        
+
         $this->render('index', array(
-            'form' => $form->render()
-        )); 
+            'form' => $form->render(),
+        ));
     }
 }

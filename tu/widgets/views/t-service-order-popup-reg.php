@@ -1,15 +1,16 @@
 <?php
 
 /**
- * Попап при заказе ТУ для анонимуса
+ * Попап при заказе ТУ для анонимуса.
  */
-
 $title = reformat($title, 30, 0, 1);
 
 $show_popup = (isset($_POST['popup']));
 
 ?>
-<div class="b-shadow b-shadow_center b-shadow_width_520 <?php if(!$show_popup){ ?>b-shadow_hide <?php } ?>b-shadow__quick"  id="tesrvices_order_auth_popup" style="display:block;">
+<div class="b-shadow b-shadow_center b-shadow_width_520 <?php if (!$show_popup) {
+    ?>b-shadow_hide <?php 
+} ?>b-shadow__quick"  id="tesrvices_order_auth_popup" style="display:block;">
   <div class="b-shadow__body b-shadow__body_pad_15_20">
 
     <h2 class="b-layout__title">Заказ услуги</h2>

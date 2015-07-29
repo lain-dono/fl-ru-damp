@@ -1,5 +1,9 @@
-<?php namespace UniversalAnalytics\Exception;
+<?php
 
-use \DomainException;
+namespace UniversalAnalytics\Exception;
 
-class InvalidRequestException extends DomainException {}
+use DomainException;
+
+class InvalidRequestException extends DomainException
+{
+}

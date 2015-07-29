@@ -8,14 +8,14 @@
                     <div class="b-layout__txt b-layout__txt_fontsize_11">— Оплата услуг производится в течение 2-3 минут.</div> 
                     <div class="b-layout__txt b-layout__txt_fontsize_11">— Платежи суммой более 15 000 не производятся.</div> 
                 </div> 
-                <form action="<?= is_release() ? "http://www.onlinedengi.ru/wmpaycheck.php" : "/bill/test/webpay.php"?>" method="post" id="<?= $type_payment ?>" name="<?= $type_payment ?>">
+                <form action="<?= is_release() ? 'http://www.onlinedengi.ru/wmpaycheck.php' : '/bill/test/webpay.php'?>" method="post" id="<?= $type_payment ?>" name="<?= $type_payment ?>">
                     <input type="hidden" name="project" value="3097"  />
                     <input type="hidden" name="mode_type" value="204"  />
                     <input type="hidden" name="nickname" value="<?= $bill->user['login']?>"  />
                     <input type="hidden" name="nick_extra" value="<?= $bill->user['login']?>"  />
                     <input type="hidden" name="amount" value="<?= $payment_sum; ?>" />
                 </form>
-                <? include ( $_SERVER['DOCUMENT_ROOT'] . "/bill/payment/paysystems/tpl.button_buy.php");?>                  
+                <?php include $_SERVER['DOCUMENT_ROOT'].'/bill/payment/paysystems/tpl.button_buy.php';?>                  
             </td>
             <td class="b-layout__td b-layout__td_padleft_20 b-layout__td_width_270">
             </td>

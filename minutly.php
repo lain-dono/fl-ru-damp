@@ -1,27 +1,26 @@
 <?php
-require_once("classes/config.php");
-require_once("classes/payed.php");
-require_once("classes/pay_place.php");
-require_once("classes/commune.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/professions.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/user_content.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/wallet/walletAlpha.php');
-require_once("classes/log.php");
 
+require_once 'classes/config.php';
+require_once 'classes/payed.php';
+require_once 'classes/pay_place.php';
+require_once 'classes/commune.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/professions.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/user_content.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/wallet/walletAlpha.php';
+require_once 'classes/log.php';
 
 //#0027582 Каждую минуту обрабатывать запросы на размешение в карусели
 pay_place::cronRequest();
 
-
 // Каждые пол часа обновляем статус рассылок
-if(date('i') == 30) {
-    require_once("classes/mailer.php");
+if (date('i') == 30) {
+    require_once 'classes/mailer.php';
     $mailer = new mailer();
     $mailer->updateStatusSending();
 }
 
 // ночные нестыковки во времени при переходе в следующий день #0021788
-if(!in_array((int) date('Hi'), array(2358, 2359))) { 
+if (!in_array((int) date('Hi'), array(2358, 2359))) {
     payed::UpdateProUsers();
 }
 
@@ -47,16 +46,16 @@ if (date('i') % 20 == 0) {
 
 if (date('i') % 15 == 0) {
     // проверка статусов платежей paymaster при возврате
-    require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/pmpay.php");
+    require_once $_SERVER['DOCUMENT_ROOT'].'/classes/pmpay.php';
     $pm = new pmpay();
-    if(DEBUG) {
+    if (DEBUG) {
         $pm->setDebugUrl($GLOBALS['host'].'/norisk2/admin/pm-server-test.php');
-    } 
+    }
     $pm->checkRefund();
 }
-    
-if(SERVER === 'release') {
-    
+
+if (SERVER === 'release') {
+
     /*
      * @todo: https://beta.free-lance.ru/mantis/view.php?id=29134#c87337
      * 
@@ -64,22 +63,20 @@ if(SERVER === 'release') {
     $qiwipay = new qiwipay();
     $qiwipay->checkBillsStatus($error);
     */
-    
+
     if (date('i') % 10 == 0) {
         // проверка статусов платежей paymaster
-        require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/pmpay.php");
+        require_once $_SERVER['DOCUMENT_ROOT'].'/classes/pmpay.php';
         $pm = new pmpay();
         $pm->checkInvoiced();
     }
 }
 
 // запускается в 0 и 1 минуту каждого часа с начала суток до 5 утра
-if(date('i') == 0 && date('H') >= 0 && date('H') <= 5) { 
+if (date('i') == 0 && date('H') >= 0 && date('H') <= 5) {
     $log = new log('minutly/'.SERVER.'-%d%m%Y[%H].log', 'w');
     // разморозка ПРО
-    $log->TRACE( payed::freezeUpdateProUsers() );
+    $log->TRACE(payed::freezeUpdateProUsers());
 }
 
 professions::autoProlongSpecs();
-
-

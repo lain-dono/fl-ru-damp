@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Уведомление работодателям
+ * Уведомление работодателям.
  * */
 ini_set('max_execution_time', '0');
 ini_set('memory_limit', '512M');
@@ -9,8 +10,7 @@ require_once '../classes/stdf.php';
 require_once '../classes/memBuff.php';
 require_once '../classes/smtp2.php';
 
-
-/**
+/*
  * Логин пользователя от кого осуществляется рассылка
  * 
  */
@@ -22,9 +22,9 @@ $sql = "SELECT uid, email, login, uname, usurname, subscr FROM employer WHERE su
 //$sql = "SELECT uid, email, login, uname, usurname FROM users WHERE email in ('jb@x13-net.ru', 'jb.x13@mail.ru', 'stoiss@yandex.ru')"; 
 
 
-$pHost = str_replace("http://", "", $GLOBALS['host']);
-if ( defined('HTTP_PREFIX') ) {
-    $pHttp = str_replace("://", "", HTTP_PREFIX); // Введено с учетом того планируется включение HTTPS на серверах (для писем в ЛС)
+$pHost = str_replace('http://', '', $GLOBALS['host']);
+if (defined('HTTP_PREFIX')) {
+    $pHttp = str_replace('://', '', HTTP_PREFIX); // Введено с учетом того планируется включение HTTPS на серверах (для писем в ЛС)
 } else {
     $pHttp = 'http';
 }
@@ -48,35 +48,33 @@ $pMessage = "
 Команда http:/{Free-lance.ru}/{$pHost}/
 ";
 
+$mail = new smtp2();
 
-
-$mail = new smtp2;
-
-$cid1  = $mail->cid();
-$cid2  = $mail->cid();
-$cid3  = $mail->cid();
-$cid4  = $mail->cid();
-$cid5  = $mail->cid();
-$cid6  = $mail->cid();
-$cid7  = $mail->cid();
-$cid8  = $mail->cid();
-$cid9  = $mail->cid();
+$cid1 = $mail->cid();
+$cid2 = $mail->cid();
+$cid3 = $mail->cid();
+$cid4 = $mail->cid();
+$cid5 = $mail->cid();
+$cid6 = $mail->cid();
+$cid7 = $mail->cid();
+$cid8 = $mail->cid();
+$cid9 = $mail->cid();
 $cid10 = $mail->cid();
 $cid11 = $mail->cid();
 
-$mail->attach(ABS_PATH . '/images/mailer/30/1.png', $cid1);
-$mail->attach(ABS_PATH . '/images/mailer/30/12.png', $cid2);
-$mail->attach(ABS_PATH . '/images/mailer/30/13.png', $cid3);
-$mail->attach(ABS_PATH . '/images/mailer/30/4.png', $cid4);
-$mail->attach(ABS_PATH . '/images/mailer/30/5.png', $cid5);
-$mail->attach(ABS_PATH . '/images/mailer/30/6.png', $cid6);
-$mail->attach(ABS_PATH . '/images/mailer/30/7.png', $cid7);
-$mail->attach(ABS_PATH . '/images/mailer/30/8.png', $cid8);
-$mail->attach(ABS_PATH . '/images/mailer/30/9.png', $cid9);
-$mail->attach(ABS_PATH . '/images/mailer/30/10.png', $cid10);
+$mail->attach(ABS_PATH.'/images/mailer/30/1.png', $cid1);
+$mail->attach(ABS_PATH.'/images/mailer/30/12.png', $cid2);
+$mail->attach(ABS_PATH.'/images/mailer/30/13.png', $cid3);
+$mail->attach(ABS_PATH.'/images/mailer/30/4.png', $cid4);
+$mail->attach(ABS_PATH.'/images/mailer/30/5.png', $cid5);
+$mail->attach(ABS_PATH.'/images/mailer/30/6.png', $cid6);
+$mail->attach(ABS_PATH.'/images/mailer/30/7.png', $cid7);
+$mail->attach(ABS_PATH.'/images/mailer/30/8.png', $cid8);
+$mail->attach(ABS_PATH.'/images/mailer/30/9.png', $cid9);
+$mail->attach(ABS_PATH.'/images/mailer/30/10.png', $cid10);
 //$mail->attach(ABS_PATH . '/images/mailer/30/11.gif', $cid11);
 
-$eSubject = "Просматривайте контакты фрилансеров и связывайтесь с ними напрямую";
+$eSubject = 'Просматривайте контакты фрилансеров и связывайтесь с ними напрямую';
 
 $eMessage = '
 <html>
@@ -452,8 +450,7 @@ $DB = new DB('plproxy');
 $master = new DB('master');
 $cnt = 0;
 
-
-$sender = $master->row("SELECT * FROM users WHERE login = ?", $sender);
+$sender = $master->row('SELECT * FROM users WHERE login = ?', $sender);
 if (empty($sender)) {
     die("Unknown Sender\n");
 }
@@ -462,7 +459,9 @@ echo "Send personal messages\n";
 
 // подготавливаем рассылку
 $msgid = $DB->val("SELECT masssend(?, ?, '{}', '')", $sender['uid'], $pMessage);
-if (!$msgid) die('Failed!');
+if (!$msgid) {
+    die('Failed!');
+}
 
 // допустим, мы получаем адресатов с какого-то запроса
 $i = 0;
@@ -471,15 +470,16 @@ while ($users = $master->col("{$sql} LIMIT 30000 OFFSET ?", $i)) {
     $i = $i + 30000;
 }
 // Стартуем рассылку в личку
-$DB->query("SELECT masssend_commit(?, ?)", $msgid, $sender['uid']); 
+$DB->query('SELECT masssend_commit(?, ?)', $msgid, $sender['uid']);
 echo "Send email messages\n";
-
 
 $mail->subject = $eSubject;  // заголовок письма
 $mail->message = $eMessage; // текст письма
 $mail->recipient = ''; // свойство 'получатель' оставляем пустым
 $spamid = $mail->masssend();
-if (!$spamid) die('Failed!');
+if (!$spamid) {
+    die('Failed!');
+}
 // с этого момента рассылка создана, но еще никому не отправлена!
 // допустим нам нужно получить список получателей с какого-либо запроса
 $i = 0;
@@ -488,14 +488,14 @@ $res = $master->query($sql);
 while ($row = pg_fetch_assoc($res)) {
     $mail->recipient[] = array(
         'email' => "{$row['uname']} {$row['usurname']} [{$row['login']}] <{$row['email']}>",
-        'extra' => array('USER_LOGIN' => $row['login'])
+        'extra' => array('USER_LOGIN' => $row['login']),
     );
     if (++$i >= 30000) {
         $mail->bind($spamid);
         $mail->recipient = array();
         $i = 0;
     }
-    $cnt++;
+    ++$cnt;
 }
 if ($i) {
     $mail->bind($spamid);

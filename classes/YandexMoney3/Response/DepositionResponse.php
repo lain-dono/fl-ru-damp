@@ -2,13 +2,12 @@
 
 namespace YandexMoney3\Response;
 
-require_once(__DIR__ . '/BaseResponse.php');
-
+require_once __DIR__.'/BaseResponse.php';
 
 class DepositionResponse extends BaseResponse
 {
     const TECH_MESSAGE = 'techMessage';
-    
+
     /**
      * @return string|null
      */
@@ -16,5 +15,4 @@ class DepositionResponse extends BaseResponse
     {
         return $this->checkAndReturn(self::TECH_MESSAGE);
     }
-    
 }

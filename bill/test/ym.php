@@ -1,19 +1,18 @@
 <?php
 
 /**
- * Эмуляция ответа от ЯД при запросах на выплату
+ * Эмуляция ответа от ЯД при запросах на выплату.
  */
-
-require_once(__DIR__ . "/../../classes/stdf.php");
-require_once(ABS_PATH . '/classes/YandexMoney3/Utils/Array2XML.php');
+require_once __DIR__.'/../../classes/stdf.php';
+require_once ABS_PATH.'/classes/YandexMoney3/Utils/Array2XML.php';
 
 use YandexMoney3\Utils\Array2XML;
 
-if (is_release())  {
+if (is_release()) {
     exit;
 }
 
-$method = __paramInit('string', 'm', NULL, NULL);
+$method = __paramInit('string', 'm', null, null);
 
 $bodyRaw = file_get_contents('php://input');
 
@@ -23,7 +22,7 @@ if (empty($bodyRaw)) {
 
 $xml = simplexml_load_string($bodyRaw);
 $json = json_encode($xml);
-$decodedArray = json_decode($json,TRUE); 
+$decodedArray = json_decode($json, true);
 
 $is_fail = false;
 
@@ -36,38 +35,36 @@ if (!$clientOrderId) {
 $converter = new Array2XML();
 $converter->setConvertFromEncoding('windows-1251');
 
-$converter->setTopNodeName($method . 'Response');
+$converter->setTopNodeName($method.'Response');
 
 if ($is_fail) {
     $converter->importArray(array(
         'clientOrderId' => $clientOrderId,
         'status' => 3,
         'error' => 41,
-        'processedDT' => date('c')
+        'processedDT' => date('c'),
     ));
-    
+
     echo $converter->saveXml();
 }
 
-switch($method) {
+switch ($method) {
     case 'testDeposition':
-        
-        /**
+
+        /*
          * <?xml version="1.0" encoding="UTF-8"?>
          * <testDepositionResponse clientOrderId="12345" status="0" processedDT="2011-07-01T20:38:01.000Z"/>
          */
         $converter->importArray(array('@attributes' => array(
             'clientOrderId' => $clientOrderId,
             'status' => 0,
-            'processedDT' => date('c')
+            'processedDT' => date('c'),
         )));
     break;
 
-
-
     case 'makeDeposition':
 
-        /**
+        /*
          * <?xml version="1.0" encoding="UTF-8"?>
          * <makeDepositionResponse clientOrderId="12345" status="0" processedDT="2011-07-01T20:38:01.000Z" balance="1000.00"/>
          */
@@ -75,7 +72,7 @@ switch($method) {
             'clientOrderId' => $clientOrderId,
             'status' => 0,
             'processedDT' => date('c'),
-            'balance' => 10000
+            'balance' => 10000,
         )));
     break;
 }

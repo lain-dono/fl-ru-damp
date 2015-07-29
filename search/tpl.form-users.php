@@ -1,46 +1,48 @@
 <?php
-require_once ($_SERVER['DOCUMENT_ROOT'] . "/xajax/countrys.common.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/professions.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/country.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/city.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/countrys.common.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/professions.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/country.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/city.php';
 $xajax->printJavascript('/xajax/');
 
 $is_show_adv = isset($_SESSION['search_advanced'][$type]);
 
-if(!$filter) {
+if (!$filter) {
     $filter = $_SESSION['search_advanced'][$type];
 }
 
-$categories = professions::GetAllGroupsLite(TRUE);
+$categories = professions::GetAllGroupsLite(true);
 $subcategories = professions::GetAllProfessions(1);
 $countries = country::GetCountries();
 if ($filter['country']) {
     $cities = city::GetCities($filter['country']);
 }
-    
+
 $all_mirrored_specs = professions::GetAllMirroredProfsId();
 $mirrored_specs = array();
 
-for ($is=0; $is<sizeof($all_mirrored_specs); $is++) {
+for ($is = 0; $is < sizeof($all_mirrored_specs); ++$is) {
     $mirrored_specs[$all_mirrored_specs[$is]['main_prof']] = $all_mirrored_specs[$is]['mirror_prof'];
     $mirrored_specs[$all_mirrored_specs[$is]['mirror_prof']] = $all_mirrored_specs[$is]['main_prof'];
 }
 
 //создаем массив специализаций (для фильтра на главной он уже есть в $prfs, для фильтра в проектах фрилансера его нет, поэтому делаем проверку на существование
 if (!sizeof($profs)) {
-    $all_specs = professions::GetAllProfessions("", 0, 1);
+    $all_specs = professions::GetAllProfessions('', 0, 1);
 } else {
     $all_specs = $profs;
 }
 
-
 ?>
 <script type="text/javascript">
-<?php if($filter['success_sbr'][0] == 1 || $filter['success_sbr'][1] == 1 || $filter['success_sbr'][2] == 1 || $filter['success_sbr'][3] == 1) { ?>
+<?php if ($filter['success_sbr'][0] == 1 || $filter['success_sbr'][1] == 1 || $filter['success_sbr'][2] == 1 || $filter['success_sbr'][3] == 1) {
+    ?>
 var vsbr = 1;
-<?php } else { //if?>
+<?php 
+} else { //if?>
 var vsbr = 0;
-<?php } //else ?>
+<?php 
+} //else ?>
 
 
 function FilterCatalogAddCategoryType() {
@@ -62,75 +64,81 @@ var maxCostBlock = 12;
 var filter_user_specs = new Array();
 var filter_specs = new Array();
 var filter_specs_ids = new Array();
-<?
+<?php
 $spec_now = 0;
-for ($i=0; $i<sizeof($all_specs); $i++) {
+for ($i = 0; $i < sizeof($all_specs); ++$i) {
     if ($all_specs[$i]['groupid'] != $spec_now) {
         $spec_now = $all_specs[$i]['groupid'];
-        echo "filter_specs[".$all_specs[$i]['groupid']."]=[";
+        echo 'filter_specs['.$all_specs[$i]['groupid'].']=[';
     }
 
-    echo "[".$all_specs[$i]['id'].",'".$all_specs[$i]['profname']."']";
+    echo '['.$all_specs[$i]['id'].",'".$all_specs[$i]['profname']."']";
 
-    if ($all_specs[$i+1]['groupid'] != $spec_now) {echo "];";}
-    else {echo ",";}
+    if ($all_specs[$i + 1]['groupid'] != $spec_now) {
+        echo '];';
+    } else {
+        echo ',';
+    }
 }
 
 $spec_now = 0;
-for ($i=0; $i<sizeof($all_specs); $i++) {
+for ($i = 0; $i < sizeof($all_specs); ++$i) {
     if ($all_specs[$i]['groupid'] != $spec_now) {
         $spec_now = $all_specs[$i]['groupid'];
-        echo "filter_specs_ids[".$all_specs[$i]['groupid']."]={";
+        echo 'filter_specs_ids['.$all_specs[$i]['groupid'].']={';
     }
-    echo "".$all_specs[$i]['id'].":1";
-    if ($all_specs[$i+1]['groupid'] != $spec_now) {echo "};";}
-    else {echo ",";}
+    echo ''.$all_specs[$i]['id'].':1';
+    if ($all_specs[$i + 1]['groupid'] != $spec_now) {
+        echo '};';
+    } else {
+        echo ',';
+    }
 }
 
-$cost_type = array(1 => "За месяц", 2 => "За 1000 знаков", 3 => "За Проект", 4 => "За час");
-$curr_type = array('2' => "Руб", '0' => "USD", '1' => "Euro");
+$cost_type = array(1 => 'За месяц', 2 => 'За 1000 знаков', 3 => 'За Проект', 4 => 'За час');
+$curr_type = array('2' => 'Руб', '0' => 'USD', '1' => 'Euro');
 ?>
-<?php require_once $_SERVER["DOCUMENT_ROOT"] . "/classes/freelancers_filter.php";?>
+<?php require_once $_SERVER['DOCUMENT_ROOT'].'/classes/freelancers_filter.php';?>
 var filter_mirror_specs = <?=freelancers_filters::getMirroredSpecsJsObject($all_mirrored_specs); ?>; 
 var filter_bullets = [[],[]];
 
-<?
+<?php
 if (sizeof($gFilter)) {
-  for ($ci=0; $ci<2; $ci++) {
-    $ph_categories[$ci] = array();
-    if (sizeof($gFilter[$ci])) {
-      foreach ($gFilter[$ci] as $fkey => $fvalue) {
-          $fvalue = intval($fvalue);
-          $fkey = intval($fkey);
-       if ($fkey) {
-        if ( !freelancers_filters::mirrorExistsInArray($fkey, $ph_categories[$ci], $mirrored_specs) )
-        {
-          if (!$fvalue)
-          {
-            $proftitle = professions::GetGroup($fkey, $error);
-            $proftitle = $proftitle['name'];
-          } else {
-            $proftitle = professions::GetProfName($fkey);
-            $prof_group = professions::GetProfField($fkey, 'prof_group');
-          }
+    for ($ci = 0; $ci < 2; ++$ci) {
+        $ph_categories[$ci] = array();
+        if (sizeof($gFilter[$ci])) {
+            foreach ($gFilter[$ci] as $fkey => $fvalue) {
+                $fvalue = intval($fvalue);
+                $fkey = intval($fkey);
+                if ($fkey) {
+                    if (!freelancers_filters::mirrorExistsInArray($fkey, $ph_categories[$ci], $mirrored_specs)) {
+                        if (!$fvalue) {
+                            $proftitle = professions::GetGroup($fkey, $error);
+                            $proftitle = $proftitle['name'];
+                        } else {
+                            $proftitle = professions::GetProfName($fkey);
+                            $prof_group = professions::GetProfField($fkey, 'prof_group');
+                        }
 
-?>
+                        ?>
 filter_bullets[<?=$fvalue?>][<?=$fkey?>] = new Array();
 filter_bullets[<?=$fvalue?>][<?=$fkey?>]['type'] = <?=$fvalue?>;
 filter_bullets[<?=$fvalue?>][<?=$fkey?>]['title'] = '<?=$proftitle?>';
-filter_bullets[<?=$fvalue?>][<?=$fkey?>]['parentid'] = '<?=(!($fvalue)?0:$prof_group)?>';
-<?
+filter_bullets[<?=$fvalue?>][<?=$fkey?>]['parentid'] = '<?=(!($fvalue) ? 0 : $prof_group)?>';
+<?php
           if ($mirrored_specs[$fkey]) {
-            ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['mirror'] = <?=$mirrored_specs[$fkey]?>;<?
+              ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['mirror'] = <?=$mirrored_specs[$fkey]?>;<?php
+
           } else {
-            ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['mirror'] = 0;<?
+              ?>filter_bullets[<?=$fvalue?>][<?=$fkey?>]['mirror'] = 0;<?php
+
           }
+                    }
+                    $ph_categories[$ci][] = $fkey;
+                }
+            }
         }
-        $ph_categories[$ci][] = $fkey;
-       }
-      }
     }
-  }
 }
 ?>
 
@@ -203,19 +211,19 @@ function addCost(o, inp, def) {
     mSpan.className = "flt-prm8";
     
     hBox = '<span class="flt-prm9"> <select name="cost_type[]">';
-    <? foreach($cost_type as $k=>$v): ?>
+    <?php foreach ($cost_type as $k => $v): ?>
     if(<?=$k?> == inp.ct) { var s = 'selected';}
     else {var s = '';}
     hBox += '<option value="<?=$k?>" '+s+'><?=$v?></option>';
-    <? endforeach; ?>
+    <?php endforeach; ?>
     hBox += '</select> <input type="text" size="10" maxlength="6" name="from_cost[]" class="" value="'+inp.fc+'"/></span><span class="b-page__desktop b-page__ipad">&nbsp;&mdash;&nbsp;</span> ';
     hBox += '<span class="flt-prm10"><input type="text" maxlength="6" name="to_cost[]" size="10" class="" value="'+inp.tc+'" />&nbsp;';
     hBox += '<select name="curr_type[]">';
-    <? foreach($curr_type as $k=>$v): ?>
+    <?php foreach ($curr_type as $k => $v): ?>
     if(<?=$k?> == inp.cut) { var s = 'selected';}
     else {var s = '';}
     hBox += '<option value="<?=$k?>" '+s+'><?=$v?></option>';
-    <? endforeach; ?>
+    <?php endforeach; ?>
     hBox += '</select></span></span>';
     
     mSpan.innerHTML = hBox;
@@ -265,7 +273,7 @@ function add2del(o) {
 
 </script>
 
-<fieldset class="flt-cnt flt-usr" id="advanced-search" style="display:<?= $is_show_adv?"block":"none";?>; padding:0 15px;">
+<fieldset class="flt-cnt flt-usr" id="advanced-search" style="display:<?= $is_show_adv ? 'block' : 'none';?>; padding:0 15px;">
 
     <div class="flt-block c">
         <label class="flt-lbl">Специализации:</label>
@@ -279,9 +287,14 @@ function add2del(o) {
                 <span class="flt-prm">
                     <select class="flt-p-sel" name="pf_category" id="pf_category" onChange="FilterSubCategory(this.value)">
                         <option value="0">Все разделы</option>
-                        <?php foreach($categories as $category) { if($category['id']<=0) continue; ?>
+                        <?php foreach ($categories as $category) {
+    if ($category['id'] <= 0) {
+        continue;
+    }
+    ?>
                         <option value="<?=$category['id']?>"><?=$category['name']?></option>
-                        <?php } //foreach ?>
+                        <?php 
+} //foreach ?>
                     </select>
                 </span>
                 <span class="flt-prm" >
@@ -307,21 +320,31 @@ function add2del(o) {
         <label class="flt-lbl">Стоимость:</label>
         <div id="cost_box" class="flt-b-in" ></div>
         <script type="text/javascript">
-        <?php if($cFilter) { ?>
-            <?php foreach($cFilter as $c=>$v) { ?>
-                <?php if($c==0) { ?>
-                var b = addCost(undefined, {ct:<?=$v['type_date']?>, fc:<?=($v['cost_from']==0?"''":$v['cost_from'])?>, tc:<?=($v['cost_to']==0?"''":$v['cost_to'])?>, cut:<?=$v['cost_type']==0?"''":$v['cost_type']?>}, <?=count($cFilter)>1?1:0?>);
-                <?php } else { //if?>
-                var m = addCost(b, {ct:<?=$v['type_date']?>, fc:<?=($v['cost_from']==0?"''":$v['cost_from'])?>, tc:<?=($v['cost_to']==0?"''":$v['cost_to'])?>, cut:<?=$v['cost_type']==0?"''":$v['cost_type']?>});
-                <?php } //else?>
+        <?php if ($cFilter) {
+    ?>
+            <?php foreach ($cFilter as $c => $v) {
+    ?>
+                <?php if ($c == 0) {
+    ?>
+                var b = addCost(undefined, {ct:<?=$v['type_date']?>, fc:<?=($v['cost_from'] == 0 ? "''" : $v['cost_from'])?>, tc:<?=($v['cost_to'] == 0 ? "''" : $v['cost_to'])?>, cut:<?=$v['cost_type'] == 0 ? "''" : $v['cost_type']?>}, <?=count($cFilter) > 1 ? 1 : 0?>);
+                <?php 
+} else { //if?>
+                var m = addCost(b, {ct:<?=$v['type_date']?>, fc:<?=($v['cost_from'] == 0 ? "''" : $v['cost_from'])?>, tc:<?=($v['cost_to'] == 0 ? "''" : $v['cost_to'])?>, cut:<?=$v['cost_type'] == 0 ? "''" : $v['cost_type']?>});
+                <?php 
+} //else?>
                 
-                <?php if(count($cFilter)>1) { ?>
+                <?php if (count($cFilter) > 1) {
+    ?>
                 b = m;
-                <?php }//if?>
-            <?php } //foreach ?>
-        <?php } else { // if ?>
+                <?php 
+}//if?>
+            <?php 
+} //foreach ?>
+        <?php 
+} else { // if ?>
             addCost(); 
-        <?php } //else ?>
+        <?php 
+} //else ?>
         </script>
     </div>
     <div class="flt-block c" >
@@ -348,19 +371,27 @@ function add2del(o) {
                 <span class="flt-prm">
                     <select onchange="xajax_GetCitysByCid(this.value);" name="pf_country" id="pf_country" class="flt-p-sel">
                         <option value="0">Все страны</option>
-                        <?php foreach ($countries as $country_id => $country_name) { ?>
-                        <option value="<?= $country_id?>" <?= $country_id == $filter['country']?'selected="selected"':'';?>><?= $country_name?></option>
-                        <?php } //foreach ?>
+                        <?php foreach ($countries as $country_id => $country_name) {
+    ?>
+                        <option value="<?= $country_id?>" <?= $country_id == $filter['country'] ? 'selected="selected"' : '';
+    ?>><?= $country_name?></option>
+                        <?php 
+} //foreach ?>
                     </select>
                 </span>
                 <span id="frm_city" class="flt-prm">
                     <select name="pf_city" class="flt-p-sel">
                         <option value="0">Все города</option>
-                        <?php if($cities) {?>
-                            <?php foreach ($cities as $city_id => $city_name) { ?>
-                            <option value="<?= $city_id?>" <?= $city_id == $filter['city'] ? 'selected=" selected"':'';?>><?= $city_name?></option>
-                            <?php } //foreach ?>
-                        <?php } //if?>
+                        <?php if ($cities) {
+    ?>
+                            <?php foreach ($cities as $city_id => $city_name) {
+    ?>
+                            <option value="<?= $city_id?>" <?= $city_id == $filter['city'] ? 'selected=" selected"' : '';
+    ?>><?= $city_name?></option>
+                            <?php 
+} //foreach ?>
+                        <?php 
+} //if?>
                     </select>
                 </span>
             </div>
@@ -375,14 +406,16 @@ function add2del(o) {
         <label class="flt-lbl">Дополнительно:</label>
         <div class="flt-b-in" >
             <ul class="flt-more c">
-                <?php if($_SESSION['uid']) {?>
+                <?php if ($_SESSION['uid']) {
+    ?>
                    <li>
                       <div class="b-check">
                           <input id="in_fav" class="b-check__input" type="checkbox" name="in_fav" value="1" <?=    ($filter['in_fav']    ? 'checked="checked"' : '')?> /> 
                           <label for="in_fav" class="b-check__label" for="in_fav">У меня в избранных</label>
                       </div>
                    </li> 
-																<?php }//if?>
+																<?php 
+}//if?>
                 <li>
                    <div class="b-check">
                        <input id="only_free" class="b-check__input" type="checkbox" name="only_free" value="1" <?= ($filter['only_free'] ? 'checked="checked"' : '')?> /> 
@@ -391,13 +424,13 @@ function add2del(o) {
                 </li>
                 <li class="flt-more-b">
                    <div class="b-check">
-                       <input id="is_pro" class="b-check__input" type="checkbox" name="is_pro" value="1" <?= ($filter['is_pro'] ?'checked="checked"':'')?> /> 
+                       <input id="is_pro" class="b-check__input" type="checkbox" name="is_pro" value="1" <?= ($filter['is_pro'] ? 'checked="checked"' : '')?> /> 
                        <label for="is_pro" class="b-check__label" for="is_pro">С <a class="b-layout__link" href="../payed/"><span class="b-icon b-icon__pro b-icon__pro_f" title="Платный аккаунт" alt="Платный аккаунт"></span></a> аккаунтом</label>
                    </div>
                 </li>
                 <li class="flt-more-b">
                    <div class="b-check">
-                      <input id="is_verify" class="b-check__input" type="checkbox" name="is_verify" value="1" <?= ($filter['is_verify'] ?'checked="checked"':'')?> /> 
+                      <input id="is_verify" class="b-check__input" type="checkbox" name="is_verify" value="1" <?= ($filter['is_verify'] ? 'checked="checked"' : '')?> /> 
                       <label for="is_verify" class="b-check__label" for="is_verify">С <span class="b-icon b-icon__ver" title="верифицированым" alt="верифицированым"></span> аккаунтом</label>
                    </div>
                 </li>
@@ -409,18 +442,18 @@ function add2del(o) {
                 </li>
                 <li>
                    <div class="b-check">
-                       <input id="sbr_is_positive" class="b-check__input" type="checkbox" name="sbr_is_positive" value="1" <?=($filter['sbr_is_positive']?'checked="checked"':'')?>/> 
+                       <input id="sbr_is_positive" class="b-check__input" type="checkbox" name="sbr_is_positive" value="1" <?=($filter['sbr_is_positive'] ? 'checked="checked"' : '')?>/> 
                        <label for="sbr_is_positive" class="b-check__label" for="sbr_is_positive">С положительными рекомендациями</label>
                    </div>
                 </li>
                 <li>
                    <div class="b-check">
-                       <input id="sbr_not_negative" class="b-check__input" type="checkbox" name="sbr_not_negative" value="1" <?=($filter['sbr_not_negative']?'checked="checked"':'')?>/> 
+                       <input id="sbr_not_negative" class="b-check__input" type="checkbox" name="sbr_not_negative" value="1" <?=($filter['sbr_not_negative'] ? 'checked="checked"' : '')?>/> 
                        <label for="sbr_not_negative" class="b-check__label" for="sbr_not_negative">Без отрицательных рекомендаций</label>
                    </div>
                 </li>
-                <?/*<li><label><input class="i-chk" type="checkbox" name="opi_is_positive" value="1" <?=($filter['opi_is_positive']?'checked="checked"':'')?>/> С положительными мнениями</label></li>
-                <li><label><input class="i-chk" type="checkbox" name="opi_not_negative" value="1" <?=($filter['opi_not_negative']?'checked="checked"':'')?>/> Без отрицательных мнений</label></li>*/?>
+                <?/*<li><label><input class="i-chk" type="checkbox" name="opi_is_positive" value="1" <?=($filter['opi_is_positive'] ? 'checked="checked"' : '')?>/> С положительными мнениями</label></li>
+                <li><label><input class="i-chk" type="checkbox" name="opi_not_negative" value="1" <?=($filter['opi_not_negative'] ? 'checked="checked"' : '')?>/> Без отрицательных мнений</label></li>*/?>
             </ul>
         </div>
     </div>

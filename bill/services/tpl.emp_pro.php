@@ -5,16 +5,21 @@
     <span class="b-layout__txt b-layout__txt_float_right b-layout__txt_fontsize_11 b-page__desktop b-page__ipad"><a href="/payed-emp/" class="b-layout__link promo-link">Подробнее об услуге</a></span>
     <h3 class="b-layout__h3 b-layout__h3_padleft_70 b-layout__txt_padleft_null_iphone">
         Профессиональный аккаунт  &#160;&#160;
-        <? if($service['type'] == 'active') { ?>
-            <span class="b-layout__txt b-layout__txt_fontsize_11 <?= $service['expired']['is_day_expired'] ? "b-layout__txt_color_c10600" : "b-layout__txt_color_808080"?> b-layouyt__txt_weight_normal">
+        <?php if ($service['type'] == 'active') {
+    ?>
+            <span class="b-layout__txt b-layout__txt_fontsize_11 <?= $service['expired']['is_day_expired'] ? 'b-layout__txt_color_c10600' : 'b-layout__txt_color_808080'?> b-layouyt__txt_weight_normal">
                 <?= $service['expired']['date_str']?>
-                <? if($service['type'] == 'active' && $service['is_auto'] == 't') { ?>
+                <?php if ($service['type'] == 'active' && $service['is_auto'] == 't') {
+    ?>
                 (включено автопродление)
-                <? }//if?>
+                <?php 
+}//if?>
             </span>    
-        <? } elseif($service['type'] == 'lately') { //if?>
+        <?php 
+} elseif ($service['type'] == 'lately') { //if?>
             <span class="b-layout__txt b-layout__txt_fontsize_11 b-layout__txt_color_808080 b-layouyt__txt_weight_normal">Срок действия истек <?= date('d.m.Y', strtotime($service['d']))?></span>
-        <? } //if?>
+        <?php 
+} //if?>
     </h3>
     <div class="b-layout__txt b-layout__txt_fontsize_11 b-layout__txt_padbot_20 b-layout__txt_padleft_70 b-layout__txt_padleft_null_iphone">Аккаунт PRO предоставляет своим обладателям бонусы на сайте: скидки на все платные услуги, бесплатную публикацию вакансий, возможность просматривать контакты всех пользователей и многое другое.</div>
 
@@ -23,20 +28,20 @@
         <a href="javascript:void(0)" class="b-button b-button_flat b-button_flat_green btn-pay"><?= billing::$btn_name_for_type[$service['type']] ?></a>
     </div>
     <?php
-    if( !empty($service['last_operation']['op_code']) ) {
+    if (!empty($service['last_operation']['op_code'])) {
         $popup_mini_data = payed::getPayedPROList('emp');
-        foreach($popup_mini_data as $data) {
-            if($service['last_operation']['op_code'] == $data['opcode']) {
+        foreach ($popup_mini_data as $data) {
+            if ($service['last_operation']['op_code'] == $data['opcode']) {
                 $last_operation = array(
-                    'month'     =>  $data['month'], 
-                    'op_code'   =>  $data['opcode'],
-                    'sum'       =>  $data['cost']
+                    'month' => $data['month'],
+                    'op_code' => $data['opcode'],
+                    'sum' => $data['cost'],
                 );
                 break;
             }
         }
-        $popup_content   = $_SERVER['DOCUMENT_ROOT'] . "/bill/widget/popups/popup.emp_pro.php";
-        include ( $_SERVER['DOCUMENT_ROOT'] . "/bill/widget/tpl.popup.php" );
+        $popup_content = $_SERVER['DOCUMENT_ROOT'].'/bill/widget/popups/popup.emp_pro.php';
+        include $_SERVER['DOCUMENT_ROOT'].'/bill/widget/tpl.popup.php';
     }
     ?>
     <span class="b-layout__txt b-layout__txt_padtop_10 b-layout__txt_fontsize_11 b-page__iphone"><a href="/payed-emp/" class="b-layout__link promo-link">Подробнее об услуге</a></span>

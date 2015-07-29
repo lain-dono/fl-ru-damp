@@ -11,13 +11,13 @@
  */
 ?>
 <?php
-require_once (dirname(__FILE__) . '/class.basemapper.php');
+require_once dirname(__FILE__).'/class.basemapper.php';
 
-class AutoInviteMapper extends BaseMapper {
-    
-  public function __construct(DBDriver $db, $model_name) {
- 		parent::__construct($db, $model_name, array());	
-  }
-  
+class AutoInviteMapper extends BaseMapper
+{
+    public function __construct(DBDriver $db, $model_name)
+    {
+        parent::__construct($db, $model_name, array());
+    }
 }
 ?>

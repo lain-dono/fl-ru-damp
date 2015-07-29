@@ -1,15 +1,17 @@
-<?
-	require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/static_compress.php");
-	$stc = new static_compress;
-	$stc->Add("/scripts/mootools-new.js");
-	$stc->Add( '/scripts/raphael-min.js' );
-    $stc->Add( '/scripts/svg.js' );
-    
-    if ($css_file) { $stc->Add("/css/".$css_file);}
-    
+<?php
+	require_once $_SERVER['DOCUMENT_ROOT'].'/classes/static_compress.php';
+	$stc = new static_compress();
+	$stc->Add('/scripts/mootools-new.js');
+	$stc->Add('/scripts/raphael-min.js');
+    $stc->Add('/scripts/svg.js');
+
+    if ($css_file) {
+        $stc->Add('/css/'.$css_file);
+    }
+
     $stc->Send();
 
-	require_once($_SERVER['DOCUMENT_ROOT'] . "/xajax/rating.common.php");
+	require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/rating.common.php';
 	$xajax->printJavascript('/xajax/');
 ?>
 <script>

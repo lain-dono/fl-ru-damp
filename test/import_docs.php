@@ -1,18 +1,19 @@
 <?php
-require_once("../classes/config.php");
 
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/sbr_adm.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/pskb.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/users.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/fpdf/fpdf.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/fpdf/fpdf_tpl.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/fpdi/fpdi.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/classes/CFile.php");
+require_once '../classes/config.php';
+
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/sbr_adm.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/pskb.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/users.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/fpdf/fpdf.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/fpdf/fpdf_tpl.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/fpdi/fpdi.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/classes/CFile.php';
 
 $res = array(
     'e' => array(),
     'a' => array(),
-    's' => 0
+    's' => 0,
 );
 
 /*
@@ -21,7 +22,6 @@ $res = array(
  1018,1021,1071,1075,1086,1081,1094,1060,951,952,1042,1043,1054,1065,1080,1082,970,984,985,987,1009,1035,1044,1053,965,971,991,997,998,
  999,1000,1096,1100,1024,1031,1046,1048,975,980,993,995,1008,1011,1015,1016,1017,1004, 1910,1912,1911,1913
 */
-
 
 /*
  идишники выгрузки с 01.03.2014 по 31.03.2014
@@ -41,8 +41,6 @@ $res = array(
  
  */
 
-
-
 /*
 
 идишники выгрузки с 01.04.2014 по 30.04.2014
@@ -60,9 +58,6 @@ $res = array(
 
  */
 
-
-
-
 /*
 
 идишники выгрузки с 01.05.2014 по 31.05.2014
@@ -75,16 +70,10 @@ $res = array(
  
  */
 
-
-
-
-
-
-
 //идишники выгрузки с 01.04.2014 по 30.04.2014
 
-$sql = "SELECT rr.*, s.id sbr_id, 
-        CASE WHEN u.uid = s.emp_id THEN lc.\"tagCust\"+1 ELSE lc.\"tagPerf\"+1 END AS form_type
+$sql = 'SELECT rr.*, s.id sbr_id, 
+        CASE WHEN u.uid = s.emp_id THEN lc."tagCust"+1 ELSE lc."tagPerf"+1 END AS form_type
 	    FROM pskb_invoice_raw rr 
         INNER JOIN users u ON u.login = rr.login
         LEFT JOIN pskb_lc lc ON lc.lc_id = rr.lc_id
@@ -104,18 +93,13 @@ $sql = "SELECT rr.*, s.id sbr_id,
  4758,4766,4770,4807,4811,4815,4946,4953,4954,4955,4712,4717,4722,4723,4731,4732,4735,4759,4813,4857,4928,4947,4674,4675,4676,4691,4706,4709,
  4714,4730,4740,4760,4765,4778,4849,4850,4859,4895,4911
 
-        ) ORDER BY sbr_id";
-
-
-
-
-
+        ) ORDER BY sbr_id';
 
 //идишники выгрузки с 01.03.2014 по 31.03.2014
 /*
 $sql = "SELECT rr.*, s.id sbr_id, 
         CASE WHEN u.uid = s.emp_id THEN lc.\"tagCust\"+1 ELSE lc.\"tagPerf\"+1 END AS form_type
-	    FROM pskb_invoice_raw rr 
+        FROM pskb_invoice_raw rr 
         INNER JOIN users u ON u.login = rr.login
         LEFT JOIN pskb_lc lc ON lc.lc_id = rr.lc_id
         LEFT JOIN sbr s ON s.id = lc.sbr_id 
@@ -139,13 +123,11 @@ $sql = "SELECT rr.*, s.id sbr_id,
         ) ORDER BY sbr_id";
 */
 
-
-
 // выгрузка с 21.02.2013 по 25.04.2013
 /*
 $sql = "SELECT rr.*, s.id sbr_id, 
         CASE WHEN u.uid = s.emp_id THEN lc.\"tagCust\"+1 ELSE lc.\"tagPerf\"+1 END AS form_type
-	    FROM pskb_invoice_raw rr 
+        FROM pskb_invoice_raw rr 
         INNER JOIN users u ON u.login = rr.login
         LEFT JOIN pskb_lc lc ON lc.lc_id = rr.lc_id
         LEFT JOIN sbr s ON s.id = lc.sbr_id 
@@ -167,18 +149,16 @@ $sql = "SELECT rr.*, s.id sbr_id,
         ) ORDER BY sbr_id";
 */
 
-
-
 $data = $DB->rows($sql);
 
 //$sbr = sbr_meta::getInstance( sbr_meta::ADMIN_ACCESS );
 $sbr = new sbr_adm(103, 'admin');
 
-if($data) {
-	foreach($data as $row) {
-		$user = new users;
+if ($data) {
+    foreach ($data as $row) {
+        $user = new users();
         $user->GetUser($row['login']);
-        
+
         $letter = array();
         $letter['title'] = "СБР-{$row['sbr_id']}-Б/О#{$row['lc_id']}";
         $letter['user_add'] = 57748;
@@ -187,114 +167,115 @@ if($data) {
         $letter['user_status_2'] = 11;
 
         $recipient = sbr_meta::getUserReqvs($letter['user_2']);
-        if ( $row['form_type'] == 1 ) {
+        if ($row['form_type'] == 1) {
             $address = (bool) trim($recipient[1]['address']);
         } else {
             $address = (bool) trim($recipient[2]['address']) || (bool) trim($recipient[2]['address_fct']) || (bool) trim($recipient[2]['address_jry']);
         }
-        if ( empty($address) ) {
+        if (empty($address)) {
             $res['a'][] = $row['sbr_id'];
             echo "{$row['sbr_id']} - Havn't address!\n";
             continue;
         }
 
-		$sbr->initFromId($row['sbr_id']);
+        $sbr->initFromId($row['sbr_id']);
 
         //$letter['user1_i']['form_type']==1 ? $letter['user1_i'][1]['address'] : $letter['user1_i'][2]['address']
-        
-		/*
-		$pdf_f_name = "/tmp/" . uniqid().".pdf";
-		$recipient = sbr_meta::getUserReqvs($letter['user_2']);
+
+        /*
+        $pdf_f_name = "/tmp/" . uniqid().".pdf";
+        $recipient = sbr_meta::getUserReqvs($letter['user_2']);
         $user = new users();
         $user->GetUserByUID($letter['user_2']);
         $user_name = ($recipient['form_type']==1 ? $recipient[1]['fio'] : $recipient[2]['full_name']);
         $address =  ($recipient['form_type']==1 ? $recipient[1]['index'] : $recipient[2]['index']).", ".
-			    	($recipient['form_type']==1 ? $recipient[1]['country'] : $recipient[2]['country']).", ".
-					($recipient['form_type']==1 ? $recipient[1]['city'] : $recipient[2]['city']).", ".
-					($recipient['form_type']==1 ? $recipient[1]['address'] : $recipient[2]['address']);
-		$pdf = new FPDF('L', 'mm', 'A4');
-		$pdf->AddFont('TimesNewRomanPSMT','','5f37f1915715e014ee2254b95c0b6cab_times.php');
-		$pdf->SetFont('TimesNewRomanPSMT','',12);
-		$pdf->SetTextColor(0,0,0);
+                    ($recipient['form_type']==1 ? $recipient[1]['country'] : $recipient[2]['country']).", ".
+                    ($recipient['form_type']==1 ? $recipient[1]['city'] : $recipient[2]['city']).", ".
+                    ($recipient['form_type']==1 ? $recipient[1]['address'] : $recipient[2]['address']);
+        $pdf = new FPDF('L', 'mm', 'A4');
+        $pdf->AddFont('TimesNewRomanPSMT','','5f37f1915715e014ee2254b95c0b6cab_times.php');
+        $pdf->SetFont('TimesNewRomanPSMT','',12);
+        $pdf->SetTextColor(0,0,0);
 
-		$pdf->AddPage('L');
-		$pdf->SetXY(197,145);
-		$pdf->SetDrawColor(50,60,100);
-		$pdf->MultiCell(65,6,"Кому: ".html_entity_decode($user_name)."\nКуда: ".html_entity_decode($address),0,'L');
-		$pdf->Output($pdf_f_name, "F");
-		*/
+        $pdf->AddPage('L');
+        $pdf->SetXY(197,145);
+        $pdf->SetDrawColor(50,60,100);
+        $pdf->MultiCell(65,6,"Кому: ".html_entity_decode($user_name)."\nКуда: ".html_entity_decode($address),0,'L');
+        $pdf->Output($pdf_f_name, "F");
+        */
 
-		$pdf_name = "/tmp/" . uniqid().".pdf";
-		$pdf = new FPDI();
-		$pagecount = 1;
+        $pdf_name = '/tmp/'.uniqid().'.pdf';
+        $pdf = new FPDI();
+        $pagecount = 1;
 
-		/*
-		$pagecount = $pdf->setSourceFile($pdf_f_name);
-		$tplidx = $pdf->importPage($pagecount, '/MediaBox');
-		$pdf->addPage('L');
-		$pdf->useTemplate($tplidx, 0, 0);
-		*/
+        /*
+        $pagecount = $pdf->setSourceFile($pdf_f_name);
+        $tplidx = $pdf->importPage($pagecount, '/MediaBox');
+        $pdf->addPage('L');
+        $pdf->useTemplate($tplidx, 0, 0);
+        */
 
-		$save = true;
-        $access = is_emp($user->role)? 2: 1;
+        $save = true;
+        $access = is_emp($user->role) ? 2 : 1;
         $fnames = array();
         $count_docs = 0;
-        
+
         //foreach($sbr->getStages() as $stage) { 
-        $doc_act = $DB->rows("select * from sbr_docs where is_deleted <> true AND sbr_id = ?", $row['sbr_id']);
-        
-		//	$doc_act = $sbr->getDocs(NULL, NULL, true, $stage->id, true);
-			if($doc_act) {
+        $doc_act = $DB->rows('select * from sbr_docs where is_deleted <> true AND sbr_id = ?', $row['sbr_id']);
+
+        //	$doc_act = $sbr->getDocs(NULL, NULL, true, $stage->id, true);
+            if ($doc_act) {
                 $fnames = array();
-                $docs   = array();
-				foreach ($doc_act as $doc) {
-					if($doc['id']==$doc['first_doc_id'] || $doc['access_role'] != $access || preg_match("/^Акт по договору/", $doc['name'])) continue;
-					
-                    if($doc['type']=='2' || $doc['type']=='20480') {
-                    	$cfile = new CFile($doc['file_id']);
-                        if ( in_array($doc['name'] . ':::' . $cfile->size, $docs) ) {
+                $docs = array();
+                foreach ($doc_act as $doc) {
+                    if ($doc['id'] == $doc['first_doc_id'] || $doc['access_role'] != $access || preg_match('/^Акт по договору/', $doc['name'])) {
+                        continue;
+                    }
+
+                    if ($doc['type'] == '2' || $doc['type'] == '20480') {
+                        $cfile = new CFile($doc['file_id']);
+                        if (in_array($doc['name'].':::'.$cfile->size, $docs)) {
                             continue;
                         }
-                        if ( in_array($cfile->name, $fnames) ) {
+                        if (in_array($cfile->name, $fnames)) {
                             continue;
                         }
-                        $docs[] = $doc['name'] . ':::' . $cfile->size; // нужно переделать на хеш файла
+                        $docs[] = $doc['name'].':::'.$cfile->size; // нужно переделать на хеш файла
                         $fnames[] = $cfile->name;
                         $p = pathinfo($cfile->name);
-                        if ( strtolower($p['extension']) != 'pdf' ) {
+                        if (strtolower($p['extension']) != 'pdf') {
                             $save = false;
                             break;
                         }
-                        
-                        $count_docs++;
-                    	$tmp_name = "/tmp/" . uniqid().".pdf";
-                    	file_put_contents($tmp_name, file_get_contents(WDCPREFIX . '/' . $cfile->path . $cfile->name));
 
-						$pagecount = $pdf->setSourceFile($tmp_name);
-						$tplidx = $pdf->importPage($pagecount, '/MediaBox');
-						if(preg_match("/^Счет-фактура/",$doc['name'])) {
-							$pdf->addPage('L');
-						} else {
-							$pdf->addPage('P');
-						}
-						$pdf->useTemplate($tplidx, 0, 0);
+                        ++$count_docs;
+                        $tmp_name = '/tmp/'.uniqid().'.pdf';
+                        file_put_contents($tmp_name, file_get_contents(WDCPREFIX.'/'.$cfile->path.$cfile->name));
 
-						if($doc['type']=='20480') {
-							$pagecount = $pdf->setSourceFile($tmp_name);
-							$tplidx = $pdf->importPage($pagecount, '/MediaBox');
-							$pdf->addPage('P');
-							$pdf->useTemplate($tplidx, 0, 0);
-						}
-					}
-				}
-                if ( !$save ) {
+                        $pagecount = $pdf->setSourceFile($tmp_name);
+                        $tplidx = $pdf->importPage($pagecount, '/MediaBox');
+                        if (preg_match('/^Счет-фактура/', $doc['name'])) {
+                            $pdf->addPage('L');
+                        } else {
+                            $pdf->addPage('P');
+                        }
+                        $pdf->useTemplate($tplidx, 0, 0);
+
+                        if ($doc['type'] == '20480') {
+                            $pagecount = $pdf->setSourceFile($tmp_name);
+                            $tplidx = $pdf->importPage($pagecount, '/MediaBox');
+                            $pdf->addPage('P');
+                            $pdf->useTemplate($tplidx, 0, 0);
+                        }
+                    }
+                }
+                if (!$save) {
                     break;
                 }
-			}
-		//}
+            }
+        //}
 
-		if ( $save && $count_docs) {
-
+        if ($save && $count_docs) {
             $sql = "INSERT INTO letters(
                                             title,
                                             user_add,
@@ -318,34 +299,31 @@ if($data) {
                                         ) RETURNING id";
             $letter['id'] = $DB->val($sql, $letter['title'], $letter['user_add'], $letter['user_1'], $letter['user_2'], $letter['user_status_2']);
 
-            
-            $pdf->Output($pdf_name, 'F');				
+            $pdf->Output($pdf_name, 'F');
 
-            $cfile = new CFile(array('tmp_name'=>$pdf_name, 'name'=>$pdf_name, 'size'=>filesize($pdf_name)));
+            $cfile = new CFile(array('tmp_name' => $pdf_name, 'name' => $pdf_name, 'size' => filesize($pdf_name)));
             $cfile->server_root = 1;
             $cfile->max_size = 5000000;
             $cfile->MoveUploadedFile('letters/');
 
-            $sql = "UPDATE letters SET file_id = ?i WHERE id = ?i";
+            $sql = 'UPDATE letters SET file_id = ?i WHERE id = ?i';
             $DB->query($sql, $cfile->id, $letter['id']);
-            $res['s']++;
+            ++$res['s'];
             echo "{$row['sbr_id']} - OK\n";
         } else {
             $res['e'][] = $row['sbr_id'];
             echo "{$row['sbr_id']} - PDF Convert Error!\n";
         }
-
-	}
+    }
 }
 
 echo "-- Haven't address -------------------------------------\n";
-foreach ( $res['a'] as $r ) {
-    echo $r . "\n";
+foreach ($res['a'] as $r) {
+    echo $r."\n";
 }
 echo "-- PDF Conver Error ------------------------------------\n";
-foreach ( $res['e'] as $r ) {
-    echo $r . "\n";
+foreach ($res['e'] as $r) {
+    echo $r."\n";
 }
 echo "--------------------------------------------------------\n";
-echo 'Success: ' . $res['s'] . '; Address Error: ' . count($res['a']) . '; PDF Error: ' . count($res['e']);
-
+echo 'Success: '.$res['s'].'; Address Error: '.count($res['a']).'; PDF Error: '.count($res['e']);

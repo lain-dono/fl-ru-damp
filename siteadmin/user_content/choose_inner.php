@@ -4,18 +4,21 @@
  * 
  * @author Max 'BlackHawk' Yastrembovich
  */
-if ( !defined('IS_SITE_ADMIN') ) { header('Location: /404.php'); exit; }
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/xajax/user_content.common.php' );
-$xajax->printJavascript( '/xajax/' );
+if (!defined('IS_SITE_ADMIN')) {
+    header('Location: /404.php');
+    exit;
+}
+require_once $_SERVER['DOCUMENT_ROOT'].'/xajax/user_content.common.php';
+$xajax->printJavascript('/xajax/');
 ?>
 
 <h2 class="b-layout__title b-layout__title_padbot_30">Потоки на текущее время</h2>
 
 <?php 
 
-if ( $aStreams ) {
-    foreach ( $aStreams as $sId => $aOne ) {
-    ?>
+if ($aStreams) {
+    foreach ($aStreams as $sId => $aOne) {
+        ?>
 <div class="b-layout__h3"><?=$aOne['name']?> <span id="queueCounts_<?=$sId?>">&nbsp;</span></div>
 
 <div class="b-buttons_padbot_20 my_contents" id="contents_<?=$sId?>">
@@ -25,9 +28,9 @@ if ( $aStreams ) {
     </div>
 </div>
     <?php
+
     }
-    
-    
+
     ?>
 <script type="text/javascript">
 window.addEvent('domready', function() {
@@ -37,11 +40,9 @@ window.addEvent('domready', function() {
 });
 </script>
     <?php
-    
-}
-else {
-    
-?>
+
+} else {
+    ?>
 Нет потоков
 <?php
 

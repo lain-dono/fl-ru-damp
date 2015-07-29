@@ -7,29 +7,35 @@ $type = $pro_type[$service['op_code']];
     <span class="b-page__desktop b-page__ipad"><span class="b-icon b-icon__spro b-icon__spro_e b-icon_absolute b-icon_left_10 " title="PRO" style=" left:10px;"></span></span>
     <h3 class="b-layout__h3 b-layout__h3_padleft_70">Профессиональный аккаунт  на 
         <span class="i-shadow">
-            <a class="b-layout__link b-layout__link_inline-block b-layout__link_bold b-layout__link_fontsize_15 b-layout__link_ygol popup-top-mini-open upd-auto-period-data" href="javascript:void(0)"><?= ($type['month'] . ' ' . ending($type['month'], 'месяц', 'месяца', 'месяцев'))?></a>
+            <a class="b-layout__link b-layout__link_inline-block b-layout__link_bold b-layout__link_fontsize_15 b-layout__link_ygol popup-top-mini-open upd-auto-period-data" href="javascript:void(0)"><?= ($type['month'].' '.ending($type['month'], 'месяц', 'месяца', 'месяцев'))?></a>
             <div class="b-shadow b-shadow_m b-shadow_left_-11 b-shadow_top_25 b-shadow_hide b-shadow_width_335 popup-mini body-shadow-close change-select-period">
                 <div class="b-shadow__right">
                     <div class="b-shadow__left">
                         <div class="b-shadow__top">
                             <div class="b-shadow__bottom">
                                 <div class="b-shadow__body b-shadow__body_bg_fff b-shadow__body_pad_10">
-                                <?php foreach($pro_type as $opcode => $data) { $eco   = ( $data['month'] * payed::PRICE_EMP_PRO - $data['cost'] ); ?>
+                                <?php foreach ($pro_type as $opcode => $data) {
+    $eco = ($data['month'] * payed::PRICE_EMP_PRO - $data['cost']);
+    ?>
                                 <div class="b-layout__txt b-layouyt__txt_weight_normal">
                                     <a class="b-layout__link b-layout__link_no-decorat select-auto-type" href="javascript:void(0)"
                                        data-opcode="<?= $data['opcode']?>"
                                        data-cost="<?= $data['cost']?>" 
-                                       data-period="<?= $data['month'] . " " . ending($data['month'], 'месяц', 'месяца', 'месяцев')?>">
-                                        <span class="b-layout__txt b-layout__txt_inline-block b-layout__txt_width_90 <?= $opcode == $service['op_code'] ? "b-layout__txt_color_808080" : ""?> b-layout__txt_fontsize_15 select-name">
-                                            <?= $data['month'] . " " . ending($data['month'], 'месяц', 'месяца', 'месяцев')?>
+                                       data-period="<?= $data['month'].' '.ending($data['month'], 'месяц', 'месяца', 'месяцев')?>">
+                                        <span class="b-layout__txt b-layout__txt_inline-block b-layout__txt_width_90 <?= $opcode == $service['op_code'] ? 'b-layout__txt_color_808080' : ''?> b-layout__txt_fontsize_15 select-name">
+                                            <?= $data['month'].' '.ending($data['month'], 'месяц', 'месяца', 'месяцев')?>
                                         </span>
                                         <span class="b-layout__txt b-layout__txt_inline-block b-layout__txt_width_90 b-layout__txt_fontsize_15 b-layout__txt_color_fd6c30 b-layout__txt_nowrap"><?= to_money($data['cost'])?> рублей</span>
-                                        <? if($eco > 0) { ?>
-                                        <span class="b-layout__txt b-layout__txt_fontsize_11 b-layout__txt_color_6db335 b-layout__txt_nowrap">&#160;<?= to_money($eco);?> руб. экономии</span>
-                                        <? }//if?>
+                                        <?php if ($eco > 0) {
+    ?>
+                                        <span class="b-layout__txt b-layout__txt_fontsize_11 b-layout__txt_color_6db335 b-layout__txt_nowrap">&#160;<?= to_money($eco);
+    ?> руб. экономии</span>
+                                        <?php 
+}//if?>
                                     </a>
                                 </div>
-                                <?php }//foreach?>
+                                <?php 
+}//foreach?>
                                 </div>
                             </div>
                         </div>

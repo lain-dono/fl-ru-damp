@@ -4,17 +4,18 @@
 
     <h1 class="b-page__title">Счет на сайте</h1>
     
-    <?php include($_SERVER['DOCUMENT_ROOT'] . "/bill/tpl.head_menu.php"); ?>
-    <?php include($_SERVER['DOCUMENT_ROOT'] . "/bill/widget/tpl.score.php"); ?>
+    <?php include $_SERVER['DOCUMENT_ROOT'].'/bill/tpl.head_menu.php'; ?>
+    <?php include $_SERVER['DOCUMENT_ROOT'].'/bill/widget/tpl.score.php'; ?>
 
-    <? if (count($history['items'])) { ?>
-        <?
+    <?php if (count($history['items'])) {
+    ?>
+        <?php
         $pagesCount = $history['pagesCount'];
-        $billHref = '%s?page=%d';
-        $billHref .= $event ? "&event=$event" : '';
-        $billHref .= $period ? "&period=$period" : '';
-        $billHref .= '%s';
-        ?>
+    $billHref = '%s?page=%d';
+    $billHref .= $event ? "&event=$event" : '';
+    $billHref .= $period ? "&period=$period" : '';
+    $billHref .= '%s';
+    ?>
 
         <div class="b-layout b-layout_overflow_auto b-layout_margbot_20">
             <table class="b-layout__table  b-layout__table_width_full b-layout__table_ipad">
@@ -36,56 +37,73 @@
                     </td>
                 </tr>
     
-                <? foreach($history['items'] as $item) { ?>
-                    <?
+                <?php foreach ($history['items'] as $item) {
+    ?>
+                    <?php
                     $itemName = account::GetHistoryText($item);
-                    $itemText = str_replace( '%username%', $_SESSION['login'], $itemText );
-                    ?>
+    $itemText = str_replace('%username%', $_SESSION['login'], $itemText);
+    ?>
                     <tr class="b-layout__tr">
                         <td class="b-layout__td b-layout__td_padtb_10 b-layout__td_width_90 b-layout__td_bordbot_e6">
-                            <div class="b-layout__txt b-layout__txt_color_808080 b-layout__txt_fontsize_11"><?= date("d.m.Y", strtotime($item['op_date'])) ?><br><?= date("H:i", strtotime($item['op_date'])) ?></div>
+                            <div class="b-layout__txt b-layout__txt_color_808080 b-layout__txt_fontsize_11"><?= date('d.m.Y', strtotime($item['op_date'])) ?><br><?= date('H:i', strtotime($item['op_date'])) ?></div>
                         </td>
                         <td class="b-layout__td b-layout__td_padtb_10 b-layout__td_padleft_10 b-layout__td_bordbot_e6">
-                            <div class="b-layout__txt <?= ($item['status'] == 'cancel' ? "b-layout__txt_color_808080" : "")?>" id="<?= ($item['op_code'] != billing::RESERVE_OP_CODE? "bil" : "res")?><?=$item['id']?>">
+                            <div class="b-layout__txt <?= ($item['status'] == 'cancel' ? 'b-layout__txt_color_808080' : '')?>" id="<?= ($item['op_code'] != billing::RESERVE_OP_CODE ? 'bil' : 'res')?><?=$item['id']?>">
                                 <?= $itemName ?>
                             </div>
                         </td>
                         <td class="b-layout__td b-layout__td_padtb_10 b-layout__td_padleft_10 b-layout__td_width_90 b-layout__td_bordbot_e6">
-                            <?php if($item['op_code'] != billing::RESERVE_OP_CODE) { ?>
+                            <?php if ($item['op_code'] != billing::RESERVE_OP_CODE) {
+    ?>
                             <div class="b-layout__txt b-layout__txt_fontsize_15 <?= $item['ammount'] < 0 ? 'b-layout__txt_color_c10600' : 'b-layout__txt_color_6db335' ?>"><?= $item['ammount'] < 0 ? '-' : '+' ?><?= abs($item['ammount']) ?></div>
-                            <?php } elseif($item['status'] == 'reserve') { //if?>
+                            <?php 
+} elseif ($item['status'] == 'reserve') { //if?>
                             &nbsp;
-                            <?php } else {//else?>
+                            <?php 
+} else {//else?>
                             <div class="b-layout__txt b-layout__txt_fontsize_15">&mdash;</div>
-                            <?php }//else?>
+                            <?php 
+}//else?>
                         </td>
                         <td class="b-layout__td b-layout__td_padtb_10 b-layout__td_padleft_10 b-layout__td_width_90 b-layout__td_bordbot_e6">
-                            <div class="b-layout__txt b-layout__txt_fontsize_15"><?= $item['op_code'] != billing::RESERVE_OP_CODE ? $item['balance'] : "&mdash;" ?></div>
+                            <div class="b-layout__txt b-layout__txt_fontsize_15"><?= $item['op_code'] != billing::RESERVE_OP_CODE ? $item['balance'] : '&mdash;' ?></div>
                         </td>
                         <td class="b-layout__td b-layout__td_padtb_10 b-layout__td_padleft_10 b-layout__td_width_240 b-layout__td_bordbot_e6">
-                            <?php if($item['op_code'] != billing::RESERVE_OP_CODE) { ?>
+                            <?php if ($item['op_code'] != billing::RESERVE_OP_CODE) {
+    ?>
                             <div class="b-layout__txt b-layout__txt_fontsize_15"><?= reformat(htmlspecialchars_decode($item['comments']), 27, 0, 1) ?></div>
-                            <?php } elseif($item['status'] == 'reserve') {//if?>
+                            <?php 
+} elseif ($item['status'] == 'reserve') {//if?>
                             <div class="b-layout__txt b-layout__txt_fontsize_15 b-layout__txt_color_c10600" id="com<?=$item['id']?>">Ожидание оплаты<br><?= exrates::getNameExratesForHistory($item['payment_sys'])?></div>
-                            <?php } elseif($item['status'] == 'cancel') {//if?>
+                            <?php 
+} elseif ($item['status'] == 'cancel') {//if?>
                             <div class="b-layout__txt b-layout__txt_fontsize_15 b-layout__txt_color_808080" id="com<?=$item['id']?>">Список заказов отменен</div>
-                            <?php }//else?>
+                            <?php 
+}//else?>
                         </td>
                     </tr>
-                <? } ?>
+                <?php 
+}
+    ?>
             </table>
         </div>
 
-        <?php if(new_paginator2($page, $pagesCount)) {?>
+        <?php if (new_paginator2($page, $pagesCount)) {
+    ?>
                 <?= new_paginator2($page, $pagesCount, 3, $billHref) ?>
-        <?php } ?>
+        <?php 
+}
+    ?>
 
-    <? } else { ?>
+    <?php 
+} else {
+    ?>
         <div class="b-post b-post_padtop_20 b-post_padbot_15">
             <h4 class="b-post__h4 b-post__h4_padbot_5 b-post__h4_center">Операций не найдено</h4>
             <div class="b-post__txt b-post__txt_center">Попробуйте изменить параметры фильтра</div>
         </div>
-    <? } ?>
+    <?php 
+} ?>
 
     <form method="get" id="history_form">
         <input type="hidden" name="event" id="event" value="<?= $event ?>" />
@@ -96,9 +114,13 @@
         <script>
             var eventsList = {};
             eventsList[0] = 'Все операции';
-            <? if (is_array($events)) foreach ($events as $eventCode => $eventName) { ?>
-            eventsList[<?= $eventCode ?>] = '<?= str_replace(array('%username%', PHP_EOL), array($_SESSION['login'], ''), $eventName ) ?>';
-            <? } ?>
+            <?php if (is_array($events)) {
+    foreach ($events as $eventCode => $eventName) {
+        ?>
+            eventsList[<?= $eventCode ?>] = '<?= str_replace(array('%username%', PHP_EOL), array($_SESSION['login'], ''), $eventName) ?>';
+            <?php 
+    }
+} ?>
         </script>
         <div class="b-combo b-combo_inline-block b-combo_overflow-x_yes b-combo_shadow_width_280 b-combo_margbot_20_ipad">
             <div class="b-combo__input b-combo__input_width_220_iphone b-combo__input_multi_dropdown b-combo__input_init_eventsList drop_down_default_<?= $event ?> b-combo__input_width_210  b-combo__input_arrow_yes">
